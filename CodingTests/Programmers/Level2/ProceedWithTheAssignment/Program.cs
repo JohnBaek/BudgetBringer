@@ -22,7 +22,7 @@ class Program
     {
         List<string> answer = new List<string>();
         
-        // 행과 열의 수를 가져온다.
+        // 행과 의 수를 가져온다.
         int rows = plans.GetLength(0);
         
         // 작업 정보가 저장될 리스트
@@ -39,53 +39,75 @@ class Program
             tasks.Add(add);
         }
 
-        // 시작 시간순으로 재 정렬
+        // 시작 시간순으로 재정렬
         tasks = tasks.OrderBy(i => i.StartTime).ToList();
-        
-        // 큐에 시간순서대로 모든 작업을 바인딩한다
-        Queue<Task> process = new Queue<Task>();
-        tasks.ForEach(i => process.Enqueue(i));
+       
+        // 잠시 멈출 작업을 보관한다.
+        Stack<Task> paused = new Stack<Task>();
 
-        Task task = null;
-        Task nextTask = null;
-        
-        // 모든 작업이 완료될때 까지 반복한다.
-        while (process.Count > 0)
+        // 모든 작업에 대해 처리한다.
+        for (int i = 0; i < tasks.Count; i++)
         {
-            // 작업을 꺼내온다.
-            if(task == null)
-                task = process.Dequeue();
+            // 현재 작업을 가져온다.
+            Task task = tasks[i];
             
-            // 그 다음 해야할 작업을 가져온다.
-            if(nextTask == null)
-                nextTask = process.Dequeue();
+            // 다음 작업
+            Task next = null;
             
-            // 완료하는데 필요한 시간이 다음 실행 시간보다 부족하다면 
-            if ((task.StartTimeMinute + task.PlayTime) < nextTask.StartTimeMinute)
-            {
-                // 작업 정보를 업데이트 한다.
-                task.PlayedTime += nextTask.StartTimeMinute - (task.StartTimeMinute + task.PlayTime);
-                task.StartTimeMinute += task.PlayedTime;
-                
-                // 뒤에서 다시 처리 할 수 있도록 다시 큐에 넣는다.
-                process.Enqueue(task);
-            }
+            // 그 다음작업이 존재하는 경우 그다음 작업을 가져온다.
+            if (i + 1 < tasks.Count)
+                next = tasks[i + 1];
             
-            // 진행해야할 다음 작업이 남아있지 않은경우 
-            if (process.Count == 0)
+            // 다음 작업이 존재 하지 않는경우
+            if (next == null)
             {
                 answer.Add(task.Name);
-                answer.Add(nextTask.Name);
                 break;
             }
             
-            // 완료된 작업을 등록한다.
-            answer.Add(task.Name);
-            
-            // 진행 큐 정보 교체
-            task = nextTask;
-            nextTask = null;
+            // (현재 작업 + 필요한 시간) 이 다음번 작업 시작 시간보다 커서 미뤄야 하는경우
+            if (task.StartTimeMinute + task.PlayTime > next.StartTimeMinute)
+            {
+                task.PlayedTime += next.StartTimeMinute - task.StartTimeMinute;
+                paused.Push(task);
+            }
+            // 처리가 가능한 작업인경우 
+            else
+            {
+                // 정답에 등록
+                answer.Add(task.Name);
+                
+                // 남은 작업이 존재 할경우 
+                if (paused.Count > 0)
+                {
+                    // 현재 진행된 시간을 가져온다.
+                    int currentTime = (task.StartTimeMinute + task.PlayTime);
+                    
+                    // 멈췄던 작업을 하나 꺼내고 
+                    Task pausedTask = paused.Pop();
+                    
+                    // 현재시간 + 남은 시간 = 필요한 시간
+                    int requiredTime = currentTime + (pausedTask.PlayTime - pausedTask.PlayedTime);
+                    
+                    // 필요시간이 다음번 시작 시간보다 큰경우
+                    if (requiredTime > next.StartTimeMinute)
+                    {
+                        pausedTask.PlayedTime += (requiredTime - next.StartTimeMinute);
+                        paused.Push(pausedTask);
+                    }
+                    // 시간내에 처리가능한 경우 
+                    else
+                    {
+                        answer.Add(pausedTask.Name);
+                    }
+                }
+            }
         }
+        
+        // 남은 작업이 있다면 순서대로 넣는다.
+        foreach (Task remain in paused)
+            answer.Add(remain.Name);
+        
         return answer.ToArray();
     }
 

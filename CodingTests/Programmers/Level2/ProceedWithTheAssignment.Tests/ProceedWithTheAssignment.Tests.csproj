@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ProceedWithTheAssignment\ProceedWithTheAssignment.csproj" />
+    <ProjectReference Include="..\ProceedWithTheAssignment_2\ProceedWithTheAssignment_2.csproj" />
   </ItemGroup>
   
 </Project>
