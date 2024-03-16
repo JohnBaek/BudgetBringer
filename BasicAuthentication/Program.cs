@@ -27,6 +27,7 @@ class Program
         
         // 웹 어플리케이션을 빌드한다.
         WebApplication app = builder.Build();
+        
         // SQLite 초기화        
         SQLitePCL.Batteries_V2.Init();
         
