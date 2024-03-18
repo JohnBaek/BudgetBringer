@@ -1,0 +1,24 @@
+version: '3.8'
+services: 
+  # 데이터베이스 MariaDB
+  database:
+    image: sgs/database
+    build:
+      context: ./Resources/DataBase
+      dockerfile: Dockerfile
+    container_name: sgs-database
+    ports:
+      - 3306:3306
+    environment:
+      TZ: Asia/Seoul
+    networks:
+      sgs-net:
+        ipv4_address: 172.16.0.10
+    restart: always
+networks:
+  sgs-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/24
+
