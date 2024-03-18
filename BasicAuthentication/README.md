@@ -1,1 +1,0 @@
-/usr/local/share/dotnet/dotnet ef migrations add --project BasicAuthentication.csproj --startup-project BasicAuthentication.csproj --context BasicAuthentication.Models.BasicAuthenticatedDbContext --configuration Debug Initialized --output-dir Models/Migrations
