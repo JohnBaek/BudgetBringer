@@ -1,8 +1,17 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:Boolean x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/ShowAdvancedOptions/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestProjectMapping/=A9E154F4_002D1E7F_002D4A03_002DBC73_002D60B4D2A1E5CF/@EntryIndexedValue">ProceedWithTheAssignment.Tests</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestProjectMapping/=DC2DAE66_002DDFBE_002D483F_002D8530_002DF49082D29689/@EntryIndexedValue">7D3F4078-31B5-46F2-8327-AB2F5C2BE079</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestTemplateMapping/=MSTest/@EntryIndexedValue">d6790ab7-33c2-4425-b2c9-51480cd1a852</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestTemplateMapping/=xUnit/@EntryIndexedValue">33ff99d8-b1ad-4ed5-a4fd-376b97c2c841</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2473d3fe_002D324e_002D498b_002Dbd0d_002D295cae63560d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Tests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;xUnit::CD3AF9DB-C49F-4A3C-9C7C-567DAF34FBAE::net7.0::ProceedWithTheAssignment.Tests.ProgramTest&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0008A418-FB69-454D-A6A1-7C5F77B868A9::net8.0::BasicAuthentication.Tests.Providers.LoginProviderTest.TryLogin_UserNotFound_ReturnsErrorMessage&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0008A418-FB69-454D-A6A1-7C5F77B868A9::net8.0::BasicAuthentication.Tests.Providers.LoginProviderTest&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0008A418-FB69-454D-A6A1-7C5F77B868A9::net8.0::BasicAuthentication.Tests.Providers.LoginProviderTests.TryLogin_UserNotFound_ReturnsErrorMessage&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::7D3F4078-31B5-46F2-8327-AB2F5C2BE079::net8.0::BasicAuthentication.Tests.Providers.LoginProviderTests.TryLogin_UserNotFound_ReturnsErrorMessage&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::7D3F4078-31B5-46F2-8327-AB2F5C2BE079::net8.0::BasicAuthentication.Tests.Providers.LoginProviderTests.TryLogin_InvalidPassword_ReturnsErrorMessage&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::7D3F4078-31B5-46F2-8327-AB2F5C2BE079::net8.0::BasicAuthentication.Tests.Providers.LoginProviderTests.TryLogin_ValidCredentials_ReturnsSuccess&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
