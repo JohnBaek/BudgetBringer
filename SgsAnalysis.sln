@@ -8,11 +8,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataBase", "DataBase", "{2963F25C-6AF0-4C95-9C8B-C78F121BE007}"
 	ProjectSection(SolutionItems) = preProject
-		Resources\MariaDB\.env = Resources\MariaDB\.env
-		Resources\MariaDB\Dockerfile = Resources\MariaDB\Dockerfile
-		Resources\MariaDB\.dockerignore = Resources\MariaDB\.dockerignore
-		Resources\MariaDB\my.cnf = Resources\MariaDB\my.cnf
+		Resources\DataBase\Dockerfile = Resources\DataBase\Dockerfile
+		Resources\DataBase\.dockerignore = Resources\DataBase\.dockerignore
+		Resources\DataBase\my.cnf = Resources\DataBase\my.cnf
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Providers", "Providers\Providers.csproj", "{ED5DE710-C5CA-4098-A4BE-8D8B83D8F66D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,6 +29,10 @@ Global
 		{11701C03-039E-4D52-89A0-0D6C65D5A42C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11701C03-039E-4D52-89A0-0D6C65D5A42C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11701C03-039E-4D52-89A0-0D6C65D5A42C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED5DE710-C5CA-4098-A4BE-8D8B83D8F66D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED5DE710-C5CA-4098-A4BE-8D8B83D8F66D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED5DE710-C5CA-4098-A4BE-8D8B83D8F66D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED5DE710-C5CA-4098-A4BE-8D8B83D8F66D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2963F25C-6AF0-4C95-9C8B-C78F121BE007} = {27CA4EC8-A393-4247-979B-53D803758528}
