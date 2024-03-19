@@ -10,35 +10,35 @@ namespace Models.DataModels;
 public partial class AnalysisDbContext : DbContext
 {
     /// <summary>
-    /// 역할정보
+    /// 역할 정보 
     /// </summary>
     public virtual DbSet<Role> Roles { get; set; }
+
+    /// <summary>
+    /// 사용자 역할 정보
+    /// </summary>
+    public virtual DbSet<UserRole> UserRoles { get; set; }
 
     /// <summary>
     /// 역할 권한 정보 
     /// </summary>
     public virtual DbSet<RoleClaim> RoleClaims { get; set; }
-
+    
     /// <summary>
     /// 사용자 정보 
     /// </summary>
     public virtual DbSet<User> Users { get; set; }
-
+    
     /// <summary>
-    /// 유저 로그인 정보 
+    /// 사용자 로그인 정보 
     /// </summary>
     public virtual DbSet<UserLogin> UserLogins { get; set; }
-
+    
     /// <summary>
-    /// 토큰 정보 
+    /// 사용자 토큰 정보 
     /// </summary>
     public virtual DbSet<UserToken> UserTokens { get; set; }
-    
-    /// <summary>
-    /// 컨피그 정보
-    /// </summary>
-    private readonly IConfiguration _configuration;
-    
+    //
     /// <summary>
     /// 생성자
     /// </summary>
@@ -66,11 +66,9 @@ public partial class AnalysisDbContext : DbContext
             entity.Property(e => e.Id).HasComment("역할의 고유 식별자");
             entity.Property(e => e.ConcurrencyStamp).HasComment("병행 처리를 위한 스탬프");
             entity.Property(e => e.Name)
-                .HasMaxLength(256)
+                .HasMaxLength(255)
                 .HasComment("역할 이름");
-            entity.Property(e => e.NormalizedName)
-                .HasMaxLength(256)
-                .HasComment("역할 이름의 정규화된 형태");
+            entity.Property(e => e.NormalizedName).HasComment("역할 이름의 정규화된 형태");
         });
 
         modelBuilder.Entity<RoleClaim>(entity =>
@@ -100,11 +98,8 @@ public partial class AnalysisDbContext : DbContext
             entity.ToTable(tb => tb.HasComment("사용자 정보"));
 
             entity.HasIndex(e => e.NormalizedEmail, "EmailIndex");
-
             entity.HasIndex(e => e.LoginId, "LoginIdIndex");
-
             entity.HasIndex(e => e.NormalizedUserName, "UserNameIndex").IsUnique();
-
             entity.Property(e => e.Id).HasComment("아이디 값");
             entity.Property(e => e.AccessFailedCount)
                 .HasComment("로그인 실패 횟수")
@@ -114,7 +109,7 @@ public partial class AnalysisDbContext : DbContext
                 .HasMaxLength(13)
                 .HasComment("유저 타입 구분자");
             entity.Property(e => e.Email)
-                .HasMaxLength(256)
+                .HasMaxLength(255)
                 .HasComment("이메일 주소");
             entity.Property(e => e.EmailConfirmed).HasComment("이메일 인증 여부");
             entity.Property(e => e.LockoutEnabled).HasComment("계정 잠금 가능 여부");
@@ -122,40 +117,33 @@ public partial class AnalysisDbContext : DbContext
                 .HasMaxLength(6)
                 .HasComment("잠금 해제 시간");
             entity.Property(e => e.LoginId).HasComment("로그인 ID");
-            entity.Property(e => e.NormalizedEmail)
-                .HasMaxLength(256)
-                .HasComment("대문자로 변환된 이메일 주소");
-            entity.Property(e => e.NormalizedUserName)
-                .HasMaxLength(256)
-                .HasComment("대문자로 변환된 사용자 이름");
+            entity.Property(e => e.NormalizedEmail).HasComment("대문자로 변환된 이메일 주소");
+            entity.Property(e => e.NormalizedUserName).HasComment("대문자로 변환된 사용자 이름");
             entity.Property(e => e.PasswordHash).HasComment("비밀번호 해시");
             entity.Property(e => e.PhoneNumber).HasComment("전화번호");
             entity.Property(e => e.PhoneNumberConfirmed).HasComment("전화번호 인증 여부");
             entity.Property(e => e.SecurityStamp).HasComment("보안 스탬프");
             entity.Property(e => e.TwoFactorEnabled).HasComment("2단계 인증 활성화 여부");
             entity.Property(e => e.UserName)
-                .HasMaxLength(256)
+                .HasMaxLength(255)
                 .HasComment("사용자 이름");
+        });
+        
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.ToTable("Users");
 
-            entity.HasMany(d => d.Roles).WithMany(p => p.Users)
-                .UsingEntity<Dictionary<string, object>>(
-                    "UserRole",
-                    r => r.HasOne<Role>().WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.ClientSetNull),
-                    l => l.HasOne<User>().WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientSetNull),
-                    j =>
-                    {
-                        j.HasKey("UserId", "RoleId")
-                            .HasName("PRIMARY")
-                            .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
-                        j.ToTable("UserRoles", tb => tb.HasComment("사용자 역할 정보"));
-                        j.HasIndex(new[] { "RoleId" }, "FK_UserRoles_Roles_RoleId");
-                        j.IndexerProperty<Guid>("UserId").HasComment("사용자 아이디");
-                        j.IndexerProperty<Guid>("RoleId").HasComment("역할 아아디");
-                    });
+            // 기존 설정들...
+
+            entity.Property(e => e.LoginId)
+                .HasMaxLength(255)
+                .HasComment("로그인 ID");
+
+            // LoginId에 대한 유니크 인덱스 설정
+            entity.HasIndex(e => e.LoginId)
+                .IsUnique()
+                .HasDatabaseName("IX_Users_LoginId");
+            // 다른 인덱스나 설정들...
         });
 
         modelBuilder.Entity<UserLogin>(entity =>
@@ -195,7 +183,25 @@ public partial class AnalysisDbContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
         });
+        
+        modelBuilder.Entity<UserRole>(entity =>
+        {
+            // 복합 키 설정
+            entity.HasKey(ur => new { ur.UserId, ur.RoleId }).HasName("PK_UserRoles");
 
+            // UserId 속성 설정
+            entity.Property(ur => ur.UserId)
+                .IsRequired()
+                .HasComment("사용자 아이디")
+                .HasMaxLength(36); 
+
+            // RoleId 속성 설정
+            entity.Property(ur => ur.RoleId)
+                .IsRequired()
+                .HasComment("역할 아이디")
+                .HasMaxLength(36); 
+        });
+        
         OnModelCreatingPartial(modelBuilder);
     }
     

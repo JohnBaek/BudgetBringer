@@ -98,4 +98,5 @@ public partial class User
     public virtual ICollection<UserToken> UserTokens { get; set; } = new List<UserToken>();
 
     public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
+    
 }

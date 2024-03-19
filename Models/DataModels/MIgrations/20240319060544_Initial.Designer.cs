@@ -9,10 +9,10 @@ using Models.DataModels;
 
 #nullable disable
 
-namespace Models.DataModels.Migrations
+namespace Models.DataModels.MIgrations
 {
     [DbContext(typeof(AnalysisDbContext))]
-    [Migration("20240319022145_Initial")]
+    [Migration("20240319060544_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -39,13 +39,12 @@ namespace Models.DataModels.Migrations
                         .HasComment("병행 처리를 위한 스탬프");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
                         .HasComment("역할 이름");
 
                     b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)")
+                        .HasColumnType("varchar(255)")
                         .HasComment("역할 이름의 정규화된 형태");
 
                     b.HasKey("Id")
@@ -111,8 +110,8 @@ namespace Models.DataModels.Migrations
                         .HasComment("유저 타입 구분자");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
                         .HasComment("이메일 주소");
 
                     b.Property<bool>("EmailConfirmed")
@@ -129,17 +128,16 @@ namespace Models.DataModels.Migrations
                         .HasComment("잠금 해제 시간");
 
                     b.Property<string>("LoginId")
+                        .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasComment("로그인 ID");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)")
+                        .HasColumnType("varchar(255)")
                         .HasComment("대문자로 변환된 이메일 주소");
 
                     b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)")
+                        .HasColumnType("varchar(255)")
                         .HasComment("대문자로 변환된 사용자 이름");
 
                     b.Property<string>("PasswordHash")
@@ -163,12 +161,16 @@ namespace Models.DataModels.Migrations
                         .HasComment("2단계 인증 활성화 여부");
 
                     b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
                         .HasComment("사용자 이름");
 
                     b.HasKey("Id")
                         .HasName("PRIMARY");
+
+                    b.HasIndex("LoginId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Users_LoginId");
 
                     b.HasIndex(new[] { "NormalizedEmail" }, "EmailIndex");
 
@@ -177,7 +179,7 @@ namespace Models.DataModels.Migrations
                     b.HasIndex(new[] { "NormalizedUserName" }, "UserNameIndex")
                         .IsUnique();
 
-                    b.ToTable("Users", t =>
+                    b.ToTable("Users", null, t =>
                         {
                             t.HasComment("사용자 정보");
                         });
@@ -214,6 +216,24 @@ namespace Models.DataModels.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Models.DataModels.UserRole", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasMaxLength(36)
+                        .HasColumnType("char(36)")
+                        .HasComment("사용자 아이디");
+
+                    b.Property<Guid>("RoleId")
+                        .HasMaxLength(36)
+                        .HasColumnType("char(36)")
+                        .HasComment("역할 아이디");
+
+                    b.HasKey("UserId", "RoleId")
+                        .HasName("PK_UserRoles");
+
+                    b.ToTable("UserRoles");
+                });
+
             modelBuilder.Entity("Models.DataModels.UserToken", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -242,26 +262,19 @@ namespace Models.DataModels.Migrations
                         });
                 });
 
-            modelBuilder.Entity("UserRole", b =>
+            modelBuilder.Entity("RoleUser", b =>
                 {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)")
-                        .HasComment("사용자 아이디");
+                    b.Property<Guid>("RolesId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("char(36)")
-                        .HasComment("역할 아아디");
+                    b.Property<Guid>("UsersId")
+                        .HasColumnType("char(36)");
 
-                    b.HasKey("UserId", "RoleId")
-                        .HasName("PRIMARY")
-                        .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
+                    b.HasKey("RolesId", "UsersId");
 
-                    b.HasIndex(new[] { "RoleId" }, "FK_UserRoles_Roles_RoleId");
+                    b.HasIndex("UsersId");
 
-                    b.ToTable("UserRoles", null, t =>
-                        {
-                            t.HasComment("사용자 역할 정보");
-                        });
+                    b.ToTable("RoleUser");
                 });
 
             modelBuilder.Entity("Models.DataModels.RoleClaim", b =>
@@ -296,16 +309,18 @@ namespace Models.DataModels.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("UserRole", b =>
+            modelBuilder.Entity("RoleUser", b =>
                 {
                     b.HasOne("Models.DataModels.Role", null)
                         .WithMany()
-                        .HasForeignKey("RoleId")
+                        .HasForeignKey("RolesId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Models.DataModels.User", null)
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
