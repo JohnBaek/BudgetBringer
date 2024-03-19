@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Models.DataModels;
 
 namespace Apis;
 
@@ -55,22 +57,29 @@ class Program
     /// <param name="configuration">컨피그 객체</param>
     public static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration)
     {
-        // // DB 컨텍스트 추가 
-        // services.AddDbContext<(options =>
-        //     options.UseSqlite(configuration.GetConnectionString("AnalysisDatabase"))
-        // );
-        // //
+        // DB 컨텍스트 정보를 추가한다.
+        string connectionString = configuration.GetConnectionString("AnalysisDatabase") ?? "";
+        Console.WriteLine($"connectionString : {connectionString}");
+        services.AddDbContext<AnalysisDbContext>(options =>
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+        //
         // // Identity 서비스 DI 
         // services.AddIdentity<User, IdentityRole>()
-        //     .AddEntityFrameworkStores<BasicAuthenticatedDbContext>()
+        //     .AddEntityFrameworkStores<AnalysisDbContext>()
         //     .AddDefaultTokenProviders();
         //
         // // 프로바이더 DI
         // services.AddTransient<ILoginService, LoginProvider>();
         //
+        
+        services.AddLogging();
+        services.AddControllers();
         // 인증서비스 DI
         services.AddAuthentication();
         // 컨트롤러 추가
         services.AddControllers();
+        // 빌더에 미들웨어 서비스를 추가한다.
+        services.AddEndpointsApiExplorer();
     }
 }
