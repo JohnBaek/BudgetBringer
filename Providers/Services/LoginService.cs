@@ -15,11 +15,6 @@ namespace Providers.Services;
 public class LoginService : ILoginService
 {
     /// <summary>
-    /// DB Context
-    /// </summary>
-    private readonly AnalysisDbContext _dbContext;
-
-    /// <summary>
     /// 로거
     /// </summary>
     private readonly ILogger<LoginService> _logger;
@@ -32,12 +27,10 @@ public class LoginService : ILoginService
     /// <summary>
     /// 생성자
     /// </summary>
-    /// <param name="dbContext">DB Context</param>
     /// <param name="logger">로거</param>
     /// <param name="userRepository">사용자 리파지토리</param>
-    public LoginService(AnalysisDbContext dbContext, ILogger<LoginService> logger, IUserRepository userRepository)
+    public LoginService( ILogger<LoginService> logger, IUserRepository userRepository)
     {
-        _dbContext = dbContext;
         _logger = logger;
         _userRepository = userRepository;
     }

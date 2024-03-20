@@ -1,0 +1,10 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestProjectMapping/=ED5DE710_002DC5CA_002D4098_002DA4BE_002D8D8B83D8F66D/@EntryIndexedValue">Providers.Tests</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestTemplateMapping/=xUnit/@EntryIndexedValue">33ff99d8-b1ad-4ed5-a4fd-376b97c2c841</s:String>
+	<s:Boolean x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/ShowAdvancedOptions/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8016dfcf_002D3b60_002D4a08_002D9343_002D43a9d4220709/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TryLoginAsync_Success" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.LoginServiceTest.TryLoginAsync_Success&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.LoginServiceTest.TryLoginAsync_Fail_UserNotFound&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
