@@ -2,6 +2,9 @@ using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Models.DataModels;
+using Serilog;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Apis;
 
@@ -23,6 +26,10 @@ class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         
+        // Serilog 로거 설정
+        builder.Host.UseSerilog((hostingContext, loggerConfiguration) => 
+            loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));        
+                
         // 웹 어플리케이션을 빌드한다.
         WebApplication app = builder.Build();
 
