@@ -10,5 +10,5 @@ public class ResponseData<T> : Response where T : class
     /// <summary>
     /// 응답 데이터
     /// </summary>
-    private T? Data { get; set; }
+    public T? Data { get; set; }
 }

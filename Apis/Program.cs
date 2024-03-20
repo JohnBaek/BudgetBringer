@@ -1,10 +1,7 @@
-using System.Reflection;
-using Microsoft.AspNetCore.Identity;
+using Features.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Models.DataModels;
 using Serilog;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Apis;
 
@@ -100,7 +97,7 @@ class Program
             dbContext.Database.Migrate();
             
             // "관리자" 계정이 존재하지 않는 경우
-            User? admin = dbContext.Users.Where(i => i.LoginId == "admin").FirstOrDefault();
+            User? admin = dbContext.Users.FirstOrDefault(i => i.LoginId == "admin");
             if (admin == null)
             {
                 // 관리자 계정을 생성한다.
@@ -113,7 +110,7 @@ class Program
                     Email = "johnbaek.bjy@gmail.com" ,
                     EmailConfirmed = true ,
                     NormalizedEmail = "JOHNBAEK.BJY@GMAIL.COM" ,
-                    PasswordHash = "53e5ef26efa132deb014c5b96393e909ceb7fc66609e2df27c15b1be34e8f90b" ,
+                    PasswordHash = "qlqlrh12!@".ToSha() ,
                     PhoneNumber = "+821033356168" ,
                     PhoneNumberConfirmed = true ,
                     TwoFactorEnabled = false ,
@@ -127,7 +124,7 @@ class Program
             }
             
             // 관리자 권한 정보를 가져온다.
-            Role? adminRole = dbContext.Roles.Where(i => i.Name.ToLower() == "administrator").FirstOrDefault();
+            Role? adminRole = dbContext.Roles.FirstOrDefault(i => i.Name != null && i.Name.ToLower() == "administrator");
             
             // 관리자 권한 정보가 없는 경우
             if (adminRole == null)

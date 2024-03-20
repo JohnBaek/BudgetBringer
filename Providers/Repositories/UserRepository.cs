@@ -1,3 +1,4 @@
+using Features.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Models.DataModels;
@@ -38,16 +39,15 @@ public class UserRepository : IUserRepository
     /// <returns>결과</returns>
     public async Task<bool> ExistUserAsync(string loginId)
     {
-        bool result = false;
-
+        bool result;
         try
         {
             return await _dbContext.Users.AsNoTracking().AnyAsync(i => i.LoginId == loginId);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            result = false;
+            e.LogError(_logger);
         }
 
         return result;
@@ -59,8 +59,22 @@ public class UserRepository : IUserRepository
     /// <param name="loginId">로그인 아이디</param>
     /// <param name="password">패스워드 (SHA 256 인크립트 된 원본)</param>
     /// <returns>결과</returns>
-    public async Task<User> GetUserWithIdPasswordAsync(string loginId, string password)
+    public async Task<User?> GetUserWithIdPasswordAsync(string loginId, string password)
     {
-        throw new NotImplementedException();
+        User? result;
+
+        try
+        {
+            return await _dbContext.Users.AsNoTracking().Where(
+                    i => i.LoginId == loginId && i.PasswordHash == password.ToSha())
+                .FirstAsync();
+        }
+        catch (Exception e)
+        {
+            result = null;
+            e.LogError(_logger);
+        }
+
+        return result;
     }
 }
