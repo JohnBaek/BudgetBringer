@@ -28,7 +28,6 @@ export const loginService = {
       const authenticationStore = AuthenticationStore();
 
       if(response.result === EnumResponseResult.error) {
-        alert(response.message);
         authenticationStore.clearAuthenticated();
       }
       // 성공인경우

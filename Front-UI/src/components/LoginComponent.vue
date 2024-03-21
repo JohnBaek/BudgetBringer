@@ -1,10 +1,12 @@
 <template>
   <v-app>
+    <v-overlay >
+    </v-overlay>
+
     <v-main>
       <v-container>
         <v-row justify="center" align="center" style="min-height: 100vh;">
           <v-col cols="12" sm="8" md="6" lg="4">
-
             <!-- 타이틀과 설명 -->
             <div class="text-center mb-5">
               <v-icon
@@ -27,13 +29,15 @@
                 :disabled="loginId === '' || password === ''"
                 @click="tryLoginAsync"
               >
-                <h3>로그인</h3>
+                <v-progress-circular indeterminate v-if="inCommunication"></v-progress-circular>
+                <h3 v-if="!inCommunication">로그인</h3>
               </v-btn>
             </v-form>
           </v-col>
         </v-row>
       </v-container>
     </v-main>
+    <v-overlay v-model="inCommunication"></v-overlay>
   </v-app>
 </template>
 <style scoped>
@@ -42,15 +46,19 @@
 
 // 로그인 아이디
 import {ref} from "vue";
-import {loginService} from "../services/login-service";
+import {loginService} from "../services/LoginService";
 import {EnumResponseResult} from "../models/Enums/EnumResponseResult";
 import {AuthenticationStore} from "../store/AuthenticationStore";
 import router from "../router";
+import {messageService} from "../services/MessageService";
 
 let loginId = ref<string>('');
 
 // 로그인 패스워드
 let password = ref<string>('');
+
+// 통신중 플래그
+let inCommunication = ref<boolean>(false);
 
 // 인증정보 스토어
 const authenticationStore = AuthenticationStore();
@@ -67,13 +75,26 @@ const tryLoginAsync = async () => {
   if(loginId.value === '' || password.value === '')
     return;
 
-  // 로그인을 시도 한다.
-  const response = await loginService.tryLoginAsync(loginId.value,password.value);
+  // 임시 Async 처리
+  inCommunication.value = true;
 
-  // 로그인에 성공한 경우
-  if(response.result === EnumResponseResult.success) {
-    await router.push('/budget/plan');
-  }
-  console.log('store.state.isAuthenticated',authenticationStore.isAuthenticated, authenticationStore.userInformation);
+  setTimeout(async () => {
+    // 로그인을 시도 한다.
+    const response = await loginService.tryLoginAsync(loginId.value, password.value);
+
+    inCommunication.value = false;
+
+    // 로그인에 성공한 경우
+    if (response.result === EnumResponseResult.success) {
+      await router.push('/budget/plan');
+    }
+    // 로그인에 실패한경우
+    else {
+      messageService.showError(response.message);
+    }
+
+    console.log('store.state.isAuthenticated', authenticationStore.isAuthenticated, authenticationStore.userInformation);
+  },2000);
+
 }
 </script>

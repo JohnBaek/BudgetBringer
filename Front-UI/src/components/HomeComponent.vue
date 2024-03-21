@@ -1,5 +1,7 @@
 
 <template>
+
+
   <v-layout>
     <div class="display-1 ma-4">
       <!--상단로고-->

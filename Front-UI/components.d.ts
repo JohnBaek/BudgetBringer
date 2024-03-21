@@ -15,6 +15,7 @@ declare module 'vue' {
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     HomeComponent: typeof import('./src/components/HomeComponent.vue')['default']
     LoginComponent: typeof import('./src/components/LoginComponent.vue')['default']
+    MessageComponent: typeof import('./src/components/MessageComponent.vue')['default']
     Navigation: typeof import('./src/components/Shared/Navigation.vue')['default']
     NoPageComponent: typeof import('./src/components/NoPageComponent.vue')['default']
     PlanBudgetComponent: typeof import('./src/components/Budget/PlanBudgetComponent.vue')['default']
