@@ -6,6 +6,7 @@ import NoPageComponent from "../components/NoPageComponent.vue";
 import BudgetProcessComponent from "../components/Budget/BudgetProcessComponent.vue";
 import BudgetPlanComponent from "../components/Budget/BudgetPlanComponent.vue";
 import BudgetApprovedComponent from "../components/Budget/BudgetApprovedComponent.vue";
+import {AuthenticationStore} from "../store/AuthenticationStore";
 
 
 /**
@@ -78,15 +79,19 @@ const router = createRouter({
 
 export default router;
 
+
+
 /**
  * 라우터 실행 핸들러
  * 로그인여부를 체크한다.
  */
 router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+  const authenticationStore = AuthenticationStore();
+
   // 인증정보가 필요할 경우
   if (to.matched.some(record => record.meta.requiresAuth)) {
     // 로그인 되어있지 않다면
-    if (!isLoggedIn()) {
+    if (!authenticationStore.isAuthenticated) {
       // 로그인 페이지로 이동한다.
       next({name: 'Login'});
       // 로그인 되어있다면
@@ -98,8 +103,3 @@ router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, n
     next();
   }
 });
-
-function isLoggedIn(): boolean {
-  // 로그인 상태 확인 로직
-  return false;
-}

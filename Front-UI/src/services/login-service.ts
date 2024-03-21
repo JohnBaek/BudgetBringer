@@ -1,7 +1,7 @@
 import {ResponseData} from "../models/Responses/ResponseData";
 import {ResponseUser} from "../models/Responses/Users/ResponseUser";
 import {EnumResponseResult} from "../models/Enums/EnumResponseResult";
-import {Ref, UnwrapRef} from "vue";
+import {AuthenticationStore} from "../store/AuthenticationStore";
 
 export const loginService = {
   async tryLoginAsync(loginId: string, password: string): Promise<ResponseData<ResponseUser>> {
@@ -11,21 +11,32 @@ export const loginService = {
       // const response = await axios.post('/api/login', { username, password });
 
       // 로그인 성공 가정
-      let responseData: ResponseData<ResponseUser> = {
+      let response: ResponseData<ResponseUser> = {
         result: EnumResponseResult.error,
         message: '아이디와 패스워드를 확인해주세요',
         data: { name: '' }, // 응답 구조에 맞게 조정 필요
       };
 
       if(loginId === 'admin' && password === '1234') {
-        responseData = {
+        response = {
           result: EnumResponseResult.success,
           message: '',
           data: { name: '관리자' }, // 응답 구조에 맞게 조정 필요
         };
       }
 
-      return responseData;
+      const authenticationStore = AuthenticationStore();
+
+      if(response.result === EnumResponseResult.error) {
+        alert(response.message);
+        authenticationStore.clearAuthenticated();
+      }
+      // 성공인경우
+      else {
+        authenticationStore.updateAuthenticated(response.data);
+      }
+
+      return response;
     } catch (error) {
       console.error('Login service error:', error);
       return {

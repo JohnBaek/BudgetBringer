@@ -17,8 +17,8 @@
 
             <!-- 로그인 폼 -->
             <v-form>
-              <v-text-field label="아이디" variant="outlined" v-model="loginId"></v-text-field>
-              <v-text-field label="패스워드" variant="outlined" type="password" v-model="password"></v-text-field>
+              <v-text-field @keyup.enter="tryLoginAsync" label="아이디" variant="outlined" v-model="loginId"></v-text-field>
+              <v-text-field @keyup.enter="tryLoginAsync" label="패스워드" variant="outlined" type="password" v-model="password"></v-text-field>
               <v-btn
                 large
                 block
@@ -44,22 +44,36 @@
 import {ref} from "vue";
 import {loginService} from "../services/login-service";
 import {EnumResponseResult} from "../models/Enums/EnumResponseResult";
+import {AuthenticationStore} from "../store/AuthenticationStore";
+import router from "../router";
 
 let loginId = ref<string>('');
 
 // 로그인 패스워드
 let password = ref<string>('');
 
+// 인증정보 스토어
+const authenticationStore = AuthenticationStore();
+
+// 로그인화면에 접근시 인증정보 날림
+authenticationStore.clearAuthenticated();
+
+console.log('authenticationStore.isAuthenticated',authenticationStore.isAuthenticated);
+
 /**
  * 로그인을 시도한다.
  */
 const tryLoginAsync = async () => {
+  if(loginId.value === '' || password.value === '')
+    return;
+
   // 로그인을 시도 한다.
   const response = await loginService.tryLoginAsync(loginId.value,password.value);
 
-  // 예외인경우
-  if(response.result === EnumResponseResult.error)
-    alert(response.message);
+  // 로그인에 성공한 경우
+  if(response.result === EnumResponseResult.success) {
+    await router.push('/budget/plan');
+  }
+  console.log('store.state.isAuthenticated',authenticationStore.isAuthenticated, authenticationStore.userInformation);
 }
-
 </script>
