@@ -1,20 +1,17 @@
 import CommonCodeComponent from "../components/CommonCode/CommonCodeComponent.vue";
 import LoginComponent from '../components/LoginComponent.vue';
 import {createRouter, createWebHistory, NavigationGuardNext, RouteLocationNormalized, RouteRecordRaw} from 'vue-router';
-import HomeComponent from "../components/Home/HomeComponent.vue";
+import HomeComponent from "../components/HomeComponent.vue";
 import NoPageComponent from "../components/NoPageComponent.vue";
+import BudgetProcessComponent from "../components/Budget/BudgetProcessComponent.vue";
+import BudgetPlanComponent from "../components/Budget/BudgetPlanComponent.vue";
+import BudgetApprovedComponent from "../components/Budget/BudgetApprovedComponent.vue";
+
 
 /**
  * 라우트 정보
  */
 const routes: Array<RouteRecordRaw> = [
-  // 메인 홈
-  {
-    path: '/',
-    name: 'Home',
-    component: HomeComponent,
-    meta: {requiresAuth: true}
-  },
   // 로그인 페이지
   {
     path: '/login',
@@ -27,15 +24,48 @@ const routes: Array<RouteRecordRaw> = [
     name: 'page-not-found',
     component: NoPageComponent,
   },
-  // 코드관리/공통코드 페이지
+  // 메인 홈
   {
-    path: '/common-code',
-    name: 'CommonCode',
-    component: CommonCodeComponent,
-    meta: {requiresAuth: true}
+    path: '/',
+    name: 'Home',
+    component: HomeComponent,
+    meta: {requiresAuth: true},
+    children: [
+      {
+        // 코드관리/공통코드 페이지
+        path: '/common-code',
+        name: 'CommonCode',
+        component: CommonCodeComponent,
+      },
+      // 예산 관련 컴포넌트
+      {
+        // 코드관리/공통코드 페이지
+        path: '/budget',
+        name: 'Budget',
+        redirect : '/budget/plan' ,
+        children: [
+          // 예산 계획
+          {
+            path: 'plan',
+            name: 'BudgetPlan',
+            component: BudgetPlanComponent,
+          },
+          // 예산 승인
+          {
+            path: 'approved',
+            name: 'BudgetApproved',
+            component: BudgetApprovedComponent,
+          },
+          // 예산 계획
+          {
+            path: 'process',
+            name: 'BudgetProcess',
+            component: BudgetProcessComponent,
+          },
+        ]
+      },
+    ]
   },
-
-
 ];
 
 /**
@@ -71,5 +101,5 @@ router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, n
 
 function isLoggedIn(): boolean {
   // 로그인 상태 확인 로직
-  return !!localStorage.getItem('user-token');
+  return false;
 }

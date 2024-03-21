@@ -17,15 +17,17 @@
 
             <!-- 로그인 폼 -->
             <v-form>
-              <v-text-field label="아이디" variant="outlined"></v-text-field>
-              <v-text-field label="패스워드" variant="outlined"></v-text-field>
+              <v-text-field label="아이디" variant="outlined" v-model="loginId"></v-text-field>
+              <v-text-field label="패스워드" variant="outlined" type="password" v-model="password"></v-text-field>
               <v-btn
                 large
                 block
                 color="primary"
                 :height="50"
+                :disabled="loginId === '' || password === ''"
+                @click="tryLoginAsync"
               >
-                <b>로그인 하기</b>
+                <h3>로그인</h3>
               </v-btn>
             </v-form>
           </v-col>
@@ -37,4 +39,27 @@
 <style scoped>
 </style>
 <script setup lang="ts">
+
+// 로그인 아이디
+import {ref} from "vue";
+import {loginService} from "../services/login-service";
+import {EnumResponseResult} from "../models/Enums/EnumResponseResult";
+
+let loginId = ref<string>('');
+
+// 로그인 패스워드
+let password = ref<string>('');
+
+/**
+ * 로그인을 시도한다.
+ */
+const tryLoginAsync = async () => {
+  // 로그인을 시도 한다.
+  const response = await loginService.tryLoginAsync(loginId.value,password.value);
+
+  // 예외인경우
+  if(response.result === EnumResponseResult.error)
+    alert(response.message);
+}
+
 </script>

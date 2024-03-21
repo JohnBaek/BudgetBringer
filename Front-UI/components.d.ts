@@ -7,12 +7,19 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    BudgetApprovedComponent: typeof import('./src/components/Budget/BudgetApprovedComponent.vue')['default']
+    BudgetPlanComponent: typeof import('./src/components/Budget/BudgetPlanComponent.vue')['default']
+    BudgetProcessComponent: typeof import('./src/components/Budget/BudgetProcessComponent.vue')['default']
+    BudgetResultComponent: typeof import('./src/components/Budget/BudgetResultComponent.vue')['default']
     CommonCodeComponent: typeof import('./src/components/CommonCode/CommonCodeComponent.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
-    HomeComponent: typeof import('./src/components/Home/HomeComponent.vue')['default']
+    HomeComponent: typeof import('./src/components/HomeComponent.vue')['default']
     LoginComponent: typeof import('./src/components/LoginComponent.vue')['default']
+    Navigation: typeof import('./src/components/Shared/Navigation.vue')['default']
     NoPageComponent: typeof import('./src/components/NoPageComponent.vue')['default']
+    PlanBudgetComponent: typeof import('./src/components/Budget/PlanBudgetComponent.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SystemLogComponent: typeof import('./src/components/System/SystemLogComponent.vue')['default']
   }
 }
