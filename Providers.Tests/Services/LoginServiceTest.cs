@@ -21,23 +21,13 @@ public class LoginServiceTest
     /// <summary>
     /// 유저 리파지토리 
     /// </summary>
-    private readonly Mock<IUserRepository> _mockUserRepository;
+    private Mock<IUserRepository> _mockUserRepository;
     
     /// <summary>
     /// 로그인서비스 
     /// </summary>
-    private readonly LoginService _loginService;
+    private LoginService _loginService;
 
-    /// <summary>
-    /// 생성자
-    /// </summary>
-    public LoginServiceTest()
-    {
-        // Arranges
-        var mockLogger = new Mock<ILogger<LoginService>>();
-        _mockUserRepository = new Mock<IUserRepository>();
-        _loginService = new LoginService(mockLogger.Object, _mockUserRepository.Object);
-    }
 
     /// <summary>
     /// 로그인 성공
@@ -45,6 +35,11 @@ public class LoginServiceTest
     [Fact]
     public async Task TryLoginAsync_Success()
     {
+        // Arranges
+        var mockLogger = new Mock<ILogger<LoginService>>();
+        _mockUserRepository = new Mock<IUserRepository>();
+        _loginService = new LoginService(mockLogger.Object, _mockUserRepository.Object);
+        
         // 요청정보 세팅
         var request = new RequestLogin
         {
@@ -69,6 +64,11 @@ public class LoginServiceTest
     [Fact]
     public async Task TryLoginAsync_Fail_UserNotFound()
     {
+        // Arranges
+        var mockLogger = new Mock<ILogger<LoginService>>();
+        _mockUserRepository = new Mock<IUserRepository>();
+        _loginService = new LoginService(mockLogger.Object, _mockUserRepository.Object);
+        
         var request = new RequestLogin
         {
             LoginId = "nonExistingUser",
@@ -92,6 +92,11 @@ public class LoginServiceTest
     [Fact]
     public async Task TryLoginAsync_Fail_InvalidCredentials()
     {
+        // Arranges
+        var mockLogger = new Mock<ILogger<LoginService>>();
+        _mockUserRepository = new Mock<IUserRepository>();
+        _loginService = new LoginService(mockLogger.Object, _mockUserRepository.Object);
+        
         var request = new RequestLogin
         {
             LoginId = "existingUser",

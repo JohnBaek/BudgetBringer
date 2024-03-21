@@ -19,6 +19,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Features", "Features\Featur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Providers.Tests", "Providers.Tests\Providers.Tests.csproj", "{34D7E900-A1F2-4A84-9B85-82453A5463EB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nginx", "Nginx", "{51C14449-5AF1-4A8F-8C23-7E137FCA6CA6}"
+	ProjectSection(SolutionItems) = preProject
+		Resources\DataBase\my.cnf = Resources\DataBase\my.cnf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{C77857EA-E9D8-4FC8-AD34-049C80747856}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +55,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2963F25C-6AF0-4C95-9C8B-C78F121BE007} = {27CA4EC8-A393-4247-979B-53D803758528}
+		{51C14449-5AF1-4A8F-8C23-7E137FCA6CA6} = {27CA4EC8-A393-4247-979B-53D803758528}
 	EndGlobalSection
 EndGlobal

@@ -6,5 +6,6 @@
   &lt;TestAncestor&gt;
     &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.LoginServiceTest.TryLoginAsync_Success&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.LoginServiceTest.TryLoginAsync_Fail_UserNotFound&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.LoginServiceTest.TryLoginAsync_Fail_InvalidCredentials&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
