@@ -23,10 +23,9 @@
                 large
                 block
                 color="primary"
-
                 :height="50"
               >
-                <b>로그인하기</b>
+                <b>로그인 하기</b>
               </v-btn>
             </v-form>
           </v-col>
@@ -35,9 +34,7 @@
     </v-main>
   </v-app>
 </template>
-
 <style scoped>
-
 </style>
 <script setup lang="ts">
 </script>
