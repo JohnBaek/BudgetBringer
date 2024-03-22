@@ -30,7 +30,6 @@
         v-model="message.visible"
         @click="closeSnackBar(message)"
       >
-        <!-- 메시지를 왼쪽에 표시하고, 'X' 버튼을 오른쪽에 정렬합니다. -->
         <div class="flex justify-space-between">
           <span><h3>{{ message.content }}</h3></span>
         </div>

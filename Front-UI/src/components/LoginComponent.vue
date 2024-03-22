@@ -63,9 +63,6 @@ let inCommunication = ref<boolean>(false);
 // 인증정보 스토어
 const authenticationStore = AuthenticationStore();
 
-// 로그인화면에 접근시 인증정보 날림
-authenticationStore.clearAuthenticated();
-
 console.log('authenticationStore.isAuthenticated',authenticationStore.isAuthenticated);
 
 /**
@@ -86,7 +83,7 @@ const tryLoginAsync = async () => {
 
     // 로그인에 성공한 경우
     if (response.result === EnumResponseResult.success) {
-      await router.push('/budget/plan');
+      await router.push('/budget');
     }
     // 로그인에 실패한경우
     else {
