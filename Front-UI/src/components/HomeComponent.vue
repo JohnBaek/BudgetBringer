@@ -16,7 +16,6 @@
         </v-icon> Budget Bringer
       </h3>
     </div>
-
     <!--메뉴 Drawer-->
     <v-spacer class="hamburger-menu"></v-spacer>
     <div class="display-1 ma-2 hamburger-menu">
@@ -28,20 +27,13 @@
     <!-- 메뉴 -->
     <v-container class="top-menu ">
       <v-spacer></v-spacer>
-      <v-row>
-        <v-col
-          v-for="(item, i) in menus"
-          :key="i"
-          :value="item"
-          cols="auto"
-          >
-          <v-btn
-            variant="text" @click="routePage(item)" >
-            <h3> {{item.title}}</h3>
-          </v-btn>
-        </v-col>
-      </v-row>
-
+      <span v-for="(item, i) in menus"
+            :key="i"
+      >
+        <v-btn variant="text" @click="routePage(item)" >
+          <h3><v-icon>{{item.icon}}</v-icon> {{item.title}}</h3>
+        </v-btn>
+      </span>
       <!-- 메뉴 항목들 -->
       <!-- 오른쪽 콘텐츠와 메뉴 아이템 사이의 공간을 균등하게 나눕니다 -->
     </v-container>
@@ -76,7 +68,8 @@
   <div v-if="!drawer">
     <v-card  elevation="10" class="ml-10 mr-10 rounded-lg" >
       <v-card-item>
-        <v-card-title class="mt-5 mb-1"><h3>
+        <v-card-title class="mt-5 mb-1">
+          <h3>
           <v-icon size="small">{{currentRouted.icon}}</v-icon>&nbsp;{{currentRouted.title}}
         </h3></v-card-title>
         <v-card-subtitle class="mb-5" >{{currentRouted.description}}</v-card-subtitle>
