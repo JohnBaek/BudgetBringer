@@ -4,6 +4,7 @@ import {messageService} from "../../services/message-service";
 import {AgGridVue} from "ag-grid-vue3";
 import CommonCodeGridRenderer from "./common-code-grid-renderer.vue";
 import {log} from "node:util";
+import {BudgetPlanGridData} from "../budget/budget-plan/budget-plan-grid-data";
 
 /**
  * 통신중 여부
@@ -52,6 +53,8 @@ const addUnderCodeModel = ref({
   description: ''
 });
 
+
+
 /**
  * 그리드 데이터 모델
  */
@@ -89,6 +92,8 @@ const getRowStyle = ({ node }) =>
  * @param params
  */
 const isEmptyPinnedCell = (params) => {
+  console.log(params.node);
+
   console.log('isEmptyPinnedCell',(params.node.rowPinned === 'top' && params.value == null) ||
     (params.node.rowPinned === 'top' && params.value === ''))
 

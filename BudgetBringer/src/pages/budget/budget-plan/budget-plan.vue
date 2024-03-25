@@ -28,7 +28,6 @@
           <budget-plan-grid></budget-plan-grid>
         </v-window-item>
       </v-window>
-
     </div>
   </div>
 </template>
