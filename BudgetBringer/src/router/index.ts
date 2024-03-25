@@ -3,8 +3,10 @@ import {NavigationGuardNext, RouteLocationNormalized, RouteRecordRaw} from "vue-
 import home from "../pages/home.vue";
 import login from "../pages/login/login.vue";
 import commonCode from "../pages/common-code/common-code.vue";
-import BudgetPlan from "../pages/budget/budget-plan.vue";
+import BudgetPlan from "../pages/budget/budget-plan/budget-plan.vue";
 import NoPage from "../pages/no-page.vue";
+import BudgetApproved from "../pages/budget/budget-approved.vue";
+import BudgetProcess from "../pages/budget/budget-process.vue";
 
 
 /**
@@ -13,12 +15,13 @@ import NoPage from "../pages/no-page.vue";
 const routes: Array<RouteRecordRaw> = [
   // 로그인 페이지
   {
-    path: '/login',
+    path: '',
     name: 'login',
     component: login,
   },
+  // 로그인 페이지
   {
-    path: '',
+    path: '/login',
     name: 'login',
     component: login,
   },
@@ -54,18 +57,18 @@ const routes: Array<RouteRecordRaw> = [
             name: 'BudgetPlan',
             component: BudgetPlan,
           },
-          // // 예산 승인
-          // {
-          //   path: 'approved',
-          //   name: 'BudgetApproved',
-          //   component: BudgetApprovedComponent,
-          // },
-          // // 예산 계획
-          // {
-          //   path: 'process',
-          //   name: 'BudgetProcess',
-          //   component: BudgetProcessComponent,
-          // },
+          // 예산 승인
+          {
+            path: 'approved',
+            name: 'BudgetApproved',
+            component: BudgetApproved,
+          },
+          // 예산 계획
+          {
+            path: 'process',
+            name: 'BudgetProcess',
+            component: BudgetProcess,
+          },
         ]
       },
     ]

@@ -6,6 +6,7 @@ import {loginService} from "../../services/login-service";
 import {EnumResponseResult} from "../../models/enums/enum-response-result";
 import {messageService} from "../../services/message-service";
 import router from "../../router";
+import LoginDialogConfirmLogout from "./login-dialog-confirm-logout.vue";
 
 /**
  * 통신중 여부
@@ -16,7 +17,6 @@ const inCommunication = ref(false);
  * 로그인 요청 정보 Ref
  */
 const request = ref(new RequestLogin('',''));
-
 
 /**
  * 로그인 요청

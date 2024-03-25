@@ -27,9 +27,17 @@ onBeforeMount(() => {
   // 스토어 정보를 가져온다.
   const routingStore = RoutingStore();
 
+  // URI 없이 요청한경우
+  if(route.fullPath === '/' || route.fullPath === '') {
+    // 로그인 페이지로 이동
+    router.push('/login');
+    return;
+  }
+
   // 라우팅 정보를 업데이트한다.
   const result = routingStore.tryUpdateRoute(route.fullPath);
 
+  // TODO 로그인 여부 판별해서 home 으로 라우트
   // 라우팅 정보를 찾는데 성공한경우
   if(result)
     // 라우팅정보를 업데이트 한다.
@@ -75,6 +83,8 @@ const onChangeMenu = async (link: DrawerLink ) => {
     <v-col>
       <router-view />
     </v-col>
+
+
   </v-row>
 </template>
 

@@ -8,6 +8,7 @@
     "lint": "eslint . --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@ag-grid-community/client-side-row-model": "^31.2.0",
     "@fontsource/roboto": "^5.0.12",
     "@mdi/font": "6.2.95",
     "ag-grid-vue3": "^31.2.0",

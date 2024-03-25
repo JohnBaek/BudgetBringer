@@ -3,6 +3,7 @@ import {ref} from "vue";
 import {messageService} from "../../services/message-service";
 import {AgGridVue} from "ag-grid-vue3";
 import CommonCodeGridRenderer from "./common-code-grid-renderer.vue";
+import {log} from "node:util";
 
 /**
  * 통신중 여부
@@ -23,6 +24,17 @@ const rootCodeDeleteDialog = ref(false);
  * 하위코드 추가 다이얼로그
  */
 const underCodeAddDialog = ref(false);
+
+/**
+ * 입력 데이터
+ */
+let inputRow = {};
+
+/**
+ * Top 인서트 Pine
+ */
+const pinnedTopRowData = [inputRow];
+
 
 /**
  * 상위코드 추가에서 사용하는 v-model
@@ -55,6 +67,76 @@ const gridColumDef = ref([
   { field: "description", headerName:"설명" ,flex:3 ,  editable: true},
   { field: "", cellRenderer: CommonCodeGridRenderer},
 ]);
+
+/**
+ * 기본 그리드 컬럼 설정
+ */
+const defaultColDef = {
+  flex: 1,
+  editable: true,
+  valueFormatter: (params) =>
+    isEmptyPinnedCell(params) ?
+      createPinnedCellPlaceholder(params) : undefined,
+}
+
+
+const getRowStyle = ({ node }) =>
+  node.rowPinned ? { fontWeight: 'bold', color:'gray' } : {};
+
+
+/**
+ * 빈 탑 핀 컬럼 셀
+ * @param params
+ */
+const isEmptyPinnedCell = (params) => {
+  console.log('isEmptyPinnedCell',(params.node.rowPinned === 'top' && params.value == null) ||
+    (params.node.rowPinned === 'top' && params.value === ''))
+
+
+  return (
+    (params.node.rowPinned === 'top' && params.value == null) ||
+    (params.node.rowPinned === 'top' && params.value === '')
+  );
+}
+
+/**
+ * 빈 핀 컬럼의 컬럼명을 조정한다.
+ * @param colDefined
+ */
+const createPinnedCellPlaceholder = (colDefined : any) => {
+  console.log('createPinnedCellPlaceholder==',colDefined) ;
+
+  return colDefined.colDef.headerName + ' 입력..';
+}
+
+/**
+ * 컬럼 에디팅이 완료된경우
+ * @param params
+ */
+const onCellEditingStopped = (params) => {
+  console.log('onCellEditingStopped')
+
+  if (isPinnedRowDataCompleted(params)) {
+    console.log({ from: 'pinned row actions' });
+    // save data
+    gridData.value = [...gridData.value, inputRow];
+    //reset pinned row
+    inputRow = {};
+    params.api.setPinnedTopRowData([inputRow]);
+  }
+}
+
+/**
+ * 데이터 입력 완료 판별
+ * @param params 파라미터
+ */
+const isPinnedRowDataCompleted = (params) => {
+  // 최상위 로우가 아닌경우
+  if (params.rowPinned !== 'top'){
+    return;
+  }
+  return gridColumDef.value.filter(i => i.field != '').every((def) => inputRow[def.field]);
+}
 
 
 /**
@@ -251,6 +333,10 @@ const selectedRootCode = (item:any) => {
           <ag-grid-vue
             :rowData="gridData"
             :columnDefs="gridColumDef"
+            :pinnedTopRowData="pinnedTopRowData"
+            :defaultColDef="defaultColDef"
+            :getRowStyle="getRowStyle"
+            @cell-editing-stopped="onCellEditingStopped"
             style="height: 500px"
             class="ag-theme-quartz"
           >
@@ -307,5 +393,4 @@ const selectedRootCode = (item:any) => {
   overflow-wrap: break-word;
   text-overflow: clip;
 }
-
 </style>

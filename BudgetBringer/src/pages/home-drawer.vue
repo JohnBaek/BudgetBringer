@@ -3,6 +3,7 @@ import CommonLogo from "../shared/common-logo.vue";
 import {onBeforeMount, ref} from "vue";
 import {DrawerLink} from "./models/drawer-link";
 import {RoutingStore} from "../stores/routing-store";
+import LoginDialogConfirmLogout from "./login/login-dialog-confirm-logout.vue";
 
 /**
  * Drawer 상태
@@ -37,15 +38,17 @@ const emits = defineEmits<{
  * @param drawerLink Drawer 링크 정보
  */
 const clickMenu = (drawerLink: DrawerLink) => {
+  // changeMenu 를 notify 한다.
   emits('changeMenu' , drawerLink);
+
+  // drawer 를 닫는다.
+  miniDrawer.value = false;
 }
 
 /**
- * 로그아웃 하기
+ * 로그아웃 다이얼로그
  */
-const logout = () => {
-}
-
+const logout = ref(false);
 
 /**
  * 마운팅 되기전 핸들링
@@ -53,9 +56,6 @@ const logout = () => {
 onBeforeMount(() =>{
   links.value = routingStore.getRoutingList();
 })
-
-
-
 </script>
 
 <template>
@@ -90,8 +90,8 @@ onBeforeMount(() =>{
     </v-list>
 
     <template v-slot:append>
-      <div class="pa-2">
-        <v-btn block prepend-icon="mdi-logout" variant="outlined" @click="logout()">
+      <div class="pa-2 mb-5">
+        <v-btn block prepend-icon="mdi-logout" variant="outlined" @click="logout = !logout">
           <b>로그아웃</b>
         </v-btn>
       </div>
@@ -130,9 +130,22 @@ onBeforeMount(() =>{
             </v-btn>
           </v-list-item>
         </v-list>
+        <v-list>
+          <v-list-item>
+            <v-container>
+              <v-btn block prepend-icon="mdi-logout"  variant="outlined" @click="logout = !logout">
+                <b>로그아웃</b>
+              </v-btn>
+            </v-container>
+          </v-list-item>
+        </v-list>
+
       </v-container>
     </v-main>
   </v-layout>
+
+  <!--로그아웃 다이얼로그-->
+  <LoginDialogConfirmLogout v-model="logout" />
 </template>
 
 <style scoped lang="css">
