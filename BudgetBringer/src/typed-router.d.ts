@@ -19,12 +19,14 @@ declare module 'vue-router/auto-routes' {
    */
   export interface RouteNamedMap {
     '/budget/budget-approved/budget-approved': RouteRecordInfo<'/budget/budget-approved/budget-approved', '/budget/budget-approved/budget-approved', Record<never, never>, Record<never, never>>,
+    '/budget/budget-approved/budget-approved-grid': RouteRecordInfo<'/budget/budget-approved/budget-approved-grid', '/budget/budget-approved/budget-approved-grid', Record<never, never>, Record<never, never>>,
     '/budget/budget-plan/budget-plan': RouteRecordInfo<'/budget/budget-plan/budget-plan', '/budget/budget-plan/budget-plan', Record<never, never>, Record<never, never>>,
     '/budget/budget-plan/budget-plan-grid-above-500k': RouteRecordInfo<'/budget/budget-plan/budget-plan-grid-above-500k', '/budget/budget-plan/budget-plan-grid-above-500k', Record<never, never>, Record<never, never>>,
     '/budget/budget-plan/budget-plan-grid-below-500k': RouteRecordInfo<'/budget/budget-plan/budget-plan-grid-below-500k', '/budget/budget-plan/budget-plan-grid-below-500k', Record<never, never>, Record<never, never>>,
     '/budget/budget-process/budget-process': RouteRecordInfo<'/budget/budget-process/budget-process', '/budget/budget-process/budget-process', Record<never, never>, Record<never, never>>,
     '/budget/budget-process/budget-process-grid-pl-owner-500k-below': RouteRecordInfo<'/budget/budget-process/budget-process-grid-pl-owner-500k-below', '/budget/budget-process/budget-process-grid-pl-owner-500k-below', Record<never, never>, Record<never, never>>,
     '/common-code/common-code': RouteRecordInfo<'/common-code/common-code', '/common-code/common-code', Record<never, never>, Record<never, never>>,
+    '/common-code/common-code-grid': RouteRecordInfo<'/common-code/common-code-grid', '/common-code/common-code-grid', Record<never, never>, Record<never, never>>,
     '/common-code/common-code-grid-renderer': RouteRecordInfo<'/common-code/common-code-grid-renderer', '/common-code/common-code-grid-renderer', Record<never, never>, Record<never, never>>,
     '/home': RouteRecordInfo<'/home', '/home', Record<never, never>, Record<never, never>>,
     '/home-drawer': RouteRecordInfo<'/home-drawer', '/home-drawer', Record<never, never>, Record<never, never>>,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import CommonGrid from "../../../shared/grid/common-grid.vue";
+import CommonGrid from "../../../shared/grids/common-grid.vue";
 import {BudgetProcessGridPLOwner } from "./budget-process-grid-pl-owner-data";
 
 /**

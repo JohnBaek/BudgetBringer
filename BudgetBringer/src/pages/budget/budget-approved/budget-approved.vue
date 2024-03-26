@@ -1,14 +1,13 @@
 
 <template>
-  <div style="display: flex; flex-direction: column; height: 900px">
-    <div style="width: 100%; flex: 1 1 auto;">
-
-    </div>
-  </div>
+  <v-sheet class="pa-5" rounded>
+    <budget-approved-grid />
+  </v-sheet>
 </template>
 
 <style scoped>
 </style>
 
 <script setup="ts">
+import BudgetApprovedGrid from "./budget-approved-grid.vue";
 </script>

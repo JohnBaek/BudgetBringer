@@ -3,11 +3,11 @@ import {CommonGridModel} from "../../../shared/grids/common-grid-model";
 /**
  * 예산 그리드 모델
  */
-export class BudgetPlanGridData extends CommonGridModel<BudgetGridRowDataModel>{
+export class BudgetApprovedGridData extends CommonGridModel<BudgetApprovedGridDataModel>{
   /**
    * 표현할 그리드의 RowData 를 받는다.
    */
-  items : Array<BudgetGridRowDataModel>;
+  items : Array<BudgetApprovedGridDataModel>;
   /**
    * 컬럼정보
    */
@@ -82,7 +82,7 @@ export class BudgetPlanGridData extends CommonGridModel<BudgetGridRowDataModel>{
 /**
  * 예산 그리드 데이터 모델
  */
-export class BudgetGridRowDataModel {
+export class BudgetApprovedGridDataModel {
   /**
    * 승인일 ( 텍스트 형태도 가능 )
    */

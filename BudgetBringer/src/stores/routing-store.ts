@@ -23,6 +23,7 @@ export const RoutingStore = defineStore('routingStore', {
           new DrawerLink('예산계획', '예산계획을 세우고 작성합니다.', '/budget/plan', 'mdi-notebook'),
           new DrawerLink('예산승인', '계획된 예산을 승인합니다.', '/budget/approved', 'mdi-check'),
           new DrawerLink('예산진행현황', '예산 사용 진행 현황에 대해서 확인합니다.', '/budget/process', 'mdi-currency-usd'),
+          new DrawerLink('액션로그', '사용자 작업 로그에대해서 확인합니다.', '/logs/system', 'mdi-notebook-minus-outline'),
         ]
       }
   },

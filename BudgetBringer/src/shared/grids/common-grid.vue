@@ -1,9 +1,7 @@
 <script setup lang="ts" generic="T">
 import {AgGridVue} from "ag-grid-vue3";
 import {ref} from "vue";
-import BudgetProcessGridPlOwner500kBelow
-  from "../../pages/budget/budget-process/budget-process-grid-pl-owner-500k-below.vue";
-
+import {communicationService, CommunicationService} from "../../services/communication-service";
 
 /**
  * Prop 정의
@@ -56,7 +54,7 @@ const props = defineProps({
   height : {
     Type: String ,
     required: false ,
-    default: '900px'
+    default: '600px'
   }
 });
 
@@ -65,12 +63,25 @@ const props = defineProps({
  */
 const selectedRows = ref([]);
 
+
 /**
  * emit 정의
  */
 const emits = defineEmits<{
   // 신규 데이터가 추가되었을때
-  (e: 'onNewRowAdded', params): any
+  (e: 'onNewRowAdded', params): any,
+
+  // 추가 버튼 클릭
+  (e: 'onAdd'): any,
+
+  // 삭제 버튼 클릭
+  (e: 'onRemove', params): any,
+
+  // 업데이트 버튼 클릭
+  (e: 'onUpdate'): any,
+
+  // 리프레쉬 버튼 클릭
+  (e: 'onRefresh'): any,
 }>();
 
 
@@ -219,16 +230,47 @@ const removeItems = () => {
   const selectedRows = gridApi.value.getSelectedRows();
   console.log('selectedRows',selectedRows);
 }
+
+/**
+ * 추가 팝업 명령
+ */
+const add = () => {
+    emits('onAdd');
+}
+
+/**
+ * 삭제 명령
+ */
+const remove = () => {
+  const selectedRows = gridApi.value.getSelectedRows();
+  emits('onRemove' , selectedRows);
+}
+
+/**
+ * 수정 팝업 명령
+ */
+const update = () => {
+    emits('onUpdate');
+}
+
+/**
+ * 새로고침 명령
+ */
+const refresh = () => {
+    emits('onRefresh');
+}
+
+
 </script>
 
 <template>
   <v-row class="mt-1 mb-1" v-if="isUseButtons">
     <v-col>
       <div class="mt-2">
-        <v-btn variant="outlined" class="mr-2" color="info">추가</v-btn>
-        <v-btn variant="outlined" class="mr-2" color="error" :disabled="selectedRows.length == 0">삭제</v-btn>
-        <v-btn variant="outlined" class="mr-2" :disabled="selectedRows.length == 0" color="warning">수정</v-btn>
-        <v-btn variant="outlined" class="mr-2"  color="green">새로 고침</v-btn>
+        <v-btn variant="outlined" @click="add()" class="mr-2" color="info">추가</v-btn>
+        <v-btn variant="outlined" @click="remove()" class="mr-2" color="error" :disabled="selectedRows.length == 0">삭제</v-btn>
+        <v-btn variant="outlined" @click="update()" :disabled="selectedRows.length == 0" color="warning">수정</v-btn>
+        <v-icon @click="refresh()" class="ml-3" size="x-large" color="green" style="cursor: pointer;">mdi-refresh-circle</v-icon>
         <v-spacer class="mt-1"></v-spacer>
         <span class="text-grey">그리드를 shift 버튼을 누른채로 클릭하면 여러 행을 선택할수 있습니다.</span>
       </div>

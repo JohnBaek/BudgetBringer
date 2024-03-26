@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {BudgetGridRowDataModel, BudgetPlanGridData} from "./budget-plan-grid-data";
-import CommonGrid from "../../../shared/grid/common-grid.vue";
+import CommonGrid from "../../../shared/grids/common-grid.vue";
 
 // TODO 테스트 데이터
 let testData = new BudgetGridRowDataModel();

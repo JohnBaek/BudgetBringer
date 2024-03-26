@@ -2,24 +2,22 @@
 <template>
   <div style="display: flex; flex-direction: column; height: 900px">
     <div style="width: 100%; flex: 1 1 auto;">
-      <v-sheet rounded>
-        <v-container>
-          <v-tabs v-model="tab">
-            <v-tab value="Owner">
-              P&L Owner
-            </v-tab>
-            <v-tab value="Bu">
-              BU
-            </v-tab>
-            <v-tab value="Below">
-              Below CHF500K Approved
-            </v-tab>
-          </v-tabs>
-        </v-container>
+      <v-sheet rounded class="pa-5">
+        <v-tabs v-model="tab" class="mb-5">
+          <v-tab value="Owner">
+            P&L Owner
+          </v-tab>
+          <v-tab value="Bu">
+            BU
+          </v-tab>
+          <v-tab value="Below">
+            Below CHF500K Approved
+          </v-tab>
+        </v-tabs>
+
 
         <v-window v-model="tab">
           <v-window-item value="Owner">
-            <v-container>
               <v-row>
                 <v-col cols="12" md="4">
                   <budget-process-grid-pl-owner500k-below
@@ -49,7 +47,6 @@
                   </budget-process-grid-pl-owner500k-below>
                 </v-col>
               </v-row>
-            </v-container>
           </v-window-item>
         </v-window>
       </v-sheet>

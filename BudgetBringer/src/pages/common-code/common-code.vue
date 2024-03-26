@@ -5,6 +5,8 @@ import {AgGridVue} from "ag-grid-vue3";
 import CommonCodeGridRenderer from "./common-code-grid-renderer.vue";
 import {log} from "node:util";
 import {BudgetPlanGridData} from "../budget/budget-plan/budget-plan-grid-data";
+import CommonCodeGrid from "./common-code-grid.vue";
+import {CommonCodeGridDataModel} from "./common-code-grid-data";
 
 /**
  * 통신중 여부
@@ -249,11 +251,7 @@ const rootCodes = ref([
 /**
  * 현재 선택한 코드정보
  */
-let currentRootCode = ref({
-  id:''
-  , title : ''
-  , description: ''
-});
+let currentRootCode = ref(new CommonCodeGridDataModel());
 
 /**
  * 좌측 루트 코드 선택시
@@ -291,7 +289,7 @@ const selectedRootCode = (item:any) => {
             <h4>상위코드 상세정보</h4>
           </v-card-title>
           <v-card-subtitle class="mb-5"><span>상위코드의 상세정보를 관리합니다. 생성된 코드명은 변경할 수 없습니다.</span></v-card-subtitle>
-          <v-text-field  label="코드명" variant="outlined"  v-model="currentRootCode.title" disabled></v-text-field>
+          <v-text-field  label="코드명" variant="outlined"  v-model="currentRootCode.code" disabled></v-text-field>
           <v-text-field  label="설명"  variant="outlined"  v-model="currentRootCode.description" @keyup.enter="updateRootCodeInfo()" :disabled="currentRootCode.id === '' || inCommunication"></v-text-field>
         </v-card>
       </v-sheet>
@@ -335,17 +333,7 @@ const selectedRootCode = (item:any) => {
         <v-card elevation="0" >
           <v-card-title><h4>하위코드 목록 관리 <v-btn density="compact" size="small" icon="mdi-plus" color="info" class="mb-1" @click="underCodeAddDialog = true"></v-btn></h4></v-card-title>
           <v-card-subtitle class="mb-5">하위 코드를 관리합니다. 생성된 코드명은 변경할 수 없습니다.</v-card-subtitle>
-          <ag-grid-vue
-            :rowData="gridData"
-            :columnDefs="gridColumDef"
-            :pinnedTopRowData="pinnedTopRowData"
-            :defaultColDef="defaultColDef"
-            :getRowStyle="getRowStyle"
-            @cell-editing-stopped="onCellEditingStopped"
-            style="height: 500px"
-            class="ag-theme-quartz"
-          >
-          </ag-grid-vue>
+          <common-code-grid :current-root-code="currentRootCode"/>
         </v-card>
       </v-sheet>
     </v-col>
@@ -373,21 +361,6 @@ const selectedRootCode = (item:any) => {
         <v-btn class="ms-auto" text="확인" @click="deleteRootCode"
         ></v-btn>
       </template>
-    </v-card>
-  </v-dialog>
-
-  <!--하위코드 추가 다이얼로그-->
-  <v-dialog v-model="underCodeAddDialog" width="auto">
-    <v-card elevation="1" rounded class="mb-10 pa-5">
-      <v-card-title class=" mt-5"><span><h4>{{currentRootCode.title}} - 하위코드 추가</h4> </span>
-      </v-card-title>
-      <v-card-subtitle class=""><b>{{currentRootCode.title}}</b> 의 하위코드를 추가합니다 생성된 코드명은 변경할 수 없습니다. 엔터키를 누르면 등록됩니다.<br>취소를 원하시는 경우 ESC 키를 눌러주세요</v-card-subtitle>
-      <v-row dense>
-        <v-col cols="12" class="mt-5">
-          <v-text-field label="코드명" variant="outlined" v-model="addUnderCodeModel.name" @keyup.enter="addUnderCode()"></v-text-field>
-          <v-text-field label="설명" variant="outlined" v-model="addUnderCodeModel.description" @keyup.enter="addUnderCode()"></v-text-field>
-        </v-col>
-      </v-row>
     </v-card>
   </v-dialog>
 </template>

@@ -54,7 +54,7 @@ const requestLoginAsync = async () => {
   <v-row
     align="center"
     justify="center"
-    style="min-height: 100vh;border:1px solid red"
+    style="min-height: 100vh;"
   >
     <v-col cols="11" sm="7" md="6" lg="4">
       <!--로고-->

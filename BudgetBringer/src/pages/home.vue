@@ -76,15 +76,12 @@ const onChangeMenu = async (link: DrawerLink ) => {
       <!--사이트 타이틀및 사이트 헤더-->
       <div class="mt-10">
         <h1>{{currentLink.title}}</h1>
-        <span class="text-grey">{{currentLink.description}}</span>
+        <span>{{currentLink.description}}</span>
       </div>
     </v-col>
-
     <v-col>
       <router-view />
     </v-col>
-
-
   </v-row>
 </template>
 
