@@ -1,6 +1,8 @@
 <script setup lang="ts" generic="T">
 import {AgGridVue} from "ag-grid-vue3";
 import {ref} from "vue";
+import BudgetProcessGridPlOwner500kBelow
+  from "../../pages/budget/budget-process/budget-process-grid-pl-owner-500k-below.vue";
 
 
 /**
@@ -35,7 +37,7 @@ const props = defineProps({
   /**
    * Delete 그리드 사용여부
    */
-  isUseDelete: {
+  isUseButtons: {
     Type: Boolean ,
     required: true ,
     default: false
@@ -75,7 +77,13 @@ const emits = defineEmits<{
 /**
  * 그리드의 rowData
  */
-const items = ref(props.inputRowData);
+const items = ref(null);
+
+/**
+ *  스켈레톤 로더
+ */
+// TODO 테스트
+setTimeout(() =>{items.value = props.inputRowData; },1000);
 
 /**
  * 그리드의 column 데이터
@@ -214,11 +222,16 @@ const removeItems = () => {
 </script>
 
 <template>
-  <v-row class="mb-2 mt-3" v-if="isUseDelete">
+  <v-row class="mt-1 mb-1" v-if="isUseButtons">
     <v-col>
-      <span class="text-grey mt-2">그리드를 shift 버튼을 누른채로 클릭하면 여러 행을 선택할수 있습니다.</span>
-      <v-spacer></v-spacer>
-      <v-btn variant="outlined" :disabled="selectedRows.length == 0">선택된 데이터 삭제하기</v-btn>
+      <div class="mt-2">
+        <v-btn variant="outlined" class="mr-2" color="info">추가</v-btn>
+        <v-btn variant="outlined" class="mr-2" color="error" :disabled="selectedRows.length == 0">삭제</v-btn>
+        <v-btn variant="outlined" class="mr-2" :disabled="selectedRows.length == 0" color="warning">수정</v-btn>
+        <v-btn variant="outlined" class="mr-2"  color="green">새로 고침</v-btn>
+        <v-spacer class="mt-1"></v-spacer>
+        <span class="text-grey">그리드를 shift 버튼을 누른채로 클릭하면 여러 행을 선택할수 있습니다.</span>
+      </div>
     </v-col>
   </v-row>
 
@@ -230,15 +243,42 @@ const removeItems = () => {
     :defaultColDef="defaultColDefined"
     :getRowStyle="getRowStyle"
     :style="{ width, height }"
+    :localeText="{ noRowsToShow: '데이터가 없습니다.' }"
     @selection-changed="onSelectionChanged"
     @grid-ready="onGridReady"
     @cell-editing-stopped="onCellEditingStopped"
     @keyup.esc="removeItems"
     rowSelection='multiple'
-    class="ag-theme-quartz"
+    class="ag-theme-alpine"
   >
   </ag-grid-vue>
 </template>
 
-<style scoped lang="css">
+<style lang="css" >
+.ag-grid-custom-header {
+  white-space: normal;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: rgba(165, 165, 165, 0.1);
+  }
+  50% {
+    background-color: rgba(165, 165, 165, 0.3);
+  }
+  100% {
+    background-color: rgba(165, 165, 165, 0.1);
+  }
+}
+
+.skeleton-cell {
+  animation: skeleton-loading 1.5s infinite ease-in-out;
+}
 </style>

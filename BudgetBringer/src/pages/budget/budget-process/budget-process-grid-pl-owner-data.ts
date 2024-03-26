@@ -1,4 +1,5 @@
 import {CommonGridModel} from "../../../shared/grid/common-grid-model";
+import CommonGridRendererSkeleton from "../../../shared/grid/common-grid-renderer-skeleton.vue";
 
 /**
  * 진생상황 P&L Owner 그리드 모델
@@ -29,27 +30,39 @@ export class BudgetProcessGridPLOwner extends CommonGridModel<BudgetProcessGridP
       {
         field: "Date",
         headerName: date,
+        headerClass: 'ag-grid-custom-header',
+        width:"120",
+        cellRendererFramework: CommonGridRendererSkeleton,
       },
       // 예산
       {
         field: "Currency",
         headerName:`KRW` ,
+        headerClass: 'ag-grid-custom-header',
+        width:"80",
+        cellRendererFramework: CommonGridRendererSkeleton,
       },
       // 예산
       {
         headerName:`${year.toString()}FY` ,
+        headerClass: 'ag-grid-custom-header',
         children: [
           {
             field: "Budget",
+            width:"100",
+            headerClass: 'ag-grid-custom-header',
           }
         ]
       },
       // 승인 예산
       {
         headerName:`${year.toString()}&${(year-1).toString()} FY` ,
+        headerClass: 'ag-grid-custom-header',
         children: [
           {
+            width:"150",
             field: "Approved",
+            headerClass: 'ag-grid-custom-header',
             headerName:'ApprovedAmount'
           }
         ]
@@ -57,9 +70,12 @@ export class BudgetProcessGridPLOwner extends CommonGridModel<BudgetProcessGridP
       // 남은 예산
       {
         headerName:`${year.toString()}FY` ,
+        headerClass: 'ag-grid-custom-header',
         children: [
           {
+            width:"150",
             field: "RemainingBudget",
+            headerClass: 'ag-grid-custom-header',
           }
         ]
       },

@@ -66,9 +66,10 @@ const items = ref(gridModel.items);
   <v-spacer></v-spacer>
   <span class="text-grey"  v-if="props.subTitle !== ''">{{props.subTitle}}</span>
   <common-grid :is-use-insert="gridModel.isUseInsert"
-               :is-use-delete="false"
+               :is-use-buttons="false"
                :input-colum-defined="gridModel.columDefined"
                :input-row-data="items"
+               height="600px"
                @onNewRowAdded="onNewRowAdded"/>
 </template>
 

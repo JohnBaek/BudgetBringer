@@ -38,7 +38,12 @@ const items = ref(gridModel.items);
 </script>
 
 <template>
-  <common-grid :is-use-insert="gridModel.isUseInsert" :input-colum-defined="gridModel.columDefined" :input-row-data="items" @onNewRowAdded="onNewRowAdded"/>
+  <common-grid
+    :is-use-insert="gridModel.isUseInsert"
+    :input-colum-defined="gridModel.columDefined"
+    :is-use-buttons="true"
+    :input-row-data="items" @onNewRowAdded="onNewRowAdded"
+  />
 </template>
 
 <style scoped lang="css">
