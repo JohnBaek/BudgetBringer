@@ -76,7 +76,7 @@ const gridColumDef = ref([
  */
 const defaultColDef = {
   flex: 1,
-  editable: true,
+
   valueFormatter: (params) =>
     isEmptyPinnedCell(params) ?
       createPinnedCellPlaceholder(params) : undefined,

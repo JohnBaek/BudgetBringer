@@ -5,8 +5,8 @@ import login from "../pages/login/login.vue";
 import commonCode from "../pages/common-code/common-code.vue";
 import BudgetPlan from "../pages/budget/budget-plan/budget-plan.vue";
 import NoPage from "../pages/no-page.vue";
-import BudgetApproved from "../pages/budget/budget-approved.vue";
-import BudgetProcess from "../pages/budget/budget-process.vue";
+import BudgetApproved from "../pages/budget/budget-approved/budget-approved.vue";
+import BudgetProcess from "../pages/budget/budget-process/budget-process.vue";
 
 
 /**

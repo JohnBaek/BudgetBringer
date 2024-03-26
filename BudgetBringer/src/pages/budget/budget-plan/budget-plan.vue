@@ -19,13 +19,13 @@
         <!--Above 500K Budget-->
         <v-window-item  value="above">
           <v-container>
-            <budget-plan-grid></budget-plan-grid>
+            <budget-plan-grid-above500k />
           </v-container>
         </v-window-item>
 
         <!--Below 500K Budget-->
         <v-window-item value="below">
-          <budget-plan-grid></budget-plan-grid>
+          <budget-plan-grid-below500k />
         </v-window-item>
       </v-window>
     </div>
@@ -36,7 +36,9 @@
 </style>
 
 <script setup="ts">
-import BudgetPlanGrid from "./budget-plan-grid.vue";
+import BudgetPlanGrid from "./budget-plan-grid-above-500k.vue";
+import BudgetPlanGridAbove500k from "./budget-plan-grid-above-500k.vue";
+import BudgetPlanGridBelow500k from "./budget-plan-grid-below-500k.vue";
 
 /**
  * 탭 데이터

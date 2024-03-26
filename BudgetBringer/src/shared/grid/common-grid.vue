@@ -21,12 +21,21 @@ const props = defineProps({
   inputColumDefined : {
     Type: Array<T> ,
     required: true ,
-    default: []
+    default: [] ,
+    width : 50 ,
   },
   /**
    * Insert 그리드 사용여부
    */
   isUseInsert : {
+    Type: Boolean ,
+    required: true ,
+    default: false
+  },
+  /**
+   * Delete 그리드 사용여부
+   */
+  isUseDelete: {
     Type: Boolean ,
     required: true ,
     default: false
@@ -49,21 +58,24 @@ const props = defineProps({
   }
 });
 
+/**
+ * 선택된 row
+ */
+const selectedRows = ref([]);
+
+/**
+ * emit 정의
+ */
+const emits = defineEmits<{
+  // 신규 데이터가 추가되었을때
+  (e: 'onNewRowAdded', params): any
+}>();
+
 
 /**
  * 그리드의 rowData
  */
 const items = ref(props.inputRowData);
-
-/**
- * 입력 데이터
- */
-let inputRow = {};
-
-/**
- * Top 인서트 Pine
- */
-const pinnedTopRowData = [inputRow];
 
 /**
  * 그리드의 column 데이터
@@ -74,6 +86,36 @@ const columDefined = ref([...props.inputColumDefined]);
  * 인서트 Grid 사용여부
  */
 const isUseInsert = props.isUseInsert;
+
+/**
+ * 입력 데이터
+ */
+let inputRow = {};
+
+/**
+ * Top 인서트 Pine
+ */
+const pinnedTopRowData = isUseInsert ? [inputRow] : [];
+
+/**
+ * Grid API
+ */
+const gridApi = ref();
+
+/**
+ * Grid Column API
+ */
+const gridColumnApi = ref(null);
+
+/**
+ * gridReady 이벤트 핸들러
+ * @param params 파라미터
+ */
+const onGridReady = (params) => {
+  gridApi.value = params.api;
+  gridColumnApi.value = params.columnApi;
+};
+
 
 /**
  * 데이터 입력 완료 판별
@@ -115,10 +157,6 @@ const isEmptyPinnedCell = (params) => {
  * @param colDefined
  */
 const createPinnedCellPlaceholder = (colDefined : any) => {
-  // console.log( 'createPinnedCellPlaceholder',colDefined.colDef.headerName,colDefined.colDef)
-
-  console.log(colDefined.colDef);
-
   return colDefined.colDef.headerName + ' 입력..';
 }
 
@@ -128,7 +166,7 @@ const createPinnedCellPlaceholder = (colDefined : any) => {
  */
 const defaultColDefined = isUseInsert ? {
   flex: 1,
-  editable: true,
+
   valueFormatter: (params) =>
     isEmptyPinnedCell(params) ?
       createPinnedCellPlaceholder(params) : undefined,
@@ -143,23 +181,47 @@ const onCellEditingStopped = (params) => {
   if(!isUseInsert)
     return;
 
+  // 데이터 입력이 완료된경우
   if (isUseInsert && isPinnedRowDataCompleted(params)) {
-    console.log(isPinnedRowDataCompleted);
 
     // 최상단에 추가된 데이터를 추가한다.
     items.value = [inputRow,...items.value];
 
-
-    console.log(inputRow);
-
+    // 부모 컴포넌트에게 전달
+    emits('onNewRowAdded' , inputRow);
+    inputRow = {};
     // 최상단 Row 를 초기화한다.
-    params.api.setPinnedTopRowData([{}]);
+    params.api.setPinnedTopRowData([inputRow]);
   }
 }
 
+/**
+ * 그리드의 셀렉트가 변경되었을때
+ */
+const onSelectionChanged = () => {
+  // 선택된 Row 를 업데이트한다.
+  selectedRows.value = gridApi.value.getSelectedRows();
+  console.log('onSelectionChanged' , selectedRows);
+};
+
+/**
+ * 데이터 삭제
+ */
+const removeItems = () => {
+  const selectedRows = gridApi.value.getSelectedRows();
+  console.log('selectedRows',selectedRows);
+}
 </script>
 
 <template>
+  <v-row class="mb-2 mt-3" v-if="isUseDelete">
+    <v-col>
+      <span class="text-grey mt-2">그리드를 shift 버튼을 누른채로 클릭하면 여러 행을 선택할수 있습니다.</span>
+      <v-spacer></v-spacer>
+      <v-btn variant="outlined" :disabled="selectedRows.length == 0">선택된 데이터 삭제하기</v-btn>
+    </v-col>
+  </v-row>
+
   <!--공통 그리드-->
   <ag-grid-vue
     :rowData="items"
@@ -168,7 +230,11 @@ const onCellEditingStopped = (params) => {
     :defaultColDef="defaultColDefined"
     :getRowStyle="getRowStyle"
     :style="{ width, height }"
+    @selection-changed="onSelectionChanged"
+    @grid-ready="onGridReady"
     @cell-editing-stopped="onCellEditingStopped"
+    @keyup.esc="removeItems"
+    rowSelection='multiple'
     class="ag-theme-quartz"
   >
   </ag-grid-vue>

@@ -27,62 +27,27 @@ export class BudgetPlanGridData extends CommonGridModel<BudgetGridRowDataModel>{
       {
         field: "ApprovalDate",
         headerName:"Approval Date" ,
-        editable: true
+
       },
       // 섹터
       {
         field: "Sector",
         headerName:"Sector",
-        editable: true,
-        cellEditor: "agSelectCellEditor",
-        cellEditorParams: {
-          values: [
-            10
-            ,500
-            ,20
-            ,10
-          ]
-        }
       },
       // 부서
       {
         field: "Bu",
         headerName:"BU",
-        editable: true,
-        cellEditor: "agSelectCellEditor",
-        cellEditorParams: {
-          values: [
-            'H&N',
-            'NR'
-          ]
-        }
       },
       // CC
       {
         field: "Cc",
         headerName:"CC"  ,
-        editable: true,
-        cellEditor: "agSelectCellEditor",
-        cellEditorParams: {
-          values: [
-            1100,
-            2000,
-            3200
-          ]
-        }
       },
       // 국가별 매니저
       {
         field: "Cbm",
         headerName:"CBM"  ,
-        editable: true,
-        cellEditor: "agSelectCellEditor",
-        cellEditorParams: {
-          values: [
-            'Yuri Hong',
-            'BC Hong'
-          ]
-        }
       },
       // 설명
       {
@@ -98,7 +63,7 @@ export class BudgetPlanGridData extends CommonGridModel<BudgetGridRowDataModel>{
         editable: true
       },
     ]
-    this.isUseInsert = true;
+    this.isUseInsert = false;
     this.items = [];
   }
 }
@@ -114,7 +79,7 @@ export class BudgetGridRowDataModel {
   /**
    * 섹터코드
    */
-  Sector:number;
+  Sector:string;
   /**
    * 부서코드
    */
@@ -122,7 +87,7 @@ export class BudgetGridRowDataModel {
   /**
    * CC 코드
    */
-  Cc:number;
+  Cc:string;
   /**
    * Country Business Manager
    */

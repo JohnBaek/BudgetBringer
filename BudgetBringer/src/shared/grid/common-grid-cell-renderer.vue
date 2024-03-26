@@ -13,5 +13,4 @@ export default {
 </template>
 
 <style scoped lang="css">
-
 </style>
