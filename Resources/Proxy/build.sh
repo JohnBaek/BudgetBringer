@@ -15,6 +15,6 @@ echo "Building new Docker image..."
 docker build -t sgs/budget-bringer-proxy .
 
 echo "Starting new container..."
-docker run -d --name budget-bringer-proxy -p --network=sgs-net --ip=172.28.0.20 8000:80 sgs/budget-bringer-proxy:latest
+docker run -d --name budget-bringer-proxy -p --network=sgs-net --restart=unless-stopped --ip=172.28.0.20 -p 8000:80 sgs/budget-bringer-proxy:latest
 
 echo "Deployment completed successfully."
