@@ -33,6 +33,7 @@ declare module 'vue-router/auto-routes' {
     '/login/login': RouteRecordInfo<'/login/login', '/login/login', Record<never, never>, Record<never, never>>,
     '/login/login-dialog-confirm-logout': RouteRecordInfo<'/login/login-dialog-confirm-logout', '/login/login-dialog-confirm-logout', Record<never, never>, Record<never, never>>,
     '/login/login-logo': RouteRecordInfo<'/login/login-logo', '/login/login-logo', Record<never, never>, Record<never, never>>,
+    '/logs/action/log-action': RouteRecordInfo<'/logs/action/log-action', '/logs/action/log-action', Record<never, never>, Record<never, never>>,
     '/no-page': RouteRecordInfo<'/no-page', '/no-page', Record<never, never>, Record<never, never>>,
   }
 }

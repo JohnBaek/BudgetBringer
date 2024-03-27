@@ -7,6 +7,7 @@ import BudgetPlan from "../pages/budget/budget-plan/budget-plan.vue";
 import NoPage from "../pages/no-page.vue";
 import BudgetApproved from "../pages/budget/budget-approved/budget-approved.vue";
 import BudgetProcess from "../pages/budget/budget-process/budget-process.vue";
+import LogAction from "../pages/logs/action/log-action.vue";
 
 
 /**
@@ -68,6 +69,20 @@ const routes: Array<RouteRecordRaw> = [
             path: 'process',
             name: 'BudgetProcess',
             component: BudgetProcess,
+          },
+        ]
+      },
+      // 로그 관련 컴포넌트
+      {
+        path: '/logs',
+        name: 'Logs',
+        redirect : '' ,
+        children: [
+          // 액션로그
+          {
+            path: 'action',
+            name: 'ActionLog',
+            component: LogAction,
           },
         ]
       },
