@@ -2,7 +2,7 @@
 if docker images | grep -q 'sgs/budget-bringer-ui'; then
     # 이미지가 있으면 삭제
     echo 'Found existing image. Deleting...'
-    docker rmi sgs/budget-bringer-ui
+    sodo docker rmi sgs/budget-bringer-ui
 fi
 
 git fetch origin
