@@ -43,5 +43,5 @@ sudo docker save sgs/budget-bringer-ui:latest -o "builds/$FILENAME"
 
 echo "File saved to builds/$FILENAME"
 
-docker run --name sgs/budget-bringer-ui --network=sgs-net --ip=172.28.0.10 -p 8880:80 -d sgs/budget-bringer-ui:latest
+docker run --name budget-bringer-ui --network=sgs-net --ip=172.28.0.10 -p 8880:80 -d sgs/budget-bringer-ui:latest
 
