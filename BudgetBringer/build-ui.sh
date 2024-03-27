@@ -20,7 +20,7 @@ fi
 sudo docker rmi sgs/budget-bringer-ui:latest
 
 # 이미지를 새로 빌드
-sudo docker build -t BudgetBringer/sgs/budget-bringer-ui .
+sudo docker build -t sgs/budget-bringer-ui .
 sleep 5
 
 
