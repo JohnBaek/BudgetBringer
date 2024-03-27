@@ -10,7 +10,7 @@ git reset --hard origin/main
 git clean -df
 
 # 이미지를 새로 빌드
-docker build -t sgs/budget-bringer-ui .
+sudo docker build -t sgs/budget-bringer-ui .
 sleep 5
 
 
@@ -29,6 +29,6 @@ FILENAME="budget-bringer-ui.tar"
 echo "Creating new file: $FILENAME"
 
 # Docker 이미지를 '.tar' 파일로 저장합니다.
-docker save sgs/budget-bringer-ui:latest -o "builds/$FILENAME"
+sudo docker save sgs/budget-bringer-ui:latest -o "builds/$FILENAME"
 
 echo "File saved to builds/$FILENAME"
