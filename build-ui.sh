@@ -5,7 +5,7 @@ git clean -df
 backup_tag=$(date +"%Y%m%d%H%M%S")
 
 # "sgs/budget-bringer-ui:latest"를 제외한 모든 "sgs/budget-bringer-ui" 이미지를 삭제
-docker images | grep 'sgs/budget-bringer-ui' | grep -v 'latest' | awk '{print $3}' | xargs -r docker rmi
+sudo docker images | grep 'sgs/budget-bringer-ui' | grep -v 'latest' | awk '{print $3}' | xargs -r docker rmi
 
 # 실행 중인 "sgs/budget-bringer-ui" 컨테이너를 찾아 정지하고 삭제
 container_id=$(docker ps | grep 'sgs/budget-bringer-ui' | awk '{print $1}')
