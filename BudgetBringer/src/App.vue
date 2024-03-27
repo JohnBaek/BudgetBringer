@@ -1,16 +1,18 @@
 <script lang="ts" setup>
 import CommonMessageTemplate from "./shared/common-message-template.vue";
 import CommonLogo from "./shared/common-logo.vue";
-import {onMounted, ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import LoginLogo from "./pages/login/login-logo.vue";
 import {AuthenticationStore} from "./services/stores/authentication-store";
 import {communicationService, CommunicationService} from "./services/communication-service";
 import {Subscription} from "rxjs";
+import {unsubscribe} from "node:diagnostics_channel";
 
 /**
  * 스플래쉬 진행중 여부
  */
 let onSplash  = ref<boolean>(true);
+
 
 /**
  * 스플래쉬 타이머
@@ -32,25 +34,43 @@ let splashTimerCache : any;
 let inCommunication = ref(false);
 
 /**
+ * 구독중인 정보
+ */
+let subscribes = [];
+
+/**
  * 마운트 핸들링
  */
 onMounted(() => {
-  console.log('1111111');
-
-  // 통신중 여부 구독
-  communicationService.communicationSubject
-  .subscribe(communication => {
-    console.log('통신 플래그 변경',communication)
-
-    if(communication == null)
-      return;
-
-    inCommunication.value = communication;
-  });
-
-  console.log('2222');
-
+  // 스플래쉬 이벤트
   splashTimerCache = splashTimer();
+
+  // 구독을 처리한다.
+  subscribes.push(
+    // 통신중 여부 구독
+    communicationService.communicationSubject.subscribe(communication => {
+      // 유효한 데이터가 아닌경우
+      if(communication == null)
+        return;
+
+      inCommunication.value = communication;
+    })
+  );
+});
+
+/**
+ * 언마운트시
+ */
+onUnmounted(() => {
+  // 스플래쉬 캐시가 존재하는 경우
+  if(splashTimerCache)
+    clearTimeout(splashTimerCache);
+
+  // 모든 구독정보를 정리한다.
+  subscribes.forEach(subs => {
+    console.log('구독정보 정리');
+    subs.unsubscribe();
+  });
 });
 </script>
 
@@ -78,7 +98,7 @@ onMounted(() => {
   <!--메세지 템플릿-->
   <common-message-template></common-message-template>
 
-  <!--오버레이-->
+  <!--오버레이 - 통신중 플래그를 활성화 할경우-->
   <v-overlay
     v-model="inCommunication"
     persistent>

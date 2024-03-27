@@ -2,9 +2,16 @@
 import HomeDrawer from "./home-drawer.vue";
 import {DrawerLink} from "./models/drawer-link";
 import router from "../router";
-import {onBeforeMount, onMounted, ref} from "vue";
+import {onBeforeMount, onMounted, provide, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {RoutingStore} from "../stores/routing-store";
+
+
+/**
+ * 모바일 Drawer 가 열렸는지 안열렸는지 여부 : Home Drawer 에서 참조
+ */
+const miniDrawer = ref(null);
+provide('miniDrawer',miniDrawer);
 
 /**
  * 현재 보관중인 링크 정보
@@ -65,13 +72,23 @@ const onChangeMenu = async (link: DrawerLink ) => {
   // 라우팅 한다.
   await router.push(currentLink.value.route);
 }
+
+/**
+ * 마운트 핸들링
+ */
+onMounted(() => {
+  // watch(drawerStatus, (status) => {
+  //   console.log(status)
+  // });
+});
 </script>
 
 <template>
   <!--좌측 Drawer-->
   <home-drawer @changeMenu="onChangeMenu($event)"></home-drawer>
 
-  <v-row class="ma-10">
+  <!--모바일 Drawer 가 열린경우 화면을 가린다.-->
+  <v-row class="ma-10" v-if="!miniDrawer">
     <v-col cols="12">
       <!--사이트 타이틀및 사이트 헤더-->
       <div class="mt-10">

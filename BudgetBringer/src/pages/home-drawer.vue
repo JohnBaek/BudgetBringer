@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CommonLogo from "../shared/common-logo.vue";
-import {onBeforeMount, ref} from "vue";
+import {inject, onBeforeMount, ref} from "vue";
 import {DrawerLink} from "./models/drawer-link";
 import {RoutingStore} from "../stores/routing-store";
 import LoginDialogConfirmLogout from "./login/login-dialog-confirm-logout.vue";
@@ -23,7 +23,8 @@ const links = ref([]);
 /**
  * 미니 Drawer
  */
-const miniDrawer = ref(false);
+const miniDrawer = inject('miniDrawer');
+const miniDrawers = ref(null);
 
 /**
  * emit 정의
@@ -44,6 +45,8 @@ const clickMenu = (drawerLink: DrawerLink) => {
   // drawer 를 닫는다.
   miniDrawer.value = false;
 }
+
+
 
 /**
  * 로그아웃 다이얼로그
@@ -115,7 +118,7 @@ onBeforeMount(() =>{
     </v-app-bar>
     <v-main>
       <!--미니 Drawer-->
-      <v-container v-if="miniDrawer" class="overlay">
+      <div v-if="miniDrawer" >
         <v-list v-for="(item, i) in links"
                 :key="i"
                 :value="item"
@@ -132,15 +135,16 @@ onBeforeMount(() =>{
         </v-list>
         <v-list>
           <v-list-item>
-            <v-container>
-              <v-btn block prepend-icon="mdi-logout"  variant="outlined" @click="logout = !logout">
-                <b>로그아웃</b>
-              </v-btn>
-            </v-container>
+            <v-row>
+              <v-col sm="12" md="6" lg="2">
+                <v-btn block prepend-icon="mdi-logout" align="center" variant="outlined" @click="logout = !logout">
+                  <b>로그아웃</b>
+                </v-btn>
+              </v-col>
+            </v-row>
           </v-list-item>
         </v-list>
-
-      </v-container>
+      </div>
     </v-main>
   </v-layout>
 
