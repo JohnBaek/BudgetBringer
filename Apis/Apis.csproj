@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -29,6 +30,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Features\Features.csproj" />
       <ProjectReference Include="..\Models\Models.csproj" />
+      <ProjectReference Include="..\Providers\Providers.csproj" />
     </ItemGroup>
 
     <ItemGroup>

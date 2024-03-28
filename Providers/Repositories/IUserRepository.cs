@@ -1,4 +1,7 @@
-using Models.DataModels;
+// using Models.DataModels;
+
+using Microsoft.AspNetCore.Identity;
+using Models.Responses.Users;
 
 namespace Providers.Repositories;
 
@@ -20,6 +23,5 @@ public interface IUserRepository
     /// <param name="loginId">로그인 아이디</param>
     /// <param name="password">패스워드 (SHA 256 인크립트 된 원본)</param>
     /// <returns>결과</returns>
-    Task<User?> GetUserWithIdPasswordAsync(string loginId, string password);
-
+    Task<IdentityUser?> GetUserWithIdPasswordAsync(string loginId, string password);
 }

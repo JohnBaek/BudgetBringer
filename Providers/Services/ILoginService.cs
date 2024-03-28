@@ -1,6 +1,7 @@
 using Models.DataModels;
 using Models.Requests.Login;
 using Models.Responses;
+using Models.Responses.Users;
 
 namespace Providers.Services;
 
@@ -13,5 +14,5 @@ public interface ILoginService
     /// 로그인을 시도한다.
     /// </summary>
     /// <returns>결과</returns>
-    Task<ResponseData<User>> TryLoginAsync(RequestLogin request);
+    Task<ResponseData<ResponseUser>> TryLoginAsync(RequestLogin request);
 }

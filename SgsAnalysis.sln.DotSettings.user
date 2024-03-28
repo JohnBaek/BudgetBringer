@@ -4,8 +4,8 @@
 	<s:Boolean x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/ShowAdvancedOptions/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8016dfcf_002D3b60_002D4a08_002D9343_002D43a9d4220709/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TryLoginAsync_Success" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.LoginServiceTest.TryLoginAsync_Success&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.LoginServiceTest.TryLoginAsync_Fail_UserNotFound&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.LoginServiceTest.TryLoginAsync_Fail_InvalidCredentials&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.LoginServiceTest&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+&lt;/SessionState&gt;</s:String>
+	
+	</wpf:ResourceDictionary>

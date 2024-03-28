@@ -1,9 +1,10 @@
 using Features.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
-using Models.DataModels;
 using Models.Requests.Login;
 using Models.Responses;
+using Models.Responses.Users;
 using Providers.Repositories;
 using Exception = System.Exception;
 
@@ -18,7 +19,7 @@ public class LoginService : ILoginService
     /// 로거
     /// </summary>
     private readonly ILogger<LoginService> _logger;
-
+    
     /// <summary>
     /// 사용자 리파지토리
     /// </summary>
@@ -34,40 +35,42 @@ public class LoginService : ILoginService
         _logger = logger;
         _userRepository = userRepository;
     }
-
+    
     /// <summary>
     /// 로그인을 시도한다.
     /// </summary>
     /// <returns>결과</returns>
-    public async Task<ResponseData<User>> TryLoginAsync(RequestLogin request)
+    public async Task<ResponseData<ResponseUser>> TryLoginAsync(RequestLogin request)
     {
-        ResponseData<User> result;
-
+        ResponseData<ResponseUser> result;
+    
         try
         {
+            Console.WriteLine(request.Password.ToSha());
+            
             // 요청이 유효하지 않은경우
             if(request.IsInValid())
-                return new ResponseData<User>{ Code = "ERR", Message = request.GetFirstErrorMessage()};
+                return new ResponseData<ResponseUser>{ Code = "ERR", Message = request.GetFirstErrorMessage()};
             
-            // 사용자를 찾지 못한경우 
-            if(!await _userRepository.ExistUserAsync(request.LoginId))
-                return new ResponseData<User>{ Code = "ERR", Message = "사용자를 찾지 못했습니다."};
-            
+            // // 사용자를 찾지 못한경우 
+            // if(!await _userRepository.ExistUserAsync(request.LoginId))
+            //     return new ResponseData<ResponseUser>{ Code = "ERR", Message = "사용자를 찾지 못했습니다."};
+            //
             // 로그인을 시도한다.
-            User? loginUser = await _userRepository.GetUserWithIdPasswordAsync(request.LoginId, request.Password.ToSha());
+            IdentityUser? loginUser = await _userRepository.GetUserWithIdPasswordAsync(request.LoginId, request.Password.ToSha());
             
             // 로그인에 실패한경우
             if(loginUser == null)
-                return new ResponseData<User>{ Code = "ERR", Message = "아이디 혹은 비밀번호가 다릅니다."};
-
-            return new ResponseData<User>() {Result = EnumResponseResult.Success, Data = loginUser};
+                return new ResponseData<ResponseUser>{ Code = "ERR", Message = "아이디 혹은 비밀번호가 다릅니다."};
+    
+            return new ResponseData<ResponseUser>() {Result = EnumResponseResult.Success, Data = new ResponseUser(){ Name = loginUser.UserName }};
         }
         catch (Exception e)
         {
-            result = new ResponseData<User>{Code = "ERR", Message = "처리중 예외가 발생했습니다." };
+            result = new ResponseData<ResponseUser>{Code = "ERR", Message = "처리중 예외가 발생했습니다." };
             e.LogError(_logger);
         }
-
+    
         return result;
     }
 }
