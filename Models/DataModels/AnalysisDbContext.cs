@@ -8,8 +8,13 @@ namespace Models.DataModels;
 /// <summary>
 /// DB 컨텍스트
 /// </summary>
-public partial class AnalysisDbContext : IdentityDbContext<User>
+public partial class AnalysisDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
+    /**
+     * 사용자 정보
+     */
+    private DbSet<User> Users;
+    
     /// <summary>
     /// 생성자
     /// </summary>
@@ -24,8 +29,6 @@ public partial class AnalysisDbContext : IdentityDbContext<User>
     /// <param name="modelBuilder">모델빌더</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        Console.WriteLine(1);
-        
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<User>(entity =>
         {
@@ -36,7 +39,7 @@ public partial class AnalysisDbContext : IdentityDbContext<User>
                 .HasMaxLength(255)
                 .HasColumnType("VARCHAR")
                 .IsRequired();
-            entity.Property(prop => prop.LoginId)
+            entity.Property(prop => prop.DisplayName)
                 .HasColumnName("DisplayName")
                 .HasComment("사용자명")
                 .HasMaxLength(255)
@@ -45,10 +48,6 @@ public partial class AnalysisDbContext : IdentityDbContext<User>
             entity.Property(prop => prop.LastPasswordChangeDate)
                 .HasColumnName("LastPasswordChangeDate")
                 .HasComment("마지막 패스워드 변경일");
-            // 기본 아이디 타입 변경
-            // entity.Property(prop => prop.Id)
-            //     .HasColumnType("CHAR")
-            //     .HasMaxLength(36);
         });
         // User 테이블 키 설정 
         modelBuilder.Entity<User>()

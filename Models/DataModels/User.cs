@@ -5,7 +5,7 @@ namespace Models.DataModels;
 /// <summary>
 /// Identity 사용자 정보 
 /// </summary>
-public partial class User : IdentityUser
+public partial class User : IdentityUser<Guid>
 {
     /// <summary>
     /// 로그인 아이디 

@@ -2,6 +2,7 @@ using Features.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
+using Models.DataModels;
 using Models.Requests.Login;
 using Models.Responses;
 using Models.Responses.Users;
@@ -46,7 +47,7 @@ public class LoginService : ILoginService
     
         try
         {
-            Console.WriteLine(request.Password.ToSha());
+            Console.WriteLine(request.Password.ToSHA());
             
             // 요청이 유효하지 않은경우
             if(request.IsInValid())
@@ -57,7 +58,7 @@ public class LoginService : ILoginService
             //     return new ResponseData<ResponseUser>{ Code = "ERR", Message = "사용자를 찾지 못했습니다."};
             //
             // 로그인을 시도한다.
-            IdentityUser? loginUser = await _userRepository.GetUserWithIdPasswordAsync(request.LoginId, request.Password.ToSha());
+            User? loginUser = await _userRepository.GetUserWithIdPasswordAsync(request.LoginId, request.Password.ToSHA());
             
             // 로그인에 실패한경우
             if(loginUser == null)

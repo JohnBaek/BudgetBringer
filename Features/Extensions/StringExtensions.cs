@@ -13,7 +13,7 @@ public static class StringExtensions
     /// </summary>
     /// <param name="input">대상 문자열</param>
     /// <returns>해싱 결과</returns>
-    public static string ToSha(this string input)
+    public static string ToSHA(this string input)
     {
         using SHA256 sha256Hash = SHA256.Create();
         byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(input));

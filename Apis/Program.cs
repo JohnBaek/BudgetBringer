@@ -28,7 +28,7 @@ class Program
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
         ConfigureServices(builder.Services , builder.Configuration);
         
-        builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+        builder.Services.AddIdentityApiEndpoints<User>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddEntityFrameworkStores<AnalysisDbContext>();
 
         builder.Services.AddSwaggerGen(swagger =>
@@ -97,6 +97,7 @@ class Program
         services.AddDbContext<AnalysisDbContext>(options =>
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+        // 커스텀 Identity 설정 주입
      
         services.AddLogging();
         services.AddControllers();

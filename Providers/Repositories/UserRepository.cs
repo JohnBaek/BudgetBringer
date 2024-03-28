@@ -25,7 +25,7 @@ public class UserRepository : IUserRepository
     /// <summary>
     /// 사이닝 매니저
     /// </summary>
-    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly SignInManager<User> _signInManager;
 
     /// <summary>
     /// 생성자
@@ -33,7 +33,7 @@ public class UserRepository : IUserRepository
     /// <param name="dbContext">DB Context</param>
     /// <param name="logger">로거</param>
     /// <param name="signInManager">사이닝 매니저</param>
-    public UserRepository(AnalysisDbContext dbContext, ILogger<UserRepository> logger, SignInManager<IdentityUser> signInManager)
+    public UserRepository(AnalysisDbContext dbContext, ILogger<UserRepository> logger, SignInManager<User> signInManager)
     {
         _dbContext = dbContext;
         _logger = logger;
@@ -67,9 +67,9 @@ public class UserRepository : IUserRepository
     /// <param name="loginId">로그인 아이디</param>
     /// <param name="password">패스워드 (SHA 256 인크립트 된 원본)</param>
     /// <returns>결과</returns>
-    public async Task<IdentityUser?> GetUserWithIdPasswordAsync(string loginId, string password)
+    public async Task<User?> GetUserWithIdPasswordAsync(string loginId, string password)
     {
-        IdentityUser? result;
+        User? result;
     
         try
         {
