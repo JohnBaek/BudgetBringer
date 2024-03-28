@@ -8,12 +8,23 @@ namespace Models.DataModels;
 /// <summary>
 /// DB 컨텍스트
 /// </summary>
-public partial class AnalysisDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
+public partial class AnalysisDbContext : IdentityDbContext<User, Role, Guid , UserClaim , UserRole , UserLogin , RoleClaim, UserToken>
 {
     /**
      * 사용자 정보
      */
     private DbSet<User> Users;
+    
+    /**
+     * 역할 정보
+     */
+    private DbSet<Role> Roles;
+    
+    private DbSet<UserClaim> UserClaims;
+    private DbSet<UserRole> UserRoles;
+    private DbSet<UserLogin> UserLogins;
+    private DbSet<RoleClaim> RoleClaims;
+    private DbSet<UserToken> UserTokens;
     
     /// <summary>
     /// 생성자
@@ -32,7 +43,7 @@ public partial class AnalysisDbContext : IdentityDbContext<User, IdentityRole<Gu
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<User>(entity =>
         {
-            entity.ToTable(name: "User");
+            entity.ToTable(name: "Users");
             entity.Property(prop => prop.LoginId)
                 .HasColumnName("LoginId")
                 .HasComment("로그인아이디")
@@ -54,34 +65,34 @@ public partial class AnalysisDbContext : IdentityDbContext<User, IdentityRole<Gu
             // 로그인 아이디 Unique
             .HasAlternateKey(prop => new { prop.LoginId });
             
-        modelBuilder.Entity<IdentityRole>(entity =>
+        modelBuilder.Entity<Role>(entity =>
         {
-            entity.ToTable(name: "Role");
+            entity.ToTable(name: "Roles");
         });
-        modelBuilder.Entity<IdentityUserRole<string>>(entity =>
+        
+        modelBuilder.Entity<UserRole>(entity =>
         {
             entity.ToTable("UserRoles");
-            //in case you chagned the TKey type
-            //  entity.HasKey(key => new { key.UserId, key.RoleId });
+            entity.HasKey(key => new { key.UserId, key.RoleId });
         });
-        modelBuilder.Entity<IdentityUserClaim<string>>(entity =>
+        modelBuilder.Entity<UserClaim>(entity =>
         {
             entity.ToTable("UserClaims");
         });
-        modelBuilder.Entity<IdentityUserLogin<string>>(entity =>
+        modelBuilder.Entity<UserLogin>(entity =>
         {
             entity.ToTable("UserLogins");
-            //in case you chagned the TKey type
-            //  entity.HasKey(key => new { key.ProviderKey, key.LoginProvider });       
+            entity.HasKey(key => new { key.ProviderKey, key.LoginProvider });       
         });
-        modelBuilder.Entity<IdentityRoleClaim<string>>(entity =>
+        modelBuilder.Entity<RoleClaim>(entity =>
         {
             entity.ToTable("RoleClaims");
 
         });
-        modelBuilder.Entity<IdentityUserToken<string>>(entity =>
+        modelBuilder.Entity<UserToken>(entity =>
         {
             entity.ToTable("UserTokens");
+            entity.HasKey(key => new { key.UserId, key.LoginProvider });       
         });
     }
 }
