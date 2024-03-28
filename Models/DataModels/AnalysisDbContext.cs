@@ -59,6 +59,23 @@ public partial class AnalysisDbContext : IdentityDbContext<User, Role, Guid , Us
             entity.Property(prop => prop.LastPasswordChangeDate)
                 .HasColumnName("LastPasswordChangeDate")
                 .HasComment("마지막 패스워드 변경일");
+            
+            entity.HasMany(e => e.UserClaims)
+                .WithOne()
+                .HasForeignKey(uc => uc.UserId)
+                .IsRequired();
+
+            // Each User can have many UserLogins
+            entity.HasMany(e => e.UserLogins)
+                .WithOne()
+                .HasForeignKey(ul => ul.UserId)
+                .IsRequired();
+
+            // Each User can have many UserTokens
+            entity.HasMany(e => e.UserTokens)
+                .WithOne()
+                .HasForeignKey(ut => ut.UserId)
+                .IsRequired();
         });
         // User 테이블 키 설정 
         modelBuilder.Entity<User>()
@@ -73,26 +90,52 @@ public partial class AnalysisDbContext : IdentityDbContext<User, Role, Guid , Us
         modelBuilder.Entity<UserRole>(entity =>
         {
             entity.ToTable("UserRoles");
-            entity.HasKey(key => new { key.UserId, key.RoleId });
+            entity.HasKey(key => new {key.UserId, key.RoleId});
+            entity.HasOne(ur => ur.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.RoleId)
+                .IsRequired();
+            entity.HasOne(ur => ur.User)
+                .WithMany(u => u.UserRoles)
+                .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
         });
         modelBuilder.Entity<UserClaim>(entity =>
         {
             entity.ToTable("UserClaims");
+            entity.HasKey(key => new {key.Id, key.UserId});
+
+            entity.HasOne(ur => ur.User)
+                .WithMany(u => u.UserClaims)
+                .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
         });
         modelBuilder.Entity<UserLogin>(entity =>
         {
             entity.ToTable("UserLogins");
-            entity.HasKey(key => new { key.ProviderKey, key.LoginProvider });       
+            entity.HasKey(key => new {key.LoginProvider, key.ProviderKey});
+            entity.HasOne(ur => ur.User)
+                .WithMany(u => u.UserLogins)
+                .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
         });
         modelBuilder.Entity<RoleClaim>(entity =>
         {
             entity.ToTable("RoleClaims");
-
+            entity.HasKey(key => new {key.Id, key.RoleId});
+            entity.HasOne(ur => ur.Role)
+                .WithMany(u => u.RoleClaims)
+                .HasForeignKey(ur => ur.RoleId)
+                .IsRequired();
         });
         modelBuilder.Entity<UserToken>(entity =>
         {
             entity.ToTable("UserTokens");
-            entity.HasKey(key => new { key.UserId, key.LoginProvider });       
+            entity.HasKey(key => new {key.UserId, key.LoginProvider, key.Name});
+            entity.HasOne(ur => ur.User)
+                .WithMany(u => u.UserTokens)
+                .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
         });
     }
 }

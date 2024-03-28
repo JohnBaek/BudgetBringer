@@ -29,8 +29,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="DataModels\Migrations\" />
       <Folder Include="DataModels\MIgrations\" />
+      <Folder Include="DataModels\Migrations\" />
     </ItemGroup>
 
 </Project>

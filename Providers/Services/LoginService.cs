@@ -25,16 +25,23 @@ public class LoginService : ILoginService
     /// 사용자 리파지토리
     /// </summary>
     private readonly IUserRepository _userRepository;
-    
+
+    /// <summary>
+    /// 사인인 매니저 
+    /// </summary>
+    private readonly SignInManager<User> _signInManager;
+
     /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="logger">로거</param>
     /// <param name="userRepository">사용자 리파지토리</param>
-    public LoginService( ILogger<LoginService> logger, IUserRepository userRepository)
+    /// <param name="signInManager">사인인 매니저</param>
+    public LoginService( ILogger<LoginService> logger, IUserRepository userRepository, SignInManager<User> signInManager)
     {
         _logger = logger;
         _userRepository = userRepository;
+        _signInManager = signInManager;
     }
     
     /// <summary>
@@ -63,7 +70,9 @@ public class LoginService : ILoginService
             // 로그인에 실패한경우
             if(loginUser == null)
                 return new ResponseData<ResponseUser>{ Code = "ERR", Message = "아이디 혹은 비밀번호가 다릅니다."};
-    
+
+            await _signInManager.SignInAsync(loginUser, isPersistent: true);
+            
             return new ResponseData<ResponseUser>() {Result = EnumResponseResult.Success, Data = new ResponseUser(){ Name = loginUser.UserName }};
         }
         catch (Exception e)

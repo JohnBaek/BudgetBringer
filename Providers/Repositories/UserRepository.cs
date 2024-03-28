@@ -75,7 +75,7 @@ public class UserRepository : IUserRepository
         {
             // 사용자의 정보를 찾는다.
             result = await _dbContext.Users.AsNoTracking()
-                .Where(i => i.UserName == loginId )
+                .Where(i => i.LoginId == loginId )
                 .FirstOrDefaultAsync();
     
             // 찾을수 없는경우 
