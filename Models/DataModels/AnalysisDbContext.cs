@@ -10,22 +10,6 @@ namespace Models.DataModels;
 /// </summary>
 public partial class AnalysisDbContext : IdentityDbContext<User, Role, Guid , UserClaim , UserRole , UserLogin , RoleClaim, UserToken>
 {
-    /**
-     * 사용자 정보
-     */
-    private DbSet<User> Users;
-    
-    /**
-     * 역할 정보
-     */
-    private DbSet<Role> Roles;
-    
-    private DbSet<UserClaim> UserClaims;
-    private DbSet<UserRole> UserRoles;
-    private DbSet<UserLogin> UserLogins;
-    private DbSet<RoleClaim> RoleClaims;
-    private DbSet<UserToken> UserTokens;
-    
     /// <summary>
     /// 생성자
     /// </summary>

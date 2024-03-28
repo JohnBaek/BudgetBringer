@@ -109,9 +109,9 @@ class Program
         services.AddEndpointsApiExplorer();
         
         // DI 추가
-        // services.AddTransient<ILoginService, LoginService>();
-        services.AddTransient<IUserRepository, UserRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ILoginService, LoginService>();
+        services.AddScoped<ISignInService<User>, SignInService>();
     }
     
     

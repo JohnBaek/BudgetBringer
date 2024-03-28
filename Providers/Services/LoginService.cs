@@ -29,19 +29,19 @@ public class LoginService : ILoginService
     /// <summary>
     /// 사인인 매니저 
     /// </summary>
-    private readonly SignInManager<User> _signInManager;
+    private readonly ISignInService<User> _signInService;
 
     /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="logger">로거</param>
     /// <param name="userRepository">사용자 리파지토리</param>
-    /// <param name="signInManager">사인인 매니저</param>
-    public LoginService( ILogger<LoginService> logger, IUserRepository userRepository, SignInManager<User> signInManager)
+    /// <param name="signInService"></param>
+    public LoginService( ILogger<LoginService> logger, IUserRepository userRepository, ISignInService<User> signInService)
     {
         _logger = logger;
         _userRepository = userRepository;
-        _signInManager = signInManager;
+        _signInService = signInService;
     }
     
     /// <summary>
@@ -60,10 +60,10 @@ public class LoginService : ILoginService
             if(request.IsInValid())
                 return new ResponseData<ResponseUser>{ Code = "ERR", Message = request.GetFirstErrorMessage()};
             
-            // // 사용자를 찾지 못한경우 
-            // if(!await _userRepository.ExistUserAsync(request.LoginId))
-            //     return new ResponseData<ResponseUser>{ Code = "ERR", Message = "사용자를 찾지 못했습니다."};
-            //
+            // 사용자를 찾지 못한경우 
+            if(!await _userRepository.ExistUserAsync(request.LoginId))
+                return new ResponseData<ResponseUser>{ Code = "ERR", Message = "사용자를 찾지 못했습니다."};
+            
             // 로그인을 시도한다.
             User? loginUser = await _userRepository.GetUserWithIdPasswordAsync(request.LoginId, request.Password.ToSHA());
             
@@ -71,8 +71,7 @@ public class LoginService : ILoginService
             if(loginUser == null)
                 return new ResponseData<ResponseUser>{ Code = "ERR", Message = "아이디 혹은 비밀번호가 다릅니다."};
 
-            await _signInManager.SignInAsync(loginUser, isPersistent: true);
-            
+            await _signInService.SignInAsync(loginUser, isPersistent: true);
             return new ResponseData<ResponseUser>() {Result = EnumResponseResult.Success, Data = new ResponseUser(){ Name = loginUser.UserName }};
         }
         catch (Exception e)

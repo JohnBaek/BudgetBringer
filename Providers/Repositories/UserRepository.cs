@@ -28,16 +28,27 @@ public class UserRepository : IUserRepository
     private readonly SignInManager<User> _signInManager;
 
     /// <summary>
+    /// 사용자 매니저
+    /// </summary>
+    private readonly UserManager<User> _userManager;
+
+    /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="dbContext">DB Context</param>
     /// <param name="logger">로거</param>
     /// <param name="signInManager">사이닝 매니저</param>
-    public UserRepository(AnalysisDbContext dbContext, ILogger<UserRepository> logger, SignInManager<User> signInManager)
+    /// <param name="userManager"></param>
+    public UserRepository(
+          AnalysisDbContext dbContext
+        , ILogger<UserRepository> logger
+        , SignInManager<User> signInManager
+        , UserManager<User> userManager)
     {
         _dbContext = dbContext;
         _logger = logger;
         _signInManager = signInManager;
+        _userManager = userManager;
     }
     
     /// <summary>
@@ -74,16 +85,16 @@ public class UserRepository : IUserRepository
         try
         {
             // 사용자의 정보를 찾는다.
-            result = await _dbContext.Users.AsNoTracking()
-                .Where(i => i.LoginId == loginId )
+            User? findUser = await _dbContext.Users.AsNoTracking().Where(i => i.LoginId == loginId )
                 .FirstOrDefaultAsync();
     
             // 찾을수 없는경우 
-            if (result == null)
+            if (findUser == null)
                 return null;
     
             // 사용자를 로그인시킨다.
-            await _signInManager.SignInAsync(result, isPersistent: false);
+            await _signInManager.SignInAsync(findUser, isPersistent: false);
+            return findUser;
         }
         catch (Exception e)
         {
