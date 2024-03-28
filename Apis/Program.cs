@@ -1,4 +1,5 @@
 using System.Reflection;
+using Apis.Middlewares;
 using Features.Extensions;
 using Features.Filters;
 using Microsoft.AspNetCore.Identity;
@@ -72,12 +73,12 @@ class Program
             app.UseHsts();
         }
         
-        
         // 데이터 마이그레이션및 시드 데이터 이니셜 라이즈 
         // SeedDataInitialize(app.Services);
 
         app.UseStaticFiles();
         app.UseAuthentication();
+        app.UseHandleUnauthorized();
         app.UseAuthorization();
         app.MapControllers();
         app.Run();

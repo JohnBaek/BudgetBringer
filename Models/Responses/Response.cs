@@ -18,6 +18,11 @@ public class Response
     public string Message { get; set; } = "";
 
     /// <summary>
+    /// 권한 여부
+    /// </summary>
+    public bool IsAuthenticated { get; set; } = true;
+
+    /// <summary>
     /// 응답 결과
     /// </summary>
     public EnumResponseResult Result { get; set; } = EnumResponseResult.Error;

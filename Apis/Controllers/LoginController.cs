@@ -41,4 +41,15 @@ public class LoginController : Controller
     {
         return await _loginService.TryLoginAsync(request);
     }
+    
+    /// <summary>
+    /// 로그인을 시도한다.
+    /// </summary>
+    /// <param name="request">로그인 정보</param>
+    /// <returns>로그인결과</returns>
+    [HttpPost("/Test")]
+    public async Task<ResponseData<ResponseUser>> Test(RequestLogin request)
+    {
+        return new ResponseData<ResponseUser>();
+    }
 }
