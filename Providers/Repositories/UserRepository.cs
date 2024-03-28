@@ -61,7 +61,7 @@ public class UserRepository : IUserRepository
         bool result;
         try
         {
-            // return await _dbContext.Users.AsNoTracking().AnyAsync(i => i.LoginId == loginId);
+            return await _dbContext.Users.AsNoTracking().AnyAsync(i => i.LoginId == loginId);
         }
         catch (Exception e)
         {
@@ -85,7 +85,10 @@ public class UserRepository : IUserRepository
         try
         {
             // 사용자의 정보를 찾는다.
-            User? findUser = await _dbContext.Users.AsNoTracking().Where(i => i.LoginId == loginId )
+            User? findUser = await _dbContext.Users.AsNoTracking()
+                .Where(i =>
+                    i.LoginId == loginId &&
+                    i.PasswordHash == password.ToSHA())
                 .FirstOrDefaultAsync();
     
             // 찾을수 없는경우 

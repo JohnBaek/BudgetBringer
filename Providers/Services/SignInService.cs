@@ -1,5 +1,9 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Models.Common.Enums;
 using Models.DataModels;
+using Models.Responses;
 
 namespace Providers.Services;
 
@@ -42,5 +46,28 @@ public class SignInService : ISignInService<User>
     public async Task SignInAsync(User user, bool isPersistent, string? authenticationMethod = null)
     {
         await _signInManager.SignInAsync(user, isPersistent, authenticationMethod);
+    }
+
+    /// <summary>
+    /// 로그인여부를 반환한다.
+    /// </summary>
+    /// <param name="httpContext">ClaimsPrincipal</param>
+    /// <returns></returns>
+    public async Task<Response> IsSignedIn(HttpContext httpContext)
+    {
+        Response response = new Response{ IsAuthenticated = false };
+        
+        // 로그인 여부를 가져온다.
+        bool isAuthenticated = _signInManager.IsSignedIn(httpContext.User);
+
+        // 인증되어있는 경우 
+        if (isAuthenticated)
+            return new Response {Result = EnumResponseResult.Success, IsAuthenticated = true};
+        
+        // 인증되어있지 않은경우
+        await _signInManager.SignOutAsync();
+        
+        return response;
+
     }
 }

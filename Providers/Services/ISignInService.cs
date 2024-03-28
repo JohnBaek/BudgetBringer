@@ -1,5 +1,8 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Models.DataModels;
+using Models.Responses;
 
 namespace Providers.Services;
 
@@ -22,4 +25,11 @@ public interface ISignInService<in TUser> where TUser : User
     /// <param name="authenticationMethod">Name of the method used to authenticate the user.</param>
     /// <returns>The task object representing the asynchronous operation.</returns>
     Task SignInAsync(TUser user, bool isPersistent, string? authenticationMethod = null);
+
+    /// <summary>
+    /// Returns true if the principal has an identity with the application cookie identity
+    /// </summary>
+    /// <param name="httpContext">The <see cref="T:System.Security.Claims.ClaimsPrincipal" /> instance.</param>
+    /// <returns>True if the user is logged in with identity.</returns>
+    Task<Response> IsSignedIn(HttpContext httpContext);
 }
