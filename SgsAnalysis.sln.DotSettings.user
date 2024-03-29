@@ -3,9 +3,14 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestTemplateMapping/=xUnit/@EntryIndexedValue">33ff99d8-b1ad-4ed5-a4fd-376b97c2c841</s:String>
 	<s:Boolean x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/ShowAdvancedOptions/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8016dfcf_002D3b60_002D4a08_002D9343_002D43a9d4220709/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TryLoginAsync_Success" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.LoginServiceTest&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
+  &lt;Or&gt;
+    &lt;TestAncestor&gt;
+      &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.AuthenticationServiceTest&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::6710A9B8-8A8D-4614-8871-E83EF038EB18::net8.0::Apis.Tests.CommonTests.Request_ChangeResponseMessage_WhenNotAuthorized&lt;/TestId&gt;
+    &lt;/TestAncestor&gt;
+    &lt;Project Location="/Users/john/Projects/SgsAnalysis/Apis.Tests" Presentation="&amp;lt;Apis.Tests&amp;gt;" /&gt;
+  &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String>
+	
 	
 	</wpf:ResourceDictionary>

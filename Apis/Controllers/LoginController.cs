@@ -21,7 +21,7 @@ public class LoginController : Controller
     /// <summary>
     /// 로그인 서비스
     /// </summary>
-    private readonly ILoginService _loginService;
+    private readonly IAuthenticationService _authenticationService;
 
     /// <summary>
     /// 사인인 서비스
@@ -32,13 +32,13 @@ public class LoginController : Controller
     /// <summary>
     /// 생성자
     /// </summary>
-    /// <param name="loginService">로그인 서비스</param>
+    /// <param name="authenticationService">로그인 서비스</param>
     /// <param name="signInService">사인인 서비스</param>
     public LoginController(
-          ILoginService loginService
+          IAuthenticationService authenticationService
         , ISignInService<User> signInService) 
     {
-        _loginService = loginService;
+        _authenticationService = authenticationService;
         _signInService = signInService;
     }
     
@@ -51,17 +51,7 @@ public class LoginController : Controller
     [HttpPost]
     public async Task<Response> TryLogin(RequestLogin request)
     {
-        return await _loginService.TryLoginAsync(request);
-    }
-
-    /// <summary>
-    /// 로그인여부를 확인한다.
-    /// </summary>
-    /// <returns>로그인결과</returns>
-    [HttpGet("/IsAuthenticated")]
-    public async Task<Response> IsAuthenticated()
-    {
-        return await _signInService.IsSignedIn(HttpContext);
+        return await _authenticationService.TryLoginAsync(request);
     }
     
     
@@ -69,12 +59,20 @@ public class LoginController : Controller
     /// 로그아웃을 처리한다.
     /// </summary>
     /// <returns></returns>
-    [HttpGet("/Logout")]
+    [HttpGet("Logout")]
     public async Task<Response> Logout()
     {
         await _signInService.SignOutAsync();
         return new Response();
     }
     
-    
+    /// <summary>
+    /// 로그인여부를 확인한다.
+    /// </summary>
+    /// <returns>로그인결과</returns>
+    [HttpGet("IsAuthenticated")]
+    public async Task<Response> IsAuthenticatedAsync()
+    {
+        return await _signInService.IsSignedIn(HttpContext);
+    }
 }

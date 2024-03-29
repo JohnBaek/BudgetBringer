@@ -1,3 +1,5 @@
+using Models.DataModels;
+
 namespace Models.Responses.Users;
 
 /// <summary>
@@ -9,4 +11,9 @@ public class ResponseUser
     /// 이름 
     /// </summary>
     public string Name { get; set; }
+
+    /// <summary>
+    /// 사용자 권한
+    /// </summary>
+    public List<string> Roles { get; set; } = new List<string>();
 }

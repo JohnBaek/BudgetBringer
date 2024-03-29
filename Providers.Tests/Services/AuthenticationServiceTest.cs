@@ -16,8 +16,8 @@ namespace Providers.Tests.Services;
 /// <summary>
 /// 로그인 서비스 테스트 클래스
 /// </summary>
-[TestSubject(typeof(LoginService))]
-public class LoginServiceTest
+[TestSubject(typeof(AuthenticationService))]
+public class AuthenticationServiceTest
 {
     /// <summary>
     /// 유저 리파지토리 
@@ -27,7 +27,7 @@ public class LoginServiceTest
     /// <summary>
     /// 로그인서비스 
     /// </summary>
-    private LoginService _loginService;
+    private AuthenticationService _authenticationService;
     
     /// <summary>
     /// 로그인 성공
@@ -36,10 +36,10 @@ public class LoginServiceTest
     public async Task TryLoginAsync_Success()
     {
         // Arranges
-        var mockLogger = new Mock<ILogger<LoginService>>();
+        var mockLogger = new Mock<ILogger<AuthenticationService>>();
         var mockSignInManager = new Mock<ISignInService<User>>();
         _mockUserRepository = new Mock<IUserRepository>();
-        _loginService = new LoginService(mockLogger.Object, _mockUserRepository.Object , mockSignInManager.Object);
+        _authenticationService = new AuthenticationService(mockLogger.Object, _mockUserRepository.Object , mockSignInManager.Object);
         
         // 요청정보 세팅
         var request = new RequestLogin
@@ -53,7 +53,7 @@ public class LoginServiceTest
             .ReturnsAsync(new User());
     
         // Act
-        var result = await _loginService.TryLoginAsync(request);
+        var result = await _authenticationService.TryLoginAsync(request);
     
         // Assert
         result.Result.Should().Be(EnumResponseResult.Success);
@@ -66,10 +66,10 @@ public class LoginServiceTest
     public async Task TryLoginAsync_Fail_UserNotFound()
     {
         // Arranges
-        var mockLogger = new Mock<ILogger<LoginService>>();
+        var mockLogger = new Mock<ILogger<AuthenticationService>>();
         var mockSignInManager = new Mock<ISignInService<User>>();
         _mockUserRepository = new Mock<IUserRepository>();
-        _loginService = new LoginService(mockLogger.Object, _mockUserRepository.Object , mockSignInManager.Object);
+        _authenticationService = new AuthenticationService(mockLogger.Object, _mockUserRepository.Object , mockSignInManager.Object);
         
         var request = new RequestLogin
         {
@@ -80,7 +80,7 @@ public class LoginServiceTest
         _mockUserRepository.Setup(x => x.ExistUserAsync(It.IsAny<string>())).ReturnsAsync(false);
     
         // Act
-        var result = await _loginService.TryLoginAsync(request);
+        var result = await _authenticationService.TryLoginAsync(request);
     
         // Assert
         result.Data.Should().BeNull();
@@ -95,10 +95,10 @@ public class LoginServiceTest
     public async Task TryLoginAsync_Fail_InvalidCredentials()
     {
         // Arranges
-        var mockLogger = new Mock<ILogger<LoginService>>();
+        var mockLogger = new Mock<ILogger<AuthenticationService>>();
         var mockSignInManager = new Mock<ISignInService<User>>();
         _mockUserRepository = new Mock<IUserRepository>();
-        _loginService = new LoginService(mockLogger.Object, _mockUserRepository.Object , mockSignInManager.Object);
+        _authenticationService = new AuthenticationService(mockLogger.Object, _mockUserRepository.Object , mockSignInManager.Object);
         
         var request = new RequestLogin
         {
@@ -111,7 +111,7 @@ public class LoginServiceTest
         _mockUserRepository.Setup(x => x.GetUserWithIdPasswordAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync((User)null);
     
         // Act
-        var result = await _loginService.TryLoginAsync(request);
+        var result = await _authenticationService.TryLoginAsync(request);
     
         // Assert
         result.Data.Should().BeNull();

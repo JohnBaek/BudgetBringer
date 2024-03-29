@@ -39,15 +39,29 @@ public class HandleUnauthorizedMiddleware
             httpContext.Response.ContentType = "application/json";
             Response response = new Response
             {
-                Code = "401",
-                Message = "권한이 없습니다.",
+                Code = "ATH099",
+                Message = "로그인 후 이용해주세요",
                 IsAuthenticated = false,
                 Result = EnumResponseResult.Error
             };
 
             string responseJson = JsonSerializer.Serialize(response);
             await httpContext.Response.WriteAsync(responseJson);
-            await _requestDelegate(httpContext);
+        }
+        // 권한이 없는경우
+        else if (httpContext.Response.StatusCode == (int) HttpStatusCode.Forbidden)
+        {
+            httpContext.Response.ContentType = "application/json";
+            Response response = new Response
+            {
+                Code = "",
+                Message = "접근 권한이 없습니다.",
+                IsAuthenticated = false,
+                Result = EnumResponseResult.Error
+            };
+
+            string responseJson = JsonSerializer.Serialize(response);
+            await httpContext.Response.WriteAsync(responseJson);
         }
     }
 }

@@ -94,9 +94,7 @@ public class UserRepository : IUserRepository
             // 찾을수 없는경우 
             if (findUser == null)
                 return null;
-    
-            // 사용자를 로그인시킨다.
-            await _signInManager.SignInAsync(findUser, isPersistent: false);
+            
             return findUser;
         }
         catch (Exception e)
@@ -107,5 +105,34 @@ public class UserRepository : IUserRepository
     
         return result;
     }
+
+
+    /// <summary>
+    /// 사용자의 Id 값으로 권한 값의 리스트를 가져온다.
+    /// </summary>
+    /// <param name="userId">사용자 아이디</param>
+    /// <returns></returns>
+    public async Task<List<string>> GetRolesByUserAsync(Guid userId)
+    {
+        List<string> result = new List<string>();
     
+        try
+        {
+            result = (await _dbContext.Roles.AsNoTracking()
+                .Join(_dbContext.UserRoles.Where(i => i.UserId == userId)
+                    , role => role.Id
+                    , userRole => userRole.RoleId
+                    , (role, userRole)
+                        => role.Name
+                    )
+                .ToListAsync())!;
+        }
+        catch (Exception e)
+        {
+            e.LogError(_logger);
+        }
+    
+        return result;
+    }
+
 }

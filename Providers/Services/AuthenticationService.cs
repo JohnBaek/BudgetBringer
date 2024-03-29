@@ -14,12 +14,12 @@ namespace Providers.Services;
 /// <summary>
 /// 로그인 서비스 구현체
 /// </summary>
-public class LoginService : ILoginService
+public class AuthenticationService : IAuthenticationService
 {
     /// <summary>
     /// 로거
     /// </summary>
-    private readonly ILogger<LoginService> _logger;
+    private readonly ILogger<AuthenticationService> _logger;
     
     /// <summary>
     /// 사용자 리파지토리
@@ -37,7 +37,7 @@ public class LoginService : ILoginService
     /// <param name="logger">로거</param>
     /// <param name="userRepository">사용자 리파지토리</param>
     /// <param name="signInService"></param>
-    public LoginService( ILogger<LoginService> logger, IUserRepository userRepository, ISignInService<User> signInService)
+    public AuthenticationService( ILogger<AuthenticationService> logger, IUserRepository userRepository, ISignInService<User> signInService)
     {
         _logger = logger;
         _userRepository = userRepository;
@@ -65,14 +65,23 @@ public class LoginService : ILoginService
                 return new ResponseData<ResponseUser>{ Code = "ERR", Message = "사용자를 찾지 못했습니다."};
             
             // 로그인을 시도한다.
-            User? loginUser = await _userRepository.GetUserWithIdPasswordAsync(request.LoginId, request.Password.ToSHA());
+            User? loginUser = await _userRepository.GetUserWithIdPasswordAsync(request.LoginId, request.Password);
             
-            // 로그인에 실패한경우
+            // 아이디 패스워드 인증에 실패한경우
             if(loginUser == null)
                 return new ResponseData<ResponseUser>{ Code = "ERR", Message = "아이디 혹은 비밀번호가 다릅니다."};
 
+            // 로그인 시킨다.
             await _signInService.SignInAsync(loginUser, isPersistent: true);
-            return new ResponseData<ResponseUser>() {Result = EnumResponseResult.Success, Data = new ResponseUser(){ Name = loginUser.UserName }};
+            return new ResponseData<ResponseUser>
+            {
+                Result = EnumResponseResult.Success , 
+                Data = new ResponseUser
+                {
+                    Name = loginUser.UserName ?? "",
+                    Roles = await _userRepository.GetRolesByUserAsync(loginUser.Id)
+                }
+            };
         }
         catch (Exception e)
         {
