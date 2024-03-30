@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FluentAssertions;
 using JetBrains.Annotations;
@@ -92,6 +93,7 @@ public class AuthenticationServiceTest
     /// 비밀번호 아이디가 틀렸을때 
     /// </summary>
     [Fact]
+    [Display(Description = "비밀번호 아이디가 틀렸을때 검증")]
     public async Task TryLoginAsync_Fail_InvalidCredentials()
     {
         // Arranges

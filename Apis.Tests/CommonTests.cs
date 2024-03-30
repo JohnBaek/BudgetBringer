@@ -1,8 +1,6 @@
 using System.Net;
 using System.Text.Json;
 using FluentAssertions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Models.Common.Enums;
 using Models.Responses;
 using Moq;
