@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.DataModels;
 using Models.Responses;
+using Models.Responses.Users;
 using Providers.Services;
 
 namespace Apis.Controllers;
@@ -48,11 +49,11 @@ public class UserController : Controller
     
     
     /// <summary>
-    /// 로그인한 사용자의 역할 정보를 가져온다.
+    /// 로그인한 사용자의 Claim 정보를 가져온다.
     /// </summary>
     /// <returns>로그인결과</returns>
     [HttpGet("Roles")]
-    public async Task<ResponseList<string>> GetUserRolesAsync()
+    public async Task<ResponseList<ResponseUserRole>> GetUserClaimsAsync()
     {
         return await _userService.GetRolesByUserAsync(this.HttpContext);
     }

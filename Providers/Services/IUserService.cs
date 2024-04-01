@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Models.Responses;
+using Models.Responses.Users;
 
 namespace Providers.Services;
 
@@ -13,5 +14,12 @@ public interface IUserService
     /// </summary>
     /// <param name="httpContext">HttpContext</param>
     /// <returns></returns>
-    Task<ResponseList<string>> GetRolesByUserAsync(HttpContext httpContext);
+    Task<ResponseList<ResponseUserRole>> GetRolesByUserAsync(HttpContext httpContext);
+    //
+    // /// <summary>
+    // /// 로그인한 사용자의 Claim 목록을 가져온다.
+    // /// </summary>
+    // /// <param name="httpContext">HttpContext</param>
+    // /// <returns></returns>
+    // Task<ResponseList<ResponseUserClaim>> GetClaimByUserAsync(HttpContext httpContext);
 }

@@ -61,19 +61,26 @@ public class AuthenticationService : IAuthenticationService
             if(!await _userRepository.ExistUserAsync(request.LoginId))
                 return new ResponseData<ResponseUser>{ Code = "ERR", Message = "사용자를 찾지 못했습니다."};
             
-            // 로그인을 시도한다.
-            User? loginUser = await _userRepository.GetUserWithIdPasswordAsync(request.LoginId, request.Password);
-            
-            // 아이디 패스워드 인증에 실패한경우
-            if(loginUser == null)
-                return new ResponseData<ResponseUser>{ Code = "ERR", Message = "아이디 혹은 비밀번호가 다릅니다."};
-
+      
             // 해당 정보로 로그인을 시도한다.
-            Response loginResult = await _signInService.PasswordSignInAsync(loginUser.LoginId, loginUser.PasswordHash!, isPersistent:false , lockoutOnFailure:false);
+            Response loginResult = await _signInService.PasswordSignInAsync(request.LoginId, request.Password, isPersistent:false , lockoutOnFailure:false);
           
             // 실패한경우 
             if (loginResult.Result != EnumResponseResult.Success)
                 return new ResponseData<ResponseUser>
+                {
+                    IsAuthenticated = false,
+                    Code = loginResult.Code,
+                    Data = null,
+                    Message = loginResult.Message
+                };
+            
+            // 사용자를 가져온다.
+            User? loginUser = await _userRepository.GetUserWithIdPasswordAsync(request.LoginId, request.Password);
+            
+            // 사용자가 없는경우
+            if(loginUser == null)
+                return  new ResponseData<ResponseUser>
                 {
                     IsAuthenticated = false,
                     Code = loginResult.Code,

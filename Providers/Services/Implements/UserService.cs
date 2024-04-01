@@ -1,9 +1,12 @@
+using System.Security.Claims;
 using Features.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using Models.Common.Enums;
 using Models.DataModels;
 using Models.Responses;
+using Models.Responses.Users;
 using Providers.Repositories;
 using Exception = System.Exception;
 
@@ -35,31 +38,39 @@ public class UserService : IUserService
     private readonly UserManager<User> _userManager;
 
     /// <summary>
+    /// 역할 매니저
+    /// </summary>
+    private readonly RoleManager<Role> _roleManager;
+
+    /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="logger">로거</param>
     /// <param name="userRepository">사용자 리파지토리</param>
-    /// <param name="signInService"></param>
-    /// <param name="userManager"></param>
+    /// <param name="signInService">사인인 서비스</param>
+    /// <param name="userManager">사용자 매니저</param>
+    /// <param name="roleManager">역할 매니저</param>
     public UserService( 
         ILogger<AuthenticationService> logger
         , IUserRepository userRepository
         , ISignInService<User> signInService
-        , UserManager<User> userManager)
+        , UserManager<User> userManager
+        , RoleManager<Role> roleManager)
     {
         _logger = logger;
         _userRepository = userRepository;
         _signInService = signInService;
         _userManager = userManager;
+        _roleManager = roleManager;
     }
     
     /// <summary>
     /// 로그인한 사용자의 권한 목록을 가져온다.
     /// </summary>
     /// <returns></returns>
-    public async Task<ResponseList<string>> GetRolesByUserAsync(HttpContext httpContext)
+    public async Task<ResponseList<ResponseUserRole>> GetRolesByUserAsync(HttpContext httpContext)
     {
-        ResponseList<string> result = new ResponseList<string>();
+        ResponseList<ResponseUserRole> result = new ResponseList<ResponseUserRole>();
     
         try
         {
@@ -69,14 +80,106 @@ public class UserService : IUserService
             if (user == null)
                 return result;
 
-            result.Items = await _userRepository.GetRolesByUserAsync(user.Id);
+            // 반환할 유저 역할정보
+            List<ResponseUserRole> roles = new List<ResponseUserRole>();
+            
+            // 로그인한 사용자의 전체 Role 을 조회한다.
+            IList<string> userRoles = await _userManager.GetRolesAsync(user);
+            
+            // 사용자의 전체 Role 에 대해 처리한다.
+            foreach (string userRole in userRoles)
+            {
+                ResponseUserRole add = new ResponseUserRole
+                {
+                    Name = userRole ,
+                    Claims = new List<ResponseUserRoleClaim>()
+                };
+                var role = await _roleManager.FindByNameAsync(userRole);
+                
+                // 찾을수 없을경우 
+                if(role == null)
+                    continue;
+                
+                // 역할 Claim 을 찾는다.
+                IList<Claim> roleClaims = await _roleManager.GetClaimsAsync(role);
+                IList<Claim> userDefinedClaim = await _userManager.GetClaimsAsync(user);
+                
+                // 사용자 정의 Claim 에 대해 처리
+                foreach (Claim claim in userDefinedClaim)
+                {
+                    roleClaims.Add(claim);         
+                }
+                
+                // 모든 역할 Claim 에 대해 처리
+                foreach (Claim claim in roleClaims)
+                {
+                    ResponseUserRoleClaim addClaim = new ResponseUserRoleClaim
+                    {   
+                        Type = claim.Type ,
+                        Value = claim.Value
+                    };
+                    add.Claims.Add(addClaim);
+                }
+                
+                
+                
+                roles.Add(add);
+            }
+            
+            result.Items = roles;
+            result.Result = EnumResponseResult.Success;
         }
         catch (Exception e)
         {
-            result = new ResponseList<string>{ Code = "ERR", Message = "처리중 예외가 발생했습니다." };
+            result = new ResponseList<ResponseUserRole>{ Code = "ERR", Message = "처리중 예외가 발생했습니다." };
             e.LogError(_logger);
         }
     
         return result;
     }
+    //
+    // /// <summary>
+    // /// 로그인한 사용자의 Claim 목록을 가져온다.
+    // /// </summary>
+    // /// <param name="httpContext">HttpContext</param>
+    // /// <returns></returns>
+    // public async Task<ResponseList<ResponseUserClaim>> GetClaimByUserAsync(HttpContext httpContext)
+    // {
+    //     ResponseList<ResponseUserClaim> result = new ResponseList<ResponseUserClaim>();
+    //
+    //     try
+    //     {
+    //         User? user = await _userManager.GetUserAsync(httpContext.User);
+    //
+    //         // 세션에 사용자 정보가 없는경우 
+    //         if (user == null)
+    //             return result;
+    //
+    //         // 사용자의 모든 Claim을 가져온다.
+    //         IList<Claim> claims = await _userManager.GetClaimsAsync(user);
+    //
+    //         // 반환할 사용자의 claim 정보 
+    //         List<ResponseUserClaim> items = new List<ResponseUserClaim>();
+    //
+    //         // 모든 Claim 에 대해 처리한다.
+    //         foreach (Claim claim in claims)
+    //         {
+    //             items.Add(new ResponseUserClaim
+    //             {
+    //                 Name = claim.Type ,
+    //                 Value = claim.Value,
+    //             });
+    //         }
+    //
+    //         result.Items = items;
+    //         result.Result = EnumResponseResult.Success;
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         result = new ResponseList<ResponseUserClaim>{ Code = "ERR", Message = "처리중 예외가 발생했습니다." };
+    //         e.LogError(_logger);
+    //     }
+    //
+    //     return result;
+    // }
 }

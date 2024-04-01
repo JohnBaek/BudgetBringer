@@ -96,6 +96,11 @@ public class SignInService : ISignInService<User>
         if(loginResult.IsNotAllowed)
             return new Response("", "허용되지 않습니다.", false, EnumResponseResult.Error);
         
+        // 실패한경우 
+        if(loginResult == SignInResult.Failed)
+            return new Response("", "아이디 또는 비밀번호를 확인해주세요", false, EnumResponseResult.Error);
+            
+        
         return new Response("", "예외가 발생했습니다.", false, EnumResponseResult.Error);
     }
 }
