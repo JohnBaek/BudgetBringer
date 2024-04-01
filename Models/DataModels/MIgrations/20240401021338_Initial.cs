@@ -162,7 +162,7 @@ namespace Models.DataModels.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "BudgetApproved",
+                name: "DbModelBudgetApproved",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
@@ -411,22 +411,22 @@ namespace Models.DataModels.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_BudgetApproved_BusinessUnitId",
-                table: "BudgetApproved",
+                table: "DbModelBudgetApproved",
                 column: "BusinessUnitId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BudgetApproved_CostCenterId",
-                table: "BudgetApproved",
+                table: "DbModelBudgetApproved",
                 column: "CostCenterId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BudgetApproved_CountryBusinessManagerId",
-                table: "BudgetApproved",
+                table: "DbModelBudgetApproved",
                 column: "CountryBusinessManagerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BudgetApproved_SectorId",
-                table: "BudgetApproved",
+                table: "DbModelBudgetApproved",
                 column: "SectorId");
 
             migrationBuilder.CreateIndex(
@@ -520,7 +520,7 @@ namespace Models.DataModels.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BudgetApproved");
+                name: "DbModelBudgetApproved");
 
             migrationBuilder.DropTable(
                 name: "Budgets");
