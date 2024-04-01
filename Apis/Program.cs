@@ -9,6 +9,7 @@ using Models.DataModels;
 // using Models.DataModels;
 using Providers.Repositories;
 using Providers.Services;
+using Providers.Services.Implements;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -27,16 +28,17 @@ public class Program
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
         ConfigureServices(builder.Services , builder.Configuration);
-        
-        builder.Services.AddIdentityApiEndpoints<User>(options => options.SignIn.RequireConfirmedAccount = true)
-            .AddEntityFrameworkStores<AnalysisDbContext>();
+
+        builder.Services.AddIdentity<User, Role>()
+            .AddEntityFrameworkStores<AnalysisDbContext>()
+            .AddDefaultTokenProviders();
 
         builder.Services.AddSwaggerGen(swagger =>
         {
             swagger.SwaggerDoc("v1" , new OpenApiInfo()
             {
                 Version = "v1"
-                , Title = "BudgetBrinder API"
+                , Title = "BudgetBringer API"
                 , Description = ""
             });
             
@@ -73,8 +75,8 @@ public class Program
             app.UseHsts();
         }
         
-        // 데이터 마이그레이션및 시드 데이터 이니셜 라이즈 
-        SeedDataInitialize(app.Services);
+        // // 데이터 마이그레이션및 시드 데이터 이니셜 라이즈 
+        // SeedDataInitialize(app.Services);
 
         app.UseStaticFiles();
         app.UseAuthentication();
@@ -97,8 +99,10 @@ public class Program
         services.AddDbContext<AnalysisDbContext>(options =>
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+        // 데이터 Seed 호스트 서비스 등록 ( 서비스 시작시 구동 )
+        services.AddHostedService<SeedDataService>();
+        
         // 커스텀 Identity 설정 주입
-     
         services.AddLogging();
         services.AddControllers();
         // 인증서비스 DI
@@ -115,102 +119,102 @@ public class Program
         services.AddScoped<IUserService, UserService>();
     }
     
-    
-    /// <summary>
-    /// 시드데이터를 이니셜라이즈 한다.
-    /// </summary>
-    /// <param name="appServices">IServiceProvider 객체</param>
-    private static void SeedDataInitialize(IServiceProvider appServices)
-    {
-        try
-        {
-            using IServiceScope scope = appServices.CreateScope();
-            AnalysisDbContext dbContext = scope.ServiceProvider.GetRequiredService<AnalysisDbContext>();
-            
-            // 데이터베이스를 이니셜라이즈한다.
-            dbContext.Database.Migrate();
-            
-            // "관리자" 계정이 존재하지 않는 경우
-            User? admin = dbContext.Users.FirstOrDefault(i => i.LoginId == "admin");
-            if (admin == null)
-            {
-                // 관리자 계정을 생성한다.
-                admin = new User()
-                {
-                    Id = Guid.Parse("fb5c2b27-8f0e-4789-8e6b-03ec94327be8")  ,
-                    NormalizedUserName = "관리자" ,
-                    DisplayName = "관리자" ,
-                    LoginId = "admin" ,
-                    UserName = "admin",
-                    SecurityStamp = "stamps",
-                    Email = "johnbaek.bjy@gmail.com" ,
-                    EmailConfirmed = true ,
-                    NormalizedEmail = "JOHNBAEK.BJY@GMAIL.COM" ,
-                    PasswordHash = "skfdkfk1212".ToSHA() ,
-                    PhoneNumber = "+821033356168" ,
-                    PhoneNumberConfirmed = true ,
-                    TwoFactorEnabled = false ,
-                    LockoutEnd = DateTime.Now ,
-                    LockoutEnabled = false 
-                };
-                
-                // 관리자 계정 등록 
-                dbContext.Add(admin);
-                dbContext.SaveChanges();
-            }
-            
-            // 관리자 권한 정보를 가져온다.
-            Role? adminRole = dbContext.Roles.FirstOrDefault(i => i.Name != null && i.Name.ToLower() == "administrator");
-            
-            // 관리자 권한 정보가 없는 경우
-            if (adminRole == null)
-            {
-                adminRole = new Role()
-                {
-                    Id = Guid.Parse("6cbe5f02-dec2-44d9-a1ec-1c6590a3166b"),
-                    Name = "Administrator",
-                    NormalizedName = "Administrator"
-                };
-            
-                dbContext.Add(adminRole);
-                dbContext.SaveChanges();
-            }
-            
-            
-            // 사용자 권한 정보를 가져온다.
-            Role? userRole = dbContext.Roles.FirstOrDefault(i => i.Name != null && i.Name.ToLower() == "user");
-            
-            // 관리자 권한 정보가 없는 경우
-            if (userRole == null)
-            {
-                userRole = new Role()
-                {
-                    Id = Guid.Parse("5febd9ce-ac13-4089-b2af-cf9d51964b53"),
-                    Name = "User",
-                    NormalizedName = "User"
-                };
-            
-                dbContext.Add(userRole);
-                dbContext.SaveChanges();
-            }
-            
-            // 사용자가 관리자 귄한을 쥐고 있지 않은 경우 
-            if (!dbContext.UserRoles.Any(i => i.RoleId.ToString() == adminRole.Id.ToString() && i.UserId.ToString() == admin.Id.ToString()))
-            {
-                UserRole addUserRole = new UserRole()
-                {
-                    UserId = admin.Id ,
-                    RoleId = adminRole.Id
-                };
-                // 사용자 궎한을 추가한다.
-                dbContext.Add(addUserRole);
-                dbContext.SaveChanges();
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-        }
-    }
+    //
+    // /// <summary>
+    // /// 시드데이터를 이니셜라이즈 한다.
+    // /// </summary>
+    // /// <param name="appServices">IServiceProvider 객체</param>
+    // private static void SeedDataInitialize(IServiceProvider appServices)
+    // {
+    //     try
+    //     {
+    //         using IServiceScope scope = appServices.CreateScope();
+    //         AnalysisDbContext dbContext = scope.ServiceProvider.GetRequiredService<AnalysisDbContext>();
+    //         
+    //         // 데이터베이스를 이니셜라이즈한다.
+    //         dbContext.Database.Migrate();
+    //         
+    //         // "관리자" 계정이 존재하지 않는 경우
+    //         User? admin = dbContext.Users.FirstOrDefault(i => i.LoginId == "admin");
+    //         if (admin == null)
+    //         {
+    //             // 관리자 계정을 생성한다.
+    //             admin = new User()
+    //             {
+    //                 Id = Guid.Parse("fb5c2b27-8f0e-4789-8e6b-03ec94327be8")  ,
+    //                 NormalizedUserName = "관리자" ,
+    //                 DisplayName = "관리자" ,
+    //                 LoginId = "admin" ,
+    //                 UserName = "admin",
+    //                 SecurityStamp = "stamps",
+    //                 Email = "johnbaek.bjy@gmail.com" ,
+    //                 EmailConfirmed = true ,
+    //                 NormalizedEmail = "JOHNBAEK.BJY@GMAIL.COM" ,
+    //                 PasswordHash = "skfdkfk1212".ToSHA() ,
+    //                 PhoneNumber = "+821033356168" ,
+    //                 PhoneNumberConfirmed = true ,
+    //                 TwoFactorEnabled = false ,
+    //                 LockoutEnd = DateTime.Now ,
+    //                 LockoutEnabled = false 
+    //             };
+    //             
+    //             // 관리자 계정 등록 
+    //             dbContext.Add(admin);
+    //             dbContext.SaveChanges();
+    //         }
+    //         
+    //         // 관리자 권한 정보를 가져온다.
+    //         Role? adminRole = dbContext.Roles.FirstOrDefault(i => i.Name != null && i.Name.ToLower() == "administrator");
+    //         
+    //         // 관리자 권한 정보가 없는 경우
+    //         if (adminRole == null)
+    //         {
+    //             adminRole = new Role()
+    //             {
+    //                 Id = Guid.Parse("6cbe5f02-dec2-44d9-a1ec-1c6590a3166b"),
+    //                 Name = "Administrator",
+    //                 NormalizedName = "Administrator"
+    //             };
+    //         
+    //             dbContext.Add(adminRole);
+    //             dbContext.SaveChanges();
+    //         }
+    //         
+    //         
+    //         // 사용자 권한 정보를 가져온다.
+    //         Role? userRole = dbContext.Roles.FirstOrDefault(i => i.Name != null && i.Name.ToLower() == "user");
+    //         
+    //         // 관리자 권한 정보가 없는 경우
+    //         if (userRole == null)
+    //         {
+    //             userRole = new Role()
+    //             {
+    //                 Id = Guid.Parse("5febd9ce-ac13-4089-b2af-cf9d51964b53"),
+    //                 Name = "User",
+    //                 NormalizedName = "User"
+    //             };
+    //         
+    //             dbContext.Add(userRole);
+    //             dbContext.SaveChanges();
+    //         }
+    //         
+    //         // 사용자가 관리자 귄한을 쥐고 있지 않은 경우 
+    //         if (!dbContext.UserRoles.Any(i => i.RoleId.ToString() == adminRole.Id.ToString() && i.UserId.ToString() == admin.Id.ToString()))
+    //         {
+    //             UserRole addUserRole = new UserRole()
+    //             {
+    //                 UserId = admin.Id ,
+    //                 RoleId = adminRole.Id
+    //             };
+    //             // 사용자 궎한을 추가한다.
+    //             dbContext.Add(addUserRole);
+    //             dbContext.SaveChanges();
+    //         }
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         Console.WriteLine(e);
+    //     }
+    // }
 }
 

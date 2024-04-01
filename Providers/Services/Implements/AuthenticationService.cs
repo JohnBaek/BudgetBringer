@@ -1,5 +1,4 @@
 using Features.Extensions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.DataModels;
@@ -9,7 +8,7 @@ using Models.Responses.Users;
 using Providers.Repositories;
 using Exception = System.Exception;
 
-namespace Providers.Services;
+namespace Providers.Services.Implements;
 
 /// <summary>
 /// 로그인 서비스 구현체
@@ -54,8 +53,6 @@ public class AuthenticationService : IAuthenticationService
     
         try
         {
-            Console.WriteLine(request.Password.ToSHA());
-            
             // 요청이 유효하지 않은경우
             if(request.IsInValid())
                 return new ResponseData<ResponseUser>{ Code = "ERR", Message = request.GetFirstErrorMessage()};
@@ -71,16 +68,27 @@ public class AuthenticationService : IAuthenticationService
             if(loginUser == null)
                 return new ResponseData<ResponseUser>{ Code = "ERR", Message = "아이디 혹은 비밀번호가 다릅니다."};
 
-            // 로그인 시킨다.
-            await _signInService.SignInAsync(loginUser, isPersistent: true);
+            // 해당 정보로 로그인을 시도한다.
+            Response loginResult = await _signInService.PasswordSignInAsync(loginUser.LoginId, loginUser.PasswordHash!, isPersistent:false , lockoutOnFailure:false);
+          
+            // 실패한경우 
+            if (loginResult.Result != EnumResponseResult.Success)
+                return new ResponseData<ResponseUser>
+                {
+                    IsAuthenticated = false,
+                    Code = loginResult.Code,
+                    Data = null,
+                    Message = loginResult.Message
+                };
+            
+            // 성공한 경우 
             return new ResponseData<ResponseUser>
             {
-                Result = EnumResponseResult.Success , 
-                Data = new ResponseUser
-                {
-                    Name = loginUser.UserName ?? "",
-                    Roles = await _userRepository.GetRolesByUserAsync(loginUser.Id)
-                }
+                Result = EnumResponseResult.Success ,
+                IsAuthenticated = true,
+                Code = loginResult.Code,
+                Data = new ResponseUser{ Name = loginUser.DisplayName},
+                Message = loginResult.Message
             };
         }
         catch (Exception e)

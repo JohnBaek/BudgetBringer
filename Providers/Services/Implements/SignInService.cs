@@ -1,11 +1,10 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Models.Common.Enums;
 using Models.DataModels;
 using Models.Responses;
 
-namespace Providers.Services;
+namespace Providers.Services.Implements;
 
 /// <summary>
 /// SignInManager<TUser> 래핑 클래스 구현체
@@ -68,6 +67,35 @@ public class SignInService : ISignInService<User>
         await _signInManager.SignOutAsync();
         
         return response;
+    }
 
+    /// <summary>
+    /// 패스워드 정보로 로그인 시킨다.
+    /// </summary>
+    /// <param name="userName"></param>
+    /// <param name="password"></param>
+    /// <param name="isPersistent"></param>
+    /// <param name="lockoutOnFailure"></param>
+    /// <returns></returns>
+    public async Task<Response> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
+    {
+        Response response;
+
+        // 로그인을 시도한다.
+        SignInResult loginResult = await _signInManager.PasswordSignInAsync(userName, password, isPersistent, lockoutOnFailure);
+
+        // 성공한경우  
+        if (loginResult.Succeeded)
+            return new Response("", "", true, EnumResponseResult.Success);
+        
+        // 계정이 잠긴경우 
+        if(loginResult.IsLockedOut)
+            return new Response("", "계정이 잠겨있습니다.", false, EnumResponseResult.Error);
+        
+        // 허용되지 않는경우 
+        if(loginResult.IsNotAllowed)
+            return new Response("", "허용되지 않습니다.", false, EnumResponseResult.Error);
+        
+        return new Response("", "예외가 발생했습니다.", false, EnumResponseResult.Error);
     }
 }

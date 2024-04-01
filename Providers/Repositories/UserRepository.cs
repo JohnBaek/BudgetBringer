@@ -86,11 +86,8 @@ public class UserRepository : IUserRepository
         {
             // 사용자의 정보를 찾는다.
             User? findUser = await _dbContext.Users.AsNoTracking()
-                .Where(i =>
-                    i.LoginId == loginId &&
-                    i.PasswordHash == password.ToSHA())
-                .FirstOrDefaultAsync();
-    
+                .Where(i => i.LoginId == loginId).FirstOrDefaultAsync();
+                
             // 찾을수 없는경우 
             if (findUser == null)
                 return null;

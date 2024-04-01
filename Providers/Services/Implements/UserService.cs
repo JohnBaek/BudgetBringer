@@ -2,15 +2,12 @@ using Features.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using Models.Common.Enums;
 using Models.DataModels;
-using Models.Requests.Login;
 using Models.Responses;
-using Models.Responses.Users;
 using Providers.Repositories;
 using Exception = System.Exception;
 
-namespace Providers.Services;
+namespace Providers.Services.Implements;
 
 /// <summary>
 /// 사용자 서비스 구현체

@@ -26,4 +26,15 @@ public static class StringExtensions
         
         return builder.ToString();
     }
+    
+    
+    /// <summary>
+    /// SHA 로 해싱한다.
+    /// </summary>
+    /// <param name="input">대상 문자열</param>
+    /// <returns>해싱 결과</returns>
+    public static string WithDateTime(this string input)
+    {
+        return $"[{DateTime.Now:yyyy-MM-dd hh:mm:ss}] {input}";
+    }
 }

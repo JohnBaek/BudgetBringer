@@ -8,6 +8,28 @@ namespace Models.Responses;
 public class Response
 {
     /// <summary>
+    /// 기본 생성자 
+    /// </summary>
+    public Response()
+    {
+    }
+
+    /// <summary>
+    /// 생성자
+    /// </summary>
+    /// <param name="code">응답 코드</param>
+    /// <param name="message">응답 메세지</param>
+    /// <param name="isAuthenticated">권한 여부</param>
+    /// <param name="result">응답 결과</param>
+    public Response(string code, string message, bool isAuthenticated, EnumResponseResult result)
+    {
+        Code = code;
+        Message = message;
+        IsAuthenticated = isAuthenticated;
+        Result = result;
+    }
+
+    /// <summary>
     /// 응답 코드 
     /// </summary>
     public string Code { get; set; } = "";

@@ -7,9 +7,11 @@ using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.DataModels;
 using Models.Requests.Login;
+using Models.Responses;
 using Moq;
 using Providers.Repositories;
 using Providers.Services;
+using Providers.Services.Implements;
 using Xunit;
 
 namespace Providers.Tests.Services;
@@ -38,26 +40,41 @@ public class AuthenticationServiceTest
     {
         // Arranges
         var mockLogger = new Mock<ILogger<AuthenticationService>>();
+        var mockUserRepository = new Mock<IUserRepository>();
         var mockSignInManager = new Mock<ISignInService<User>>();
-        _mockUserRepository = new Mock<IUserRepository>();
-        _authenticationService = new AuthenticationService(mockLogger.Object, _mockUserRepository.Object , mockSignInManager.Object);
+    
+        // AuthenticationService 인스턴스 생성
+        var authenticationService = new AuthenticationService(mockLogger.Object, mockUserRepository.Object, mockSignInManager.Object);
+    
+        // 요청 정보 세팅
+        var user = new User
+        {
+            LoginId = "testUser",
+            PasswordHash = "password"
+        };
+
+        // 사용자 존재 여부 및 사용자 정보 가져오기 모킹
+        mockUserRepository.Setup(x => x.ExistUserAsync(user.LoginId)).ReturnsAsync(true);
+        mockUserRepository.Setup(x => x.GetUserWithIdPasswordAsync(user.LoginId, user.PasswordHash))
+            .ReturnsAsync(new User { LoginId = user.LoginId , PasswordHash = "password"});
         
-        // 요청정보 세팅
+        // 로그인 성공 시나리오 설정
+        mockSignInManager.Setup(x => x.PasswordSignInAsync(user.LoginId, user.PasswordHash, false, false))
+            .ReturnsAsync(new Response { Result = EnumResponseResult.Success });
+
         var request = new RequestLogin
         {
             LoginId = "testUser",
             Password = "password"
         };
-    
-        _mockUserRepository.Setup(x => x.ExistUserAsync(It.IsAny<string>())).ReturnsAsync(true);
-        _mockUserRepository.Setup(x => x.GetUserWithIdPasswordAsync(It.IsAny<string>(), It.IsAny<string>()))
-            .ReturnsAsync(new User());
-    
+        
         // Act
-        var result = await _authenticationService.TryLoginAsync(request);
+        var result = await authenticationService.TryLoginAsync(request);
     
         // Assert
+        result.Should().NotBeNull();
         result.Result.Should().Be(EnumResponseResult.Success);
+        result.IsAuthenticated.Should().BeTrue();
     }
     
     /// <summary>

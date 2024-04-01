@@ -32,4 +32,15 @@ public interface ISignInService<in TUser> where TUser : User
     /// <param name="httpContext">The <see cref="T:System.Security.Claims.ClaimsPrincipal" /> instance.</param>
     /// <returns>True if the user is logged in with identity.</returns>
     Task<Response> IsSignedIn(HttpContext httpContext);
+
+
+    /// <summary>
+    /// Attempts to sign in the specified <paramref name="userName" /> and <paramref name="password" /> combination
+    /// as an asynchronous operation.
+    /// </summary>
+    /// <param name="userName">The user name to sign in.</param>
+    /// <param name="password">The password to attempt to sign in with.</param>
+    /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
+    /// <param name="lockoutOnFailure">Flag indicating if the user account should be locked if the sign in fails.</param>
+    Task<Response> PasswordSignInAsync(string userName,string password,bool isPersistent,bool lockoutOnFailure);
 }
