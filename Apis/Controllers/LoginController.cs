@@ -1,11 +1,8 @@
-using System.Transactions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models.Common.Enums;
 using Models.DataModels;
 using Models.Requests.Login;
 using Models.Responses;
-using Models.Responses.Users;
 using Providers.Services;
 
 namespace Apis.Controllers;
