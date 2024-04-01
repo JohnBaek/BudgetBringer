@@ -30,17 +30,17 @@ public class UserService : IUserService
     /// <summary>
     /// 사인인 매니저 
     /// </summary>
-    private readonly ISignInService<User> _signInService;
+    private readonly ISignInService<DbModelUser> _signInService;
 
     /// <summary>
     /// 유저 매니저
     /// </summary>
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<DbModelUser> _userManager;
 
     /// <summary>
     /// 역할 매니저
     /// </summary>
-    private readonly RoleManager<Role> _roleManager;
+    private readonly RoleManager<DbModelRole> _roleManager;
 
     /// <summary>
     /// 생성자
@@ -53,9 +53,9 @@ public class UserService : IUserService
     public UserService( 
         ILogger<AuthenticationService> logger
         , IUserRepository userRepository
-        , ISignInService<User> signInService
-        , UserManager<User> userManager
-        , RoleManager<Role> roleManager)
+        , ISignInService<DbModelUser> signInService
+        , UserManager<DbModelUser> userManager
+        , RoleManager<DbModelRole> roleManager)
     {
         _logger = logger;
         _userRepository = userRepository;
@@ -74,7 +74,7 @@ public class UserService : IUserService
     
         try
         {
-            User? user = await _userManager.GetUserAsync(httpContext.User);
+            DbModelUser? user = await _userManager.GetUserAsync(httpContext.User);
 
             // 세션에 사용자 정보가 없는경우 
             if (user == null)
@@ -83,10 +83,10 @@ public class UserService : IUserService
             // 반환할 유저 역할정보
             List<ResponseUserRole> roles = new List<ResponseUserRole>();
             
-            // 로그인한 사용자의 전체 Role 을 조회한다.
+            // 로그인한 사용자의 전체 DbModelRole 을 조회한다.
             IList<string> userRoles = await _userManager.GetRolesAsync(user);
             
-            // 사용자의 전체 Role 에 대해 처리한다.
+            // 사용자의 전체 DbModelRole 에 대해 처리한다.
             foreach (string userRole in userRoles)
             {
                 ResponseUserRole add = new ResponseUserRole
@@ -149,14 +149,14 @@ public class UserService : IUserService
     //
     //     try
     //     {
-    //         User? user = await _userManager.GetUserAsync(httpContext.User);
+    //         DbModelUser? dbModelUser = await _userManager.GetUserAsync(httpContext.DbModelUser);
     //
     //         // 세션에 사용자 정보가 없는경우 
-    //         if (user == null)
+    //         if (dbModelUser == null)
     //             return result;
     //
     //         // 사용자의 모든 Claim을 가져온다.
-    //         IList<Claim> claims = await _userManager.GetClaimsAsync(user);
+    //         IList<Claim> claims = await _userManager.GetClaimsAsync(dbModelUser);
     //
     //         // 반환할 사용자의 claim 정보 
     //         List<ResponseUserClaim> items = new List<ResponseUserClaim>();

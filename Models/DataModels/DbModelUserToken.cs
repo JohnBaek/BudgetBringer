@@ -7,10 +7,10 @@ namespace Models.DataModels;
 /// 사용자 토큰
 /// </summary>
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-public class UserToken : IdentityUserToken<Guid>
+public class DbModelUserToken : IdentityUserToken<Guid>
 {
     /// <summary>
     /// 유저
     /// </summary>
-    public virtual User User { get; init; } = null!;
+    public virtual DbModelUser DbModelUser { get; init; } = null!;
 }

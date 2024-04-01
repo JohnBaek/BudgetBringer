@@ -9,7 +9,7 @@ namespace Models.DataModels;
 /// </summary>
 [Table("BusinessUnits")]
 [Index(nameof(Name) , IsUnique = true)]
-public class BusinessUnit
+public class DbModelBusinessUnit
 {
     /// <summary>
     /// 아이디 

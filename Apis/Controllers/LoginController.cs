@@ -24,7 +24,7 @@ public class LoginController : Controller
     /// 사인인 서비스
     /// </summary>
     /// <returns></returns>
-    private readonly ISignInService<User> _signInService;
+    private readonly ISignInService<DbModelUser> _signInService;
 
     /// <summary>
     /// 생성자
@@ -33,7 +33,7 @@ public class LoginController : Controller
     /// <param name="signInService">사인인 서비스</param>
     public LoginController(
           IAuthenticationService authenticationService
-        , ISignInService<User> signInService) 
+        , ISignInService<DbModelUser> signInService) 
     {
         _authenticationService = authenticationService;
         _signInService = signInService;

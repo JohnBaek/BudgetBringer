@@ -7,8 +7,8 @@ namespace Models.DataModels;
 /// <summary>
 /// 액션 로그 
 /// </summary>
-[Table("LogAction")]
-public class LogAction
+[Table("DbModelLogAction")]
+public class DbModelLogAction
 {
     /// <summary>
     /// 아이디 값 
@@ -26,7 +26,7 @@ public class LogAction
     /// 등록자 아이디 
     /// </summary>
     [Required]
-    [ForeignKey("User")]
+    [ForeignKey("DbModelUser")]
     public Guid RegId { get; init;}
 
     /// <summary>
@@ -46,5 +46,5 @@ public class LogAction
     /// <summary>
     /// 사용자 정보
     /// </summary>
-    public virtual required User User { get; init;} 
+    public virtual required DbModelUser DbModelUser { get; init;} 
 }

@@ -8,15 +8,15 @@ namespace Models.DataModels;
 /// 사용자 역할 정보
 /// </summary>
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-public class UserRole : IdentityUserRole<Guid>
+public class DbModelUserRole : IdentityUserRole<Guid>
 {
     /// <summary>
     /// 사용자 정보 
     /// </summary>
-    public User? User { get; init; }
+    public DbModelUser? User { get; init; }
     
     /// <summary>
     /// 역할 정보 
     /// </summary>
-    public Role? Role { get; init; }
+    public DbModelRole? Role { get; init; }
 }

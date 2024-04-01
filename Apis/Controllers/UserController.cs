@@ -30,7 +30,7 @@ public class UserController : Controller
     /// 사인인 서비스
     /// </summary>
     /// <returns></returns>
-    private readonly ISignInService<User> _signInService;
+    private readonly ISignInService<DbModelUser> _signInService;
 
     /// <summary>
     /// 생성자
@@ -40,7 +40,7 @@ public class UserController : Controller
     /// <param name="userService">유저 서비스</param>
     public UserController(
         IAuthenticationService authenticationService
-        , ISignInService<User> signInService, IUserService userService) 
+        , ISignInService<DbModelUser> signInService, IUserService userService) 
     {
         _authenticationService = authenticationService;
         _signInService = signInService;

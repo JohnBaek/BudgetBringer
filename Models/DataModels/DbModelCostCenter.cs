@@ -1,20 +1,24 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Models.DataModels;
 
 /// <summary>
-/// 섹터 정보 
+/// 코스트 센터 
 /// </summary>
-public class Sector
+[Table("CostCenters")]
+[Index(nameof(Value), IsUnique = true)]
+public class DbModelCostCenter
 {
     /// <summary>
-    /// 섹터 아이디 
+    /// 아이디 
     /// </summary>
     [Key]
     public Guid Id { get; init; }
-
+    
     /// <summary>
-    /// 섹터 값
+    /// DbModelCostCenter 값 (유니크)
     /// </summary>
     [Required]
     public int Value { get; init; }

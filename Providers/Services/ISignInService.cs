@@ -9,7 +9,7 @@ namespace Providers.Services;
 /// <summary>
 /// SignInManager<TUser> 래핑 클래스
 /// </summary>
-public interface ISignInService<in TUser> where TUser : User
+public interface ISignInService<in TUser> where TUser : DbModelUser
 {
     /// <summary>
     /// 사인 아웃
@@ -20,9 +20,9 @@ public interface ISignInService<in TUser> where TUser : User
     /// <summary>
     /// 유저정보로 강제로그인
     /// </summary>
-    /// <param name="user">The user to sign-in.</param>
+    /// <param name="user">The dbModelUser to sign-in.</param>
     /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
-    /// <param name="authenticationMethod">Name of the method used to authenticate the user.</param>
+    /// <param name="authenticationMethod">Name of the method used to authenticate the dbModelUser.</param>
     /// <returns>The task object representing the asynchronous operation.</returns>
     Task SignInAsync(TUser user, bool isPersistent, string? authenticationMethod = null);
 
@@ -30,7 +30,7 @@ public interface ISignInService<in TUser> where TUser : User
     /// Returns true if the principal has an identity with the application cookie identity
     /// </summary>
     /// <param name="httpContext">The <see cref="T:System.Security.Claims.ClaimsPrincipal" /> instance.</param>
-    /// <returns>True if the user is logged in with identity.</returns>
+    /// <returns>True if the dbModelUser is logged in with identity.</returns>
     Task<Response> IsSignedIn(HttpContext httpContext);
 
 
@@ -38,9 +38,9 @@ public interface ISignInService<in TUser> where TUser : User
     /// Attempts to sign in the specified <paramref name="userName" /> and <paramref name="password" /> combination
     /// as an asynchronous operation.
     /// </summary>
-    /// <param name="userName">The user name to sign in.</param>
+    /// <param name="userName">The dbModelUser name to sign in.</param>
     /// <param name="password">The password to attempt to sign in with.</param>
     /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
-    /// <param name="lockoutOnFailure">Flag indicating if the user account should be locked if the sign in fails.</param>
+    /// <param name="lockoutOnFailure">Flag indicating if the dbModelUser account should be locked if the sign in fails.</param>
     Task<Response> PasswordSignInAsync(string userName,string password,bool isPersistent,bool lockoutOnFailure);
 }

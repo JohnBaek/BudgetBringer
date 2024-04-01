@@ -28,7 +28,7 @@ public class AuthenticationService : IAuthenticationService
     /// <summary>
     /// 사인인 매니저 
     /// </summary>
-    private readonly ISignInService<User> _signInService;
+    private readonly ISignInService<DbModelUser> _signInService;
 
     /// <summary>
     /// 생성자
@@ -36,7 +36,7 @@ public class AuthenticationService : IAuthenticationService
     /// <param name="logger">로거</param>
     /// <param name="userRepository">사용자 리파지토리</param>
     /// <param name="signInService"></param>
-    public AuthenticationService( ILogger<AuthenticationService> logger, IUserRepository userRepository, ISignInService<User> signInService)
+    public AuthenticationService( ILogger<AuthenticationService> logger, IUserRepository userRepository, ISignInService<DbModelUser> signInService)
     {
         _logger = logger;
         _userRepository = userRepository;
@@ -76,7 +76,7 @@ public class AuthenticationService : IAuthenticationService
                 };
             
             // 사용자를 가져온다.
-            User? loginUser = await _userRepository.GetUserWithIdPasswordAsync(request.LoginId, request.Password);
+            DbModelUser? loginUser = await _userRepository.GetUserWithIdPasswordAsync(request.LoginId, request.Password);
             
             // 사용자가 없는경우
             if(loginUser == null)

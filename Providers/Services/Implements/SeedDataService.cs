@@ -49,14 +49,14 @@ public class SeedDataService : IHostedService
         Console.WriteLine("[Migration End]".WithDateTime());    
         
         
-        Console.WriteLine("[User and Role Initialize Start]".WithDateTime());    
+        Console.WriteLine("[DbModelUser and DbModelRole Initialize Start]".WithDateTime());    
         // 필요한 매니저 서비스를 DI 한다.
-        UserManager<User> userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-        RoleManager<Role> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+        UserManager<DbModelUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<DbModelUser>>();
+        RoleManager<DbModelRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<DbModelRole>>();
             
         // 관리자 , 및 유저에 대한 권한을 생성한다.
         await CreateRoleAsync(roleManager,"Admin");
-        await CreateRoleAsync(roleManager,"User");
+        await CreateRoleAsync(roleManager,"DbModelUser");
         
         // 상세 관리자 Claim 을 설정한다.
         await CreateRoleClaimAdminAsync(dbContext,roleManager);
@@ -66,11 +66,11 @@ public class SeedDataService : IHostedService
         // 관리자를 생성한다.
         await CreateUserAsync(userManager: userManager , role:"Admin" , loginId:"admin" , displayName:"관리자", password:"Qkfka!@12" );
         // 사용자를 생성한다.
-        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"commonUser" , displayName:"일반 사용자", password:"Qkfka!@12" );
+        await CreateUserAsync(userManager: userManager , role:"DbModelUser" , loginId:"commonUser" , displayName:"일반 사용자", password:"Qkfka!@12" );
         // 특수 사용자를 생성한다. ( ProcessResult.All 전체 권한 추가 )
-        await CreateUserWithSpecifyAsync(userManager , role:"User" , loginId:"sgs" , displayName:"SGS", password:"Qkfka!212", targetPermission: "ProcessResult.All" );
+        await CreateUserWithSpecifyAsync(userManager , role:"DbModelUser" , loginId:"sgs" , displayName:"SGS", password:"Qkfka!212", targetPermission: "ProcessResult.All" );
         
-        Console.WriteLine("[User and Role Initialize End]".WithDateTime());    
+        Console.WriteLine("[DbModelUser and DbModelRole Initialize End]".WithDateTime());    
     }
 
 
@@ -79,11 +79,11 @@ public class SeedDataService : IHostedService
     /// </summary>
     /// <param name="dbContext">데이터베이스 컨텍스트</param>
     /// <param name="roleManager">역할 매니저</param>
-    private async Task CreateRoleClaimAdminAsync(AnalysisDbContext dbContext, RoleManager<Role> roleManager)
+    private async Task CreateRoleClaimAdminAsync(AnalysisDbContext dbContext, RoleManager<DbModelRole> roleManager)
     {
         try
         {
-            Role? role = await roleManager.FindByNameAsync("Admin");
+            DbModelRole? role = await roleManager.FindByNameAsync("Admin");
             if (role == null)
             {
                 Console.WriteLine("Admin 역할이 존재하지 않습니다.");
@@ -91,27 +91,27 @@ public class SeedDataService : IHostedService
             }
             
             // 상세 역할 지정
-            var requiredClaims = new List<RoleClaim>
+            var requiredClaims = new List<DbModelRoleClaim>
             {
                 // 공통 코드 관리
-                new() { Role = role,  Id = 11000 , ClaimType = "Permission", ClaimValue = "CommonCode", DisplayName = "공통코드", Description ="공통코드"},
-                new() { Role = role,  Id = 11001 , ClaimType = "Permission", ClaimValue = "CommonCode.All",DisplayName = "공통코드 전체권한", Description ="공통코드 전체권한"},
+                new() { DbModelRole = role,  Id = 11000 , ClaimType = "Permission", ClaimValue = "CommonCode", DisplayName = "공통코드", Description ="공통코드"},
+                new() { DbModelRole = role,  Id = 11001 , ClaimType = "Permission", ClaimValue = "CommonCode.All",DisplayName = "공통코드 전체권한", Description ="공통코드 전체권한"},
                 
                 // 예산 입력
-                new() { Role = role,  Id = 12000 , ClaimType = "Permission", ClaimValue = "BudgetPlan" , DisplayName = "예산계획" , Description = "예산계획"},
-                new() { Role = role,  Id = 12001 , ClaimType = "Permission", ClaimValue = "BudgetPlan.All",DisplayName = "예산계획 전체권한" , Description = "전체권한"},
+                new() { DbModelRole = role,  Id = 12000 , ClaimType = "Permission", ClaimValue = "BudgetPlan" , DisplayName = "예산계획" , Description = "예산계획"},
+                new() { DbModelRole = role,  Id = 12001 , ClaimType = "Permission", ClaimValue = "BudgetPlan.All",DisplayName = "예산계획 전체권한" , Description = "전체권한"},
                 
                 // 예산 승인
-                new() { Role = role,  Id = 13000 , ClaimType = "Permission", ClaimValue = "BudgetApproved" , DisplayName = "예산승인", Description = "예산승인"},
-                new() { Role = role,  Id = 13001 , ClaimType = "Permission", ClaimValue = "BudgetApproved.All",DisplayName = "예산승인 전체권한" , Description = "전체권한"},
+                new() { DbModelRole = role,  Id = 13000 , ClaimType = "Permission", ClaimValue = "DbModelBudgetApproved" , DisplayName = "예산승인", Description = "예산승인"},
+                new() { DbModelRole = role,  Id = 13001 , ClaimType = "Permission", ClaimValue = "DbModelBudgetApproved.All",DisplayName = "예산승인 전체권한" , Description = "전체권한"},
                 
                 // 액션 로그
-                new() { Role = role,  Id = 14000 , ClaimType = "Permission", ClaimValue = "LogAction", DisplayName = "액션 로그", Description = "액션 로그"},
-                new() { Role = role,  Id = 14001 , ClaimType = "Permission", ClaimValue = "LogAction.All",DisplayName = "액션로그 전체권한" , Description = "액션로그 전체권한"},
+                new() { DbModelRole = role,  Id = 14000 , ClaimType = "Permission", ClaimValue = "DbModelLogAction", DisplayName = "액션 로그", Description = "액션 로그"},
+                new() { DbModelRole = role,  Id = 14001 , ClaimType = "Permission", ClaimValue = "DbModelLogAction.All",DisplayName = "액션로그 전체권한" , Description = "액션로그 전체권한"},
                 
                 // 결과 확인
-                new() { Role = role,  Id = 15000 , ClaimType = "Permission", ClaimValue = "ProcessResult", DisplayName = "결과 확인", Description = "결과 확인"},
-                new() { Role = role,  Id = 15001 , ClaimType = "Permission", ClaimValue = "ProcessResult.All",DisplayName = "결과확인 전체권한" , Description = "결과확인 전체권한"},
+                new() { DbModelRole = role,  Id = 15000 , ClaimType = "Permission", ClaimValue = "ProcessResult", DisplayName = "결과 확인", Description = "결과 확인"},
+                new() { DbModelRole = role,  Id = 15001 , ClaimType = "Permission", ClaimValue = "ProcessResult.All",DisplayName = "결과확인 전체권한" , Description = "결과확인 전체권한"},
             };
             
             // 모든 Claim 에 대해 처리한다.
@@ -147,11 +147,11 @@ public class SeedDataService : IHostedService
     /// </summary>
     /// <param name="dbContext"></param>
     /// <param name="roleManager"></param>
-    private async Task CreateRoleClaimUserAsync(AnalysisDbContext dbContext, RoleManager<Role> roleManager)
+    private async Task CreateRoleClaimUserAsync(AnalysisDbContext dbContext, RoleManager<DbModelRole> roleManager)
     {
         try
         {
-            Role? role = await roleManager.FindByNameAsync("User");
+            DbModelRole? role = await roleManager.FindByNameAsync("DbModelUser");
             if (role == null)
             {
                 Console.WriteLine("Admin 역할이 존재하지 않습니다.");
@@ -159,10 +159,10 @@ public class SeedDataService : IHostedService
             }
             
             // 상세 역할 지정
-            var requiredClaims = new List<RoleClaim>
+            var requiredClaims = new List<DbModelRoleClaim>
             {
                 // 결과 확인
-                new() { Role = role,  Id = 15000 , ClaimType = "Permission", ClaimValue = "ProcessResult", DisplayName = "결과 확인", Description = "결과 확인"},
+                new() { DbModelRole = role,  Id = 15000 , ClaimType = "Permission", ClaimValue = "ProcessResult", DisplayName = "결과 확인", Description = "결과 확인"},
             };
             
             // 모든 Claim 에 대해 처리한다.
@@ -208,10 +208,10 @@ public class SeedDataService : IHostedService
     /// <param name="loginId">로그인아이디</param>
     /// <param name="displayName">사용자명</param>
     /// <param name="password">패스워드</param>
-    private async Task CreateUserAsync(UserManager<User> userManager,  string role,string loginId, string displayName ,string password)
+    private async Task CreateUserAsync(UserManager<DbModelUser> userManager,  string role,string loginId, string displayName ,string password)
     {
         // 생성될 유저 정보
-        User adminUser = new User{ 
+        DbModelUser adminDbModelUser = new DbModelUser{ 
             LoginId = loginId
             , Id = Guid.NewGuid()
             , UserName = loginId
@@ -221,10 +221,10 @@ public class SeedDataService : IHostedService
         };
             
         // 사용자가 존재하지 않는경우 
-        if (await userManager.FindByNameAsync(adminUser.UserName) == null)
+        if (await userManager.FindByNameAsync(adminDbModelUser.UserName) == null)
         {
-            IdentityResult result = await userManager.CreateAsync(adminUser, password);
-            Console.WriteLine($"[사용자 추가] : 사용자명 - [{adminUser.DisplayName}]".WithDateTime());
+            IdentityResult result = await userManager.CreateAsync(adminDbModelUser, password);
+            Console.WriteLine($"[사용자 추가] : 사용자명 - [{adminDbModelUser.DisplayName}]".WithDateTime());
             
             if (!result.Succeeded)
             {
@@ -235,7 +235,7 @@ public class SeedDataService : IHostedService
                 }
             }
             
-            await userManager.AddToRoleAsync(adminUser, role.ToUpper());
+            await userManager.AddToRoleAsync(adminDbModelUser, role.ToUpper());
         }
     }
 
@@ -249,13 +249,13 @@ public class SeedDataService : IHostedService
     /// <param name="displayName">사용자명</param>
     /// <param name="password">패스워드</param>
     /// <param name="targetPermission">대상 권한</param>
-    private async Task CreateUserWithSpecifyAsync( UserManager<User> userManager, string role, string loginId, string displayName, string password, string targetPermission)
+    private async Task CreateUserWithSpecifyAsync( UserManager<DbModelUser> userManager, string role, string loginId, string displayName, string password, string targetPermission)
     {
         // 기본 사용자를 생성 
         await CreateUserAsync(userManager: userManager, role:role, loginId: loginId, displayName: displayName, password: password);
 
         // 생성된 사용자 정보를 검색
-        User? findUser =  await userManager.FindByNameAsync(loginId);
+        DbModelUser? findUser =  await userManager.FindByNameAsync(loginId);
         
         // 찾은 정보가 없는 경우 
         if (findUser == null)
@@ -280,12 +280,12 @@ public class SeedDataService : IHostedService
     /// </summary>
     /// <param name="roleManager"></param>
     /// <param name="roleName">추가할 역할</param>
-    private async Task CreateRoleAsync( RoleManager<Role> roleManager , string roleName)
+    private async Task CreateRoleAsync( RoleManager<DbModelRole> roleManager , string roleName)
     {
         // 대상 역할이 없는경우 
         if (!await roleManager.RoleExistsAsync(roleName))
         {
-            Role add = new Role
+            DbModelRole add = new DbModelRole
             {
                 Name = roleName,
                 Id = Guid.NewGuid()

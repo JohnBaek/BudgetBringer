@@ -41,32 +41,32 @@ public class ResponseBudgetApproved
     public Guid SectorId { get; init; }
 
     /// <summary>
-    /// BusinessUnit 아이디
+    /// DbModelBusinessUnit 아이디
     /// </summary>
     public Guid BusinessUnitId { get; init; }
     
     /// <summary>
-    /// CostCenter 아이디
+    /// DbModelCostCenter 아이디
     /// </summary>
     public Guid CostCenterId { get; init; }
     
     /// <summary>
-    /// CountryBusinessManager 아이디
+    /// DbModelCountryBusinessManager 아이디
     /// </summary>
     public Guid CountryBusinessManagerId { get; init; }
     
     /// <summary>
-    /// CostCenter 명
+    /// DbModelCostCenter 명
     /// </summary>
     public required string CostCenterName { get; init; } 
 
     /// <summary>
-    /// CountryBusinessManager 명
+    /// DbModelCountryBusinessManager 명
     /// </summary>
     public required string CountryBusinessManagerName { get; init; } 
     
     /// <summary>
-    /// BusinessUnit 명
+    /// DbModelBusinessUnit 명
     /// </summary>
     public required string BusinessUnitName { get; init; }
 

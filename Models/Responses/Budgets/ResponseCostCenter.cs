@@ -11,7 +11,7 @@ public class ResponseCostCenter
     public Guid Id { get; init; }
     
     /// <summary>
-    /// CostCenter 값 (유니크)
+    /// DbModelCostCenter 값 (유니크)
     /// </summary>
     public int Value { get; init; }
     

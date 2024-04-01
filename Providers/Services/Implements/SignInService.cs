@@ -9,18 +9,18 @@ namespace Providers.Services.Implements;
 /// <summary>
 /// SignInManager<TUser> 래핑 클래스 구현체
 /// </summary>
-public class SignInService : ISignInService<User>
+public class SignInService : ISignInService<DbModelUser>
 {
     /// <summary>
     /// 사인인 매니저
     /// </summary>
-    private readonly SignInManager<User> _signInManager;
+    private readonly SignInManager<DbModelUser> _signInManager;
 
     /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="signInManager">사인인 매니저</param>
-    public SignInService(SignInManager<User> signInManager)
+    public SignInService(SignInManager<DbModelUser> signInManager)
     {
         _signInManager = signInManager;
     }
@@ -38,13 +38,13 @@ public class SignInService : ISignInService<User>
     /// <summary>
     /// 유저정보로 강제로그인
     /// </summary>
-    /// <param name="user">The user to sign-in.</param>
+    /// <param name="dbModelUser">The dbModelUser to sign-in.</param>
     /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
-    /// <param name="authenticationMethod">Name of the method used to authenticate the user.</param>
+    /// <param name="authenticationMethod">Name of the method used to authenticate the dbModelUser.</param>
     /// <returns>The task object representing the asynchronous operation.</returns>
-    public async Task SignInAsync(User user, bool isPersistent, string? authenticationMethod = null)
+    public async Task SignInAsync(DbModelUser dbModelUser, bool isPersistent, string? authenticationMethod = null)
     {
-        await _signInManager.SignInAsync(user, isPersistent, authenticationMethod);
+        await _signInManager.SignInAsync(dbModelUser, isPersistent, authenticationMethod);
     }
 
     /// <summary>

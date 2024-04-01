@@ -34,19 +34,19 @@ public class RequestBudgetApproved
     public Guid SectorId { get; init; }
 
     /// <summary>
-    /// BusinessUnit 아이디
+    /// DbModelBusinessUnit 아이디
     /// </summary>
     [Required(ErrorMessage = "비지니스 유닛 정보를 선택해주세요")]
     public Guid BusinessUnitId { get; init; }
     
     /// <summary>
-    /// CostCenter 아이디
+    /// DbModelCostCenter 아이디
     /// </summary>
     [Required(ErrorMessage = "코스트센터 정보를 선택해주세요")]
     public Guid CostCenterId { get; init; }
     
     /// <summary>
-    /// CountryBusinessManager 아이디
+    /// DbModelCountryBusinessManager 아이디
     /// </summary>
     [Required(ErrorMessage = "Country Business Manager 정보를 선택 해주세요")]
     public Guid CountryBusinessManagerId { get; init; }

@@ -5,11 +5,12 @@ using Microsoft.EntityFrameworkCore;
 namespace Models.DataModels;
 
 /// <summary>
-/// 코스트 센터 
+/// CBM 관리 데이터베이스 모델
 /// </summary>
-[Table("CostCenters")]
-[Index(nameof(Value), IsUnique = true)]
-public class CostCenter
+// ReSharper disable ClassWithVirtualMembersNeverInherited.Global
+[Table("CountryBusinessManagers")]
+[Index(nameof(Name), IsUnique = true)]
+public class DbModelCountryBusinessManager
 {
     /// <summary>
     /// 아이디 
@@ -18,11 +19,12 @@ public class CostCenter
     public Guid Id { get; init; }
     
     /// <summary>
-    /// CostCenter 값 (유니크)
+    /// 오너명
     /// </summary>
+    [MaxLength(255)]
     [Required]
-    public int Value { get; init; }
-    
+    public required string Name { get; init; } 
+
     /// <summary>
     /// 등록일 (필수)
     /// </summary>

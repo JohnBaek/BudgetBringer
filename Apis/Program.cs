@@ -29,7 +29,7 @@ public class Program
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
         ConfigureServices(builder.Services , builder.Configuration);
 
-        builder.Services.AddIdentity<User, Role>()
+        builder.Services.AddIdentity<DbModelUser, DbModelRole>()
             .AddEntityFrameworkStores<AnalysisDbContext>()
             .AddDefaultTokenProviders();
 
@@ -115,7 +115,7 @@ public class Program
         // DI 추가
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
-        services.AddScoped<ISignInService<User>, SignInService>();
+        services.AddScoped<ISignInService<DbModelUser>, SignInService>();
         services.AddScoped<IUserService, UserService>();
     }
     
@@ -135,11 +135,11 @@ public class Program
     //         dbContext.Database.Migrate();
     //         
     //         // "관리자" 계정이 존재하지 않는 경우
-    //         User? admin = dbContext.Users.FirstOrDefault(i => i.LoginId == "admin");
+    //         DbModelUser? admin = dbContext.Users.FirstOrDefault(i => i.LoginId == "admin");
     //         if (admin == null)
     //         {
     //             // 관리자 계정을 생성한다.
-    //             admin = new User()
+    //             admin = new DbModelUser()
     //             {
     //                 Id = Guid.Parse("fb5c2b27-8f0e-4789-8e6b-03ec94327be8")  ,
     //                 NormalizedUserName = "관리자" ,
@@ -164,12 +164,12 @@ public class Program
     //         }
     //         
     //         // 관리자 권한 정보를 가져온다.
-    //         Role? adminRole = dbContext.Roles.FirstOrDefault(i => i.Name != null && i.Name.ToLower() == "administrator");
+    //         DbModelRole? adminRole = dbContext.Roles.FirstOrDefault(i => i.Name != null && i.Name.ToLower() == "administrator");
     //         
     //         // 관리자 권한 정보가 없는 경우
     //         if (adminRole == null)
     //         {
-    //             adminRole = new Role()
+    //             adminRole = new DbModelRole()
     //             {
     //                 Id = Guid.Parse("6cbe5f02-dec2-44d9-a1ec-1c6590a3166b"),
     //                 Name = "Administrator",
@@ -182,16 +182,16 @@ public class Program
     //         
     //         
     //         // 사용자 권한 정보를 가져온다.
-    //         Role? userRole = dbContext.Roles.FirstOrDefault(i => i.Name != null && i.Name.ToLower() == "user");
+    //         DbModelRole? userRole = dbContext.Roles.FirstOrDefault(i => i.Name != null && i.Name.ToLower() == "dbModelUser");
     //         
     //         // 관리자 권한 정보가 없는 경우
     //         if (userRole == null)
     //         {
-    //             userRole = new Role()
+    //             userRole = new DbModelRole()
     //             {
     //                 Id = Guid.Parse("5febd9ce-ac13-4089-b2af-cf9d51964b53"),
-    //                 Name = "User",
-    //                 NormalizedName = "User"
+    //                 Name = "DbModelUser",
+    //                 NormalizedName = "DbModelUser"
     //             };
     //         
     //             dbContext.Add(userRole);
@@ -201,7 +201,7 @@ public class Program
     //         // 사용자가 관리자 귄한을 쥐고 있지 않은 경우 
     //         if (!dbContext.UserRoles.Any(i => i.RoleId.ToString() == adminRole.Id.ToString() && i.UserId.ToString() == admin.Id.ToString()))
     //         {
-    //             UserRole addUserRole = new UserRole()
+    //             DbModelUserRole addUserRole = new DbModelUserRole()
     //             {
     //                 UserId = admin.Id ,
     //                 RoleId = adminRole.Id

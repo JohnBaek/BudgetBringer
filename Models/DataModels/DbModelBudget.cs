@@ -8,7 +8,7 @@ namespace Models.DataModels;
 /// </summary>
 [Table("Budgets")]
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-public partial class Budget
+public partial class DbModelBudget
 {
     /// <summary>
     /// 예산 모델 아이디 
@@ -60,41 +60,41 @@ public partial class Budget
     public Guid SectorId { get; init; }
 
     /// <summary>
-    /// BusinessUnit 아이디
+    /// DbModelBusinessUnit 아이디
     /// </summary>
-    [ForeignKey(nameof(BusinessUnit))]
+    [ForeignKey(nameof(DbModelBusinessUnit))]
     public Guid BusinessUnitId { get; init; }
     
     
     /// <summary>
-    /// CostCenter 아이디
+    /// DbModelCostCenter 아이디
     /// </summary>
-    [ForeignKey(nameof(CostCenter))]
+    [ForeignKey(nameof(DbModelCostCenter))]
     public Guid CostCenterId { get; init; }
 
     
     /// <summary>
-    /// CountryBusinessManager 아이디
+    /// DbModelCountryBusinessManager 아이디
     /// </summary>
-    [ForeignKey(nameof(CountryBusinessManager))]
+    [ForeignKey(nameof(DbModelCountryBusinessManager))]
     public Guid CountryBusinessManagerId { get; init; }
     
     /// <summary>
-    /// CostCenter 명
+    /// DbModelCostCenter 명
     /// </summary>
     [MaxLength(255)]
     [Required]
     public required string CostCenterName { get; init; } 
 
     /// <summary>
-    /// CountryBusinessManager 명
+    /// DbModelCountryBusinessManager 명
     /// </summary>
     [MaxLength(255)]
     [Required]
     public required string CountryBusinessManagerName { get; init; } 
     
     /// <summary>
-    /// BusinessUnit 명
+    /// DbModelBusinessUnit 명
     /// </summary>
     [MaxLength(255)]
     [Required]
@@ -120,20 +120,20 @@ public partial class Budget
     /// <summary>
     /// 섹터
     /// </summary>
-    public virtual required Sector? Sector { get; init; }
+    public virtual required DbModelSector? Sector { get; init; }
     
     /// <summary>
     /// 비지니스 유닛
     /// </summary> 
-    public virtual required BusinessUnit BusinessUnit { get; init; }
+    public virtual required DbModelBusinessUnit DbModelBusinessUnit { get; init; }
     
     /// <summary>
     /// 코스트 센터
     /// </summary>
-    public virtual required CostCenter CostCenter { get; init; }
+    public virtual required DbModelCostCenter DbModelCostCenter { get; init; }
     
     /// <summary>
     /// 컨트리 비지니스 매니저
     /// </summary>
-    public virtual required CountryBusinessManager CountryBusinessManager { get; init; }
+    public virtual required DbModelCountryBusinessManager DbModelCountryBusinessManager { get; init; }
 }

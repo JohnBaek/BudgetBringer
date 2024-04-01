@@ -25,12 +25,12 @@ public class UserRepository : IUserRepository
     /// <summary>
     /// 사이닝 매니저
     /// </summary>
-    private readonly SignInManager<User> _signInManager;
+    private readonly SignInManager<DbModelUser> _signInManager;
 
     /// <summary>
     /// 사용자 매니저
     /// </summary>
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<DbModelUser> _userManager;
 
     /// <summary>
     /// 생성자
@@ -42,8 +42,8 @@ public class UserRepository : IUserRepository
     public UserRepository(
           AnalysisDbContext dbContext
         , ILogger<UserRepository> logger
-        , SignInManager<User> signInManager
-        , UserManager<User> userManager)
+        , SignInManager<DbModelUser> signInManager
+        , UserManager<DbModelUser> userManager)
     {
         _dbContext = dbContext;
         _logger = logger;
@@ -78,14 +78,14 @@ public class UserRepository : IUserRepository
     /// <param name="loginId">로그인 아이디</param>
     /// <param name="password">패스워드 (SHA 256 인크립트 된 원본)</param>
     /// <returns>결과</returns>
-    public async Task<User?> GetUserWithIdPasswordAsync(string loginId, string password)
+    public async Task<DbModelUser?> GetUserWithIdPasswordAsync(string loginId, string password)
     {
-        User? result;
+        DbModelUser? result;
     
         try
         {
             // 사용자의 정보를 찾는다.
-            User? findUser = await _dbContext.Users.AsNoTracking()
+            DbModelUser? findUser = await _dbContext.Users.AsNoTracking()
                 .Where(i => i.LoginId == loginId).FirstOrDefaultAsync();
                 
             // 찾을수 없는경우 

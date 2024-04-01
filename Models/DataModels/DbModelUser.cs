@@ -10,7 +10,7 @@ namespace Models.DataModels;
 /// Identity 사용자 정보 
 /// </summary>
 [Index(nameof(LoginId), IsUnique = true)]
-public class User : IdentityUser<Guid>
+public class DbModelUser : IdentityUser<Guid>
 {
     /// <summary>
     /// 로그인 아이디 
@@ -22,7 +22,7 @@ public class User : IdentityUser<Guid>
     /// <summary>
     /// 컨트리 비지니스 매니저 아이디 
     /// </summary>
-    [ForeignKey(nameof(CountryBusinessManager))]
+    [ForeignKey(nameof(DbModelCountryBusinessManager))]
     public Guid? CountryBusinessManagerId { get; init; }
 
     /// <summary>
@@ -40,25 +40,25 @@ public class User : IdentityUser<Guid>
     /// <summary>
     /// 사용자 클레임 정보
     /// </summary>
-    public virtual ICollection<UserClaim>? UserClaims { get; init; }
+    public virtual ICollection<DbModelUserClaim>? UserClaims { get; init; }
     
     /// <summary>
     /// 사용자 로그인 정보
     /// </summary>
-    public virtual ICollection<UserLogin>? UserLogins { get; init; }
+    public virtual ICollection<DbModelUserLogin>? UserLogins { get; init; }
     
     /// <summary>
     /// 사용자 토큰정보
     /// </summary>
-    public virtual ICollection<UserToken>? UserTokens { get; init; }
+    public virtual ICollection<DbModelUserToken>? UserTokens { get; init; }
     
     /// <summary>
     /// 사용자 역할 정보 
     /// </summary>
-    public virtual ICollection<UserRole>? UserRoles { get; init; }
+    public virtual ICollection<DbModelUserRole>? UserRoles { get; init; }
     
     /// <summary>
     /// 사용자 액션 로그 정보
     /// </summary>
-    public virtual ICollection<LogAction>? LogActions { get; init; } 
+    public virtual ICollection<DbModelLogAction>? LogActions { get; init; } 
 }

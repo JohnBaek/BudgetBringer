@@ -8,12 +8,12 @@ namespace Models.DataModels;
 /// 역할 Claim
 /// </summary>
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-public class RoleClaim : IdentityRoleClaim<Guid>
+public class DbModelRoleClaim : IdentityRoleClaim<Guid>
 {
     /// <summary>
     /// 역할 정보
     /// </summary>
-    public virtual Role Role { get; init; } = null!;
+    public virtual DbModelRole DbModelRole { get; init; } = null!;
 
     /// <summary>
     /// 타입정보 

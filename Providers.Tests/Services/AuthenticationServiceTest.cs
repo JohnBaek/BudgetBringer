@@ -41,13 +41,13 @@ public class AuthenticationServiceTest
         // Arranges
         var mockLogger = new Mock<ILogger<AuthenticationService>>();
         var mockUserRepository = new Mock<IUserRepository>();
-        var mockSignInManager = new Mock<ISignInService<User>>();
+        var mockSignInManager = new Mock<ISignInService<DbModelUser>>();
     
         // AuthenticationService 인스턴스 생성
         var authenticationService = new AuthenticationService(mockLogger.Object, mockUserRepository.Object, mockSignInManager.Object);
     
         // 요청 정보 세팅
-        var user = new User
+        var user = new DbModelUser
         {
             LoginId = "testUser",
             PasswordHash = "password"
@@ -56,7 +56,7 @@ public class AuthenticationServiceTest
         // 사용자 존재 여부 및 사용자 정보 가져오기 모킹
         mockUserRepository.Setup(x => x.ExistUserAsync(user.LoginId)).ReturnsAsync(true);
         mockUserRepository.Setup(x => x.GetUserWithIdPasswordAsync(user.LoginId, user.PasswordHash))
-            .ReturnsAsync(new User { LoginId = user.LoginId , PasswordHash = "password"});
+            .ReturnsAsync(new DbModelUser { LoginId = user.LoginId , PasswordHash = "password"});
         
         // 로그인 성공 시나리오 설정
         mockSignInManager.Setup(x => x.PasswordSignInAsync(user.LoginId, user.PasswordHash, false, false))
@@ -85,7 +85,7 @@ public class AuthenticationServiceTest
     {
         // Arranges
         var mockLogger = new Mock<ILogger<AuthenticationService>>();
-        var mockSignInManager = new Mock<ISignInService<User>>();
+        var mockSignInManager = new Mock<ISignInService<DbModelUser>>();
         _mockUserRepository = new Mock<IUserRepository>();
         _authenticationService = new AuthenticationService(mockLogger.Object, _mockUserRepository.Object , mockSignInManager.Object);
         
@@ -115,7 +115,7 @@ public class AuthenticationServiceTest
     {
         // Arranges
         var mockLogger = new Mock<ILogger<AuthenticationService>>();
-        var mockSignInManager = new Mock<ISignInService<User>>();
+        var mockSignInManager = new Mock<ISignInService<DbModelUser>>();
         _mockUserRepository = new Mock<IUserRepository>();
         _authenticationService = new AuthenticationService(mockLogger.Object, _mockUserRepository.Object , mockSignInManager.Object);
         
@@ -127,7 +127,7 @@ public class AuthenticationServiceTest
     
         // 사용자는 존재하지만, 비밀번호가 틀렸을 때 null을 반환하도록 설정
         _mockUserRepository.Setup(x => x.ExistUserAsync(It.IsAny<string>())).ReturnsAsync(true);
-        _mockUserRepository.Setup(x => x.GetUserWithIdPasswordAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync((User)null);
+        _mockUserRepository.Setup(x => x.GetUserWithIdPasswordAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync((DbModelUser)null);
     
         // Act
         var result = await _authenticationService.TryLoginAsync(request);

@@ -8,37 +8,37 @@ namespace Models.DataModels;
 /// <summary>
 /// DB 컨텍스트
 /// </summary>
-public partial class AnalysisDbContext : IdentityDbContext<User, Role, Guid , UserClaim , UserRole , UserLogin , RoleClaim, UserToken>
+public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelRole, Guid , DbModelUserClaim , DbModelUserRole , DbModelUserLogin , DbModelRoleClaim, DbModelUserToken>
 {
     /// <summary>
     /// 예산 승인
     /// </summary>
-    public required DbSet<BudgetApproved> BudgetApproved {get;init;}
+    public required DbSet<DbModelBudgetApproved> BudgetApproved {get;init;}
     
     /// <summary>
     /// 예산
     /// </summary>
-    public required DbSet<Budget> Budgets {get;init;}
+    public required DbSet<DbModelBudget> Budgets {get;init;}
     
     /// <summary>
     /// 비지니스 유닛
     /// </summary>
-    public required DbSet<BusinessUnit> BusinessUnits {get;init;}
+    public required DbSet<DbModelBusinessUnit> BusinessUnits {get;init;}
     
     /// <summary>
     /// 코스트센터
     /// </summary>
-    public required DbSet<CostCenter> CostCenters {get;init;}
+    public required DbSet<DbModelCostCenter> CostCenters {get;init;}
     
     /// <summary>
     /// 컨트리 비지니스 매니저
     /// </summary>
-    public required DbSet<CountryBusinessManager> CountryBusinessManagers {get;init;}
+    public required DbSet<DbModelCountryBusinessManager> CountryBusinessManagers {get;init;}
     
     /// <summary>
     /// 로그액션
     /// </summary>
-    public required DbSet<LogAction> LogActions {get;init;}
+    public required DbSet<DbModelLogAction> LogActions {get;init;}
     
     /// <summary>
     /// 생성자
@@ -56,58 +56,58 @@ public partial class AnalysisDbContext : IdentityDbContext<User, Role, Guid , Us
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<BudgetApproved>(entity =>{
-            entity.ToTable("BudgetApproved");
+        modelBuilder.Entity<DbModelBudgetApproved>(entity =>{
+            entity.ToTable("DbModelBudgetApproved");
         });
-        modelBuilder.Entity<Budget>(entity =>{
+        modelBuilder.Entity<DbModelBudget>(entity =>{
             entity.ToTable("Budgets");
         });
-        modelBuilder.Entity<BusinessUnit>(entity =>{
+        modelBuilder.Entity<DbModelBusinessUnit>(entity =>{
             entity.ToTable("BusinessUnits");
         });
-        modelBuilder.Entity<CostCenter>(entity =>{
+        modelBuilder.Entity<DbModelCostCenter>(entity =>{
             entity.ToTable("CostCenters");
         });
-        modelBuilder.Entity<CountryBusinessManager>(entity =>{
+        modelBuilder.Entity<DbModelCountryBusinessManager>(entity =>{
             entity.ToTable("CountryBusinessManagers");
         });
-        modelBuilder.Entity<LogAction>(entity =>{
+        modelBuilder.Entity<DbModelLogAction>(entity =>{
             entity.ToTable("LogActions");
         });
-        modelBuilder.Entity<Role>(entity =>{
+        modelBuilder.Entity<DbModelRole>(entity =>{
             entity.ToTable("Roles");
         });
-        modelBuilder.Entity<RoleClaim>(entity =>{
+        modelBuilder.Entity<DbModelRoleClaim>(entity =>{
             entity.ToTable("RoleClaims");
             entity.HasKey(key => new {key.Id, key.RoleId});
-            entity.HasOne(ur => ur.Role)
+            entity.HasOne(ur => ur.DbModelRole)
                 .WithMany(u => u.RoleClaims)
                 .HasForeignKey(ur => ur.RoleId)
                 .IsRequired();
         });
-        modelBuilder.Entity<Sector>(entity =>{
+        modelBuilder.Entity<DbModelSector>(entity =>{
             entity.ToTable("Sectors");
         });
-        modelBuilder.Entity<User>(entity =>{
+        modelBuilder.Entity<DbModelUser>(entity =>{
             entity.ToTable("Users");
         });
-        modelBuilder.Entity<UserClaim>(entity =>{
+        modelBuilder.Entity<DbModelUserClaim>(entity =>{
             entity.ToTable("UserClaims");
             entity.HasKey(key => new {key.Id, key.UserId});
-            entity.HasOne(ur => ur.User)
+            entity.HasOne(ur => ur.DbModelUser)
                 .WithMany(u => u.UserClaims)
                 .HasForeignKey(ur => ur.UserId)
                 .IsRequired();
         });
-        modelBuilder.Entity<UserLogin>(entity =>{
+        modelBuilder.Entity<DbModelUserLogin>(entity =>{
             entity.ToTable("UserLogins");
             entity.HasKey(key => new {key.LoginProvider, key.ProviderKey});
-            entity.HasOne(ur => ur.User)
+            entity.HasOne(ur => ur.DbModelUser)
                 .WithMany(u => u.UserLogins)
                 .HasForeignKey(ur => ur.UserId)
                 .IsRequired();
         });
-        modelBuilder.Entity<UserRole>(entity =>{
+        modelBuilder.Entity<DbModelUserRole>(entity =>{
             entity.ToTable("UserRoles");
             entity.HasKey(key => new {key.UserId, key.RoleId});
             entity.HasOne(ur => ur.Role)
@@ -119,10 +119,10 @@ public partial class AnalysisDbContext : IdentityDbContext<User, Role, Guid , Us
                 .HasForeignKey(ur => ur.UserId)
                 .IsRequired();
         });
-        modelBuilder.Entity<UserToken>(entity =>{
+        modelBuilder.Entity<DbModelUserToken>(entity =>{
             entity.ToTable("UserTokens");
             entity.HasKey(key => new {key.UserId, key.LoginProvider, key.Name});
-            entity.HasOne(ur => ur.User)
+            entity.HasOne(ur => ur.DbModelUser)
                     .WithMany(u => u.UserTokens)
                     .HasForeignKey(ur => ur.UserId)
                     .IsRequired();

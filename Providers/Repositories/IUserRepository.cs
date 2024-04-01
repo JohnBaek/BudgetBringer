@@ -24,7 +24,7 @@ public interface IUserRepository
     /// <param name="loginId">로그인 아이디</param>
     /// <param name="password">패스워드 (SHA 256 인크립트 된 원본)</param>
     /// <returns>결과</returns>
-    Task<User?> GetUserWithIdPasswordAsync(string loginId, string password);
+    Task<DbModelUser?> GetUserWithIdPasswordAsync(string loginId, string password);
 
     /// <summary>
     /// 사용자의 Id 값으로 권한 값의 리스트를 가져온다.

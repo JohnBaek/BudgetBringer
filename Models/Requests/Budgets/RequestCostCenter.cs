@@ -8,7 +8,7 @@ namespace Models.Requests.Budgets;
 public class RequestCostCenter
 {
     /// <summary>
-    /// CostCenter 값 
+    /// DbModelCostCenter 값 
     /// </summary>
     [Required(ErrorMessage = "값을 입력해주세요")]
     public int Value { get; init; }
