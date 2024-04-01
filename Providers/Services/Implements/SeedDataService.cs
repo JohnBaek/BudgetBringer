@@ -115,7 +115,7 @@ public class SeedDataService : IHostedService
             };
             
             // 모든 Claim 에 대해 처리한다.
-            List<RoleClaim> willAddClaims = new List<RoleClaim>();
+            int count = 0;
             foreach (var requiredClaim in requiredClaims)
             {
                 // 요청하는 Claim이 없는지 여부 
@@ -127,16 +127,13 @@ public class SeedDataService : IHostedService
                 // 현재 Claim 에 필요한 값이 없는경우 
                 if (hasNotClaim)
                 {
-                    willAddClaims.Add(requiredClaim);
+                    await dbContext.RoleClaims.AddRangeAsync(requiredClaim);
+                    Console.WriteLine($"[{++count}][관리자 Claim 추가] : ClaimType : [{requiredClaim.ClaimType}] , ClaimValue : [{requiredClaim.ClaimValue}]".WithDateTime());
                 }
             }
-            
-            // 추가해야할 Claim 이 있는경우 
-            if (willAddClaims.Count > 0)
-            {
-                await dbContext.RoleClaims.AddRangeAsync(willAddClaims);
+
+            if(count > 0)
                 await dbContext.SaveChangesAsync();
-            }
         }
         catch (Exception e)
         {
@@ -169,7 +166,7 @@ public class SeedDataService : IHostedService
             };
             
             // 모든 Claim 에 대해 처리한다.
-            List<RoleClaim> willAddClaims = new List<RoleClaim>();
+            int count = 0;
             foreach (var requiredClaim in requiredClaims)
             {
                 // 요청하는 Claim이 없는지 여부 
@@ -181,16 +178,13 @@ public class SeedDataService : IHostedService
                 // 현재 Claim 에 필요한 값이 없는경우 
                 if (hasNotClaim)
                 {
-                    willAddClaims.Add(requiredClaim);
+                    await dbContext.RoleClaims.AddRangeAsync(requiredClaim);
+                    Console.WriteLine($"[{++count}][사용자 Claim 추가] : ClaimType - [{requiredClaim.ClaimType}] , ClaimValue - [{requiredClaim.ClaimValue}]".WithDateTime());
                 }
             }
-            
-            // 추가해야할 Claim 이 있는경우 
-            if (willAddClaims.Count > 0)
-            {
-                await dbContext.RoleClaims.AddRangeAsync(willAddClaims);
+
+            if(count > 0)
                 await dbContext.SaveChangesAsync();
-            }
         }
         catch (Exception e)
         {
@@ -230,12 +224,14 @@ public class SeedDataService : IHostedService
         if (await userManager.FindByNameAsync(adminUser.UserName) == null)
         {
             IdentityResult result = await userManager.CreateAsync(adminUser, password);
+            Console.WriteLine($"[사용자 추가] : 사용자명 - [{adminUser.DisplayName}]".WithDateTime());
+            
             if (!result.Succeeded)
             {
                 // 실패한 경우, 에러 메시지 로깅 또는 처리
                 foreach (var error in result.Errors)
                 {
-                    Console.WriteLine($"Error: {error.Description}");
+                    Console.WriteLine($"Error: {error.Description}".WithDateTime());
                 }
             }
             
@@ -294,7 +290,9 @@ public class SeedDataService : IHostedService
                 Name = roleName,
                 Id = Guid.NewGuid()
             };
+            Console.WriteLine($"[역할정보 추가] : 역할명 - [{add.Name}]".WithDateTime());
             await roleManager.CreateAsync(add);
         }
+
     }
 } 
