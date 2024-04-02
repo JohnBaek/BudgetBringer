@@ -1,5 +1,6 @@
 using Features.Extensions;
 using Microsoft.Extensions.Logging;
+using Models.DataModels;
 using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
@@ -48,7 +49,7 @@ public class BusinessUnitService : IBusinessUnitService
         
         try
         {
-            response = new ResponseList<ResponseBusinessUnit>();
+            response = await _businessUnitRepository.GetListAsync(requestQuery);
         }
         catch (Exception e)
         {

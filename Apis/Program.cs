@@ -98,6 +98,12 @@ public static class Program
         services.AddDbContext<AnalysisDbContext>(options =>
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+        // 세션 유지 설정
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        });
+        
         // 데이터 Seed 호스트 서비스 등록 ( 서비스 시작시 구동 )
         services.AddHostedService<SeedDataService>();
         // HttpContext 전역 서비스 레이어에서 사용 
@@ -130,6 +136,7 @@ public static class Program
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ISignInService<DbModelUser>, SignInService>();
         services.AddScoped<IBusinessUnitService, BusinessUnitService>();
+        services.AddTransient(typeof(IQueryService<>), typeof(QueryService<>));
     }
 }
 

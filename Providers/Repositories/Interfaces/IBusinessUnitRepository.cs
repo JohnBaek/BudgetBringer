@@ -2,6 +2,7 @@ using Models.DataModels;
 using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
+using Models.Responses.Budgets;
 
 namespace Providers.Repositories.Interfaces;
 
@@ -15,7 +16,7 @@ public interface IBusinessUnitRepository
     /// </summary>
     /// <param name="requestQuery">쿼리 정보</param>
     /// <returns></returns>
-    Task<List<DbModelBusinessUnit>> GetListAsync(RequestQuery requestQuery);
+    Task<ResponseList<ResponseBusinessUnit>> GetListAsync(RequestQuery requestQuery);
 
     /// <summary>
     /// 데이터를 업데이트한다.
