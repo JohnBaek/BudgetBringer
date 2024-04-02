@@ -8,10 +8,10 @@ public enum EnumQuerySearchType
     /// <summary>
     /// 스트링 단일 검색
     /// </summary>
-    String ,
+    Equals ,
     
     /// <summary>
     /// 스트링 Like 검색
     /// </summary>
-    StringLike ,
+    Contains ,
 }

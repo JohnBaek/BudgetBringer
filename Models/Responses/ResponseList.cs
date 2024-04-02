@@ -1,5 +1,8 @@
 using Models.Common.Enums;
+using Models.Common.Query;
+using Models.DataModels;
 using Models.Requests.Query;
+using Models.Responses.Budgets;
 
 namespace Models.Responses;
 
@@ -51,7 +54,39 @@ public class ResponseList<T> : Response where T : class
         Result = EnumResponseResult.Error;
         Message = message;
     }
-    
+
+   
+    /// <summary>
+    /// 생성자
+    /// </summary>
+    /// <param name="result"></param>
+    /// <param name="container"></param>
+    /// <param name="items"></param>
+    public ResponseList(EnumResponseResult result, QueryContainer<T> container, List<T> items)
+    {
+        Result = result;
+        Skip = container.Skip;
+        TotalCount = container.TotalCount;
+        PageCount = container.PageCount;
+        Items = items;
+    }
+
+    /// <summary>
+    /// 생성자
+    /// </summary>
+    /// <param name="result"></param>
+    /// <param name="requestQuery"></param>
+    /// <param name="items"></param>
+    /// <param name="totalCount"></param>
+    public ResponseList(EnumResponseResult result, RequestQuery requestQuery, List<T> items, int totalCount)
+    {
+        Result = result;
+        Skip = requestQuery.Skip;
+        PageCount = requestQuery.PageCount;
+        Items = items;
+        TotalCount = totalCount;
+    }
+
     /// <summary>
     /// 스킵
     /// </summary>

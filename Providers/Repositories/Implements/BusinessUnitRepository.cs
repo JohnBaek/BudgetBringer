@@ -87,7 +87,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
                 .ToListAsync();
 
             // 결과를 바인딩한다.
-            result = new ResponseList<ResponseBusinessUnit>(EnumResponseResult.Success, requestQuery, list);
+            result = new ResponseList<ResponseBusinessUnit>(EnumResponseResult.Success, requestQuery, list, container.TotalCount);
         }
         catch (Exception e)
         {

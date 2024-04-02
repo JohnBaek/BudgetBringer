@@ -1,4 +1,7 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using Models.Common.Enums;
 
 namespace Models.Requests.Query;
 
@@ -11,26 +14,43 @@ public class RequestQuery
     /// 스킵
     /// </summary>
     [Required]
+    [DefaultValue(0)]
     public int Skip { get; set; } = 0;
 
     /// <summary>
     /// 페이지 카운트 
     /// </summary>
     [Required]
+    [DefaultValue(20)]
     public int PageCount { get; set; } = 20;
 
     /// <summary>
     /// 검색 키워드 
     /// </summary>
-    public List<string> SearchKeywords { get; set; } = [];
+    public List<string> SearchKeywords { get; set; }
     
     /// <summary>
     /// 검색 필드
     /// </summary>
-    public List<string> SearchFields { get; set; } = [];
+    public List<string> SearchFields { get; set; } 
 
     /// <summary>
     /// 검색 메타 정보 
     /// </summary>
+    [JsonIgnore]
     public List<RequestQuerySearchMeta> SearchMetas { get; set; } = [];
+
+    /// <summary>
+    /// 메타 정보를 추가한다.
+    /// </summary>
+    /// <param name="searchType"></param>
+    /// <param name="field"></param>
+    public void AddMeta(EnumQuerySearchType searchType, string field)
+    {
+        SearchMetas.Add(new RequestQuerySearchMeta
+        {
+            SearchType = searchType ,
+            Field = field
+        });
+    }
 }

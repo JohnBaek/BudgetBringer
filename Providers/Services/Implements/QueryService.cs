@@ -2,10 +2,12 @@ using System.Linq.Expressions;
 using Features.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Models.Common.Enums;
 using Models.Common.Query;
 using Models.DataModels;
 using Models.Requests.Query;
 using Models.Responses;
+using Models.Responses.Budgets;
 using Providers.Services.Interfaces;
 
 namespace Providers.Services.Implements;
@@ -56,6 +58,45 @@ public class QueryService<T> : IQueryService<T> where T : class
             
             // 요청정보를 가공한다.
             IEnumerable<Tuple<string, string>> searchValue = ConvertToQuerySearchList(requestQuery);
+
+            // 검색 메타 정보 
+            List<RequestQuerySearchMeta> metas = requestQuery.SearchMetas;
+            
+            // 검색어 정보에 대해 처리
+            foreach (var tuple in searchValue)
+            {
+                // 검색어가 일치하는 메타정보를 찾는다.
+                RequestQuerySearchMeta? findMeta = metas.Find(i => i.Field.Equals(tuple.Item1, StringComparison.CurrentCultureIgnoreCase));
+                
+                // 찾지 못한경우 
+                if(findMeta == null)
+                    continue;
+                
+                // 필드 이름
+                ParameterExpression parameter = Expression.Parameter(typeof(T), "x");
+                MemberExpression property = Expression.Property(parameter, findMeta.Field);
+                ConstantExpression constant = Expression.Constant(tuple.Item2);
+                Expression condition;
+
+                // 타입별 검색
+                switch (findMeta.SearchType)
+                {
+                    // 동일한 값을 찾는경우 
+                    case EnumQuerySearchType.Equals:
+                        condition = Expression.Equal(property, constant);
+                        break;
+                    // 포함된 값을 찾는 경우 
+                    case EnumQuerySearchType.Contains:
+                        var method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+                        condition = Expression.Call(property, method, constant);
+                        break;
+                    default:
+                        continue;
+                }
+
+                var lambda = Expression.Lambda<Func<T, bool>>(condition, parameter);
+                conditions.Add(lambda);
+            }
             
             // 모든 조건에 대해 추가처리
             result = conditions.Aggregate(query, (current, condition) => current.Where(condition));
@@ -80,8 +121,11 @@ public class QueryService<T> : IQueryService<T> where T : class
 
         try
         {
+            // 검색 메타정보 추가
+            requestQuery.AddMeta(EnumQuerySearchType.Contains , nameof(ResponseBusinessUnit.Name));
+            
             // 쿼리를 기본 재가공한다.
-            IQueryable<T> query = this.ReProductQuery(requestQuery);
+            IQueryable<T> query = ReProductQuery(requestQuery);
             
             // 전체 카운트를 구한다.
             int totalCount = await query.CountAsync();
