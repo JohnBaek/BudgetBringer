@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Models.Common.Enums;
+
 // ReSharper disable All
 
 namespace Models.DataModels;
@@ -25,16 +27,14 @@ public class DbModelLogAction
     /// <summary>
     /// 등록자 아이디 
     /// </summary>
-    [Required]
     [ForeignKey("DbModelUser")]
-    public Guid RegId { get; init;}
+    public Guid? RegId { get; init;}
 
     /// <summary>
     /// 등록자명 
     /// </summary>
-    [Required]
     [MaxLength(255)]
-    public required string RegName { get; init;}
+    public string? RegName { get; init;}
 
     /// <summary>
     /// 내용 
@@ -42,6 +42,12 @@ public class DbModelLogAction
     [Required]
     [MaxLength(3000)]
     public required string Contents { get; init;}
+
+    /// <summary>
+    /// 액션타입
+    /// </summary>
+    [Required]
+    public EnumDatabaseLogActionType ActionType { get; set; }
     
     /// <summary>
     /// 사용자 정보

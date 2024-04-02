@@ -12,7 +12,7 @@ using Models.DataModels;
 namespace Models.DataModels.Migrations
 {
     [DbContext(typeof(AnalysisDbContext))]
-    [Migration("20240401021338_Initial")]
+    [Migration("20240402004502_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace Models.DataModels.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("Models.DataModels.Budget", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelBudget", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -109,7 +109,7 @@ namespace Models.DataModels.Migrations
                     b.ToTable("Budgets", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.BudgetApproved", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelBudgetApproved", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -199,10 +199,10 @@ namespace Models.DataModels.Migrations
 
                     b.HasIndex("SectorId");
 
-                    b.ToTable("BudgetApproved", (string)null);
+                    b.ToTable("DbModelBudgetApproved", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.BusinessUnit", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelBusinessUnit", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -227,7 +227,7 @@ namespace Models.DataModels.Migrations
                     b.ToTable("BusinessUnits", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.CostCenter", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelCostCenter", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -250,7 +250,7 @@ namespace Models.DataModels.Migrations
                     b.ToTable("CostCenters", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.CountryBusinessManager", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelCountryBusinessManager", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -275,11 +275,14 @@ namespace Models.DataModels.Migrations
                     b.ToTable("CountryBusinessManagers", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.LogAction", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelLogAction", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
+
+                    b.Property<int>("ActionType")
+                        .HasColumnType("int");
 
                     b.Property<string>("Contents")
                         .IsRequired()
@@ -289,11 +292,10 @@ namespace Models.DataModels.Migrations
                     b.Property<DateTime>("RegDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("RegId")
+                    b.Property<Guid?>("RegId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("RegName")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
@@ -304,7 +306,7 @@ namespace Models.DataModels.Migrations
                     b.ToTable("LogActions", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.Role", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -331,7 +333,7 @@ namespace Models.DataModels.Migrations
                     b.ToTable("Roles", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.RoleClaim", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelRoleClaim", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -350,12 +352,10 @@ namespace Models.DataModels.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("varchar(1000)");
 
                     b.Property<string>("DisplayName")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
@@ -366,7 +366,7 @@ namespace Models.DataModels.Migrations
                     b.ToTable("RoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.Sector", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelSector", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -386,7 +386,7 @@ namespace Models.DataModels.Migrations
                     b.ToTable("Sectors", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.User", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -470,7 +470,7 @@ namespace Models.DataModels.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.UserClaim", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelUserClaim", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -491,7 +491,7 @@ namespace Models.DataModels.Migrations
                     b.ToTable("UserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.UserLogin", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelUserLogin", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("varchar(255)");
@@ -512,7 +512,7 @@ namespace Models.DataModels.Migrations
                     b.ToTable("UserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.UserRole", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelUserRole", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)");
@@ -527,7 +527,7 @@ namespace Models.DataModels.Migrations
                     b.ToTable("UserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.UserToken", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelUserToken", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)");
@@ -546,129 +546,127 @@ namespace Models.DataModels.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.Budget", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelBudget", b =>
                 {
-                    b.HasOne("Models.DataModels.BusinessUnit", "BusinessUnit")
+                    b.HasOne("Models.DataModels.DbModelBusinessUnit", "DbModelBusinessUnit")
                         .WithMany()
                         .HasForeignKey("BusinessUnitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.DataModels.CostCenter", "CostCenter")
+                    b.HasOne("Models.DataModels.DbModelCostCenter", "DbModelCostCenter")
                         .WithMany()
                         .HasForeignKey("CostCenterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.DataModels.CountryBusinessManager", "CountryBusinessManager")
+                    b.HasOne("Models.DataModels.DbModelCountryBusinessManager", "DbModelCountryBusinessManager")
                         .WithMany()
                         .HasForeignKey("CountryBusinessManagerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.DataModels.Sector", "Sector")
+                    b.HasOne("Models.DataModels.DbModelSector", "Sector")
                         .WithMany()
                         .HasForeignKey("SectorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("BusinessUnit");
+                    b.Navigation("DbModelBusinessUnit");
 
-                    b.Navigation("CostCenter");
+                    b.Navigation("DbModelCostCenter");
 
-                    b.Navigation("CountryBusinessManager");
+                    b.Navigation("DbModelCountryBusinessManager");
 
                     b.Navigation("Sector");
                 });
 
-            modelBuilder.Entity("Models.DataModels.BudgetApproved", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelBudgetApproved", b =>
                 {
-                    b.HasOne("Models.DataModels.BusinessUnit", "BusinessUnit")
+                    b.HasOne("Models.DataModels.DbModelBusinessUnit", "DbModelBusinessUnit")
                         .WithMany()
                         .HasForeignKey("BusinessUnitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.DataModels.CostCenter", "CostCenter")
+                    b.HasOne("Models.DataModels.DbModelCostCenter", "DbModelCostCenter")
                         .WithMany()
                         .HasForeignKey("CostCenterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.DataModels.CountryBusinessManager", "CountryBusinessManager")
+                    b.HasOne("Models.DataModels.DbModelCountryBusinessManager", "DbModelCountryBusinessManager")
                         .WithMany()
                         .HasForeignKey("CountryBusinessManagerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.DataModels.Sector", "Sector")
+                    b.HasOne("Models.DataModels.DbModelSector", "DbModelSector")
                         .WithMany()
                         .HasForeignKey("SectorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("BusinessUnit");
+                    b.Navigation("DbModelBusinessUnit");
 
-                    b.Navigation("CostCenter");
+                    b.Navigation("DbModelCostCenter");
 
-                    b.Navigation("CountryBusinessManager");
+                    b.Navigation("DbModelCountryBusinessManager");
 
-                    b.Navigation("Sector");
+                    b.Navigation("DbModelSector");
                 });
 
-            modelBuilder.Entity("Models.DataModels.LogAction", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelLogAction", b =>
                 {
-                    b.HasOne("Models.DataModels.User", "User")
+                    b.HasOne("Models.DataModels.DbModelUser", "DbModelUser")
                         .WithMany("LogActions")
-                        .HasForeignKey("RegId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RegId");
 
-                    b.Navigation("User");
+                    b.Navigation("DbModelUser");
                 });
 
-            modelBuilder.Entity("Models.DataModels.RoleClaim", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelRoleClaim", b =>
                 {
-                    b.HasOne("Models.DataModels.Role", "Role")
+                    b.HasOne("Models.DataModels.DbModelRole", "DbModelRole")
                         .WithMany("RoleClaims")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Role");
+                    b.Navigation("DbModelRole");
                 });
 
-            modelBuilder.Entity("Models.DataModels.UserClaim", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelUserClaim", b =>
                 {
-                    b.HasOne("Models.DataModels.User", "User")
+                    b.HasOne("Models.DataModels.DbModelUser", "DbModelUser")
                         .WithMany("UserClaims")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("DbModelUser");
                 });
 
-            modelBuilder.Entity("Models.DataModels.UserLogin", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelUserLogin", b =>
                 {
-                    b.HasOne("Models.DataModels.User", "User")
+                    b.HasOne("Models.DataModels.DbModelUser", "DbModelUser")
                         .WithMany("UserLogins")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("DbModelUser");
                 });
 
-            modelBuilder.Entity("Models.DataModels.UserRole", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelUserRole", b =>
                 {
-                    b.HasOne("Models.DataModels.Role", "Role")
+                    b.HasOne("Models.DataModels.DbModelRole", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.DataModels.User", "User")
+                    b.HasOne("Models.DataModels.DbModelUser", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -679,25 +677,25 @@ namespace Models.DataModels.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Models.DataModels.UserToken", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelUserToken", b =>
                 {
-                    b.HasOne("Models.DataModels.User", "User")
+                    b.HasOne("Models.DataModels.DbModelUser", "DbModelUser")
                         .WithMany("UserTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("DbModelUser");
                 });
 
-            modelBuilder.Entity("Models.DataModels.Role", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelRole", b =>
                 {
                     b.Navigation("RoleClaims");
 
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Models.DataModels.User", b =>
+            modelBuilder.Entity("Models.DataModels.DbModelUser", b =>
                 {
                     b.Navigation("LogActions");
 

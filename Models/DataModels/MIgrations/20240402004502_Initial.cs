@@ -144,9 +144,9 @@ namespace Models.DataModels.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ClaimValue = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DisplayName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                    DisplayName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Description = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: false)
+                    Description = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -156,72 +156,6 @@ namespace Models.DataModels.Migrations
                         name: "FK_RoleClaims_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "DbModelBudgetApproved",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    ApprovalDate = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    IsApproved = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Year = table.Column<string>(type: "varchar(4)", maxLength: 4, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Month = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Day = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    IsAbove500K = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Description = table.Column<string>(type: "varchar(3000)", maxLength: 3000, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    SectorId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    BusinessUnitId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    CostCenterId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    CountryBusinessManagerId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    CostCenterName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    CountryBusinessManagerName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    BusinessUnitName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    PoNumber = table.Column<int>(type: "int", nullable: false),
-                    ApprovalStatus = table.Column<int>(type: "int", nullable: false),
-                    ApprovalAmount = table.Column<double>(type: "double", nullable: false),
-                    Actual = table.Column<double>(type: "double", nullable: false),
-                    OcProjectName = table.Column<string>(type: "varchar(3000)", maxLength: 3000, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    BossLineDescription = table.Column<string>(type: "varchar(3000)", maxLength: 3000, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BudgetApproved", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_BudgetApproved_BusinessUnits_BusinessUnitId",
-                        column: x => x.BusinessUnitId,
-                        principalTable: "BusinessUnits",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BudgetApproved_CostCenters_CostCenterId",
-                        column: x => x.CostCenterId,
-                        principalTable: "CostCenters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BudgetApproved_CountryBusinessManagers_CountryBusinessManage~",
-                        column: x => x.CountryBusinessManagerId,
-                        principalTable: "CountryBusinessManagers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BudgetApproved_Sectors_SectorId",
-                        column: x => x.SectorId,
-                        principalTable: "Sectors",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -290,16 +224,83 @@ namespace Models.DataModels.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "DbModelBudgetApproved",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    ApprovalDate = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsApproved = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Year = table.Column<string>(type: "varchar(4)", maxLength: 4, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Month = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Day = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsAbove500K = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Description = table.Column<string>(type: "varchar(3000)", maxLength: 3000, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    SectorId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    BusinessUnitId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    CostCenterId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    CountryBusinessManagerId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    CostCenterName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CountryBusinessManagerName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    BusinessUnitName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PoNumber = table.Column<int>(type: "int", nullable: false),
+                    ApprovalStatus = table.Column<int>(type: "int", nullable: false),
+                    ApprovalAmount = table.Column<double>(type: "double", nullable: false),
+                    Actual = table.Column<double>(type: "double", nullable: false),
+                    OcProjectName = table.Column<string>(type: "varchar(3000)", maxLength: 3000, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    BossLineDescription = table.Column<string>(type: "varchar(3000)", maxLength: 3000, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DbModelBudgetApproved", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DbModelBudgetApproved_BusinessUnits_BusinessUnitId",
+                        column: x => x.BusinessUnitId,
+                        principalTable: "BusinessUnits",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DbModelBudgetApproved_CostCenters_CostCenterId",
+                        column: x => x.CostCenterId,
+                        principalTable: "CostCenters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DbModelBudgetApproved_CountryBusinessManagers_CountryBusines~",
+                        column: x => x.CountryBusinessManagerId,
+                        principalTable: "CountryBusinessManagers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DbModelBudgetApproved_Sectors_SectorId",
+                        column: x => x.SectorId,
+                        principalTable: "Sectors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "LogActions",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     RegDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    RegId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    RegName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                    RegId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    RegName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Contents = table.Column<string>(type: "varchar(3000)", maxLength: 3000, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ActionType = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -308,8 +309,7 @@ namespace Models.DataModels.Migrations
                         name: "FK_LogActions_Users_RegId",
                         column: x => x.RegId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -410,26 +410,6 @@ namespace Models.DataModels.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BudgetApproved_BusinessUnitId",
-                table: "DbModelBudgetApproved",
-                column: "BusinessUnitId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BudgetApproved_CostCenterId",
-                table: "DbModelBudgetApproved",
-                column: "CostCenterId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BudgetApproved_CountryBusinessManagerId",
-                table: "DbModelBudgetApproved",
-                column: "CountryBusinessManagerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BudgetApproved_SectorId",
-                table: "DbModelBudgetApproved",
-                column: "SectorId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Budgets_BusinessUnitId",
                 table: "Budgets",
                 column: "BusinessUnitId");
@@ -466,6 +446,26 @@ namespace Models.DataModels.Migrations
                 table: "CountryBusinessManagers",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DbModelBudgetApproved_BusinessUnitId",
+                table: "DbModelBudgetApproved",
+                column: "BusinessUnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DbModelBudgetApproved_CostCenterId",
+                table: "DbModelBudgetApproved",
+                column: "CostCenterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DbModelBudgetApproved_CountryBusinessManagerId",
+                table: "DbModelBudgetApproved",
+                column: "CountryBusinessManagerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DbModelBudgetApproved_SectorId",
+                table: "DbModelBudgetApproved",
+                column: "SectorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LogActions_RegId",
@@ -520,10 +520,10 @@ namespace Models.DataModels.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DbModelBudgetApproved");
+                name: "Budgets");
 
             migrationBuilder.DropTable(
-                name: "Budgets");
+                name: "DbModelBudgetApproved");
 
             migrationBuilder.DropTable(
                 name: "LogActions");

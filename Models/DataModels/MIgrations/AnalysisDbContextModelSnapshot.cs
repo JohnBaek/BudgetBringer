@@ -278,6 +278,9 @@ namespace Models.DataModels.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<int>("ActionType")
+                        .HasColumnType("int");
+
                     b.Property<string>("Contents")
                         .IsRequired()
                         .HasMaxLength(3000)
@@ -286,11 +289,10 @@ namespace Models.DataModels.Migrations
                     b.Property<DateTime>("RegDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("RegId")
+                    b.Property<Guid?>("RegId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("RegName")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
@@ -347,12 +349,10 @@ namespace Models.DataModels.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("varchar(1000)");
 
                     b.Property<string>("DisplayName")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
@@ -563,7 +563,7 @@ namespace Models.DataModels.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.DataModels.DbModelSector", "DbModelSector")
+                    b.HasOne("Models.DataModels.DbModelSector", "Sector")
                         .WithMany()
                         .HasForeignKey("SectorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -575,7 +575,7 @@ namespace Models.DataModels.Migrations
 
                     b.Navigation("DbModelCountryBusinessManager");
 
-                    b.Navigation("DbModelSector");
+                    b.Navigation("Sector");
                 });
 
             modelBuilder.Entity("Models.DataModels.DbModelBudgetApproved", b =>
@@ -617,9 +617,7 @@ namespace Models.DataModels.Migrations
                 {
                     b.HasOne("Models.DataModels.DbModelUser", "DbModelUser")
                         .WithMany("LogActions")
-                        .HasForeignKey("RegId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RegId");
 
                     b.Navigation("DbModelUser");
                 });
@@ -659,21 +657,21 @@ namespace Models.DataModels.Migrations
 
             modelBuilder.Entity("Models.DataModels.DbModelUserRole", b =>
                 {
-                    b.HasOne("Models.DataModels.DbModelRole", "DbModelRole")
+                    b.HasOne("Models.DataModels.DbModelRole", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.DataModels.DbModelUser", "DbModelUser")
+                    b.HasOne("Models.DataModels.DbModelUser", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("DbModelRole");
+                    b.Navigation("Role");
 
-                    b.Navigation("DbModelUser");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Models.DataModels.DbModelUserToken", b =>
