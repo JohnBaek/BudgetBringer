@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Models.DataModels;
+using Providers.Repositories.Interfaces;
 
 namespace Providers.Repositories.Implements;
 

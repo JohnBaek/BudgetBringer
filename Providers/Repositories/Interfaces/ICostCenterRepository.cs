@@ -1,22 +1,21 @@
-
 using Models.DataModels;
 using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
 
-namespace Providers.Repositories;
+namespace Providers.Repositories.Interfaces;
 
 /// <summary>
-/// 비지니스 유닛 Repository
+/// 코스트 센터 리파지토리
 /// </summary>
-public interface IBusinessUnitRepository
+public interface ICostCenterRepository
 {
     /// <summary>
     /// 리스트를 가져온다.
     /// </summary>
     /// <param name="requestQuery">쿼리 정보</param>
     /// <returns></returns>
-    Task<List<DbModelBusinessUnit>> GetListAsync(RequestQuery requestQuery);
+    Task<List<DbModelCostCenter>> GetListAsync(RequestQuery requestQuery);
 
     /// <summary>
     /// 데이터를 업데이트한다.

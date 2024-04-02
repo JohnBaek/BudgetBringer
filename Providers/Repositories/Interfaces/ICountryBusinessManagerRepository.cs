@@ -1,22 +1,21 @@
-
 using Models.DataModels;
 using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
 
-namespace Providers.Repositories;
+namespace Providers.Repositories.Interfaces;
 
 /// <summary>
-/// 섹터 리파지토리
+/// 컨트리 비지니스 매니저 리파지토리
 /// </summary>
-public interface ISectorRepository
+public interface ICountryBusinessManagerRepository
 {
     /// <summary>
     /// 리스트를 가져온다.
     /// </summary>
     /// <param name="requestQuery">쿼리 정보</param>
     /// <returns></returns>
-    Task<List<DbModelSector>> GetListAsync(RequestQuery requestQuery);
+    Task<List<DbModelCountryBusinessManager>> GetListAsync(RequestQuery requestQuery);
 
     /// <summary>
     /// 데이터를 업데이트한다.

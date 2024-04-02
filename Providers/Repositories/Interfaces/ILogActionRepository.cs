@@ -1,10 +1,9 @@
 using Models.Common.Enums;
 using Models.DataModels;
-using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
 
-namespace Providers.Repositories;
+namespace Providers.Repositories.Interfaces;
 
 /// <summary>
 /// 액션 로그 모델 인터페이스

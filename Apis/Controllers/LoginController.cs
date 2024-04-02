@@ -4,6 +4,7 @@ using Models.DataModels;
 using Models.Requests.Login;
 using Models.Responses;
 using Providers.Services;
+using Providers.Services.Interfaces;
 
 namespace Apis.Controllers;
 

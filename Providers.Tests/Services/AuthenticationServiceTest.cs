@@ -10,8 +10,10 @@ using Models.Requests.Login;
 using Models.Responses;
 using Moq;
 using Providers.Repositories;
+using Providers.Repositories.Interfaces;
 using Providers.Services;
 using Providers.Services.Implements;
+using Providers.Services.Interfaces;
 using Xunit;
 
 namespace Providers.Tests.Services;

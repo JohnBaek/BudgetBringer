@@ -1,10 +1,7 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Models.DataModels;
 using Models.Responses;
 
-namespace Providers.Services;
+namespace Providers.Services.Interfaces;
 
 /// <summary>
 /// SignInManager<TUser> 래핑 클래스

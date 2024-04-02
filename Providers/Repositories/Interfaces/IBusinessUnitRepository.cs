@@ -3,19 +3,19 @@ using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
 
-namespace Providers.Repositories;
+namespace Providers.Repositories.Interfaces;
 
 /// <summary>
-/// 컨트리 비지니스 매니저 리파지토리
+/// 비지니스 유닛 Repository
 /// </summary>
-public interface ICountryBusinessManagerRepository
+public interface IBusinessUnitRepository
 {
     /// <summary>
     /// 리스트를 가져온다.
     /// </summary>
     /// <param name="requestQuery">쿼리 정보</param>
     /// <returns></returns>
-    Task<List<DbModelCountryBusinessManager>> GetListAsync(RequestQuery requestQuery);
+    Task<List<DbModelBusinessUnit>> GetListAsync(RequestQuery requestQuery);
 
     /// <summary>
     /// 데이터를 업데이트한다.

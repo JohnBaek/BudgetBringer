@@ -1,8 +1,7 @@
-using Microsoft.AspNetCore.Http;
 using Models.Responses;
 using Models.Responses.Users;
 
-namespace Providers.Services;
+namespace Providers.Services.Interfaces;
 
 /// <summary>
 /// 유저 서비스 인터페이스

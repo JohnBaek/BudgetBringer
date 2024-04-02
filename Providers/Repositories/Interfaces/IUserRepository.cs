@@ -1,10 +1,8 @@
 // using Models.DataModels;
 
-using Microsoft.AspNetCore.Identity;
 using Models.DataModels;
-using Models.Responses.Users;
 
-namespace Providers.Repositories;
+namespace Providers.Repositories.Interfaces;
 
 /// <summary>
 /// 유저 정보 리파지토리 인터페이스

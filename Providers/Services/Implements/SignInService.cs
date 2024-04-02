@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Models.Common.Enums;
 using Models.DataModels;
 using Models.Responses;
+using Providers.Services.Interfaces;
 
 namespace Providers.Services.Implements;
 

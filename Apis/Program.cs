@@ -7,8 +7,10 @@ using Microsoft.OpenApi.Models;
 using Models.DataModels;
 using Providers.Repositories;
 using Providers.Repositories.Implements;
+using Providers.Repositories.Interfaces;
 using Providers.Services;
 using Providers.Services.Implements;
+using Providers.Services.Interfaces;
 using Serilog;
 // using Models.DataModels;
 
