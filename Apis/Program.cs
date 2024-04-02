@@ -96,12 +96,13 @@ public class Program
     {
         // DB 컨텍스트 정보를 추가한다.
         string connectionString = configuration.GetConnectionString("AnalysisDatabase") ?? "";
-        Console.WriteLine($"[CONNECTION] : {connectionString}");
         services.AddDbContext<AnalysisDbContext>(options =>
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
         // 데이터 Seed 호스트 서비스 등록 ( 서비스 시작시 구동 )
         services.AddHostedService<SeedDataService>();
+        // HttpContext 전역 서비스 레이어에서 사용 
+        services.AddHttpContextAccessor();
         
         // 커스텀 Identity 설정 주입
         services.AddLogging();
@@ -115,9 +116,13 @@ public class Program
         
         // DI 추가
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IBusinessUnitRepository,BusinessUnitRepository>();
+        services.AddScoped<ICostCenterRepository,CostCenterRepository>();
+        services.AddScoped<ICountryBusinessManagerRepository,CountryBusinessManagerRepository>();
+        services.AddScoped<ILogActionRepository,LogActionRepository>();
+        services.AddScoped<ISectorRepository,SectorRepository>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ISignInService<DbModelUser>, SignInService>();
-        services.AddScoped<IUserService, UserService>();
     }
     
     //

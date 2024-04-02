@@ -13,7 +13,7 @@ namespace Apis.Controllers;
 [ApiController]
 [AllowAnonymous]
 [Route("api/v1/[controller]")]
-public class LoginController : Controller
+public class LoginController
 {
     /// <summary>
     /// 로그인 서비스
@@ -45,7 +45,7 @@ public class LoginController : Controller
     /// </summary>
     /// <param name="request">로그인 정보</param>
     /// <returns>로그인결과</returns>
-    [HttpPost]
+    [HttpPost("Login")]
     public async Task<Response> TryLogin(RequestLogin request)
     {
         return await _authenticationService.TryLoginAsync(request);
@@ -68,8 +68,8 @@ public class LoginController : Controller
     /// </summary>
     /// <returns>로그인결과</returns>
     [HttpGet("IsAuthenticated")]
-    public async Task<Response> IsAuthenticatedAsync()
+    public Response IsAuthenticatedAsync()
     {
-        return await _signInService.IsSignedIn(HttpContext);
+        return _signInService.IsSignedIn();
     }
 }

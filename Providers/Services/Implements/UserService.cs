@@ -15,7 +15,7 @@ namespace Providers.Services.Implements;
 /// <summary>
 /// 사용자 서비스 구현체
 /// </summary>
-public class UserService : IUserService
+public class UserService : IUserService 
 {
     /// <summary>
     /// 로거
@@ -41,6 +41,11 @@ public class UserService : IUserService
     /// 역할 매니저
     /// </summary>
     private readonly RoleManager<DbModelRole> _roleManager;
+    
+    /// <summary>
+    /// IHttpContextAccessor
+    /// </summary>
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     /// <summary>
     /// 생성자
@@ -50,31 +55,38 @@ public class UserService : IUserService
     /// <param name="signInService">사인인 서비스</param>
     /// <param name="userManager">사용자 매니저</param>
     /// <param name="roleManager">역할 매니저</param>
+    /// <param name="httpContextAccessor">IHttpContextAccessor</param>
     public UserService( 
         ILogger<AuthenticationService> logger
         , IUserRepository userRepository
         , ISignInService<DbModelUser> signInService
         , UserManager<DbModelUser> userManager
-        , RoleManager<DbModelRole> roleManager)
+        , RoleManager<DbModelRole> roleManager
+        , IHttpContextAccessor httpContextAccessor)
     {
         _logger = logger;
         _userRepository = userRepository;
         _signInService = signInService;
         _userManager = userManager;
         _roleManager = roleManager;
+        _httpContextAccessor = httpContextAccessor;
     }
     
     /// <summary>
     /// 로그인한 사용자의 권한 목록을 가져온다.
     /// </summary>
     /// <returns></returns>
-    public async Task<ResponseList<ResponseUserRole>> GetRolesByUserAsync(HttpContext httpContext)
+    public async Task<ResponseList<ResponseUserRole>> GetRolesByUserAsync()
     {
         ResponseList<ResponseUserRole> result = new ResponseList<ResponseUserRole>();
     
         try
         {
-            DbModelUser? user = await _userManager.GetUserAsync(httpContext.User);
+            // 세션이 비어있을 경우 
+            if (_httpContextAccessor.HttpContext?.User == null)
+                return result;
+            
+            DbModelUser? user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
 
             // 세션에 사용자 정보가 없는경우 
             if (user == null)

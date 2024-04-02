@@ -29,9 +29,8 @@ public interface ISignInService<in TUser> where TUser : DbModelUser
     /// <summary>
     /// Returns true if the principal has an identity with the application cookie identity
     /// </summary>
-    /// <param name="httpContext">The <see cref="T:System.Security.Claims.ClaimsPrincipal" /> instance.</param>
     /// <returns>True if the dbModelUser is logged in with identity.</returns>
-    Task<Response> IsSignedIn(HttpContext httpContext);
+    Response IsSignedIn();
 
 
     /// <summary>

@@ -31,6 +31,7 @@ public class UserController : Controller
     /// </summary>
     /// <returns></returns>
     private readonly ISignInService<DbModelUser> _signInService;
+    
 
     /// <summary>
     /// 생성자
@@ -55,6 +56,6 @@ public class UserController : Controller
     [HttpGet("Roles")]
     public async Task<ResponseList<ResponseUserRole>> GetUserClaimsAsync()
     {
-        return await _userService.GetRolesByUserAsync(this.HttpContext);
+        return await _userService.GetRolesByUserAsync();
     }
 }

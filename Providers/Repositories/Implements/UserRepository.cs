@@ -31,6 +31,12 @@ public class UserRepository : IUserRepository
     /// 사용자 매니저
     /// </summary>
     private readonly UserManager<DbModelUser> _userManager;
+    
+    /// <summary>
+    /// 로그액션 리파지토리
+    /// </summary>
+    private readonly ILogActionRepository _logActionRepository;
+
 
     /// <summary>
     /// 생성자
@@ -39,16 +45,18 @@ public class UserRepository : IUserRepository
     /// <param name="logger">로거</param>
     /// <param name="signInManager">사이닝 매니저</param>
     /// <param name="userManager"></param>
+    /// <param name="logActionRepository">로그액션 리파지토리</param>
     public UserRepository(
           AnalysisDbContext dbContext
         , ILogger<UserRepository> logger
         , SignInManager<DbModelUser> signInManager
-        , UserManager<DbModelUser> userManager)
+        , UserManager<DbModelUser> userManager, ILogActionRepository logActionRepository)
     {
         _dbContext = dbContext;
         _logger = logger;
         _signInManager = signInManager;
         _userManager = userManager;
+        _logActionRepository = logActionRepository;
     }
     
     /// <summary>
@@ -58,14 +66,12 @@ public class UserRepository : IUserRepository
     /// <returns>결과</returns>
     public async Task<bool> ExistUserAsync(string loginId)
     {
-        bool result;
         try
         {
             return await _dbContext.Users.AsNoTracking().AnyAsync(i => i.LoginId == loginId);
         }
         catch (Exception e)
         {
-            result = false;
             e.LogError(_logger);
         }
     

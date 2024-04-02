@@ -7,7 +7,7 @@ using Models.Responses;
 namespace Providers.Services.Implements;
 
 /// <summary>
-/// SignInManager<TUser> 래핑 클래스 구현체
+/// SignInManager 래핑 클래스 구현체
 /// </summary>
 public class SignInService : ISignInService<DbModelUser>
 {
@@ -15,14 +15,21 @@ public class SignInService : ISignInService<DbModelUser>
     /// 사인인 매니저
     /// </summary>
     private readonly SignInManager<DbModelUser> _signInManager;
+    
+    /// <summary>
+    /// IHttpContextAccessor
+    /// </summary>
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="signInManager">사인인 매니저</param>
-    public SignInService(SignInManager<DbModelUser> signInManager)
+    /// <param name="httpContextAccessor">IHttpContextAccessor</param>
+    public SignInService(SignInManager<DbModelUser> signInManager, IHttpContextAccessor httpContextAccessor)
     {
         _signInManager = signInManager;
+        _httpContextAccessor = httpContextAccessor;
     }
 
 
@@ -50,21 +57,21 @@ public class SignInService : ISignInService<DbModelUser>
     /// <summary>
     /// 로그인여부를 반환한다.
     /// </summary>
-    /// <param name="httpContext">ClaimsPrincipal</param>
     /// <returns></returns>
-    public async Task<Response> IsSignedIn(HttpContext httpContext)
+    public Response IsSignedIn()
     {
         Response response = new Response{ IsAuthenticated = false };
+
+        // 세션이 비어있을 경우
+        if (_httpContextAccessor.HttpContext?.User == null)
+            return response;
         
         // 로그인 여부를 가져온다.
-        bool isAuthenticated = _signInManager.IsSignedIn(httpContext.User);
+        bool isAuthenticated = _signInManager.IsSignedIn(_httpContextAccessor.HttpContext.User);
 
         // 인증되어있는 경우 
         if (isAuthenticated)
             return new Response {Result = EnumResponseResult.Success, IsAuthenticated = true};
-        
-        // 인증되어있지 않은경우
-        await _signInManager.SignOutAsync();
         
         return response;
     }
