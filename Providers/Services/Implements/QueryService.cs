@@ -7,7 +7,6 @@ using Models.Common.Query;
 using Models.DataModels;
 using Models.Requests.Query;
 using Models.Responses;
-using Models.Responses.Budgets;
 using Providers.Services.Interfaces;
 
 namespace Providers.Services.Implements;
@@ -16,12 +15,12 @@ namespace Providers.Services.Implements;
 /// 쿼리서비스 구현체
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class QueryService<T> : IQueryService<T> where T : class
+public class QueryService: IQueryService
 {
     /// <summary>
     /// 로거
     /// </summary>
-    private readonly ILogger<IQueryService<T>> _logger;
+    private readonly ILogger<IQueryService> _logger;
     
     /// <summary>
     /// DB Context
@@ -33,7 +32,7 @@ public class QueryService<T> : IQueryService<T> where T : class
     /// </summary>
     /// <param name="logger">로거</param>
     /// <param name="dbContext">dbContext</param>
-    public QueryService(ILogger<IQueryService<T>> logger, AnalysisDbContext dbContext)
+    public QueryService(ILogger<IQueryService> logger, AnalysisDbContext dbContext)
     {
         _logger = logger;
         _dbContext = dbContext;
@@ -44,7 +43,7 @@ public class QueryService<T> : IQueryService<T> where T : class
     /// </summary>
     /// <param name="requestQuery">요청정보</param>
     /// <returns>IQueryable</returns>
-    public IQueryable<T> ReProductQuery(RequestQuery requestQuery)
+    public IQueryable<T> ReProductQuery<T>(RequestQuery requestQuery) where T : class 
     {
         IQueryable<T>? result;
 
@@ -72,7 +71,6 @@ public class QueryService<T> : IQueryService<T> where T : class
                 if(findMeta == null)
                     continue;
                 
-                // 필드 이름
                 ParameterExpression parameter = Expression.Parameter(typeof(T), "x");
                 MemberExpression property = Expression.Property(parameter, findMeta.Field);
                 ConstantExpression constant = Expression.Constant(tuple.Item2);
@@ -111,21 +109,53 @@ public class QueryService<T> : IQueryService<T> where T : class
     }
 
     /// <summary>
+    /// ResponseList 로 변환한다.
+    /// </summary>
+    /// <param name="requestQuery">요청정보</param>
+    /// <param name="mappingFunction"></param>
+    /// <returns></returns>
+    public async Task<ResponseList<V>> ToResponseListAsync<T,V>(RequestQuery requestQuery, Expression<Func<T, V>> mappingFunction)
+        where T : class
+        where V : class
+    {
+        ResponseList<V>? result;
+
+        try
+        {
+            // 쿼리를 처리한다.
+            QueryContainer<T>? container = await ToProductAsync<T>(requestQuery);
+            
+            // 쿼리 반환에 실패한경우
+            if (container == null)
+                throw new Exception("데이터베이스 처리중 예외가 발생했습니다.");
+
+            // 조회
+            List<V> list = await ToListAsync(container.Queryable, mappingFunction);
+            
+            return new ResponseList<V>(EnumResponseResult.Success, requestQuery, list, container.TotalCount);
+        }
+        catch (Exception e)
+        {
+            result = new ResponseList<V>("처리중 예외가 발생했습니다.");
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+
+    /// <summary>
     /// 요청정보로 쿼리를 파싱한다.
     /// </summary>
     /// <param name="requestQuery">요청정보</param>
     /// <returns></returns>
-    public async Task<QueryContainer<T>?> ToProductAsync(RequestQuery requestQuery)
+    public async Task<QueryContainer<T>?> ToProductAsync<T>(RequestQuery requestQuery) where T : class
     {
         QueryContainer<T>? result;
 
         try
         {
-            // 검색 메타정보 추가
-            requestQuery.AddMeta(EnumQuerySearchType.Contains , nameof(ResponseBusinessUnit.Name));
-            
             // 쿼리를 기본 재가공한다.
-            IQueryable<T> query = ReProductQuery(requestQuery);
+            IQueryable<T> query = ReProductQuery<T>(requestQuery);
             
             // 전체 카운트를 구한다.
             int totalCount = await query.CountAsync();
@@ -138,6 +168,32 @@ public class QueryService<T> : IQueryService<T> where T : class
         catch (Exception e)
         {
             result = null;
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// 최종 데이터를 매핑한다.
+    /// </summary>
+    /// <param name="queryable">IQueryable</param>
+    /// <param name="mappingFunction">매핑 Delegate</param>
+    /// <typeparam name="V">결과</typeparam>
+    /// <returns></returns>
+    public async Task<List<V>> ToListAsync<T,V>(IQueryable<T> queryable, Expression<Func<T, V>> mappingFunction)
+        where T : class
+        where V : class
+    {
+        List<V> result;
+
+        try
+        {
+            return await queryable.Select(mappingFunction).ToListAsync();
+        }
+        catch (Exception e)
+        {
+            result = [];
             e.LogError(_logger);
         }
 

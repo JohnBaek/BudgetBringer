@@ -136,7 +136,7 @@ public static class Program
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ISignInService<DbModelUser>, SignInService>();
         services.AddScoped<IBusinessUnitService, BusinessUnitService>();
-        services.AddTransient(typeof(IQueryService<>), typeof(QueryService<>));
+        services.AddTransient<IQueryService, QueryService>();
     }
 }
 

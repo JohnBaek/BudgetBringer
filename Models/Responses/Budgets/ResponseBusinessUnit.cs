@@ -6,6 +6,24 @@ namespace Models.Responses.Budgets;
 public class ResponseBusinessUnit
 {
     /// <summary>
+    /// 생성자
+    /// </summary>
+    public ResponseBusinessUnit()
+    {
+    }
+
+    /// <summary>
+    /// 생성자
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="name"></param>
+    public ResponseBusinessUnit(Guid id, string name)
+    {
+        Id = id;
+        Name = name;
+    }
+
+    /// <summary>
     /// 아이디 
     /// </summary>
     public Guid Id { get; init; }

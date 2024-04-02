@@ -38,7 +38,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
     /// <summary>
     /// 쿼리 서비스
     /// </summary>
-    private readonly IQueryService<DbModelBusinessUnit> _queryService;
+    private readonly IQueryService _queryService;
 
     /// <summary>
     /// 생성자
@@ -51,7 +51,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
           ILogger<BusinessUnitRepository> logger
         , AnalysisDbContext dbContext
         , ILogActionRepository logActionRepository
-        , IQueryService<DbModelBusinessUnit> queryService)
+        , IQueryService queryService)
     {
         _logger = logger;
         _dbContext = dbContext;
@@ -70,24 +70,18 @@ public class BusinessUnitRepository : IBusinessUnitRepository
         ResponseList<ResponseBusinessUnit> result = new ResponseList<ResponseBusinessUnit>();
         try
         {
-            // 쿼리 설정
-            QueryContainer<DbModelBusinessUnit>? container = await _queryService.ToProductAsync(requestQuery);
-
-            // 쿼리 반환에 실패한경우
-            if (container == null)
-                return new ResponseList<ResponseBusinessUnit>("데이터베이스 처리중 예외가 발생했습니다.");
-
-            // 실제 셀렉팅
-            List<ResponseBusinessUnit> list = await container.Queryable
-                .Select(item => new ResponseBusinessUnit
-                {
-                    Id = item.Id,
-                    Name = item.Name
-                })
-                .ToListAsync();
-
-            // 결과를 바인딩한다.
-            result = new ResponseList<ResponseBusinessUnit>(EnumResponseResult.Success, requestQuery, list, container.TotalCount);
+            // 검색 메타정보 추가
+            requestQuery.AddMeta(EnumQuerySearchType.Contains , nameof(ResponseBusinessUnit.Name));
+            
+            // 셀렉팅 정의
+            Expression<Func<DbModelBusinessUnit, ResponseBusinessUnit>> mapDataToResponse = item => new ResponseBusinessUnit
+            {
+                Id = item.Id,
+                Name = item.Name,
+            };
+            
+            // 결과를 가져온다.
+            result = await _queryService.ToResponseListAsync(requestQuery, mapDataToResponse);
         }
         catch (Exception e)
         {

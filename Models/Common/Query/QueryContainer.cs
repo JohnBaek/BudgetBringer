@@ -12,12 +12,12 @@ public class QueryContainer<T>
     /// 생성자
     /// </summary>
     /// <param name="totalCount">전체 갯수</param>
-    /// <param name="IQueryable">쿼리</param>
+    /// <param name="queryable">쿼리</param>
     /// <param name="requestQuery">쿼리정보</param>
     public QueryContainer(int totalCount, IQueryable<T> queryable, RequestQuery requestQuery)
     {
         TotalCount = totalCount;
-        this.Queryable = queryable;
+        Queryable = queryable;
         Skip = requestQuery.Skip;
     }
 

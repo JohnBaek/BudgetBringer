@@ -27,12 +27,12 @@ public class RequestQuery
     /// <summary>
     /// 검색 키워드 
     /// </summary>
-    public List<string> SearchKeywords { get; set; }
+    public List<string>? SearchKeywords { get; set; }
     
     /// <summary>
     /// 검색 필드
     /// </summary>
-    public List<string> SearchFields { get; set; } 
+    public List<string>? SearchFields { get; set; } 
 
     /// <summary>
     /// 검색 메타 정보 
