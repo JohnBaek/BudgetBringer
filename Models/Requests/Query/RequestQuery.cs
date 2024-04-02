@@ -45,7 +45,7 @@ public class RequestQuery
     /// </summary>
     /// <param name="searchType"></param>
     /// <param name="field"></param>
-    public void AddMeta(EnumQuerySearchType searchType, string field)
+    public void AddSearchDefine(EnumQuerySearchType searchType, string field)
     {
         SearchMetas.Add(new RequestQuerySearchMeta
         {

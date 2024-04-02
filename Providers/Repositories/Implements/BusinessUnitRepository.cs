@@ -71,7 +71,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
         try
         {
             // 검색 메타정보 추가
-            requestQuery.AddMeta(EnumQuerySearchType.Contains , nameof(ResponseBusinessUnit.Name));
+            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBusinessUnit.Name));
             
             // 셀렉팅 정의
             Expression<Func<DbModelBusinessUnit, ResponseBusinessUnit>> mapDataToResponse = item => new ResponseBusinessUnit
@@ -156,33 +156,4 @@ public class BusinessUnitRepository : IBusinessUnitRepository
     
         return result;
     }
-    
-    
-    public List<QuerySearch> ConvertToQuerySearchList(RequestQuery requestQuery)
-    {
-        var querySearchList = new List<QuerySearch>();
-
-        if (requestQuery.SearchFields.Count != requestQuery.SearchKeywords.Count)
-        {
-            throw new ArgumentException("Fields and keywords lists should have the same length.");
-        }
-
-        for (int i = 0; i < requestQuery.SearchFields.Count; i++)
-        {
-            querySearchList.Add(new QuerySearch
-            {
-                Field = requestQuery.SearchFields[i],
-                Value = requestQuery.SearchKeywords[i]
-            });
-        }
-
-        return querySearchList;
-    }
-}
-
-
-public class QuerySearch
-{
-    public string Field { get; set; }
-    public string Value { get; set; }
 }
