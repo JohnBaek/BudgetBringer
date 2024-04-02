@@ -9,7 +9,7 @@ namespace Models.DataModels;
 /// 액션 로그 
 /// </summary>
 [Table("DbModelLogAction")]
-public class DbModelLogAction
+public class DbModelLogAction 
 {
     /// <summary>
     /// 아이디 값 
@@ -41,7 +41,7 @@ public class DbModelLogAction
     [Required]
     [MaxLength(3000)]
     public required string Contents { get; init;}
-
+    
     /// <summary>
     /// 액션타입
     /// </summary>
@@ -52,4 +52,5 @@ public class DbModelLogAction
     /// 사용자 정보
     /// </summary>
     public virtual DbModelUser? DbModelUser { get; init;} 
+    
 }

@@ -9,7 +9,7 @@ namespace Models.DataModels;
 /// </summary>
 [Table("CostCenters")]
 [Index(nameof(Value), IsUnique = true)]
-public class DbModelCostCenter
+public class DbModelCostCenter : DbModelDefault
 {
     /// <summary>
     /// 아이디 
@@ -22,16 +22,4 @@ public class DbModelCostCenter
     /// </summary>
     [Required]
     public int Value { get; init; }
-    
-    /// <summary>
-    /// 등록일 (필수)
-    /// </summary>
-    [Required]
-    public DateTime RegDate { get; init; }
-    
-    /// <summary>
-    /// 수정일 (필수)
-    /// </summary>
-    [Required]
-    public DateTime ModDate { get; init; }
 }

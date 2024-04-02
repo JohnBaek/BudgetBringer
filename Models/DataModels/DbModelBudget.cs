@@ -8,7 +8,7 @@ namespace Models.DataModels;
 /// </summary>
 [Table("Budgets")]
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-public partial class DbModelBudget
+public partial class DbModelBudget : DbModelDefault
 {
     /// <summary>
     /// 예산 모델 아이디 

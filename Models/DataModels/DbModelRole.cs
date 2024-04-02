@@ -19,3 +19,4 @@ public class DbModelRole : IdentityRole<Guid>
     /// </summary>
     public virtual ICollection<DbModelRoleClaim>? RoleClaims { get; init; }
 }
+

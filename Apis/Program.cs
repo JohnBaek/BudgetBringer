@@ -30,10 +30,12 @@ public static class Program
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
         ConfigureServices(builder.Services , builder.Configuration);
 
+        // DB 컨텍스트 설정
         builder.Services.AddIdentity<DbModelUser, DbModelRole>()
             .AddEntityFrameworkStores<AnalysisDbContext>()
             .AddDefaultTokenProviders();
 
+        // 스웨거 설정
         builder.Services.AddSwaggerGen(swagger =>
         {
             swagger.SwaggerDoc("v1" , new OpenApiInfo()
@@ -76,9 +78,6 @@ public static class Program
             app.UseHsts();
         }
         
-        // // 데이터 마이그레이션및 시드 데이터 이니셜 라이즈 
-        // SeedDataInitialize(app.Services);
-
         app.UseStaticFiles();
         app.UseAuthentication();
         app.UseHandleUnauthorized();
@@ -106,23 +105,33 @@ public static class Program
         
         // 커스텀 Identity 설정 주입
         services.AddLogging();
-        services.AddControllers();
+        // 컨트롤러 설정
+        services.AddControllers(config =>
+        {
+            // Claim 기반 필터링 적용
+            config.Filters.Add(new ClaimRequirementFilter("ClaimType", "ClaimValue"));
+        });
+        
         // 인증서비스 DI
         services.AddAuthentication();
         // 컨트롤러 추가
         services.AddControllers();
+        
         // 빌더에 미들웨어 서비스를 추가한다.
         services.AddEndpointsApiExplorer();
         
-        // DI 추가
+        // 리파지토리 레이어 추가 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IBusinessUnitRepository,BusinessUnitRepository>();
         services.AddScoped<ICostCenterRepository,CostCenterRepository>();
         services.AddScoped<ICountryBusinessManagerRepository,CountryBusinessManagerRepository>();
         services.AddScoped<ILogActionRepository,LogActionRepository>();
         services.AddScoped<ISectorRepository,SectorRepository>();
+        
+        // 서비스 레이어 추가
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ISignInService<DbModelUser>, SignInService>();
+        services.AddScoped<IBusinessUnitService, BusinessUnitService>();
     }
 }
 

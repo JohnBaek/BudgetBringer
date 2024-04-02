@@ -5,7 +5,7 @@ namespace Models.DataModels;
 /// <summary>
 /// 섹터 정보 
 /// </summary>
-public class DbModelSector
+public class DbModelSector : DbModelDefault
 {
     /// <summary>
     /// 섹터 아이디 

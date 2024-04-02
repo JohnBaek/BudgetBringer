@@ -10,7 +10,7 @@ namespace Models.DataModels;
 /// </summary>
 // ReSharper disable ClassWithVirtualMembersNeverInherited.Global
 [Table("DbModelBudgetApproved")]
-public class DbModelBudgetApproved
+public class DbModelBudgetApproved : DbModelDefault
 {
     /// <summary>
     /// 예산 승인 모델 아이디 

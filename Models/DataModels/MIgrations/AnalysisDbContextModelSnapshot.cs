@@ -76,6 +76,17 @@ namespace Models.DataModels.Migrations
                     b.Property<bool>("IsAbove500K")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<DateTime>("ModDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("ModId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ModName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
                     b.Property<string>("Month")
                         .IsRequired()
                         .HasMaxLength(2)
@@ -84,6 +95,17 @@ namespace Models.DataModels.Migrations
                     b.Property<string>("OcProjectName")
                         .HasMaxLength(3000)
                         .HasColumnType("varchar(3000)");
+
+                    b.Property<DateTime>("RegDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("RegId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("RegName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<Guid>("SectorId")
                         .HasColumnType("char(36)");
@@ -168,6 +190,17 @@ namespace Models.DataModels.Migrations
                     b.Property<bool>("IsApproved")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<DateTime>("ModDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("ModId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ModName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
                     b.Property<string>("Month")
                         .HasMaxLength(2)
                         .HasColumnType("varchar(2)");
@@ -178,6 +211,17 @@ namespace Models.DataModels.Migrations
 
                     b.Property<int>("PoNumber")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("RegDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("RegId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("RegName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<Guid>("SectorId")
                         .HasColumnType("char(36)");
@@ -208,6 +252,14 @@ namespace Models.DataModels.Migrations
                     b.Property<DateTime>("ModDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<Guid>("ModId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ModName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -215,6 +267,14 @@ namespace Models.DataModels.Migrations
 
                     b.Property<DateTime>("RegDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("RegId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("RegName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -233,8 +293,24 @@ namespace Models.DataModels.Migrations
                     b.Property<DateTime>("ModDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<Guid>("ModId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ModName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
                     b.Property<DateTime>("RegDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("RegId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("RegName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("Value")
                         .HasColumnType("int");
@@ -256,6 +332,14 @@ namespace Models.DataModels.Migrations
                     b.Property<DateTime>("ModDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<Guid>("ModId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ModName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -263,6 +347,14 @@ namespace Models.DataModels.Migrations
 
                     b.Property<DateTime>("RegDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("RegId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("RegName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -372,8 +464,24 @@ namespace Models.DataModels.Migrations
                     b.Property<DateTime>("ModDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<Guid>("ModId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ModName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
                     b.Property<DateTime>("RegDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("RegId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("RegName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("Value")
                         .HasColumnType("int");
@@ -480,6 +588,10 @@ namespace Models.DataModels.Migrations
 
                     b.Property<string>("ClaimValue")
                         .HasColumnType("longtext");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(3000)
+                        .HasColumnType("varchar(3000)");
 
                     b.HasKey("Id", "UserId");
 

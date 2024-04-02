@@ -10,7 +10,7 @@ namespace Models.DataModels;
 // ReSharper disable ClassWithVirtualMembersNeverInherited.Global
 [Table("CountryBusinessManagers")]
 [Index(nameof(Name), IsUnique = true)]
-public class DbModelCountryBusinessManager
+public class DbModelCountryBusinessManager : DbModelDefault
 {
     /// <summary>
     /// 아이디 
@@ -24,16 +24,4 @@ public class DbModelCountryBusinessManager
     [MaxLength(255)]
     [Required]
     public required string Name { get; init; } 
-
-    /// <summary>
-    /// 등록일 (필수)
-    /// </summary>
-    [Required]
-    public DateTime RegDate { get; init; }
-    
-    /// <summary>
-    /// 수정일 (필수)
-    /// </summary>
-    [Required]
-    public DateTime ModDate { get; init; }
 }

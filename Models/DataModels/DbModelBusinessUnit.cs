@@ -9,7 +9,7 @@ namespace Models.DataModels;
 /// </summary>
 [Table("BusinessUnits")]
 [Index(nameof(Name) , IsUnique = true)]
-public class DbModelBusinessUnit
+public class DbModelBusinessUnit : DbModelDefault
 {
     /// <summary>
     /// 아이디 
@@ -23,16 +23,4 @@ public class DbModelBusinessUnit
     [MaxLength(255)]
     [Required]
     public required string Name { get; init; }
-    
-    /// <summary>
-    /// 등록일 (필수)
-    /// </summary>
-    [Required]
-    public DateTime RegDate { get; init; }
-    
-    /// <summary>
-    /// 수정일 (필수)
-    /// </summary>
-    [Required]
-    public DateTime ModDate { get; init; }
 }
