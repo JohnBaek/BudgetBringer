@@ -34,12 +34,13 @@ public class HandleUnauthorizedMiddleware
         await _requestDelegate(httpContext);
         
         // 인증되지 않은 사용자 인경우 
-        if (httpContext.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
+        if (httpContext.Response.StatusCode == (int)HttpStatusCode.Unauthorized || httpContext.Response.StatusCode == (int)HttpStatusCode.NotFound)
         {
+            httpContext.Response.StatusCode = (int) HttpStatusCode.OK;
             httpContext.Response.ContentType = "application/json";
             Response response = new Response
             {
-                Code = "ATH099",
+                Code = "UNAUTHORIZED",
                 Message = "로그인 후 이용해주세요",
                 IsAuthenticated = false,
                 Result = EnumResponseResult.Error
@@ -49,8 +50,12 @@ public class HandleUnauthorizedMiddleware
             await httpContext.Response.WriteAsync(responseJson);
         }
         // 권한이 없는경우
-        else if (httpContext.Response.StatusCode == (int) HttpStatusCode.Forbidden)
+        else if (httpContext.Response.StatusCode == (int) HttpStatusCode.Forbidden ||
+                 httpContext.Response.StatusCode == (int) HttpStatusCode.NotAcceptable
+                 )
         {
+
+            httpContext.Response.StatusCode = (int) HttpStatusCode.OK;
             httpContext.Response.ContentType = "application/json";
             Response response = new Response
             {

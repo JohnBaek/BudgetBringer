@@ -1,11 +1,9 @@
-using System.Runtime.InteropServices;
 using Features.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Requests.Query;
 using Models.Responses;
 using Models.Responses.Budgets;
-using Models.Responses.Users;
 using Providers.Services.Interfaces;
 
 namespace Apis.Controllers;
@@ -15,7 +13,7 @@ namespace Apis.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/v1/[controller]")]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin,User")]
 public class BusinessUnitController : Controller
 {
     /// <summary>
@@ -35,10 +33,11 @@ public class BusinessUnitController : Controller
     /// <summary>
     /// 리스트를 가져온다.
     /// </summary>
-    /// <returns>로그인결과</returns>
-    [HttpGet("Roles")]
-    [ClaimRequirement("Permission","budget-plan")]
-    public async Task<ResponseList<ResponseBusinessUnit>> GetListAsync(RequestQuery requestQuery)
+    /// <param name="requestQuery">요청 정보</param>
+    /// <returns></returns>
+    [HttpGet("")]
+    [ClaimRequirement("Permission","budget-plan,budget-plan-view")]
+    public async Task<ResponseList<ResponseBusinessUnit>> GetListAsync([FromQuery] RequestQuery requestQuery)
     {
         return await _businessUnitService.GetListAsync(requestQuery);
     }

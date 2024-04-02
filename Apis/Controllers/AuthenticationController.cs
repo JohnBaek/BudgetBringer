@@ -14,7 +14,7 @@ namespace Apis.Controllers;
 [ApiController]
 [AllowAnonymous]
 [Route("api/v1/[controller]")]
-public class LoginController
+public class AuthenticationController
 {
     /// <summary>
     /// 로그인 서비스
@@ -32,7 +32,7 @@ public class LoginController
     /// </summary>
     /// <param name="authenticationService">로그인 서비스</param>
     /// <param name="signInService">사인인 서비스</param>
-    public LoginController(
+    public AuthenticationController(
           IAuthenticationService authenticationService
         , ISignInService<DbModelUser> signInService) 
     {

@@ -1,29 +1,22 @@
+using Features.Filters;
+using Microsoft.AspNetCore.Mvc;
+
 namespace Features.Attributes;
 
 /// <summary>
 /// Claim 기반 Authorize 애트리뷰트
 /// </summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-public class ClaimRequirementAttribute : Attribute
+public class ClaimRequirementAttribute : TypeFilterAttribute
 {
-    /// <summary>
-    /// Claim 타입
-    /// </summary>
-    public string ClaimType { get; }
-    
-    /// <summary>
-    /// Claim 값
-    /// </summary>
-    public string ClaimValue { get; }
-
     /// <summary>
     /// 생성자
     /// </summary>
-    /// <param name="claimType"></param>
-    /// <param name="claimValue"></param>
+    /// <param name="claimType">타입</param>
+    /// <param name="claimValue">값</param>
     public ClaimRequirementAttribute(string claimType, string claimValue)
+        : base(typeof(ClaimRequirementFilter))
     {
-        ClaimType = claimType;
-        ClaimValue = claimValue;
+        Arguments = new object[] { claimType, claimValue };
     }
 }

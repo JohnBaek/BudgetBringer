@@ -108,8 +108,6 @@ public static class Program
         // 컨트롤러 설정
         services.AddControllers(config =>
         {
-            // Claim 기반 필터링 적용
-            config.Filters.Add(new ClaimRequirementFilter("ClaimType", "ClaimValue"));
         });
         
         // 인증서비스 DI
