@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Models.Common.Enums;
 
 // ReSharper disable All
-
 namespace Models.DataModels;
 
 /// <summary>
@@ -52,5 +51,5 @@ public class DbModelLogAction
     /// <summary>
     /// 사용자 정보
     /// </summary>
-    public virtual required DbModelUser DbModelUser { get; init;} 
+    public virtual DbModelUser? DbModelUser { get; init;} 
 }

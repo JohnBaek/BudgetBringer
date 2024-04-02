@@ -32,4 +32,10 @@ public interface IUserRepository
     /// <param name="userId">사용자 아이디</param>
     /// <returns></returns>
     Task<List<string>> GetRolesByUserAsync(Guid userId);
+
+    /// <summary>
+    /// 로그인한 사용자의 정보를 가져온다.
+    /// </summary>
+    /// <returns></returns>
+    Task<DbModelUser> GetAuthenticatedUser();
 }

@@ -22,16 +22,23 @@ public class LogActionRepository : ILogActionRepository
     /// 로거
     /// </summary>
     private readonly ILogger<LogActionRepository> _logger;
+    
+    /// <summary>
+    /// 사용자 리파지토리
+    /// </summary>
+    private readonly IUserRepository _userRepository;
 
     /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="logger">로거</param>
     /// <param name="dbContext">디비컨텍스트</param>
-    public LogActionRepository(ILogger<LogActionRepository> logger, AnalysisDbContext dbContext)
+    /// <param name="userRepository">유저리파지토리</param>
+    public LogActionRepository(ILogger<LogActionRepository> logger, AnalysisDbContext dbContext, IUserRepository userRepository)
     {
         _logger = logger;
         _dbContext = dbContext;
+        _userRepository = userRepository;
     }
 
     
@@ -71,6 +78,24 @@ public class LogActionRepository : ILogActionRepository
         
         try
         {
+            // 로그인한 사용자 정보를 가져온다.
+            DbModelUser user = await _userRepository.GetAuthenticatedUser();
+            
+            // 로그 정보를 생성한다.
+            DbModelLogAction add = new DbModelLogAction
+            {
+                Id = Guid.NewGuid() ,
+                Contents = contents ,
+                ActionType = actionType ,
+                RegDate = DateTime.Now ,
+                RegId = user.Id ,
+                RegName = user.DisplayName
+            };
+
+            // 데이터베이스에 저장
+            await _dbContext.LogActions.AddAsync(add);
+            await _dbContext.SaveChangesAsync();
+            
             result = new Response();
         }
         catch (Exception e)

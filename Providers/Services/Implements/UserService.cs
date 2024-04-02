@@ -149,49 +149,4 @@ public class UserService : IUserService
     
         return result;
     }
-    //
-    // /// <summary>
-    // /// 로그인한 사용자의 Claim 목록을 가져온다.
-    // /// </summary>
-    // /// <param name="httpContext">HttpContext</param>
-    // /// <returns></returns>
-    // public async Task<ResponseList<ResponseUserClaim>> GetClaimByUserAsync(HttpContext httpContext)
-    // {
-    //     ResponseList<ResponseUserClaim> result = new ResponseList<ResponseUserClaim>();
-    //
-    //     try
-    //     {
-    //         DbModelUser? dbModelUser = await _userManager.GetUserAsync(httpContext.DbModelUser);
-    //
-    //         // 세션에 사용자 정보가 없는경우 
-    //         if (dbModelUser == null)
-    //             return result;
-    //
-    //         // 사용자의 모든 Claim을 가져온다.
-    //         IList<Claim> claims = await _userManager.GetClaimsAsync(dbModelUser);
-    //
-    //         // 반환할 사용자의 claim 정보 
-    //         List<ResponseUserClaim> items = new List<ResponseUserClaim>();
-    //
-    //         // 모든 Claim 에 대해 처리한다.
-    //         foreach (Claim claim in claims)
-    //         {
-    //             items.Add(new ResponseUserClaim
-    //             {
-    //                 Name = claim.Type ,
-    //                 Value = claim.Value,
-    //             });
-    //         }
-    //
-    //         result.Items = items;
-    //         result.Result = EnumResponseResult.Success;
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         result = new ResponseList<ResponseUserClaim>{ Code = "ERR", Message = "처리중 예외가 발생했습니다." };
-    //         e.LogError(_logger);
-    //     }
-    //
-    //     return result;
-    // }
 }

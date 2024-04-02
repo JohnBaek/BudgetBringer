@@ -1,4 +1,5 @@
 using Features.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -21,21 +22,17 @@ public class UserRepository : IUserRepository
     /// 로거
     /// </summary>
     private readonly ILogger<UserRepository> _logger;
-    
-    /// <summary>
-    /// 사이닝 매니저
-    /// </summary>
-    private readonly SignInManager<DbModelUser> _signInManager;
 
     /// <summary>
     /// 사용자 매니저
     /// </summary>
     private readonly UserManager<DbModelUser> _userManager;
     
+    
     /// <summary>
-    /// 로그액션 리파지토리
+    /// IHttpContextAccessor
     /// </summary>
-    private readonly ILogActionRepository _logActionRepository;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
 
     /// <summary>
@@ -43,20 +40,18 @@ public class UserRepository : IUserRepository
     /// </summary>
     /// <param name="dbContext">DB Context</param>
     /// <param name="logger">로거</param>
-    /// <param name="signInManager">사이닝 매니저</param>
     /// <param name="userManager"></param>
-    /// <param name="logActionRepository">로그액션 리파지토리</param>
+    /// <param name="httpContextAccessor">IHttpContextAccessor</param>
     public UserRepository(
           AnalysisDbContext dbContext
         , ILogger<UserRepository> logger
-        , SignInManager<DbModelUser> signInManager
-        , UserManager<DbModelUser> userManager, ILogActionRepository logActionRepository)
+        , UserManager<DbModelUser> userManager
+        , IHttpContextAccessor httpContextAccessor)
     {
         _dbContext = dbContext;
         _logger = logger;
-        _signInManager = signInManager;
         _userManager = userManager;
-        _logActionRepository = logActionRepository;
+        _httpContextAccessor = httpContextAccessor;
     }
     
     /// <summary>
@@ -138,4 +133,28 @@ public class UserRepository : IUserRepository
         return result;
     }
 
+    /// <summary>
+    /// 로그인한 사용자의 정보를 가져온다.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<DbModelUser> GetAuthenticatedUser()
+    {
+        DbModelUser? result;
+    
+        try
+        {
+            // 세션이 비어있을 경우 
+            if (_httpContextAccessor.HttpContext?.User == null)
+                return new DbModelUser();
+            
+            result = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        }
+        catch (Exception e)
+        {
+            result = null;
+            e.LogError(_logger);
+        }
+    
+        return result;
+    }
 }
