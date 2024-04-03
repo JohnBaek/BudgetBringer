@@ -10,13 +10,13 @@ namespace Providers.Services.Interfaces;
 /// </summary>
 public interface IBudgetApprovedService
 {
-    /// <summary>
+    // <summary>
     /// 리스트를 가져온다.
     /// </summary>
     /// <param name="requestQuery">쿼리 정보</param>
     /// <returns></returns>
     Task<ResponseList<ResponseBudgetApproved>> GetListAsync(RequestQuery requestQuery);
-
+    
     /// <summary>
     /// 데이터를 가져온다.
     /// </summary>
@@ -24,19 +24,21 @@ public interface IBudgetApprovedService
     /// <returns></returns>
     Task<ResponseData<ResponseBudgetApproved>> GetAsync(string id);
 
+
     /// <summary>
     /// 데이터를 업데이트한다.
     /// </summary>
+    /// <param name="id"></param>
     /// <param name="request"></param>
     /// <returns></returns>
-    Task<Response> UpdateAsync(RequestBusinessUnit request);
+    Task<Response> UpdateAsync(string id, RequestBudgetApproved request);
     
     /// <summary>
     /// 데이터를 추가한다.
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    Task<Response> AddAsync(RequestBusinessUnit request);
+    Task<ResponseData<ResponseBudgetApproved>> AddAsync(RequestBudgetApproved request);
     
     /// <summary>
     /// 데이터를 삭제한다.

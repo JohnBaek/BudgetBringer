@@ -16,7 +16,7 @@ public interface IBusinessUnitService
     /// <param name="requestQuery">쿼리 정보</param>
     /// <returns></returns>
     Task<ResponseList<ResponseBusinessUnit>> GetListAsync(RequestQuery requestQuery);
-
+    
     /// <summary>
     /// 데이터를 가져온다.
     /// </summary>
@@ -27,10 +27,10 @@ public interface IBusinessUnitService
     /// <summary>
     /// 데이터를 업데이트한다.
     /// </summary>
-    /// <param name="id">아이디 값</param>
+    /// <param name="id"></param>
     /// <param name="request"></param>
     /// <returns></returns>
-    Task<Response> UpdateAsync(string id , RequestBusinessUnit request);
+    Task<Response> UpdateAsync(string id, RequestBusinessUnit request);
     
     /// <summary>
     /// 데이터를 추가한다.
