@@ -375,8 +375,7 @@ namespace Models.DataModels.Migrations
 
                     b.Property<string>("Contents")
                         .IsRequired()
-                        .HasMaxLength(3000)
-                        .HasColumnType("varchar(3000)");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("RegDate")
                         .HasColumnType("datetime(6)");
