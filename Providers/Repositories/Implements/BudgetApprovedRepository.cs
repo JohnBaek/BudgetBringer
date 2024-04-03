@@ -51,6 +51,11 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
     private const string LogCategory = "[BudgetApproved]";
 
     /// <summary>
+    /// 디스패처 서비스
+    /// </summary>
+    private readonly IDispatchService _dispatchService;
+
+    /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="logger">로거</param>
@@ -58,18 +63,21 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
     /// <param name="queryService">쿼리 서비스</param>
     /// <param name="userRepository">유저 리파지토리</param>
     /// <param name="logActionWriteService">액션 로그 기록 서비스</param>
+    /// <param name="dispatchService">디스패처 서비스</param>
     public BudgetApprovedRepository(
         ILogger<BudgetApprovedRepository> logger
         , AnalysisDbContext dbContext
         , IQueryService queryService
         , IUserRepository userRepository
-        , ILogActionWriteService logActionWriteService)
+        , ILogActionWriteService logActionWriteService
+        , IDispatchService dispatchService)
     {
         _logger = logger;
         _dbContext = dbContext;
         _queryService = queryService;
         _userRepository = userRepository;
         _logActionWriteService = logActionWriteService;
+        _dispatchService = dispatchService;
     }
 
 
@@ -85,7 +93,16 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         try
         {
             // 검색 메타정보 추가
-            // requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.Name));
+            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.Description));
+            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.PoNumber));
+            requestQuery.AddSearchDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.ApprovalStatus));
+            requestQuery.AddSearchDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.ApprovalAmount));
+            requestQuery.AddSearchDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.Actual));
+            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.CostCenterName));
+            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.CountryBusinessManagerName));
+            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.BusinessUnitName));
+            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.OcProjectName));
+            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.BossLineDescription));
             
             // 셀렉팅 정의
             Expression<Func<DbModelBudgetApproved, ResponseBudgetApproved>> mapDataToResponse = item => new ResponseBudgetApproved
@@ -136,8 +153,8 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                 return new ResponseData<ResponseBudgetApproved>("ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요");
 
             // 기존데이터를 조회한다.
-            DbModelBusinessUnit? before =
-                await _dbContext.BusinessUnits.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
+            DbModelBudgetApproved? before =
+                await _dbContext.BudgetApproved.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
             
             // 조회된 데이터가 없다면
             if(before == null)
@@ -183,7 +200,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                 return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
             
             // 동일한 이름을 가진 데이터가 있는지 확인
-            DbModelBusinessUnit? update = await _dbContext.BusinessUnits
+            DbModelBudgetApproved? update = await _dbContext.BudgetApproved
                 .Where(i => i.Id == id.ToGuid())
                 .FirstOrDefaultAsync();
             
@@ -192,19 +209,24 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                 return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "대상이 존재하지 않습니다."};
             
             // 로그기록을 위한 데이터 스냅샷
-            DbModelBusinessUnit snapshot = update.FromClone()!;
+            DbModelBudgetApproved snapshot = update.FromClone()!;
           
             // 데이터를 수정한다.
-            // update.Name = request.Name;
-            update.RegName = user.DisplayName; 
+            update.IsAbove500K = request.IsAbove500K;
+            update.ApprovalDate = request.ApprovalDate;
+            update.Description = request.Description;
+            update.PoNumber = request.PoNumber;
+            update.ApprovalStatus = request.ApprovalStatus;
+            update.ApprovalAmount = request.ApprovalAmount;
+            update.Actual = request.Actual;
+            update.OcProjectName = request.OcProjectName;
+            update.BossLineDescription = request.BossLineDescription;
             update.ModName = user.DisplayName; 
-            update.RegDate = DateTime.Now; 
             update.ModDate = DateTime.Now; 
-            update.RegId = user.Id; 
             update.ModId = user.Id; 
             
             // 데이터베이스에 업데이트처리 
-            _dbContext.BusinessUnits.Update(update);
+            _dbContext.BudgetApproved.Update(update);
             await _dbContext.SaveChangesAsync();
             
             // 커밋한다.
@@ -248,21 +270,50 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             // 사용자 정보가 없는경우 
             if(user == null)
                 return new ResponseData<ResponseBudgetApproved>{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
-        
+
+
+            // 코스트센터명 조회
+            string costCenterName = await _dispatchService.GetNameByIdAsync<DbModelCostCenter>
+                ("Id", "Value", request.CostCenterId.ToString());
+
+            // 컨트리 비지니스 매니저명 조회
+            string countryBusinessManagerName = await _dispatchService.GetNameByIdAsync<DbModelCountryBusinessManager>
+                ("Id", "Name", request.CountryBusinessManagerId.ToString());
+
+            // 비지니스유닛 명 조회
+            string businessUnitName = await _dispatchService.GetNameByIdAsync<DbModelBusinessUnit>
+                ("Id", "Name", request.CountryBusinessManagerId.ToString());
+            
             // 데이터를 생성한다.
             DbModelBudgetApproved add = new DbModelBudgetApproved
             {
-                ApprovalDate = null,
+                Id = Guid.NewGuid(),
+                SectorId = request.SectorId,
+                
+                CostCenterId = request.CostCenterId,
+                BusinessUnitId = request.BusinessUnitId,
+                CountryBusinessManagerId = request.CountryBusinessManagerId,
+                
+                CostCenterName = costCenterName ,
+                BusinessUnitName = businessUnitName,
+                CountryBusinessManagerName = countryBusinessManagerName,
+                
+                IsAbove500K = request.IsAbove500K,
+                ApprovalDate = request.ApprovalDate,
+                Description = request.Description,
+                PoNumber = request.PoNumber,
+                ApprovalStatus = request.ApprovalStatus,
+                ApprovalAmount = request.ApprovalAmount,
+                Actual = request.Actual,
+                OcProjectName = request.OcProjectName,
+                BossLineDescription = request.BossLineDescription,
                 IsApproved = false,
-                CostCenterName = null,
-                CountryBusinessManagerName = null,
-                BusinessUnitName = null,
-                DbModelSector = null,
-                DbModelBusinessUnit = null,
-                DbModelCostCenter = null,
-                DbModelCountryBusinessManager = null,
-                RegName = null,
-                ModName = null
+                RegName = user.DisplayName,
+                ModName = user.DisplayName,
+                RegDate = DateTime.Now,
+                ModDate = DateTime.Now,
+                RegId = user.Id,
+                ModId = user.Id,
             };
             
             // 데이터베이스에 데이터 추가 

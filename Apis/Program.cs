@@ -134,6 +134,8 @@ public static class Program
         services.AddScoped<ISignInService<DbModelUser>, SignInService>();
         services.AddScoped<IBusinessUnitService, BusinessUnitService>();
         services.AddScoped<ILogActionWriteService, LogActionWriteService>();
+        services.AddScoped<IDispatchService, DispatchService>();
+        
         services.AddTransient<IQueryService, QueryService>();
     }
 }
