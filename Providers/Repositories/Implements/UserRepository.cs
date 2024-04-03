@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Features.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +13,8 @@ namespace Providers.Repositories.Implements;
 /// <summary>
 /// 유저 정보 리파지토리 인터페이스
 /// </summary>
+[SuppressMessage("Performance", "CA1862:Use the \'StringComparison\' method overloads to perform case-insensitive string comparisons")]
+[SuppressMessage("ReSharper", "SpecifyStringComparison")]
 public class UserRepository : IUserRepository
 {
     /// <summary>

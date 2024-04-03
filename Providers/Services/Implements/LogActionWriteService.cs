@@ -45,9 +45,10 @@ public class LogActionWriteService : ILogActionWriteService
     /// <param name="after">반영 후</param>
     /// <param name="user">사용자 정보</param>
     /// <param name="contents">로그 컨텐츠 정보</param>
+    /// <param name="category">카테고</param>
     /// <typeparam name="T">모델 T</typeparam>
     /// <returns></returns>
-    public async Task<Response> WriteUpdate<T>(T before, T after, DbModelUser user, string contents) where T : class 
+    public async Task<Response> WriteUpdate<T>(T before, T after, DbModelUser user, string contents , string category) where T : class 
     {
         Response result;
         StringBuilder stringBuilder = new StringBuilder();
@@ -66,7 +67,7 @@ public class LogActionWriteService : ILogActionWriteService
             stringBuilder.AppendLine($"변경전: {beforeJson}");
             stringBuilder.AppendLine($"변경후: {afterJson}");
 
-            await _logActionRepository.AddAsync(EnumDatabaseLogActionType.Update, stringBuilder.ToString(), user);
+            await _logActionRepository.AddAsync(EnumDatabaseLogActionType.Update, stringBuilder.ToString(), category, user);
             result = new Response(EnumResponseResult.Success);
         }
         catch (Exception e)
@@ -77,16 +78,17 @@ public class LogActionWriteService : ILogActionWriteService
 
         return result;
     }
-    
+
     /// <summary>
     /// 추가 로그를 기록한다.
     /// </summary>
     /// <param name="before">반영 전</param>
     /// <param name="user">사용자 정보</param>
     /// <param name="contents">로그 컨텐츠 정보</param>
+    /// <param name="category">카테고리</param>
     /// <typeparam name="T">모델 T</typeparam>
     /// <returns></returns>
-    public async Task<Response> WriteAddition<T>(T before, DbModelUser user, string contents) where T : class
+    public async Task<Response> WriteAddition<T>(T before, DbModelUser user, string contents , string category) where T : class
     {
         Response result;
         StringBuilder stringBuilder = new StringBuilder();
@@ -101,7 +103,7 @@ public class LogActionWriteService : ILogActionWriteService
             stringBuilder.AppendLine($"사용자 \"[{user.DisplayName} ({user.Id})]\" 가 데이터를 추가 했습니다.");
             stringBuilder.AppendLine($"데이터: {beforeJson}");
 
-            await _logActionRepository.AddAsync(EnumDatabaseLogActionType.Add, stringBuilder.ToString(), user);
+            await _logActionRepository.AddAsync(EnumDatabaseLogActionType.Add, stringBuilder.ToString(), category, user);
             result = new Response(EnumResponseResult.Success);
         }
         catch (Exception e)
@@ -119,9 +121,10 @@ public class LogActionWriteService : ILogActionWriteService
     /// <param name="before">반영 전</param>
     /// <param name="user">사용자 정보</param>
     /// <param name="contents">로그 컨텐츠 정보</param>
+    /// <param name="category">카테고리</param>
     /// <typeparam name="T">모델 T</typeparam>
     /// <returns></returns>
-    public async Task<Response> WriteDeletion<T>(T before, DbModelUser user, string contents) where T : class
+    public async Task<Response> WriteDeletion<T>(T before, DbModelUser user, string contents , string category) where T : class
     {
         Response result;
         StringBuilder stringBuilder = new StringBuilder();
@@ -136,7 +139,7 @@ public class LogActionWriteService : ILogActionWriteService
             stringBuilder.AppendLine($"사용자 \"[{user.DisplayName} ({user.Id})]\" 가 데이터를 삭제 했습니다.");
             stringBuilder.AppendLine($"데이터: {beforeJson}");
 
-            await _logActionRepository.AddAsync(EnumDatabaseLogActionType.Delete, stringBuilder.ToString(), user);
+            await _logActionRepository.AddAsync(EnumDatabaseLogActionType.Delete, stringBuilder.ToString(), category, user);
             result = new Response(EnumResponseResult.Success);
         }
         catch (Exception e)

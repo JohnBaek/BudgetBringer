@@ -22,7 +22,8 @@ public interface ILogActionRepository
     /// </summary>
     /// <param name="actionType">데이터베이스 액션 타입</param>
     /// <param name="contents">로그 컨텐츠</param>
+    /// <param name="category">카테고리</param>
     /// <param name="user">사용자 정보</param>
     /// <returns></returns>
-    Task<Response> AddAsync(EnumDatabaseLogActionType actionType, string contents, DbModelUser user);
+    Task<Response> AddAsync(EnumDatabaseLogActionType actionType, string contents, string category, DbModelUser user);
 }

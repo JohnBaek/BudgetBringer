@@ -2,6 +2,7 @@ using Models.DataModels;
 using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
+using Models.Responses.Budgets;
 
 namespace Providers.Repositories.Interfaces;
 
@@ -15,21 +16,29 @@ public interface ISectorRepository
     /// </summary>
     /// <param name="requestQuery">쿼리 정보</param>
     /// <returns></returns>
-    Task<List<DbModelSector>> GetListAsync(RequestQuery requestQuery);
+    Task<ResponseList<ResponseSector>> GetListAsync(RequestQuery requestQuery);
+
+    /// <summary>
+    /// 데이터를 가져온다.
+    /// </summary>
+    /// <param name="id">아이디</param>
+    /// <returns></returns>
+    Task<ResponseData<ResponseSector>> GetAsync(string id);
 
     /// <summary>
     /// 데이터를 업데이트한다.
     /// </summary>
+    /// <param name="id"></param>
     /// <param name="request"></param>
     /// <returns></returns>
-    Task<Response> UpdateAsync(RequestBusinessUnit request);
+    Task<Response> UpdateAsync(string id , RequestSector request);
     
     /// <summary>
     /// 데이터를 추가한다.
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    Task<Response> AddAsync(RequestBusinessUnit request);
+    Task<ResponseData<ResponseSector>> AddAsync(RequestSector request);
     
     /// <summary>
     /// 데이터를 삭제한다.

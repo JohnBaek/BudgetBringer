@@ -373,6 +373,11 @@ namespace Models.DataModels.Migrations
                     b.Property<int>("ActionType")
                         .HasColumnType("int");
 
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
                     b.Property<string>("Contents")
                         .IsRequired()
                         .HasColumnType("TEXT");

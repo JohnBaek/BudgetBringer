@@ -6,6 +6,7 @@ using Models.DataModels;
 using Models.Requests.Query;
 using Models.Responses;
 using Providers.Repositories.Interfaces;
+using Providers.Services.Interfaces;
 
 namespace Providers.Repositories.Implements;
 
@@ -25,6 +26,26 @@ public class LogActionRepository : ILogActionRepository
     private readonly ILogger<LogActionRepository> _logger;
     
 
+    /// <summary>
+    /// 사용자 리파지토리
+    /// </summary>
+    private readonly IUserRepository _userRepository;
+
+    /// <summary>
+    /// 쿼리 서비스
+    /// </summary>
+    private readonly IQueryService _queryService;
+
+    /// <summary>
+    /// 액션 로그 기록 서비스
+    /// </summary>
+    private readonly ILogActionWriteService _logActionWriteService;
+
+    /// <summary>
+    /// 로그 카테고리명
+    /// </summary>
+    private const string LogCategory = "[BudgetApproved]";
+    
     /// <summary>
     /// 생성자
     /// </summary>
@@ -66,9 +87,11 @@ public class LogActionRepository : ILogActionRepository
     /// </summary>
     /// <param name="actionType">데이터베이스 액션 타입</param>
     /// <param name="contents">로그 컨텐츠</param>
+    /// <param name="category"></param>
     /// <param name="user">사용자 정보</param>
     /// <returns></returns>
-    public async Task<Response> AddAsync(EnumDatabaseLogActionType actionType, string contents, DbModelUser user)
+    public async Task<Response> AddAsync(EnumDatabaseLogActionType actionType, string contents, string category,
+        DbModelUser user)
     {
         Response result;
         
@@ -82,7 +105,8 @@ public class LogActionRepository : ILogActionRepository
                 ActionType = actionType ,
                 RegDate = DateTime.Now ,
                 RegId = user.Id ,
-                RegName = user.DisplayName
+                RegName = user.DisplayName ,
+                Category = category ,
             };
 
             // 데이터베이스에 저장

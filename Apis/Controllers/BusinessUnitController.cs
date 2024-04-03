@@ -1,6 +1,7 @@
 using Features.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
 using Models.Responses.Budgets;
@@ -36,9 +37,58 @@ public class BusinessUnitController : Controller
     /// <param name="requestQuery">요청 정보</param>
     /// <returns></returns>
     [HttpGet("")]
-    [ClaimRequirement("Permission","budget-plan,budget-plan-view")]
+    [ClaimRequirement("Permission","budget-plan")]
     public async Task<ResponseList<ResponseBusinessUnit>> GetListAsync([FromQuery] RequestQuery requestQuery)
     {
         return await _businessUnitService.GetListAsync(requestQuery);
+    }
+
+    /// <summary>
+    /// 데이터를 가져온다.
+    /// </summary>
+    /// <param name="id">아이디</param>
+    /// <returns></returns>
+    [HttpGet("{id}")]
+    [ClaimRequirement("Permission","budget-plan")]
+    public async Task<ResponseData<ResponseBusinessUnit>> GetAsync([FromRoute] string id)
+    {
+        return await _businessUnitService.GetAsync(id);
+    }
+
+
+    /// <summary>
+    /// 데이터를 업데이트한다.
+    /// </summary>
+    /// <param name="id">아이디</param>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("{id}")]
+    [ClaimRequirement("Permission","budget-plan")]
+    public async Task<Response> UpdateAsync([FromRoute] string id , RequestBusinessUnit request)
+    {
+        return await _businessUnitService.UpdateAsync(id , request);
+    }
+    
+    /// <summary>
+    /// 데이터를 추가한다.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("")]
+    [ClaimRequirement("Permission","budget-plan")]
+    public async Task<ResponseData<ResponseBusinessUnit>> AddAsync(RequestBusinessUnit request)
+    {
+        return await _businessUnitService.AddAsync(request);
+    }
+    
+    /// <summary>
+    /// 데이터를 삭제한다.
+    /// </summary>
+    /// <param name="id">대상 아이디값</param>
+    /// <returns></returns>
+    [HttpDelete("{id}")]
+    [ClaimRequirement("Permission","budget-plan")]
+    public async Task<Response> DeleteAsync(string id){
+        return await _businessUnitService.DeleteAsync(id);
     }
 }

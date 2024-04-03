@@ -1,4 +1,5 @@
 using Models.Common.Enums;
+using Models.DataModels;
 
 namespace Models.Responses;
 
@@ -15,6 +16,41 @@ public class ResponseData<T> : Response where T : class
     public ResponseData()
     {
     }
+    
+    /// <summary>
+    /// 생성자
+    /// </summary>
+    /// <param name="code"></param>
+    /// <param name="message"></param>
+    public ResponseData( string code, string message) 
+    {
+        Code = code;
+        Message = message;
+    }
+
+    /// <summary>
+    /// 생성자
+    /// </summary>
+    /// <param name="result"></param>
+    /// <param name="data"></param>
+    public ResponseData(EnumResponseResult result, T? data) : base(result)
+    {
+        Data = data;
+    }
+
+    /// <summary>
+    /// 생성자
+    /// </summary>
+    /// <param name="result"></param>
+    /// <param name="code"></param>
+    /// <param name="message"></param>
+    public ResponseData(EnumResponseResult result, string code, string message) : base(result, code, message)
+    {
+        Result = result;
+        Code = code;
+        Message = message;
+    }
+
 
     /// <summary>
     /// 생성자
@@ -25,7 +61,7 @@ public class ResponseData<T> : Response where T : class
         this.Result = EnumResponseResult.Error;
         this.Message = message;
     }
-    
+
     /// <summary>
     /// 응답 데이터
     /// </summary>

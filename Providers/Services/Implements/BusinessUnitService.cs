@@ -71,7 +71,7 @@ public class BusinessUnitService : IBusinessUnitService
         
         try
         {
-            response = new ResponseData<ResponseBusinessUnit>();
+            response = await _businessUnitRepository.GetAsync(id);
         }
         catch (Exception e)
         {
@@ -85,15 +85,16 @@ public class BusinessUnitService : IBusinessUnitService
     /// <summary>
     /// 데이터를 업데이트한다.
     /// </summary>
-    /// <param name="request">요청정보</param>
+    /// <param name="id">아이디 값</param>
+    /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<Response> UpdateAsync(RequestBusinessUnit request)
+    public async Task<Response> UpdateAsync(string id, RequestBusinessUnit request)
     {
-        ResponseData<ResponseBusinessUnit> response;
+        Response response;
         
         try
         {
-            response = new ResponseData<ResponseBusinessUnit>();
+            response = await _businessUnitRepository.UpdateAsync(id , request);
         }
         catch (Exception e)
         {
@@ -109,13 +110,13 @@ public class BusinessUnitService : IBusinessUnitService
     /// </summary>
     /// <param name="request">요청정보</param>
     /// <returns></returns>
-    public async Task<Response> AddAsync(RequestBusinessUnit request)
+    public async Task<ResponseData<ResponseBusinessUnit>> AddAsync(RequestBusinessUnit request)
     {
         ResponseData<ResponseBusinessUnit> response;
         
         try
         {
-            response = new ResponseData<ResponseBusinessUnit>();
+            response = await _businessUnitRepository.AddAsync(request);
         }
         catch (Exception e)
         {
@@ -133,11 +134,11 @@ public class BusinessUnitService : IBusinessUnitService
     /// <returns></returns>
     public async Task<Response> DeleteAsync(string id)
     {
-        ResponseData<ResponseBusinessUnit> response;
+        Response response;
         
         try
         {
-            response = new ResponseData<ResponseBusinessUnit>();
+            response = await _businessUnitRepository.DeleteAsync(id);
         }
         catch (Exception e)
         {

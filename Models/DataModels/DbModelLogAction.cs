@@ -42,6 +42,13 @@ public class DbModelLogAction
     public required string Contents { get; init;}
     
     /// <summary>
+    /// 카테고리 
+    /// </summary>
+    [Required]
+    [MaxLength(255)]
+    public required string Category { get; init;}
+    
+    /// <summary>
     /// 액션타입
     /// </summary>
     [Required]
