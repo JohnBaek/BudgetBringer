@@ -24,22 +24,16 @@ public class LogActionRepository : ILogActionRepository
     /// </summary>
     private readonly ILogger<LogActionRepository> _logger;
     
-    /// <summary>
-    /// 사용자 리파지토리
-    /// </summary>
-    private readonly IUserRepository _userRepository;
 
     /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="logger">로거</param>
     /// <param name="dbContext">디비컨텍스트</param>
-    /// <param name="userRepository">유저리파지토리</param>
-    public LogActionRepository(ILogger<LogActionRepository> logger, AnalysisDbContext dbContext, IUserRepository userRepository)
+    public LogActionRepository(ILogger<LogActionRepository> logger, AnalysisDbContext dbContext)
     {
         _logger = logger;
         _dbContext = dbContext;
-        _userRepository = userRepository;
     }
 
     
@@ -72,16 +66,14 @@ public class LogActionRepository : ILogActionRepository
     /// </summary>
     /// <param name="actionType">데이터베이스 액션 타입</param>
     /// <param name="contents">로그 컨텐츠</param>
+    /// <param name="user">사용자 정보</param>
     /// <returns></returns>
-    public async Task<Response> AddAsync(EnumDatabaseLogActionType actionType, string contents)
+    public async Task<Response> AddAsync(EnumDatabaseLogActionType actionType, string contents, DbModelUser user)
     {
         Response result;
         
         try
         {
-            // 로그인한 사용자 정보를 가져온다.
-            DbModelUser user = await _userRepository.GetAuthenticatedUser();
-            
             // 로그 정보를 생성한다.
             DbModelLogAction add = new DbModelLogAction
             {

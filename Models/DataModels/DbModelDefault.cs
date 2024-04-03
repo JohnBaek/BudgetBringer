@@ -11,13 +11,13 @@ public class DbModelDefault
     /// 등록일 (필수)
     /// </summary>
     [Required]
-    public DateTime RegDate { get; init; }
+    public DateTime RegDate { get; set; }
     
     /// <summary>
     /// 수정일 (필수)
     /// </summary>
     [Required]
-    public DateTime ModDate { get; init; }
+    public DateTime ModDate { get; set; }
 
     /// <summary>
     /// 등록자 아이디 
@@ -36,13 +36,13 @@ public class DbModelDefault
     /// </summary>
     [Required]
     [MaxLength(255)]
-    public required string RegName { get; init;}
+    public required string RegName { get; set;}
 
     /// <summary>
     /// 수정자명 
     /// </summary>
     [Required]
     [MaxLength(255)]
-    public required string ModName { get; init;}
+    public required string ModName { get; set;}
 
 }

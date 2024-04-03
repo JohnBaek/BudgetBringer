@@ -5,7 +5,7 @@ namespace Models.Requests.Budgets;
 /// <summary>
 /// 예산정보 요청 클래스
 /// </summary>
-public class RequestBudgetPlan
+public class RequestBudgetPlan : RequestBase
 {
     /// <summary>
     /// 500K 이상 예산 여부

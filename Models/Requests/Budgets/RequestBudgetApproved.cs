@@ -6,7 +6,7 @@ namespace Models.Requests.Budgets;
 /// <summary>
 /// 예산정보 승인 정보 응답 클래스
 /// </summary>
-public class RequestBudgetApproved
+public class RequestBudgetApproved : RequestBase
 {
     /// <summary>
     /// 500K 이상 예산 여부

@@ -1,8 +1,12 @@
 
+using System.Data;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices.JavaScript;
 using Features.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Models.Common.Enums;
 using Models.Common.Query;
 using Models.DataModels;
@@ -16,7 +20,7 @@ using Providers.Services.Interfaces;
 namespace Providers.Repositories.Implements;
 
 /// <summary>
-/// 비지니스 유닛 Repository 구현체
+/// 비지니스 유닛 RepositoryTitle 구현체
 /// </summary>
 public class BusinessUnitRepository : IBusinessUnitRepository
 {
@@ -31,9 +35,9 @@ public class BusinessUnitRepository : IBusinessUnitRepository
     private readonly ILogger<BusinessUnitRepository> _logger;
 
     /// <summary>
-    /// 로그액션 리파지토리
+    /// 사용자 리파지토리
     /// </summary>
-    private readonly ILogActionRepository _logActionRepository;
+    private readonly IUserRepository _userRepository;
 
     /// <summary>
     /// 쿼리 서비스
@@ -41,22 +45,35 @@ public class BusinessUnitRepository : IBusinessUnitRepository
     private readonly IQueryService _queryService;
 
     /// <summary>
+    /// 액션 로그 기록 서비스
+    /// </summary>
+    private readonly ILogActionWriteService _logActionWriteService;
+
+    /// <summary>
+    /// 리파지토리 명
+    /// </summary>
+    private const string RepositoryTitle = "[BusinessUnit]";
+
+    /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="logger">로거</param>
     /// <param name="dbContext">디비컨텍스트</param>
-    /// <param name="logActionRepository">로그액션 리파지토리</param>
-    /// <param name="queryService"></param>
+    /// <param name="queryService">쿼리 서비스</param>
+    /// <param name="userRepository">유저 리파지토리</param>
+    /// <param name="logActionWriteService">액션 로그 기록 서비스</param>
     public BusinessUnitRepository(
           ILogger<BusinessUnitRepository> logger
         , AnalysisDbContext dbContext
-        , ILogActionRepository logActionRepository
-        , IQueryService queryService)
+        , IQueryService queryService
+        , IUserRepository userRepository
+        , ILogActionWriteService logActionWriteService)
     {
         _logger = logger;
         _dbContext = dbContext;
-        _logActionRepository = logActionRepository;
         _queryService = queryService;
+        _userRepository = userRepository;
+        _logActionWriteService = logActionWriteService;
     }
 
 
@@ -80,8 +97,8 @@ public class BusinessUnitRepository : IBusinessUnitRepository
                 Name = item.Name,
             };
             
-            // 결과를 가져온다.
-            result = await _queryService.ToResponseListAsync(requestQuery, mapDataToResponse);
+            // 결과를 반환한다.
+            return await _queryService.ToResponseListAsync(requestQuery, mapDataToResponse);
         }
         catch (Exception e)
         {
@@ -94,19 +111,65 @@ public class BusinessUnitRepository : IBusinessUnitRepository
     /// <summary>
     /// 데이터를 업데이트한다.
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="id">아이디</param>
+    /// <param name="request">요청정보</param>
     /// <returns></returns>
-    public async Task<Response> UpdateAsync(RequestBusinessUnit request)
+    public async Task<Response> UpdateAsync(string id , RequestBusinessUnit request)
     {
         Response result;
         
+        // 트랜잭션을 시작한다.
+        await using IDbContextTransaction transaction = await _dbContext.Database.BeginTransactionAsync();
+        
         try
         {
-            result = new Response();
+            // 요청이 유효하지 않은경우
+            if(id.IsNullOrEmpty() || request.IsInValid())
+                return new Response{ Code = "ERROR_INVALID_PARAMETER", Message = "필수 값을 입력해주세요"};
+            
+            // 로그인한 사용자 정보를 가져온다.
+            DbModelUser? user = await _userRepository.GetAuthenticatedUser();
+
+            // 사용자 정보가 없는경우 
+            if(user == null)
+                return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
+            
+            // 동일한 이름을 가진 데이터가 있는지 확인
+            DbModelBusinessUnit? update = await _dbContext.BusinessUnits
+                .Where(i => i.Name.Equals(request.Name, StringComparison.CurrentCultureIgnoreCase))
+                .FirstOrDefaultAsync();
+            
+            // 대상 데이터가 없는경우
+            if(update == null)
+                return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "대상이 존재하지 않습니다."};
+            
+            // 로그기록을 위한 데이터 스냅샷
+            DbModelBusinessUnit snapshot = update.GenerateClone()!;
+          
+            // 데이터를 수정한다.
+            update.Name = request.Name;
+            update.RegName = user.DisplayName; 
+            update.ModName = user.DisplayName; 
+            update.RegDate = DateTime.Now; 
+            update.ModDate = DateTime.Now; 
+            update.RegId = user.Id; 
+            update.ModId = user.Id; 
+            
+            // 데이터베이스에 업데이트처리 
+            _dbContext.BusinessUnits.Update(update);
+            await _dbContext.SaveChangesAsync();
+            
+            // 커밋한다.
+            await transaction.CommitAsync();
+            result = new Response(EnumResponseResult.Success);
+            
+            // 로그 기록
+            await _logActionWriteService.WriteUpdate(snapshot, update, user , RepositoryTitle);
         }
         catch (Exception e)
         {
-            result = new Response();
+            await transaction.RollbackAsync();
+            result = new Response(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.");
             e.LogError(_logger);
         }
     
@@ -122,13 +185,57 @@ public class BusinessUnitRepository : IBusinessUnitRepository
     {
         Response result;
         
+        // 트랜잭션을 시작한다.
+        await using IDbContextTransaction transaction = await _dbContext.Database.BeginTransactionAsync();
+        
         try
         {
-            result = new Response();
+            // 요청이 유효하지 않은경우
+            if(request.IsInValid())
+                return new Response{ Code = "ERROR_INVALID_PARAMETER", Message = request.GetFirstErrorMessage()};
+
+            // 로그인한 사용자 정보를 가져온다.
+            DbModelUser? user = await _userRepository.GetAuthenticatedUser();
+
+            // 사용자 정보가 없는경우 
+            if(user == null)
+                return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
+            
+            // 동일한 이름을 가진 데이터가 있는지 확인
+            bool isDuplicated = await _dbContext.BusinessUnits.AnyAsync(i => i.Name.Equals(request.Name, StringComparison.CurrentCultureIgnoreCase));
+            
+            // 동일한 데이터가 있다면 
+            if(isDuplicated)
+                return new Response{ Code = "ERROR_IS_DUPLICATED", Message = "이미 존재하는 데이터입니다."};
+          
+            // 데이터를 생성한다.
+            DbModelBusinessUnit add = new DbModelBusinessUnit
+            {
+                Id = Guid.NewGuid() ,
+                Name = request.Name ,
+                RegName = user.DisplayName ,
+                ModName = user.DisplayName ,
+                RegDate = DateTime.Now ,
+                ModDate = DateTime.Now ,
+                RegId = user.Id ,
+                ModId = user.Id ,
+            };
+            
+            // 데이터베이스에 데이터 추가 
+            await _dbContext.BusinessUnits.AddAsync(add);
+            await _dbContext.SaveChangesAsync();
+            
+            // 커밋한다.
+            await transaction.CommitAsync();
+            result = new Response(EnumResponseResult.Success);
+            
+            // 로그 기록
+            await _logActionWriteService.WriteAddition(add, user , RepositoryTitle);
         }
         catch (Exception e)
         {
-            result = new Response();
+            await transaction.RollbackAsync();
+            result = new Response(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.");
             e.LogError(_logger);
         }
     
@@ -144,13 +251,45 @@ public class BusinessUnitRepository : IBusinessUnitRepository
     {
         Response result;
         
+        // 트랜잭션을 시작한다.
+        await using IDbContextTransaction transaction = await _dbContext.Database.BeginTransactionAsync();
+        
         try
         {
-            result = new Response();
+            // 요청이 유효하지 않은경우
+            if(id.IsNullOrEmpty())
+                return new Response{ Code = "ERROR_INVALID_PARAMETER", Message = "필수 값을 입력해주세요"};
+
+            // 로그인한 사용자 정보를 가져온다.
+            DbModelUser? user = await _userRepository.GetAuthenticatedUser();
+
+            // 사용자 정보가 없는경우 
+            if(user == null)
+                return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
+            
+            // 기존데이터를 조회한다.
+            DbModelBusinessUnit? remove =
+                await _dbContext.BusinessUnits.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
+            
+            // 조회된 데이터가 없다면
+            if(remove == null)
+                return new Response{ Code = "ERROR_IS_NONE_EXIST", Message = "대상이 존재하지 않습니다."};
+
+            // 대상을 삭제한다.
+            _dbContext.Remove(remove);
+            await _dbContext.SaveChangesAsync();
+            
+            // 커밋한다.
+            await transaction.CommitAsync();
+            result = new Response(EnumResponseResult.Success);
+            
+            // 로그 기록
+            await _logActionWriteService.WriteDeletion(remove, user , RepositoryTitle);
         }
         catch (Exception e)
         {
-            result = new Response();
+            await transaction.RollbackAsync();
+            result = new Response(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.");
             e.LogError(_logger);
         }
     

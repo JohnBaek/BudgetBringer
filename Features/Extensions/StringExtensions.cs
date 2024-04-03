@@ -37,4 +37,15 @@ public static class StringExtensions
     {
         return $"[{DateTime.Now:yyyy-MM-dd hh:mm:ss}] {input}";
     }
+    
+    /// <summary>
+    /// Guid 로 파싱한다.
+    /// </summary>
+    /// <param name="input">대상 문자열</param>
+    /// <returns>해싱 결과</returns>
+    public static Guid ToGuid(this string input)
+    {
+        return Guid.Parse(input);
+    }
+    
 }

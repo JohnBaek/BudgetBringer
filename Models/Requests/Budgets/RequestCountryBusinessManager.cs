@@ -5,7 +5,7 @@ namespace Models.Requests.Budgets;
 /// <summary>
 /// CBM 관리 요청 모델 
 /// </summary>
-public class RequestCountryBusinessManager
+public class RequestCountryBusinessManager : RequestBase
 {
     /// <summary>
     /// 오너명

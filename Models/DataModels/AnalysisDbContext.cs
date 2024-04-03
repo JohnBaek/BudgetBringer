@@ -73,6 +73,8 @@ public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelR
         });
         modelBuilder.Entity<DbModelLogAction>(entity =>{
             entity.ToTable("LogActions");
+            entity.Property(i => i.Contents)
+                .HasColumnType("VARCHAR(MAX)");
         });
         modelBuilder.Entity<DbModelRole>(entity =>{
             entity.ToTable("Roles");

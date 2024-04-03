@@ -23,5 +23,10 @@ public enum EnumDatabaseLogActionType
     /// <summary>
     /// 조회
     /// </summary>
-    Read ,
+    View ,
+    
+    /// <summary>
+    /// 목록조회
+    /// </summary>
+    ViewList ,
 }

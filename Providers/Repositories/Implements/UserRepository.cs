@@ -138,7 +138,7 @@ public class UserRepository : IUserRepository
     /// 로그인한 사용자의 정보를 가져온다.
     /// </summary>
     /// <returns></returns>
-    public async Task<DbModelUser> GetAuthenticatedUser()
+    public async Task<DbModelUser?> GetAuthenticatedUser()
     {
         DbModelUser? result;
     

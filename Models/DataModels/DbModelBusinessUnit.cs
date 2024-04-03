@@ -22,5 +22,5 @@ public class DbModelBusinessUnit : DbModelDefault
     /// </summary>
     [MaxLength(255)]
     [Required]
-    public required string Name { get; init; }
+    public required string Name { get; set; }
 }

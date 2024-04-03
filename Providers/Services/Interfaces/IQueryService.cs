@@ -25,9 +25,9 @@ public interface IQueryService
     /// <param name="requestQuery">요청정보</param>
     /// <param name="mappingFunction"></param>
     /// <returns></returns>
-    Task<ResponseList<V>> ToResponseListAsync<T,V>(RequestQuery requestQuery, Expression<Func<T, V>> mappingFunction)
+    Task<ResponseList<TV>> ToResponseListAsync<T,TV>(RequestQuery requestQuery, Expression<Func<T, TV>> mappingFunction)
         where T : class
-        where V : class;
+        where TV : class;
     
     /// <summary>
     /// 요청정보로 쿼리를 파싱한다.
@@ -41,9 +41,8 @@ public interface IQueryService
     /// </summary>
     /// <param name="queryable">IQueryable</param>
     /// <param name="mappingFunction">매핑 Delegate</param>
-    /// <typeparam name="V">결과</typeparam>
     /// <returns></returns>
-    Task<List<V>> ToListAsync<T,V>(IQueryable<T> queryable, Expression<Func<T, V>> mappingFunction)
+    Task<List<TV>> ToListAsync<T,TV>(IQueryable<T> queryable, Expression<Func<T, TV>> mappingFunction)
         where T : class
-        where V : class;
+        where TV : class;
 }

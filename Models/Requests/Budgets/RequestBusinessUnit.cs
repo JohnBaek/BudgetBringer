@@ -5,7 +5,7 @@ namespace Models.Requests.Budgets;
 /// <summary>
 /// 비지니스 유닛 요청 모델
 /// </summary>
-public class RequestBusinessUnit
+public class RequestBusinessUnit : RequestBase
 {
     /// <summary>
     /// 유닛명 (유니크)

@@ -21,9 +21,10 @@ public interface IBusinessUnitRepository
     /// <summary>
     /// 데이터를 업데이트한다.
     /// </summary>
+    /// <param name="Id"></param>
     /// <param name="request"></param>
     /// <returns></returns>
-    Task<Response> UpdateAsync(RequestBusinessUnit request);
+    Task<Response> UpdateAsync(string Id, RequestBusinessUnit request);
     
     /// <summary>
     /// 데이터를 추가한다.

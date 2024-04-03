@@ -16,12 +16,13 @@ public interface ILogActionRepository
     /// <param name="requestQuery">쿼리 정보</param>
     /// <returns></returns>
     Task<List<DbModelLogAction>> GetListAsync(RequestQuery requestQuery);
-    
+
     /// <summary>
     /// 로그를 추가한다.
     /// </summary>
     /// <param name="actionType">데이터베이스 액션 타입</param>
     /// <param name="contents">로그 컨텐츠</param>
+    /// <param name="user">사용자 정보</param>
     /// <returns></returns>
-    Task<Response> AddAsync(EnumDatabaseLogActionType actionType , string contents);
+    Task<Response> AddAsync(EnumDatabaseLogActionType actionType, string contents, DbModelUser user);
 }

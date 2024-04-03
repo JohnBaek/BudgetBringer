@@ -39,7 +39,6 @@ public class DbModelLogAction
     /// 내용 
     /// </summary>
     [Required]
-    [MaxLength(3000)]
     public required string Contents { get; init;}
     
     /// <summary>
