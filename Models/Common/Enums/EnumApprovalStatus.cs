@@ -11,6 +11,11 @@ public enum EnumApprovalStatus
     None ,
     
     /// <summary>
+    /// 세금계산서 발행 전
+    /// </summary>
+    PoNotYetPublished ,
+    
+    /// <summary>
     /// 세금계산서 발행
     /// </summary>
     PoPublished ,

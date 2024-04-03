@@ -17,7 +17,8 @@ public class DbModelSector : DbModelDefault
     /// 섹터 값
     /// </summary>
     [Required]
-    public int Value { get; init; }
+    [MaxLength(255)]
+    public string Value { get; set; }
     
     /// <summary>
     /// 등록일 (필수)

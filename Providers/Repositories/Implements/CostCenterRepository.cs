@@ -90,7 +90,7 @@ public class CostCenterRepository : ICostCenterRepository
             // requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseCostCenter.Name));
             
             // 셀렉팅 정의
-            Expression<Func<DbModelBudget, ResponseCostCenter>> mapDataToResponse = item => new ResponseCostCenter
+            Expression<Func<DbModelBudgetPlan, ResponseCostCenter>> mapDataToResponse = item => new ResponseCostCenter
             {
                 Id = item.Id,
             };
@@ -121,7 +121,7 @@ public class CostCenterRepository : ICostCenterRepository
                 return new ResponseData<ResponseCostCenter>("ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요");
 
             // 기존데이터를 조회한다.
-            DbModelBudget? before =
+            DbModelBudgetPlan? before =
                 await        _dbContext.Budgets.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
             
             // 조회된 데이터가 없다면
@@ -167,7 +167,7 @@ public class CostCenterRepository : ICostCenterRepository
                 return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
             
             // 동일한 이름을 가진 데이터가 있는지 확인
-            DbModelBudget? update = await        _dbContext.Budgets
+            DbModelBudgetPlan? update = await        _dbContext.Budgets
                 .Where(i => i.Id == id.ToGuid())
                 .FirstOrDefaultAsync();
             
@@ -176,7 +176,7 @@ public class CostCenterRepository : ICostCenterRepository
                 return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "대상이 존재하지 않습니다."};
             
             // 로그기록을 위한 데이터 스냅샷
-            DbModelBudget snapshot = update.FromClone()!;
+            DbModelBudgetPlan snapshot = update.FromClone()!;
           
             // 데이터를 수정한다.
             // update.Name = request.Name;
@@ -234,7 +234,7 @@ public class CostCenterRepository : ICostCenterRepository
                 return new ResponseData<ResponseCostCenter>{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
 
             // 데이터를 생성한다.
-            DbModelBudget add = new DbModelBudget
+            DbModelBudgetPlan add = new DbModelBudgetPlan
             {
                 Id = Guid.NewGuid(),
                 CostCenterName = null,
@@ -305,7 +305,7 @@ public class CostCenterRepository : ICostCenterRepository
      
             
             // 기존데이터를 조회한다.
-            DbModelBudget? remove =
+            DbModelBudgetPlan? remove =
                 await        _dbContext.Budgets.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
             
             // 조회된 데이터가 없다면

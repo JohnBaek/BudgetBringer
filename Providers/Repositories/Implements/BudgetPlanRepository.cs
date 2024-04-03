@@ -87,7 +87,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             // requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.Name));
             
             // 셀렉팅 정의
-            Expression<Func<DbModelBudget, ResponseBudgetPlan>> mapDataToResponse = item => new ResponseBudgetPlan
+            Expression<Func<DbModelBudgetPlan, ResponseBudgetPlan>> mapDataToResponse = item => new ResponseBudgetPlan
             {
                 Id = item.Id,
                 CostCenterName = null,
@@ -121,7 +121,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
                 return new ResponseData<ResponseBudgetPlan>("ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요");
 
             // 기존데이터를 조회한다.
-            DbModelBudget? before =
+            DbModelBudgetPlan? before =
                 await        _dbContext.Budgets.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
             
             // 조회된 데이터가 없다면
@@ -167,7 +167,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
                 return new ResponseData<ResponseBudgetPlan>{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
             
             // 동일한 이름을 가진 데이터가 있는지 확인
-            DbModelBudget? update = await        _dbContext.Budgets
+            DbModelBudgetPlan? update = await        _dbContext.Budgets
                 .Where(i => i.Id == id.ToGuid())
                 .FirstOrDefaultAsync();
             
@@ -176,7 +176,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
                 return new ResponseData<ResponseBudgetPlan>{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "대상이 존재하지 않습니다."};
             
             // 로그기록을 위한 데이터 스냅샷
-            DbModelBudget snapshot = update.FromClone()!;
+            DbModelBudgetPlan snapshot = update.FromClone()!;
           
             // 데이터를 수정한다.
             // update.Name = request.Name;
@@ -234,7 +234,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
                 return new ResponseData<ResponseBudgetPlan>{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
 
             // 데이터를 생성한다.
-            DbModelBudget add = new DbModelBudget
+            DbModelBudgetPlan add = new DbModelBudgetPlan
             {
                 Id = Guid.NewGuid(),
                 CostCenterName = null,
@@ -252,8 +252,21 @@ public class BudgetPlanRepository : IBudgetPlanRepository
                 ModId = user.Id,
             };
             
+            // 기안일이 정상적인 Date 데이터인지 여부 
+            bool isApprovalDateValid = DateOnly.TryParse(request.ApprovalDate, out DateOnly approvalDate);
+            
+            // 정상적인 데이터인경우 
+            if (isApprovalDateValid)
+            {
+                add.IsApprovalDateValid = true;
+                add.ApproveDateValue = approvalDate;
+                add.Year = approvalDate.Year.ToString();
+                add.Month = approvalDate.Month.ToString("00");
+                add.Day = approvalDate.Day.ToString("00");
+            }
+            
             // 데이터베이스에 데이터 추가 
-            await        _dbContext.Budgets.AddAsync(add);
+            await _dbContext.Budgets.AddAsync(add);
             await _dbContext.SaveChangesAsync();
             
             // 커밋한다.
@@ -305,8 +318,8 @@ public class BudgetPlanRepository : IBudgetPlanRepository
      
             
             // 기존데이터를 조회한다.
-            DbModelBudget? remove =
-                await        _dbContext.Budgets.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
+            DbModelBudgetPlan? remove =
+                await _dbContext.Budgets.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
             
             // 조회된 데이터가 없다면
             if(remove == null)

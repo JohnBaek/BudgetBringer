@@ -21,5 +21,6 @@ public class DbModelCostCenter : DbModelDefault
     /// DbModelCostCenter 값 (유니크)
     /// </summary>
     [Required]
-    public int Value { get; init; }
+    [MaxLength(255)]
+    public string Value { get; init; }
 }

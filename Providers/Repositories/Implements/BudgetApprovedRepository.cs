@@ -30,7 +30,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
     /// </summary>
     private readonly ILogger<BudgetApprovedRepository> _logger;
     
-    /// <summary>
+    /// <summary>222222
     /// 사용자 리파지토리
     /// </summary>
     private readonly IUserRepository _userRepository;
@@ -210,7 +210,20 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             
             // 로그기록을 위한 데이터 스냅샷
             DbModelBudgetApproved snapshot = update.FromClone()!;
-          
+
+            // 기안일이 정상적인 Date 데이터인지 여부 
+            bool isApprovalDateValid = DateOnly.TryParse(request.ApprovalDate, out DateOnly approvalDate);
+            
+            // 정상적인 데이터인경우 
+            if (isApprovalDateValid)
+            {
+                update.IsApprovalDateValid = true;
+                update.ApproveDateValue = approvalDate;
+                update.Year = approvalDate.Year.ToString();
+                update.Month = approvalDate.Month.ToString("00");
+                update.Day = approvalDate.Day.ToString("00");
+            }
+            
             // 데이터를 수정한다.
             update.IsAbove500K = request.IsAbove500K;
             update.ApprovalDate = request.ApprovalDate;

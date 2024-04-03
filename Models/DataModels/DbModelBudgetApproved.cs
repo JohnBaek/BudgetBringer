@@ -9,7 +9,7 @@ namespace Models.DataModels;
 /// 승인된 예산 데이터베이스 모델 클래스 
 /// </summary>
 // ReSharper disable ClassWithVirtualMembersNeverInherited.Global
-[Table("DbModelBudgetApproved")]
+[Table("BudgetApproved")]
 public class DbModelBudgetApproved : DbModelDefault
 {
     /// <summary>
@@ -24,6 +24,17 @@ public class DbModelBudgetApproved : DbModelDefault
     [MaxLength(255)]
     [Required]
     public string ApprovalDate { get; set; } 
+    
+    /// <summary>
+    /// 기안일 정상 포맷 (yyyy-MM-dd) 이라면 DateOnly 로 파싱된 값 
+    /// </summary>
+    public DateOnly? ApproveDateValue { get; set; } 
+    
+    /// <summary>
+    /// 기안일 정상 포맷 (yyyy-MM-dd) 여부
+    /// </summary>
+    [Required]
+    public bool IsApprovalDateValid { get; set; }
 
     /// <summary>
     /// 승인일이 확인된경우 ( OC 승인 예정 등의 텍스트가 아니라 날짜 형태로 들어간 경우 ) 

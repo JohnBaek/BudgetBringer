@@ -6,9 +6,9 @@ namespace Models.DataModels;
 /// <summary>
 /// 예산 관련 데이터베이스 모델 클래스 
 /// </summary>
-[Table("Budgets")]
+[Table("BudgetPlans")]
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-public partial class DbModelBudget : DbModelDefault
+public partial class DbModelBudgetPlan : DbModelDefault
 {
     /// <summary>
     /// 예산 모델 아이디 
@@ -20,19 +20,19 @@ public partial class DbModelBudget : DbModelDefault
     /// 년도 정보 : yyyy
     /// </summary>
     [MaxLength(4)]
-    public string Year { get; init; } = "";
+    public string Year { get; set; } = "";
 
     /// <summary>
     /// 월 정보 : MM
     /// </summary>
     [MaxLength(2)]
-    public string Month { get; init; } = "";
+    public string Month { get; set; } = "";
 
     /// <summary>
     /// 일 정보 : dd
     /// </summary>
     [MaxLength(2)]
-    public string Day { get; init; } = "";
+    public string Day { get; set; } = "";
 
     /// <summary>
     /// 500K 이상 예산 여부
@@ -46,6 +46,17 @@ public partial class DbModelBudget : DbModelDefault
     [Required]
     [MaxLength(255)]
     public string ApprovalDate { get; init; } = "";
+    
+    /// <summary>
+    /// 기안일 정상 포맷 (yyyy-MM-dd) 이라면 DateOnly 로 파싱된 값 
+    /// </summary>
+    public DateOnly? ApproveDateValue { get; set; } 
+    
+    /// <summary>
+    /// 기안일 정상 포맷 (yyyy-MM-dd) 여부
+    /// </summary>
+    [Required]
+    public bool IsApprovalDateValid { get; set; }
 
     /// <summary>
     /// 설명 

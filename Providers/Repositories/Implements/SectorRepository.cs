@@ -89,7 +89,7 @@ public class SectorRepository : ISectorRepository
             // requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseSector.Name));
             
             // 셀렉팅 정의
-            Expression<Func<DbModelBudget, ResponseSector>> mapDataToResponse = item => new ResponseSector
+            Expression<Func<DbModelBudgetPlan, ResponseSector>> mapDataToResponse = item => new ResponseSector
             {
                 Id = item.Id,
             };
@@ -120,7 +120,7 @@ public class SectorRepository : ISectorRepository
                 return new ResponseData<ResponseSector>("ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요");
 
             // 기존데이터를 조회한다.
-            DbModelBudget? before =
+            DbModelBudgetPlan? before =
                 await        _dbContext.Budgets.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
             
             // 조회된 데이터가 없다면
@@ -166,7 +166,7 @@ public class SectorRepository : ISectorRepository
                 return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
             
             // 동일한 이름을 가진 데이터가 있는지 확인
-            DbModelBudget? update = await        _dbContext.Budgets
+            DbModelBudgetPlan? update = await        _dbContext.Budgets
                 .Where(i => i.Id == id.ToGuid())
                 .FirstOrDefaultAsync();
             
@@ -175,7 +175,7 @@ public class SectorRepository : ISectorRepository
                 return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "대상이 존재하지 않습니다."};
             
             // 로그기록을 위한 데이터 스냅샷
-            DbModelBudget snapshot = update.FromClone()!;
+            DbModelBudgetPlan snapshot = update.FromClone()!;
           
             // 데이터를 수정한다.
             // update.Name = request.Name;
@@ -233,7 +233,7 @@ public class SectorRepository : ISectorRepository
                 return new ResponseData<ResponseSector>{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
 
             // 데이터를 생성한다.
-            DbModelBudget add = new DbModelBudget
+            DbModelBudgetPlan add = new DbModelBudgetPlan
             {
                 Id = Guid.NewGuid(),
                 CostCenterName = null,
@@ -304,7 +304,7 @@ public class SectorRepository : ISectorRepository
      
             
             // 기존데이터를 조회한다.
-            DbModelBudget? remove =
+            DbModelBudgetPlan? remove =
                 await        _dbContext.Budgets.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
             
             // 조회된 데이터가 없다면

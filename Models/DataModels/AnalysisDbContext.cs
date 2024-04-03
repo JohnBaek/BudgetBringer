@@ -18,7 +18,7 @@ public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelR
     /// <summary>
     /// 예산
     /// </summary>
-    public required DbSet<DbModelBudget> Budgets {get;init;}
+    public required DbSet<DbModelBudgetPlan> Budgets {get;init;}
     
     /// <summary>
     /// 비지니스 유닛
@@ -57,10 +57,10 @@ public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelR
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<DbModelBudgetApproved>(entity =>{
-            entity.ToTable("DbModelBudgetApproved");
+            entity.ToTable("BudgetApproved");
         });
-        modelBuilder.Entity<DbModelBudget>(entity =>{
-            entity.ToTable("Budgets");
+        modelBuilder.Entity<DbModelBudgetPlan>(entity =>{
+            entity.ToTable("BudgetPlans");
         });
         modelBuilder.Entity<DbModelBusinessUnit>(entity =>{
             entity.ToTable("BusinessUnits");

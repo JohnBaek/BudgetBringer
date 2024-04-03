@@ -22,112 +22,6 @@ namespace Models.DataModels.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("Models.DataModels.DbModelBudget", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("ApprovalDate")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("BossLineDescription")
-                        .HasMaxLength(3000)
-                        .HasColumnType("varchar(3000)");
-
-                    b.Property<double>("BudgetTotal")
-                        .HasColumnType("double");
-
-                    b.Property<Guid>("BusinessUnitId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("BusinessUnitName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<Guid>("CostCenterId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("CostCenterName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<Guid>("CountryBusinessManagerId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("CountryBusinessManagerName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Day")
-                        .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("varchar(2)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(3000)
-                        .HasColumnType("varchar(3000)");
-
-                    b.Property<bool>("IsAbove500K")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTime>("ModDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<Guid>("ModId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("ModName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Month")
-                        .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("varchar(2)");
-
-                    b.Property<string>("OcProjectName")
-                        .HasMaxLength(3000)
-                        .HasColumnType("varchar(3000)");
-
-                    b.Property<DateTime>("RegDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<Guid>("RegId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("RegName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<Guid>("SectorId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Year")
-                        .IsRequired()
-                        .HasMaxLength(4)
-                        .HasColumnType("varchar(4)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BusinessUnitId");
-
-                    b.HasIndex("CostCenterId");
-
-                    b.HasIndex("CountryBusinessManagerId");
-
-                    b.HasIndex("SectorId");
-
-                    b.ToTable("Budgets", (string)null);
-                });
-
             modelBuilder.Entity("Models.DataModels.DbModelBudgetApproved", b =>
                 {
                     b.Property<Guid>("Id")
@@ -148,6 +42,9 @@ namespace Models.DataModels.Migrations
                     b.Property<int>("ApprovalStatus")
                         .HasColumnType("int");
 
+                    b.Property<DateOnly?>("ApproveDateValue")
+                        .HasColumnType("date");
+
                     b.Property<string>("BossLineDescription")
                         .HasMaxLength(3000)
                         .HasColumnType("varchar(3000)");
@@ -185,6 +82,9 @@ namespace Models.DataModels.Migrations
                         .HasColumnType("varchar(3000)");
 
                     b.Property<bool>("IsAbove500K")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsApprovalDateValid")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsApproved")
@@ -240,7 +140,119 @@ namespace Models.DataModels.Migrations
 
                     b.HasIndex("SectorId");
 
-                    b.ToTable("DbModelBudgetApproved", (string)null);
+                    b.ToTable("BudgetApproved", (string)null);
+                });
+
+            modelBuilder.Entity("Models.DataModels.DbModelBudgetPlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ApprovalDate")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateOnly?>("ApproveDateValue")
+                        .HasColumnType("date");
+
+                    b.Property<string>("BossLineDescription")
+                        .HasMaxLength(3000)
+                        .HasColumnType("varchar(3000)");
+
+                    b.Property<double>("BudgetTotal")
+                        .HasColumnType("double");
+
+                    b.Property<Guid>("BusinessUnitId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("BusinessUnitName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<Guid>("CostCenterId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("CostCenterName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<Guid>("CountryBusinessManagerId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("CountryBusinessManagerName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Day")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("varchar(2)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(3000)
+                        .HasColumnType("varchar(3000)");
+
+                    b.Property<bool>("IsAbove500K")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsApprovalDateValid")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("ModDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("ModId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ModName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Month")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("varchar(2)");
+
+                    b.Property<string>("OcProjectName")
+                        .HasMaxLength(3000)
+                        .HasColumnType("varchar(3000)");
+
+                    b.Property<DateTime>("RegDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("RegId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("RegName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<Guid>("SectorId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Year")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("varchar(4)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusinessUnitId");
+
+                    b.HasIndex("CostCenterId");
+
+                    b.HasIndex("CountryBusinessManagerId");
+
+                    b.HasIndex("SectorId");
+
+                    b.ToTable("BudgetPlans", (string)null);
                 });
 
             modelBuilder.Entity("Models.DataModels.DbModelBusinessUnit", b =>
@@ -312,8 +324,10 @@ namespace Models.DataModels.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -487,8 +501,10 @@ namespace Models.DataModels.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -659,41 +675,6 @@ namespace Models.DataModels.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.DbModelBudget", b =>
-                {
-                    b.HasOne("Models.DataModels.DbModelBusinessUnit", "DbModelBusinessUnit")
-                        .WithMany()
-                        .HasForeignKey("BusinessUnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.DataModels.DbModelCostCenter", "DbModelCostCenter")
-                        .WithMany()
-                        .HasForeignKey("CostCenterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.DataModels.DbModelCountryBusinessManager", "DbModelCountryBusinessManager")
-                        .WithMany()
-                        .HasForeignKey("CountryBusinessManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.DataModels.DbModelSector", "Sector")
-                        .WithMany()
-                        .HasForeignKey("SectorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DbModelBusinessUnit");
-
-                    b.Navigation("DbModelCostCenter");
-
-                    b.Navigation("DbModelCountryBusinessManager");
-
-                    b.Navigation("Sector");
-                });
-
             modelBuilder.Entity("Models.DataModels.DbModelBudgetApproved", b =>
                 {
                     b.HasOne("Models.DataModels.DbModelBusinessUnit", "DbModelBusinessUnit")
@@ -727,6 +708,41 @@ namespace Models.DataModels.Migrations
                     b.Navigation("DbModelCountryBusinessManager");
 
                     b.Navigation("DbModelSector");
+                });
+
+            modelBuilder.Entity("Models.DataModels.DbModelBudgetPlan", b =>
+                {
+                    b.HasOne("Models.DataModels.DbModelBusinessUnit", "DbModelBusinessUnit")
+                        .WithMany()
+                        .HasForeignKey("BusinessUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.DataModels.DbModelCostCenter", "DbModelCostCenter")
+                        .WithMany()
+                        .HasForeignKey("CostCenterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.DataModels.DbModelCountryBusinessManager", "DbModelCountryBusinessManager")
+                        .WithMany()
+                        .HasForeignKey("CountryBusinessManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.DataModels.DbModelSector", "Sector")
+                        .WithMany()
+                        .HasForeignKey("SectorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DbModelBusinessUnit");
+
+                    b.Navigation("DbModelCostCenter");
+
+                    b.Navigation("DbModelCountryBusinessManager");
+
+                    b.Navigation("Sector");
                 });
 
             modelBuilder.Entity("Models.DataModels.DbModelLogAction", b =>
