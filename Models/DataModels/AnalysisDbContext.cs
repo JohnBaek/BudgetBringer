@@ -26,6 +26,11 @@ public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelR
     public required DbSet<DbModelBusinessUnit> BusinessUnits {get;init;}
     
     /// <summary>
+    /// 섹터
+    /// </summary>
+    public required DbSet<DbModelSector> Sectors {get;init;}
+    
+    /// <summary>
     /// 코스트센터
     /// </summary>
     public required DbSet<DbModelCostCenter> CostCenters {get;init;}

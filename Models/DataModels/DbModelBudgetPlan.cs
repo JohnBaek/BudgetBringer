@@ -10,11 +10,16 @@ namespace Models.DataModels;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public partial class DbModelBudgetPlan : DbModelDefault
 {
+    public DbModelBudgetPlan()
+    {
+    }
+
+
     /// <summary>
     /// 예산 모델 아이디 
     /// </summary>
     [Key]
-    public Guid Id { get; init; }
+    public Guid Id { get; set; }
 
     /// <summary>
     /// 년도 정보 : yyyy
@@ -38,14 +43,14 @@ public partial class DbModelBudgetPlan : DbModelDefault
     /// 500K 이상 예산 여부
     /// </summary>
     [Required]
-    public bool IsAbove500K { get; init; }
+    public bool IsAbove500K { get; set; }
 
     /// <summary>
     /// 기안일 ( 날짜가아닌 일반 스트링데이터도 포함 될 수 있다. )
     /// </summary>
     [Required]
     [MaxLength(255)]
-    public string ApprovalDate { get; init; } = "";
+    public string ApprovalDate { get; set; } = "";
     
     /// <summary>
     /// 기안일 정상 포맷 (yyyy-MM-dd) 이라면 DateOnly 로 파싱된 값 
@@ -62,89 +67,96 @@ public partial class DbModelBudgetPlan : DbModelDefault
     /// 설명 
     /// </summary>
     [MaxLength(3000)]
-    public string? Description { get; init; }
+    public string? Description { get; set; }
 
     /// <summary>
     /// 섹터 아이디
     /// </summary>
     [ForeignKey(nameof(Sector))]
-    public Guid SectorId { get; init; }
+    public Guid SectorId { get; set; }
 
     /// <summary>
     /// DbModelBusinessUnit 아이디
     /// </summary>
     [ForeignKey(nameof(DbModelBusinessUnit))]
-    public Guid BusinessUnitId { get; init; }
+    public Guid BusinessUnitId { get; set; }
     
     
     /// <summary>
     /// DbModelCostCenter 아이디
     /// </summary>
     [ForeignKey(nameof(DbModelCostCenter))]
-    public Guid CostCenterId { get; init; }
+    public Guid CostCenterId { get; set; }
 
     
     /// <summary>
     /// DbModelCountryBusinessManager 아이디
     /// </summary>
     [ForeignKey(nameof(DbModelCountryBusinessManager))]
-    public Guid CountryBusinessManagerId { get; init; }
+    public Guid CountryBusinessManagerId { get; set; }
+    
+    /// <summary>
+    /// DbModelSector 명
+    /// </summary>
+    [MaxLength(255)]
+    [Required]
+    public string SectorName { get; set; } = ""; 
     
     /// <summary>
     /// DbModelCostCenter 명
     /// </summary>
     [MaxLength(255)]
     [Required]
-    public required string CostCenterName { get; init; } 
+    public string CostCenterName { get; set; } = ""; 
 
     /// <summary>
     /// DbModelCountryBusinessManager 명
     /// </summary>
     [MaxLength(255)]
     [Required]
-    public required string CountryBusinessManagerName { get; init; } 
+    public string CountryBusinessManagerName { get; set; } = ""; 
     
     /// <summary>
     /// DbModelBusinessUnit 명
     /// </summary>
     [MaxLength(255)]
     [Required]
-    public required string BusinessUnitName { get; init; }
+    public string BusinessUnitName { get; set; } = "";
 
     /// <summary>
     /// 총예산
     /// </summary>
-    public double BudgetTotal { get; init; }
+    public double BudgetTotal { get; set; }
 
     /// <summary>
     /// OcProjectName
     /// </summary>
     [MaxLength(3000)]
-    public string? OcProjectName { get; init; }
+    public string? OcProjectName { get; set; }
     
     /// <summary>
     /// BossLineDescription
     /// </summary>
     [MaxLength(3000)]
-    public string? BossLineDescription { get; init; }
+    public string? BossLineDescription { get; set; }
     
     /// <summary>
     /// 섹터
     /// </summary>
-    public virtual required DbModelSector? Sector { get; init; }
+    public virtual DbModelSector? Sector { get; init; }
     
     /// <summary>
     /// 비지니스 유닛
     /// </summary> 
-    public virtual required DbModelBusinessUnit DbModelBusinessUnit { get; init; }
+    public virtual DbModelBusinessUnit? DbModelBusinessUnit { get; init; }
     
     /// <summary>
     /// 코스트 센터
     /// </summary>
-    public virtual required DbModelCostCenter DbModelCostCenter { get; init; }
+    public virtual DbModelCostCenter? DbModelCostCenter { get; init; }
     
     /// <summary>
     /// 컨트리 비지니스 매니저
     /// </summary>
-    public virtual required DbModelCountryBusinessManager DbModelCountryBusinessManager { get; init; }
+    public virtual DbModelCountryBusinessManager? DbModelCountryBusinessManager { get; init; }
 }

@@ -46,4 +46,11 @@ public interface IBudgetPlanService
     /// <param name="id">대상 아이디값</param>
     /// <returns></returns>
     Task<Response> DeleteAsync(string id);
+
+
+    /// <summary>
+    /// 데이터를 마이그리에션 한다.
+    /// </summary>
+    /// <returns></returns>
+    Task<Response> MigrationAsync();
 }

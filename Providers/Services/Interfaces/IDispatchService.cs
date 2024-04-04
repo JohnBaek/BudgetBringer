@@ -14,5 +14,5 @@ public interface IDispatchService
     /// <param name="id"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    Task<string> GetNameByIdAsync<T>(string keyColumn , string nameColumn , string id) where T : class;
+    Task<string> GetNameByIdAsync<T>(string keyColumn , string nameColumn , Guid id) where T : class;
 }

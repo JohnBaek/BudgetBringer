@@ -126,6 +126,11 @@ namespace Models.DataModels.Migrations
                     b.Property<Guid>("SectorId")
                         .HasColumnType("char(36)");
 
+                    b.Property<string>("SectorName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
                     b.Property<string>("Year")
                         .HasMaxLength(4)
                         .HasColumnType("varchar(4)");
@@ -236,6 +241,11 @@ namespace Models.DataModels.Migrations
 
                     b.Property<Guid>("SectorId")
                         .HasColumnType("char(36)");
+
+                    b.Property<string>("SectorName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Year")
                         .IsRequired()

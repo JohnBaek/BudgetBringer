@@ -91,4 +91,15 @@ public class BudgetPlanController : Controller
     public async Task<Response> DeleteAsync(string id){
         return await _budgetPlanService.DeleteAsync(id);
     }
+    
+    /// <summary>
+    /// 데이터를 마이그레이션한다.
+    /// </summary>
+    /// <returns></returns>
+    [HttpOptions("Migration")]
+    [ClaimRequirement("Permission","budget-plan")]
+    public async Task<Response> Migration()
+    {
+        return await _budgetPlanService.MigrationAsync();
+    }
 }

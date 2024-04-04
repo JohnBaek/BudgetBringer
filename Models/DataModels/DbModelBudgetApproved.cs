@@ -96,27 +96,34 @@ public class DbModelBudgetApproved : DbModelDefault
     /// </summary>
     [ForeignKey(nameof(DbModelCountryBusinessManager))]
     public Guid CountryBusinessManagerId { get; set; }
+
+    /// <summary>
+    /// DbModelSector 명
+    /// </summary>
+    [MaxLength(255)]
+    [Required]
+    public string SectorName { get; set; } = ""; 
     
     /// <summary>
     /// DbModelCostCenter 명
     /// </summary>
     [MaxLength(255)]
     [Required]
-    public string CostCenterName { get; set; } 
+    public string CostCenterName { get; set; }  = "";
 
     /// <summary>
     /// DbModelCountryBusinessManager 명
     /// </summary>
     [MaxLength(255)]
     [Required]
-    public string CountryBusinessManagerName { get; set; } 
+    public string CountryBusinessManagerName { get; set; }  = "";
     
     /// <summary>
     /// DbModelBusinessUnit 명
     /// </summary>
     [MaxLength(255)]
     [Required]
-    public string BusinessUnitName { get; set; }
+    public string BusinessUnitName { get; set; } = "";
 
     /// <summary>
     /// 인보이스 번호 

@@ -26,14 +26,25 @@ public class RequestQuery
     public int PageCount { get; set; } = 20;
 
     /// <summary>
-    /// 검색 키워드 
+    /// (사용자로부터 입력 받음) 검색 키워드 
     /// </summary>
-    public List<string> SearchKeywords { get; set; } = [];
+    public IReadOnlyList<string>? SearchKeywords { get; init; }
     
     /// <summary>
-    /// 검색 필드
+    ///(사용자로부터 입력 받음)  검색 필드
     /// </summary>
-    public List<string> SearchFields { get; set; } = [];
+    public IReadOnlyList<string>? SearchFields { get; init; }
+    
+    /// <summary>
+    /// (사용자로부터 입력 받음) Sort 종류 
+    /// </summary>
+    public IReadOnlyList<string>? SortOrders { get; init; }
+    
+    /// <summary>
+    ///(사용자로부터 입력 받음)  Sort 필드
+    /// </summary>
+    public IReadOnlyList<string>? SortFields { get; init; }
+    
 
     /// <summary>
     /// 검색 메타 정보 

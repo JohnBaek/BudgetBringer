@@ -146,4 +146,25 @@ public class BudgetPlanService : IBudgetPlanService
 
         return response;
     }
+
+    /// <summary>
+    /// 데이터를 마이그리에션 한다.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<Response> MigrationAsync()
+    {
+        Response response;
+        
+        try
+        {
+            response = await _repository.MigrationAsync();
+        }
+        catch (Exception e)
+        {
+            response = new ResponseData<ResponseBudgetPlan>("처리중 예외가 발생했습니다.");
+            e.LogError(_logger);
+        }
+    
+        return response;
+    }
 }

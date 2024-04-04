@@ -43,7 +43,7 @@ public class DispatchService : IDispatchService
     /// <param name="id"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public async Task<string> GetNameByIdAsync<T>(string keyColumn, string nameColumn, string id) where T : class
+    public async Task<string> GetNameByIdAsync<T>(string keyColumn, string nameColumn, Guid id) where T : class
     {
         string result;
         try

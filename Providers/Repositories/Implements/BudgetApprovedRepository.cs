@@ -284,19 +284,6 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             if(user == null)
                 return new ResponseData<ResponseBudgetApproved>{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
 
-
-            // 코스트센터명 조회
-            string costCenterName = await _dispatchService.GetNameByIdAsync<DbModelCostCenter>
-                ("Id", "Value", request.CostCenterId.ToString());
-
-            // 컨트리 비지니스 매니저명 조회
-            string countryBusinessManagerName = await _dispatchService.GetNameByIdAsync<DbModelCountryBusinessManager>
-                ("Id", "Name", request.CountryBusinessManagerId.ToString());
-
-            // 비지니스유닛 명 조회
-            string businessUnitName = await _dispatchService.GetNameByIdAsync<DbModelBusinessUnit>
-                ("Id", "Name", request.CountryBusinessManagerId.ToString());
-            
             // 데이터를 생성한다.
             DbModelBudgetApproved add = new DbModelBudgetApproved
             {
@@ -306,10 +293,10 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                 CostCenterId = request.CostCenterId,
                 BusinessUnitId = request.BusinessUnitId,
                 CountryBusinessManagerId = request.CountryBusinessManagerId,
-                
-                CostCenterName = costCenterName ,
-                BusinessUnitName = businessUnitName,
-                CountryBusinessManagerName = countryBusinessManagerName,
+                //
+                // CostCenterName = costCenterName ,
+                // BusinessUnitName = businessUnitName,
+                // CountryBusinessManagerName = countryBusinessManagerName,
                 
                 IsAbove500K = request.IsAbove500K,
                 ApprovalDate = request.ApprovalDate,
