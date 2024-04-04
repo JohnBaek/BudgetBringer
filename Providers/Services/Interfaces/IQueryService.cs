@@ -42,7 +42,7 @@ public interface IQueryService
     /// <param name="queryable">IQueryable</param>
     /// <param name="mappingFunction">매핑 Delegate</param>
     /// <returns></returns>
-    Task<List<TV>> ToListAsync<T,TV>(IQueryable<T> queryable, Expression<Func<T, TV>> mappingFunction)
+    Task<List<TV>> ToListAsync<T,TV>(IQueryable<T>? queryable, Expression<Func<T, TV>> mappingFunction)
         where T : class
         where TV : class;
 }

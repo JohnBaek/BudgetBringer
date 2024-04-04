@@ -14,7 +14,7 @@ public class QueryContainer<T>
     /// <param name="totalCount">전체 갯수</param>
     /// <param name="queryable">쿼리</param>
     /// <param name="requestQuery">쿼리정보</param>
-    public QueryContainer(int totalCount, IQueryable<T> queryable, RequestQuery requestQuery)
+    public QueryContainer(int totalCount, IQueryable<T>? queryable, RequestQuery requestQuery)
     {
         TotalCount = totalCount;
         Queryable = queryable;
@@ -39,5 +39,5 @@ public class QueryContainer<T>
     /// <summary>
     /// 응답 데이터 쿼리
     /// </summary>
-    public IQueryable<T> Queryable { get; set; }
+    public IQueryable<T>? Queryable { get; set; }
 }

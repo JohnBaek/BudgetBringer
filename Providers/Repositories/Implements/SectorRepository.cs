@@ -117,7 +117,7 @@ public class SectorRepository : ISectorRepository
         {
             // 요청이 유효하지 않은경우
             if (id.IsEmpty())
-                return new ResponseData<ResponseSector>("ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요");
+                return new ResponseData<ResponseSector>(EnumResponseResult.Error,"ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요",null);
 
             // 기존데이터를 조회한다.
             DbModelBudgetPlan? before =
@@ -125,7 +125,7 @@ public class SectorRepository : ISectorRepository
             
             // 조회된 데이터가 없다면
             if(before == null)
-                return new ResponseData<ResponseSector>("ERROR_IS_NONE_EXIST", "대상이 존재하지 않습니다.");
+                return new ResponseData<ResponseSector>(EnumResponseResult.Error,"ERROR_IS_NONE_EXIST", "대상이 존재하지 않습니다.",null);
 
             // 데이터를 복사한다.
             ResponseSector data = before.FromCopyValue<ResponseSector>()!;
@@ -269,7 +269,7 @@ public class SectorRepository : ISectorRepository
         catch (Exception e)
         {
             await transaction.RollbackAsync();
-            result = new ResponseData<ResponseSector>(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.");
+            result = new ResponseData<ResponseSector>(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
     
@@ -317,7 +317,7 @@ public class SectorRepository : ISectorRepository
             
             // 커밋한다.
             await transaction.CommitAsync();
-            result = new Response(EnumResponseResult.Success);
+            result = new Response(EnumResponseResult.Success,"","");
             
             // 로그 기록
             await _logActionWriteService.WriteDeletion(remove, user , "",LogCategory);

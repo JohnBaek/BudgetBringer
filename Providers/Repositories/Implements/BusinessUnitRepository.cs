@@ -119,7 +119,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
         {
             // 요청이 유효하지 않은경우
             if (id.IsEmpty())
-                return new ResponseData<ResponseBusinessUnit>("ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요");
+                return new ResponseData<ResponseBusinessUnit>(EnumResponseResult.Error,"ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요",null);
 
             // 기존데이터를 조회한다.
             DbModelBusinessUnit? before =
@@ -127,7 +127,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
             
             // 조회된 데이터가 없다면
             if(before == null)
-                return new ResponseData<ResponseBusinessUnit>("ERROR_IS_NONE_EXIST", "대상이 존재하지 않습니다.");
+                return new ResponseData<ResponseBusinessUnit>(EnumResponseResult.Error,"ERROR_IS_NONE_EXIST", "대상이 존재하지 않습니다.",null);
 
             // 데이터를 복사한다.
             ResponseBusinessUnit data = before.FromCopyValue<ResponseBusinessUnit>()!;
@@ -194,7 +194,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
             
             // 커밋한다.
             await transaction.CommitAsync();
-            result = new Response(EnumResponseResult.Success);
+            result = new Response(EnumResponseResult.Success,"","");
             
             // 로그 기록
             await _logActionWriteService.WriteUpdate(snapshot, update, user , "",LogCategory);
@@ -272,7 +272,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
         catch (Exception e)
         {
             await transaction.RollbackAsync();
-            result = new ResponseData<ResponseBusinessUnit>(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.");
+            result = new ResponseData<ResponseBusinessUnit>(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
     
@@ -318,7 +318,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
             
             // 커밋한다.
             await transaction.CommitAsync();
-            result = new Response(EnumResponseResult.Success);
+            result = new Response(EnumResponseResult.Success,"","");
             
             // 로그 기록
             await _logActionWriteService.WriteDeletion(remove, user , "",LogCategory);

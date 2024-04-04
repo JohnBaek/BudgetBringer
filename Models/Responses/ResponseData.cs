@@ -16,51 +16,22 @@ public class ResponseData<T> : Response where T : class
     public ResponseData()
     {
     }
-    
-    /// <summary>
-    /// 생성자
-    /// </summary>
-    /// <param name="code"></param>
-    /// <param name="message"></param>
-    public ResponseData( string code, string message) 
-    {
-        Code = code;
-        Message = message;
-    }
 
     /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="result"></param>
+    /// <param name="code"></param>
+    /// <param name="message"></param>
     /// <param name="data"></param>
-    public ResponseData(EnumResponseResult result, T? data) : base(result)
-    {
-        Data = data;
-    }
-
-    /// <summary>
-    /// 생성자
-    /// </summary>
-    /// <param name="result"></param>
-    /// <param name="code"></param>
-    /// <param name="message"></param>
-    public ResponseData(EnumResponseResult result, string code, string message) : base(result, code, message)
+    public ResponseData(EnumResponseResult result, string code, string message, T? data) : base(result, code, message)
     {
         Result = result;
         Code = code;
         Message = message;
+        Data = data;
     }
 
-
-    /// <summary>
-    /// 생성자
-    /// </summary>
-    /// <param name="message">메세지</param>
-    public ResponseData(string message)
-    {
-        this.Result = EnumResponseResult.Error;
-        this.Message = message;
-    }
 
     /// <summary>
     /// 응답 데이터

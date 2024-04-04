@@ -12,79 +12,23 @@ namespace Models.Responses;
 public class ResponseList<T> : Response where T : class
 {
     /// <summary>
-    /// 생성자
-    /// </summary>
-    /// <param name="result">응답결과</param>
-    /// <param name="requestQuery">쿼리정보</param>
-    public ResponseList(EnumResponseResult result , RequestQuery requestQuery)
-    {
-        this.Result = result;
-        this.Skip = requestQuery.Skip;
-        this.PageCount = requestQuery.PageCount;
-    }
-
-    /// <summary>
-    /// 생성자
-    /// </summary>
-    /// <param name="result">응답결과</param>
-    /// <param name="requestQuery">쿼리정보</param>
-    /// <param name="items">데이터</param>
-    public ResponseList(EnumResponseResult result , RequestQuery requestQuery , List<T> items)
-    {
-        Result = result;
-        Skip = requestQuery.Skip;
-        PageCount = requestQuery.PageCount;
-        Items = items;
-    }
-    
-    
-    /// <summary>
     /// 기본 생성자
     /// </summary>
     public ResponseList()
     {
-    }   
-    
-    /// <summary>
-    /// 생성자
-    /// </summary>
-    /// <param name="message">메세지</param>
-    public ResponseList(string message)
-    {
-        Result = EnumResponseResult.Error;
-        Message = message;
-    }
-
-   
-    /// <summary>
-    /// 생성자
-    /// </summary>
-    /// <param name="result"></param>
-    /// <param name="container"></param>
-    /// <param name="items"></param>
-    public ResponseList(EnumResponseResult result, QueryContainer<T> container, List<T> items)
-    {
-        Result = result;
-        Skip = container.Skip;
-        TotalCount = container.TotalCount;
-        PageCount = container.PageCount;
-        Items = items;
     }
 
     /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="result"></param>
-    /// <param name="requestQuery"></param>
+    /// <param name="code"></param>
+    /// <param name="message"></param>
     /// <param name="items"></param>
-    /// <param name="totalCount"></param>
-    public ResponseList(EnumResponseResult result, RequestQuery requestQuery, List<T> items, int totalCount)
+    public ResponseList(EnumResponseResult result, string code, string message, List<T>? items) 
+        : base(result, code, message)
     {
-        Result = result;
-        Skip = requestQuery.Skip;
-        PageCount = requestQuery.PageCount;
         Items = items;
-        TotalCount = totalCount;
     }
 
     /// <summary>

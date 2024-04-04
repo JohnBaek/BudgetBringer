@@ -1,5 +1,6 @@
 using Features.Extensions;
 using Microsoft.Extensions.Logging;
+using Models.Common.Enums;
 using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
@@ -52,7 +53,7 @@ public class CountryBusinessManagerService : ICountryBusinessManagerService
         }
         catch (Exception e)
         {
-            response = new ResponseList<ResponseCountryBusinessManager>("처리중 예외가 발생했습니다.");
+            response = new ResponseList<ResponseCountryBusinessManager>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 
@@ -74,7 +75,7 @@ public class CountryBusinessManagerService : ICountryBusinessManagerService
         }
         catch (Exception e)
         {
-            response = new ResponseData<ResponseCountryBusinessManager>("처리중 예외가 발생했습니다.");
+            response = new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 
@@ -97,7 +98,7 @@ public class CountryBusinessManagerService : ICountryBusinessManagerService
         }
         catch (Exception e)
         {
-            response = new ResponseData<ResponseCountryBusinessManager>("처리중 예외가 발생했습니다.");
+            response = new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 
@@ -119,7 +120,7 @@ public class CountryBusinessManagerService : ICountryBusinessManagerService
         }
         catch (Exception e)
         {
-            response = new ResponseData<ResponseCountryBusinessManager>("처리중 예외가 발생했습니다.");
+            response = new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 
@@ -141,7 +142,7 @@ public class CountryBusinessManagerService : ICountryBusinessManagerService
         }
         catch (Exception e)
         {
-            response = new ResponseData<ResponseCountryBusinessManager>("처리중 예외가 발생했습니다.");
+            response = new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 

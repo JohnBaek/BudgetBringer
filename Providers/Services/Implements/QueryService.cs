@@ -272,7 +272,7 @@ public class QueryService: IQueryService
         try
         {
             // 쿼리를 처리한다.
-            QueryContainer<T>? container = await ToProductAsync<T>(requestQuery);
+            QueryContainer<T> container = await ToProductAsync<T>(requestQuery);
             
             // 쿼리 반환에 실패한경우
             if (container == null)
@@ -280,12 +280,19 @@ public class QueryService: IQueryService
 
             // 조회
             List<TV> list = await ToListAsync(container.Queryable, mappingFunction);
-            
-            return new ResponseList<TV>(EnumResponseResult.Success, requestQuery, list, container.TotalCount);
+
+            return new ResponseList<TV>
+            {
+                Result = EnumResponseResult.Success,
+                TotalCount = container.TotalCount,
+                Skip = requestQuery.Skip,
+                PageCount = requestQuery.PageCount,
+                Items = list
+            };
         }
         catch (Exception e)
         {
-            result = new ResponseList<TV>("처리중 예외가 발생했습니다.");
+            result = new ResponseList<TV>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 
@@ -304,10 +311,14 @@ public class QueryService: IQueryService
         try
         {
             // 쿼리를 기본 재가공한다.
-            IQueryable<T> query = ReProductQuery<T>(requestQuery);
+            IQueryable<T>? query = ReProductQuery<T>(requestQuery);
+
+            if (query == null)
+                return null;
             
-            // 전체 카운트를 구한다.
-            int totalCount = await query.CountAsync();
+            int totalCount = 0;
+
+            totalCount = await query.CountAsync();
 
             // 현재 조건으로 쿼리를 적용한다.
             query = query.Skip(requestQuery.Skip).Take(requestQuery.PageCount);
@@ -330,7 +341,7 @@ public class QueryService: IQueryService
     /// <param name="mappingFunction">매핑 Delegate</param>
     /// <typeparam name="TV">결과</typeparam>
     /// <returns></returns>
-    public async Task<List<TV>> ToListAsync<T,TV>(IQueryable<T> queryable, Expression<Func<T, TV>> mappingFunction)
+    public async Task<List<TV>> ToListAsync<T,TV>(IQueryable<T>? queryable, Expression<Func<T, TV>> mappingFunction)
         where T : class
         where TV : class
     {

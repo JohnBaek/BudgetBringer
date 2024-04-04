@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Resources;
 using Features.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -118,7 +119,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
     /// <returns></returns>
     public async Task<ResponseList<ResponseBudgetApproved>> GetListAsync(RequestQuery requestQuery)
     {
-        ResponseList<ResponseBudgetApproved> result = new ResponseList<ResponseBudgetApproved>();
+        ResponseList<ResponseBudgetApproved> result;
         try
         {
             // 검색 메타정보 추가
@@ -142,9 +143,10 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         }
         catch (Exception e)
         {
+            result = new ResponseList<ResponseBudgetApproved>(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
-
+        
         return result;
     }
 
@@ -160,7 +162,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         {
             // 요청이 유효하지 않은경우
             if (id.IsEmpty())
-                return new ResponseData<ResponseBudgetApproved>("ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요");
+                return new ResponseData<ResponseBudgetApproved>(EnumResponseResult.Error,"ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요",null);
 
             // 기존데이터를 조회한다.
             ResponseBudgetApproved? data =
@@ -169,7 +171,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             
             // 조회된 데이터가 없다면
             if(data == null)
-                return new ResponseData<ResponseBudgetApproved>("ERROR_IS_NONE_EXIST", "대상이 존재하지 않습니다.");
+                return new ResponseData<ResponseBudgetApproved>(EnumResponseResult.Error,"ERROR_IS_NONE_EXIST", "대상이 존재하지 않습니다.",null);
 
             return new ResponseData<ResponseBudgetApproved> {Result = EnumResponseResult.Success, Data = data};
         }
@@ -198,14 +200,14 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         {
             // 요청이 유효하지 않은경우
             if(id.IsEmpty() || request.IsInValid())
-                return new Response{ Code = "ERROR_INVALID_PARAMETER", Message = "필수 값을 입력해주세요"};
+                return new Response(EnumResponseResult.Success,"ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요");
             
             // 로그인한 사용자 정보를 가져온다.
             DbModelUser? user = await _userRepository.GetAuthenticatedUser();
 
             // 사용자 정보가 없는경우 
             if(user == null)
-                return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
+                return new Response(EnumResponseResult.Success,"ERROR_SESSION_TIMEOUT", "로그인 상태를 확인해주세요");
             
             // 동일한 이름을 가진 데이터가 있는지 확인
             DbModelBudgetApproved? update = await _dbContext.BudgetApproved
@@ -214,12 +216,11 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             
             // 대상 데이터가 없는경우
             if(update == null)
-                return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "대상이 존재하지 않습니다."};
+                return new Response(EnumResponseResult.Success,"ERROR_TARGET_DOES_NOT_FOUND", "대상이 존재하지 않습니다.");
             
             // 로그기록을 위한 데이터 스냅샷
             DbModelBudgetApproved snapshot = update.FromClone()!;
 
-           
             // 데이터를 바인딩한다
             Response bidingResult = await SetBudgetPlanDispatchValidatorAsync(update, user , request);
             
@@ -232,7 +233,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             
             // 커밋한다.
             await transaction.CommitAsync();
-            result = new Response(EnumResponseResult.Success);
+            result = new Response(EnumResponseResult.Success,"","");
             
             // 로그 기록
             await _logActionWriteService.WriteUpdate(snapshot, update, user , "",LogCategory);
@@ -305,7 +306,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         catch (Exception e)
         {
             await transaction.RollbackAsync();
-            result = new ResponseData<ResponseBudgetApproved>(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.");
+            result = new ResponseData<ResponseBudgetApproved>(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
     
@@ -351,7 +352,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             
             // 커밋한다.
             await transaction.CommitAsync();
-            result = new Response(EnumResponseResult.Success);
+            result = new Response(EnumResponseResult.Success,"","");
             
             // 로그 기록
             await _logActionWriteService.WriteDeletion(remove, user , "",LogCategory);

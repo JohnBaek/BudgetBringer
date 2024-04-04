@@ -68,7 +68,7 @@ public class LogActionWriteService : ILogActionWriteService
             stringBuilder.AppendLine($"변경후: {afterJson}");
 
             await _logActionRepository.AddAsync(EnumDatabaseLogActionType.Update, stringBuilder.ToString(), category, user);
-            result = new Response(EnumResponseResult.Success);
+            result = new Response(EnumResponseResult.Success,"","");
         }
         catch (Exception e)
         {
@@ -104,7 +104,7 @@ public class LogActionWriteService : ILogActionWriteService
             stringBuilder.AppendLine($"데이터: {beforeJson}");
 
             await _logActionRepository.AddAsync(EnumDatabaseLogActionType.Add, stringBuilder.ToString(), category, user);
-            result = new Response(EnumResponseResult.Success);
+            result = new Response(EnumResponseResult.Success,"","");
         }
         catch (Exception e)
         {
@@ -140,7 +140,7 @@ public class LogActionWriteService : ILogActionWriteService
             stringBuilder.AppendLine($"데이터: {beforeJson}");
 
             await _logActionRepository.AddAsync(EnumDatabaseLogActionType.Delete, stringBuilder.ToString(), category, user);
-            result = new Response(EnumResponseResult.Success);
+            result = new Response(EnumResponseResult.Success ,"","");
         }
         catch (Exception e)
         {

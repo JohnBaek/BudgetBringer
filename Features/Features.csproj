@@ -13,4 +13,8 @@
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.4.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Remove="Resources\Resources.resx" />
+    </ItemGroup>
+
 </Project>

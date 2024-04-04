@@ -1,5 +1,6 @@
 using Features.Extensions;
 using Microsoft.Extensions.Logging;
+using Models.Common.Enums;
 using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
@@ -51,7 +52,7 @@ public class CostCenterService : ICostCenterService
         }
         catch (Exception e)
         {
-            response = new ResponseList<ResponseCostCenter>("처리중 예외가 발생했습니다.");
+            response = new ResponseList<ResponseCostCenter>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 
@@ -73,7 +74,7 @@ public class CostCenterService : ICostCenterService
         }
         catch (Exception e)
         {
-            response = new ResponseData<ResponseCostCenter>("처리중 예외가 발생했습니다.");
+            response = new ResponseData<ResponseCostCenter>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 
@@ -96,7 +97,7 @@ public class CostCenterService : ICostCenterService
         }
         catch (Exception e)
         {
-            response = new ResponseData<ResponseCostCenter>("처리중 예외가 발생했습니다.");
+            response = new ResponseData<ResponseCostCenter>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 
@@ -118,7 +119,7 @@ public class CostCenterService : ICostCenterService
         }
         catch (Exception e)
         {
-            response = new ResponseData<ResponseCostCenter>("처리중 예외가 발생했습니다.");
+            response = new ResponseData<ResponseCostCenter>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 
@@ -140,7 +141,7 @@ public class CostCenterService : ICostCenterService
         }
         catch (Exception e)
         {
-            response = new ResponseData<ResponseCostCenter>("처리중 예외가 발생했습니다.");
+            response = new ResponseData<ResponseCostCenter>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 

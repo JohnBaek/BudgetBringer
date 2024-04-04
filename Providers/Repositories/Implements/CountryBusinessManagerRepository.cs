@@ -118,7 +118,7 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
         {
             // 요청이 유효하지 않은경우
             if (id.IsEmpty())
-                return new ResponseData<ResponseCountryBusinessManager>("ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요");
+                return new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error,"ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요",null);
 
             // 기존데이터를 조회한다.
             DbModelBudgetPlan? before =
@@ -126,7 +126,7 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
             
             // 조회된 데이터가 없다면
             if(before == null)
-                return new ResponseData<ResponseCountryBusinessManager>("ERROR_IS_NONE_EXIST", "대상이 존재하지 않습니다.");
+                return new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error,"ERROR_IS_NONE_EXIST", "대상이 존재하지 않습니다.",null);
 
             // 데이터를 복사한다.
             ResponseCountryBusinessManager data = before.FromCopyValue<ResponseCountryBusinessManager>()!;
@@ -237,13 +237,6 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
             DbModelBudgetPlan add = new DbModelBudgetPlan
             {
                 Id = Guid.NewGuid(),
-                CostCenterName = null,
-                CountryBusinessManagerName = null,
-                BusinessUnitName = null,
-                Sector = null,
-                DbModelBusinessUnit = null,
-                DbModelCostCenter = null,
-                DbModelCountryBusinessManager = null,
                 RegName = user.DisplayName,
                 ModName = user.DisplayName,
                 RegDate = DateTime.Now,
@@ -270,7 +263,7 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
         catch (Exception e)
         {
             await transaction.RollbackAsync();
-            result = new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.");
+            result = new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
     
@@ -318,7 +311,7 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
             
             // 커밋한다.
             await transaction.CommitAsync();
-            result = new Response(EnumResponseResult.Success);
+            result = new Response(EnumResponseResult.Success,"","");
             
             // 로그 기록
             await _logActionWriteService.WriteDeletion(remove, user , "",LogCategory);

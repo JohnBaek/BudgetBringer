@@ -11,6 +11,11 @@
     &lt;Project Location="/Users/john/Projects/SgsAnalysis/Apis.Tests" Presentation="&amp;lt;Apis.Tests&amp;gt;" /&gt;
   &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String>
+	<s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=Providers_002FResources_002FCodeResources/@EntryIndexedValue">True</s:Boolean>
+	
+	
+	
+	<s:Boolean x:Key="/Default/ResxEditorPersonal/Initialized/@EntryValue">True</s:Boolean>
 	
 	
 	</wpf:ResourceDictionary>

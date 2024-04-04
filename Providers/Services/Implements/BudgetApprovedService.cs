@@ -1,5 +1,6 @@
 using Features.Extensions;
 using Microsoft.Extensions.Logging;
+using Models.Common.Enums;
 using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
@@ -51,7 +52,7 @@ public class BudgetApprovedService : IBudgetApprovedService
         }
         catch (Exception e)
         {
-            response = new ResponseList<ResponseBudgetApproved>("처리중 예외가 발생했습니다.");
+            response = new ResponseList<ResponseBudgetApproved>(EnumResponseResult.Error,"" ,"처리중 예외가 발생했습니다.", null);
             e.LogError(_logger);
         }
 
@@ -73,7 +74,7 @@ public class BudgetApprovedService : IBudgetApprovedService
         }
         catch (Exception e)
         {
-            response = new ResponseData<ResponseBudgetApproved>("처리중 예외가 발생했습니다.");
+            response = new ResponseData<ResponseBudgetApproved>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 
@@ -96,7 +97,7 @@ public class BudgetApprovedService : IBudgetApprovedService
         }
         catch (Exception e)
         {
-            response = new ResponseData<ResponseBudgetApproved>("처리중 예외가 발생했습니다.");
+            response = new ResponseData<ResponseBudgetApproved>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 
@@ -118,7 +119,7 @@ public class BudgetApprovedService : IBudgetApprovedService
         }
         catch (Exception e)
         {
-            response = new ResponseData<ResponseBudgetApproved>("처리중 예외가 발생했습니다.");
+            response = new ResponseData<ResponseBudgetApproved>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 
@@ -140,7 +141,7 @@ public class BudgetApprovedService : IBudgetApprovedService
         }
         catch (Exception e)
         {
-            response = new ResponseData<ResponseBudgetApproved>("처리중 예외가 발생했습니다.");
+            response = new ResponseData<ResponseBudgetApproved>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 

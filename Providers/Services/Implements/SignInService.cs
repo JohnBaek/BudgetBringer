@@ -94,21 +94,19 @@ public class SignInService : ISignInService<DbModelUser>
 
         // 성공한경우  
         if (loginResult.Succeeded)
-            return new Response("", "", true, EnumResponseResult.Success);
+            return new Response(EnumResponseResult.Success,"","");
         
         // 계정이 잠긴경우 
         if(loginResult.IsLockedOut)
-            return new Response("", "계정이 잠겨있습니다.", false, EnumResponseResult.Error);
+            return new Response(EnumResponseResult.Error,"", "계정이 잠겨있습니다.");
         
         // 허용되지 않는경우 
         if(loginResult.IsNotAllowed)
-            return new Response("", "허용되지 않습니다.", false, EnumResponseResult.Error);
-        
+           return new Response(EnumResponseResult.Error, "허용되지 않습니다.","");
+
         // 실패한경우 
-        if(loginResult == SignInResult.Failed)
-            return new Response("", "아이디 또는 비밀번호를 확인해주세요", false, EnumResponseResult.Error);
-            
-        
-        return new Response("", "예외가 발생했습니다.", false, EnumResponseResult.Error);
+        return loginResult == SignInResult.Failed
+            ? new Response(EnumResponseResult.Error, "아이디 또는 비밀번호를 확인해주세요", "")
+            : new Response(EnumResponseResult.Error, "예외가 발생했습니다.", "");
     }
 }
