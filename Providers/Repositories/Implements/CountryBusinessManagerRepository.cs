@@ -75,6 +75,21 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
         _logActionWriteService = logActionWriteService;
     }
     
+    
+   /// <summary>
+    /// 셀렉터 매핑 정의
+    /// </summary>
+    private Expression<Func<DbModelCountryBusinessManager, ResponseCountryBusinessManager>> MapDataToResponse { get; init; } = item => new ResponseCountryBusinessManager
+    {
+        Id = item.Id,
+        Name = item.Name,
+        RegName = item.RegName ,
+        ModName = item.ModName ,
+        RegDate = item.RegDate ,
+        ModDate = item.ModDate ,
+    };
+    
+
     /// <summary>
     /// 리스트를 가져온다.
     /// </summary>
@@ -86,17 +101,14 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
         try
         {
             // 검색 메타정보 추가
-            // requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCountryBusinessManager.Name));
-            
-            // 셀렉팅 정의
-            Expression<Func<DbModelBudgetPlan, ResponseCountryBusinessManager>> mapDataToResponse = item => new ResponseCountryBusinessManager
-            {
-                Id = item.Id,
-                Name = null,
-            };
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCountryBusinessManager.Name));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegDate));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.RegDate));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModDate));
             
             // 결과를 반환한다.
-            return await _queryService.ToResponseListAsync(requestQuery, mapDataToResponse);
+            return await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
         }
         catch (Exception e)
         {
@@ -121,16 +133,17 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
                 return new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error,"ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요",null);
 
             // 기존데이터를 조회한다.
-            DbModelBudgetPlan? before =
-                await        _dbContext.BudgetPlans.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
+            ResponseCountryBusinessManager? before =
+                await _dbContext.CountryBusinessManagers.Where(i => i.Id == id.ToGuid())
+                    .Select(MapDataToResponse)
+                    .FirstOrDefaultAsync();
             
             // 조회된 데이터가 없다면
             if(before == null)
                 return new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error,"ERROR_IS_NONE_EXIST", "대상이 존재하지 않습니다.",null);
 
             // 데이터를 복사한다.
-            ResponseCountryBusinessManager data = before.FromCopyValue<ResponseCountryBusinessManager>()!;
-            return new ResponseData<ResponseCountryBusinessManager> {Result = EnumResponseResult.Success, Data = data};
+            return new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Success, "", "", before);
         }
         catch (Exception e)
         {
@@ -167,7 +180,7 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
                 return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
             
             // 동일한 이름을 가진 데이터가 있는지 확인
-            DbModelBudgetPlan? update = await        _dbContext.BudgetPlans
+            DbModelCountryBusinessManager? update = await _dbContext.CountryBusinessManagers
                 .Where(i => i.Id == id.ToGuid())
                 .FirstOrDefaultAsync();
             
@@ -176,10 +189,10 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
                 return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "대상이 존재하지 않습니다."};
             
             // 로그기록을 위한 데이터 스냅샷
-            DbModelBudgetPlan snapshot = update.FromClone()!;
+            DbModelCountryBusinessManager snapshot = update.FromClone()!;
           
             // 데이터를 수정한다.
-            // update.Name = request.Name;
+            update.Name = request.Name;
             update.RegName = user.DisplayName; 
             update.ModName = user.DisplayName; 
             update.RegDate = DateTime.Now; 
@@ -188,12 +201,12 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
             update.ModId = user.Id; 
             
             // 데이터베이스에 업데이트처리 
-                   _dbContext.BudgetPlans.Update(update);
+            _dbContext.CountryBusinessManagers.Update(update);
             await _dbContext.SaveChangesAsync();
             
             // 커밋한다.
             await transaction.CommitAsync();
-            result = new Response{ Result = EnumResponseResult.Success};
+            result = new Response(EnumResponseResult.Success,"","");
             
             // 로그 기록
             await _logActionWriteService.WriteUpdate(snapshot, update, user , "",LogCategory);
@@ -232,21 +245,29 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
             // 사용자 정보가 없는경우 
             if(user == null)
                 return new ResponseData<ResponseCountryBusinessManager>{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
-
+            
+            // 동일한 이름을 가진 데이터가 있는지 확인
+            bool isDuplicated = await _dbContext.CountryBusinessManagers.AnyAsync(i => i.Name.ToLower() == request.Name.ToLower());
+            
+            // 동일한 데이터가 있다면 
+            if(isDuplicated)
+                return new ResponseData<ResponseCountryBusinessManager>{ Code = "ERROR_IS_DUPLICATED", Message = "이미 존재하는 데이터입니다."};
+          
             // 데이터를 생성한다.
-            DbModelBudgetPlan add = new DbModelBudgetPlan
+            DbModelCountryBusinessManager add = new DbModelCountryBusinessManager
             {
-                Id = Guid.NewGuid(),
-                RegName = user.DisplayName,
-                ModName = user.DisplayName,
-                RegDate = DateTime.Now,
-                ModDate = DateTime.Now,
-                RegId = user.Id,
-                ModId = user.Id,
+                Id = Guid.NewGuid() ,
+                Name = request.Name ,
+                RegName = user.DisplayName ,
+                ModName = user.DisplayName ,
+                RegDate = DateTime.Now ,
+                ModDate = DateTime.Now ,
+                RegId = user.Id ,
+                ModId = user.Id ,
             };
             
             // 데이터베이스에 데이터 추가 
-            await        _dbContext.BudgetPlans.AddAsync(add);
+            await _dbContext.CountryBusinessManagers.AddAsync(add);
             await _dbContext.SaveChangesAsync();
             
             // 커밋한다.
@@ -269,7 +290,7 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
     
         return result;
     }
-    
+
     /// <summary>
     /// 데이터를 삭제한다.
     /// </summary>
@@ -278,51 +299,49 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
     public async Task<Response> DeleteAsync(string id)
     {
         Response result;
-        
+
         // 트랜잭션을 시작한다.
         await using IDbContextTransaction transaction = await _dbContext.Database.BeginTransactionAsync();
-        
+
         try
         {
             // 요청이 유효하지 않은경우
-            if(id.IsEmpty())
-                return new Response{ Code = "ERROR_INVALID_PARAMETER", Message = "필수 값을 입력해주세요"};
+            if (id.IsEmpty())
+                return new Response {Code = "ERROR_INVALID_PARAMETER", Message = "필수 값을 입력해주세요"};
 
             // 로그인한 사용자 정보를 가져온다.
             DbModelUser? user = await _userRepository.GetAuthenticatedUser();
 
             // 사용자 정보가 없는경우 
-            if(user == null)
-                return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
-            
-     
-            
+            if (user == null)
+                return new Response {Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
+
             // 기존데이터를 조회한다.
-            DbModelBudgetPlan? remove =
-                await        _dbContext.BudgetPlans.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
-            
+            DbModelCountryBusinessManager? remove =
+                await _dbContext.CountryBusinessManagers.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
+
             // 조회된 데이터가 없다면
-            if(remove == null)
-                return new Response{ Code = "ERROR_IS_NONE_EXIST", Message = "대상이 존재하지 않습니다."};
+            if (remove == null)
+                return new Response {Code = "ERROR_IS_NONE_EXIST", Message = "대상이 존재하지 않습니다."};
 
             // 대상을 삭제한다.
             _dbContext.Remove(remove);
             await _dbContext.SaveChangesAsync();
-            
+
             // 커밋한다.
             await transaction.CommitAsync();
-            result = new Response(EnumResponseResult.Success,"","");
-            
+            result = new Response(EnumResponseResult.Success, "", "");
+
             // 로그 기록
-            await _logActionWriteService.WriteDeletion(remove, user , "",LogCategory);
+            await _logActionWriteService.WriteDeletion(remove, user, "", LogCategory);
         }
         catch (Exception e)
         {
             await transaction.RollbackAsync();
-            result = new Response(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.");
+            result = new Response(EnumResponseResult.Error, "ERROR_DATA_EXCEPTION", "처리중 예외가 발생했습니다.");
             e.LogError(_logger);
         }
-    
+
         return result;
     }
 }

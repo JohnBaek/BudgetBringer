@@ -51,7 +51,8 @@ public class HandleUnauthorizedMiddleware
         }
         // 권한이 없는경우
         else if (httpContext.Response.StatusCode == (int) HttpStatusCode.Forbidden ||
-                 httpContext.Response.StatusCode == (int) HttpStatusCode.NotAcceptable
+                 httpContext.Response.StatusCode == (int) HttpStatusCode.NotAcceptable ||
+                 httpContext.Response.StatusCode == (int) HttpStatusCode.Found 
                  )
         {
 

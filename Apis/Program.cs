@@ -141,6 +141,7 @@ public static class Program
         services.AddScoped<ILogActionWriteService, LogActionWriteService>();
         services.AddScoped<IBudgetPlanService, BudgetPlanService>();
         services.AddScoped<IBudgetApprovedService, BudgetApprovedService>();
+        services.AddScoped<ICountryBusinessManagerService, CountryBusinessManagerService>();
         services.AddScoped<IDispatchService, DispatchService>();
         
         services.AddTransient<IQueryService, QueryService>();
