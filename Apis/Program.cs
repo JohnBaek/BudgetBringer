@@ -133,8 +133,11 @@ public static class Program
         
         // 서비스 레이어 추가
         services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<ISignInService<DbModelUser>, SignInService>();
         services.AddScoped<IBusinessUnitService, BusinessUnitService>();
+        services.AddScoped<ISectorService, SectorService>();
+        services.AddScoped<ICostCenterService, CostCenterService>();
         services.AddScoped<ILogActionWriteService, LogActionWriteService>();
         services.AddScoped<IBudgetPlanService, BudgetPlanService>();
         services.AddScoped<IBudgetApprovedService, BudgetApprovedService>();

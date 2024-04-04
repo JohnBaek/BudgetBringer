@@ -10,25 +10,25 @@ using Providers.Services.Interfaces;
 namespace Apis.Controllers;
 
 /// <summary>
-/// 예산승인 유닛 컨트롤러
+/// 비지니스 유닛 컨트롤러
 /// </summary>
 [ApiController]
 [Route("api/v1/[controller]")]
 [Authorize(Roles = "Admin")]
-public class BudgetApprovedController : Controller
+public class CostCenterController : Controller
 {
     /// <summary>
     /// 비지니스 유닛 서비스 
     /// </summary>
-    private readonly IBudgetApprovedService _budgetApprovedService;
+    private readonly ICostCenterService _costCenterService;
 
     /// <summary>
     /// 생성자 
     /// </summary>
-    /// <param name="budgetPlanService">비지니스 유닛 서비스 </param>
-    public BudgetApprovedController(IBudgetApprovedService budgetPlanService)
+    /// <param name="costCenterService">코스트센터 서비스</param>
+    public CostCenterController(ICostCenterService costCenterService)
     {
-        _budgetApprovedService = budgetPlanService;
+        _costCenterService = costCenterService;
     }
     
     /// <summary>
@@ -38,9 +38,9 @@ public class BudgetApprovedController : Controller
     /// <returns></returns>
     [HttpGet("")]
     [ClaimRequirement("Permission","budget-plan")]
-    public async Task<ResponseList<ResponseBudgetApproved>> GetListAsync([FromQuery] RequestQuery requestQuery)
+    public async Task<ResponseList<ResponseCostCenter>> GetListAsync([FromQuery] RequestQuery requestQuery)
     {
-        return await _budgetApprovedService.GetListAsync(requestQuery);
+        return await _costCenterService.GetListAsync(requestQuery);
     }
 
     /// <summary>
@@ -50,9 +50,9 @@ public class BudgetApprovedController : Controller
     /// <returns></returns>
     [HttpGet("{id}")]
     [ClaimRequirement("Permission","budget-plan")]
-    public async Task<ResponseData<ResponseBudgetApproved>> GetAsync([FromRoute] string id)
+    public async Task<ResponseData<ResponseCostCenter>> GetAsync([FromRoute] string id)
     {
-        return await _budgetApprovedService.GetAsync(id);
+        return await _costCenterService.GetAsync(id);
     }
 
 
@@ -64,9 +64,9 @@ public class BudgetApprovedController : Controller
     /// <returns></returns>
     [HttpPost("{id}")]
     [ClaimRequirement("Permission","budget-plan")]
-    public async Task<Response> UpdateAsync([FromRoute] string id , RequestBudgetApproved request)
+    public async Task<Response> UpdateAsync([FromRoute] string id , RequestCostCenter request)
     {
-        return await _budgetApprovedService.UpdateAsync(id , request);
+        return await _costCenterService.UpdateAsync(id , request);
     }
     
     /// <summary>
@@ -76,9 +76,9 @@ public class BudgetApprovedController : Controller
     /// <returns></returns>
     [HttpPost("")]
     [ClaimRequirement("Permission","budget-plan")]
-    public async Task<ResponseData<ResponseBudgetApproved>> AddAsync(RequestBudgetApproved request)
+    public async Task<ResponseData<ResponseCostCenter>> AddAsync(RequestCostCenter request)
     {
-        return await _budgetApprovedService.AddAsync(request);
+        return await _costCenterService.AddAsync(request);
     }
     
     /// <summary>
@@ -89,6 +89,6 @@ public class BudgetApprovedController : Controller
     [HttpDelete("{id}")]
     [ClaimRequirement("Permission","budget-plan")]
     public async Task<Response> DeleteAsync(string id){
-        return await _budgetApprovedService.DeleteAsync(id);
+        return await _costCenterService.DeleteAsync(id);
     }
 }

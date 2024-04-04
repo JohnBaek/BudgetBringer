@@ -75,6 +75,19 @@ public class BusinessUnitRepository : IBusinessUnitRepository
         _logActionWriteService = logActionWriteService;
     }
 
+    /// <summary>
+    /// 셀렉터 매핑 정의
+    /// </summary>
+    private Expression<Func<DbModelBusinessUnit, ResponseBusinessUnit>> MapDataToResponse { get; init; } = item => new ResponseBusinessUnit
+    {
+        Id = item.Id,
+        Name = item.Name,
+        RegName = item.RegName ,
+        ModName = item.ModName ,
+        RegDate = item.RegDate ,
+        ModDate = item.ModDate ,
+    };
+    
 
     /// <summary>
     /// 리스트를 가져온다.
@@ -88,16 +101,13 @@ public class BusinessUnitRepository : IBusinessUnitRepository
         {
             // 검색 메타정보 추가
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBusinessUnit.Name));
-            
-            // 셀렉팅 정의
-            Expression<Func<DbModelBusinessUnit, ResponseBusinessUnit>> mapDataToResponse = item => new ResponseBusinessUnit
-            {
-                Id = item.Id,
-                Name = item.Name,
-            };
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegDate));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.RegDate));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModDate));
             
             // 결과를 반환한다.
-            return await _queryService.ToResponseListAsync(requestQuery, mapDataToResponse);
+            return await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
         }
         catch (Exception e)
         {

@@ -22,17 +22,7 @@ public class UserService : IUserService
     /// <summary>
     /// 로거
     /// </summary>
-    private readonly ILogger<AuthenticationService> _logger;
-    
-    /// <summary>
-    /// 사용자 리파지토리
-    /// </summary>
-    private readonly IUserRepository _userRepository;
-
-    /// <summary>
-    /// 사인인 매니저 
-    /// </summary>
-    private readonly ISignInService<DbModelUser> _signInService;
+    private readonly ILogger<UserService> _logger;
 
     /// <summary>
     /// 유저 매니저
@@ -53,22 +43,16 @@ public class UserService : IUserService
     /// 생성자
     /// </summary>
     /// <param name="logger">로거</param>
-    /// <param name="userRepository">사용자 리파지토리</param>
-    /// <param name="signInService">사인인 서비스</param>
     /// <param name="userManager">사용자 매니저</param>
     /// <param name="roleManager">역할 매니저</param>
     /// <param name="httpContextAccessor">IHttpContextAccessor</param>
     public UserService( 
-        ILogger<AuthenticationService> logger
-        , IUserRepository userRepository
-        , ISignInService<DbModelUser> signInService
+        ILogger<UserService> logger
         , UserManager<DbModelUser> userManager
         , RoleManager<DbModelRole> roleManager
         , IHttpContextAccessor httpContextAccessor)
     {
         _logger = logger;
-        _userRepository = userRepository;
-        _signInService = signInService;
         _userManager = userManager;
         _roleManager = roleManager;
         _httpContextAccessor = httpContextAccessor;
@@ -134,8 +118,6 @@ public class UserService : IUserService
                     };
                     add.Claims.Add(addClaim);
                 }
-                
-                
                 
                 roles.Add(add);
             }

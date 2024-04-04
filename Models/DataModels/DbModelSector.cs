@@ -19,16 +19,4 @@ public class DbModelSector : DbModelDefault
     [Required]
     [MaxLength(255)]
     public string Value { get; set; }
-    
-    /// <summary>
-    /// 등록일 (필수)
-    /// </summary>
-    [Required]
-    public DateTime RegDate { get; init; }
-    
-    /// <summary>
-    /// 수정일 (필수)
-    /// </summary>
-    [Required]
-    public DateTime ModDate { get; init; }
 }

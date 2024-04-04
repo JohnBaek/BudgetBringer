@@ -16,5 +16,5 @@ public class RequestCostCenter : RequestBase
     /// DbModelCostCenter 값 
     /// </summary>
     [Required(ErrorMessage = "값을 입력해주세요")]
-    public int Value { get; init; }
+    public string Value { get; init; }
 }

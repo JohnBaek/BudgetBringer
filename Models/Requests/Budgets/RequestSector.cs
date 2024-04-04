@@ -11,5 +11,5 @@ public class RequestSector : RequestBase
     /// 섹터 값
     /// </summary>
     [Required(ErrorMessage = "값을 입력해주세요")]
-    public int Value { get; init; }
+    public string Value { get; init; }
 }

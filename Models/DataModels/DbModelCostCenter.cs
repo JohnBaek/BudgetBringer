@@ -22,5 +22,5 @@ public class DbModelCostCenter : DbModelDefault
     /// </summary>
     [Required]
     [MaxLength(255)]
-    public string Value { get; init; }
+    public string Value { get; set; }
 }

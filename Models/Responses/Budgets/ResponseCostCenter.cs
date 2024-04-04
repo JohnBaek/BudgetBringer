@@ -13,7 +13,7 @@ public class ResponseCostCenter : ResponseCommonWriter
     /// <summary>
     /// DbModelCostCenter 값 (유니크)
     /// </summary>
-    public int Value { get; init; }
+    public string Value { get; init; }
     
     /// <summary>
     /// 등록일 (필수)

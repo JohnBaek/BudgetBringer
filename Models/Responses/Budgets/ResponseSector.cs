@@ -13,7 +13,7 @@ public class ResponseSector : ResponseCommonWriter
     /// <summary>
     /// 섹터 값
     /// </summary>
-    public int Value { get; init; }
+    public string Value { get; init; }
     
     /// <summary>
     /// 등록일 (필수)

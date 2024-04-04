@@ -14,7 +14,7 @@ namespace Apis.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/v1/[controller]")]
-[Authorize(Roles = "Admin,User")]
+[Authorize(Roles = "Admin")]
 public class BudgetPlanController : Controller
 {
     /// <summary>
