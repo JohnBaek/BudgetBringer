@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using System.Text.Json.Serialization;
 using Models.Common.Enums;
 
@@ -27,12 +28,12 @@ public class RequestQuery
     /// <summary>
     /// 검색 키워드 
     /// </summary>
-    public List<string>? SearchKeywords { get; set; }
+    public List<string> SearchKeywords { get; set; } = [];
     
     /// <summary>
     /// 검색 필드
     /// </summary>
-    public List<string>? SearchFields { get; set; } 
+    public List<string> SearchFields { get; set; } = [];
 
     /// <summary>
     /// 검색 메타 정보 
@@ -44,13 +45,13 @@ public class RequestQuery
     /// 메타 정보를 추가한다.
     /// </summary>
     /// <param name="searchType"></param>
-    /// <param name="field"></param>
-    public void AddSearchDefine(EnumQuerySearchType searchType, string field)
+    /// <param name="fieldName"></param>
+    public void AddSearchDefine(EnumQuerySearchType searchType, string fieldName)
     {
         SearchMetas.Add(new RequestQuerySearchMeta
         {
             SearchType = searchType ,
-            Field = field
+            Field = fieldName ,
         });
     }
 }

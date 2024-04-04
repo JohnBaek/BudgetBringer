@@ -81,10 +81,17 @@ public class QueryService: IQueryService
                 {
                     // 동일한 값을 찾는경우 
                     case EnumQuerySearchType.Equals:
+                        constant = GetParseConstant( tuple , property.Type);
                         condition = Expression.Equal(property, constant);
                         break;
                     // 포함된 값을 찾는 경우 
                     case EnumQuerySearchType.Contains:
+                        // property의 타입이 string이 아니면 에러 발생
+                        if (property.Type != typeof(string)) 
+                        {
+                            throw new InvalidOperationException($"'Contains' 타입에서 문자열 외의 데이터는 지원하지 않습니다. 속성 '{findMeta.Field}' 의 타입은 '{property.Type}' 입니다.");
+                        }
+                        
                         var method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
                         condition = Expression.Call(property, method, constant);
                         break;
@@ -109,16 +116,70 @@ public class QueryService: IQueryService
     }
 
     /// <summary>
+    /// 해당 타입에 맞게 ConstantExpression 를 변환처리한다
+    /// </summary>
+    /// <param name="tuple"></param>
+    /// <param name="property"></param>
+    /// <returns></returns>
+    private ConstantExpression GetParseConstant(Tuple<string, string> tuple, Type property)
+    {
+        object value = null;
+
+        // Bool 처리
+        if (property == typeof(bool) && bool.TryParse(tuple.Item2, out bool boolValue))
+        {
+            value = boolValue;
+        }
+        // Int 처리
+        else if (property == typeof(int) && int.TryParse(tuple.Item2, out int intValue))
+        {
+            value = intValue;
+        }
+        // Float 처리
+        else if (property == typeof(float) && float.TryParse(tuple.Item2, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float floatValue))
+        {
+            value = floatValue;
+        }
+        // Double 처리
+        else if (property == typeof(double) && double.TryParse(tuple.Item2, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double doubleValue))
+        {
+            value = doubleValue;
+        }
+        // Enum 처리
+        else if (property.IsEnum)
+        {
+            try
+            {
+                value = Enum.Parse(property, tuple.Item2, true); // 대소문자 구분 없이 파싱
+            }
+            catch (Exception)
+            {
+                value = 0;
+            }
+        }
+    
+        // 파싱된 값이 있는 경우, 해당 타입의 상수 표현식으로 반환
+        if (value != null)
+        {
+            return Expression.Constant(value, property);
+        }
+        
+        // 파싱에 실패하거나 지원되지 않는 타입인 경우, 원본 문자열을 사용
+        // 이 경우, 적절한 예외 처리 또는 로깅을 고려할 수 있음
+        return Expression.Constant(tuple.Item2, typeof(string));
+    }
+
+    /// <summary>
     /// ResponseList 로 변환한다.
     /// </summary>
     /// <param name="requestQuery">요청정보</param>
     /// <param name="mappingFunction"></param>
     /// <returns></returns>
-    public async Task<ResponseList<V>> ToResponseListAsync<T,V>(RequestQuery requestQuery, Expression<Func<T, V>> mappingFunction)
+    public async Task<ResponseList<TV>> ToResponseListAsync<T,TV>(RequestQuery requestQuery, Expression<Func<T, TV>> mappingFunction)
         where T : class
-        where V : class
+        where TV : class
     {
-        ResponseList<V>? result;
+        ResponseList<TV>? result;
 
         try
         {
@@ -130,13 +191,13 @@ public class QueryService: IQueryService
                 throw new Exception("데이터베이스 처리중 예외가 발생했습니다.");
 
             // 조회
-            List<V> list = await ToListAsync(container.Queryable, mappingFunction);
+            List<TV> list = await ToListAsync(container.Queryable, mappingFunction);
             
-            return new ResponseList<V>(EnumResponseResult.Success, requestQuery, list, container.TotalCount);
+            return new ResponseList<TV>(EnumResponseResult.Success, requestQuery, list, container.TotalCount);
         }
         catch (Exception e)
         {
-            result = new ResponseList<V>("처리중 예외가 발생했습니다.");
+            result = new ResponseList<TV>("처리중 예외가 발생했습니다.");
             e.LogError(_logger);
         }
 
@@ -179,13 +240,13 @@ public class QueryService: IQueryService
     /// </summary>
     /// <param name="queryable">IQueryable</param>
     /// <param name="mappingFunction">매핑 Delegate</param>
-    /// <typeparam name="V">결과</typeparam>
+    /// <typeparam name="TV">결과</typeparam>
     /// <returns></returns>
-    public async Task<List<V>> ToListAsync<T,V>(IQueryable<T> queryable, Expression<Func<T, V>> mappingFunction)
+    public async Task<List<TV>> ToListAsync<T,TV>(IQueryable<T> queryable, Expression<Func<T, TV>> mappingFunction)
         where T : class
-        where V : class
+        where TV : class
     {
-        List<V> result;
+        List<TV> result;
 
         try
         {
@@ -221,7 +282,7 @@ public class QueryService: IQueryService
             for (int i = 0; i < requestQuery.SearchFields.Count; i++)
             {
                 // 값을 분리하여 추가한다.
-                Tuple<string, string> add = new Tuple<string, string>(requestQuery.SearchFields[i],requestQuery.SearchKeywords[i]);
+                Tuple<string, string> add = new Tuple<string, string>(requestQuery.SearchFields[i] , requestQuery.SearchKeywords[i]);
                 result.Add(add);
             }
         }

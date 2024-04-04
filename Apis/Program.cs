@@ -128,12 +128,16 @@ public static class Program
         services.AddScoped<ICountryBusinessManagerRepository,CountryBusinessManagerRepository>();
         services.AddScoped<ILogActionRepository,LogActionRepository>();
         services.AddScoped<ISectorRepository,SectorRepository>();
+        services.AddScoped<IBudgetPlanRepository,BudgetPlanRepository>();
+        services.AddScoped<IBudgetApprovedRepository,BudgetApprovedRepository>();
         
         // 서비스 레이어 추가
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ISignInService<DbModelUser>, SignInService>();
         services.AddScoped<IBusinessUnitService, BusinessUnitService>();
         services.AddScoped<ILogActionWriteService, LogActionWriteService>();
+        services.AddScoped<IBudgetPlanService, BudgetPlanService>();
+        services.AddScoped<IBudgetApprovedService, BudgetApprovedService>();
         services.AddScoped<IDispatchService, DispatchService>();
         
         services.AddTransient<IQueryService, QueryService>();

@@ -19,6 +19,16 @@ public class ResponseBudgetPlan
     /// 기안일 ( 날짜가아닌 일반 스트링데이터도 포함 될 수 있다. )
     /// </summary>
     public string ApprovalDate { get; init; } = "";
+    
+    /// <summary>
+    /// 기안일 정상 포맷 (yyyy-MM-dd) 이라면 DateOnly 로 파싱된 값 
+    /// </summary>
+    public DateOnly? ApproveDateValue { get; set; } 
+    
+    /// <summary>
+    /// 기안일 정상 포맷 (yyyy-MM-dd) 여부
+    /// </summary>
+    public bool IsApprovalDateValid { get; set; }
 
     /// <summary>
     /// 설명 

@@ -18,7 +18,7 @@ public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelR
     /// <summary>
     /// 예산
     /// </summary>
-    public required DbSet<DbModelBudgetPlan> Budgets {get;init;}
+    public required DbSet<DbModelBudgetPlan> BudgetPlans {get;init;}
     
     /// <summary>
     /// 비지니스 유닛

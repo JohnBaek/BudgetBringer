@@ -121,7 +121,7 @@ public class SectorRepository : ISectorRepository
 
             // 기존데이터를 조회한다.
             DbModelBudgetPlan? before =
-                await        _dbContext.Budgets.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
+                await        _dbContext.BudgetPlans.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
             
             // 조회된 데이터가 없다면
             if(before == null)
@@ -166,7 +166,7 @@ public class SectorRepository : ISectorRepository
                 return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
             
             // 동일한 이름을 가진 데이터가 있는지 확인
-            DbModelBudgetPlan? update = await        _dbContext.Budgets
+            DbModelBudgetPlan? update = await        _dbContext.BudgetPlans
                 .Where(i => i.Id == id.ToGuid())
                 .FirstOrDefaultAsync();
             
@@ -187,7 +187,7 @@ public class SectorRepository : ISectorRepository
             update.ModId = user.Id; 
             
             // 데이터베이스에 업데이트처리 
-                   _dbContext.Budgets.Update(update);
+                   _dbContext.BudgetPlans.Update(update);
             await _dbContext.SaveChangesAsync();
             
             // 커밋한다.
@@ -252,7 +252,7 @@ public class SectorRepository : ISectorRepository
             };
             
             // 데이터베이스에 데이터 추가 
-            await        _dbContext.Budgets.AddAsync(add);
+            await        _dbContext.BudgetPlans.AddAsync(add);
             await _dbContext.SaveChangesAsync();
             
             // 커밋한다.
@@ -305,7 +305,7 @@ public class SectorRepository : ISectorRepository
             
             // 기존데이터를 조회한다.
             DbModelBudgetPlan? remove =
-                await        _dbContext.Budgets.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
+                await        _dbContext.BudgetPlans.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
             
             // 조회된 데이터가 없다면
             if(remove == null)
