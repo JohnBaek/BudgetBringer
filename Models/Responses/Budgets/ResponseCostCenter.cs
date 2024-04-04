@@ -3,7 +3,7 @@ namespace Models.Responses.Budgets;
 /// <summary>
 /// 코스트 센터 응답 모델
 /// </summary>
-public class ResponseCostCenter
+public class ResponseCostCenter : ResponseCommonWriter
 {
     /// <summary>
     /// 아이디 

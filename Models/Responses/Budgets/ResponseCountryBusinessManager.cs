@@ -3,7 +3,7 @@ namespace Models.Responses.Budgets;
 /// <summary>
 /// CBM 관리 응답 모델 
 /// </summary>
-public class ResponseCountryBusinessManager
+public class ResponseCountryBusinessManager : ResponseCommonWriter
 {
     /// <summary>
     /// 아이디 

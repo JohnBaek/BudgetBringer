@@ -3,7 +3,7 @@ namespace Models.Responses.Budgets;
 /// <summary>
 /// 섹터 정보 응답 모델 
 /// </summary>
-public class ResponseSector
+public class ResponseSector : ResponseCommonWriter
 {
     /// <summary>
     /// 섹터 아이디 

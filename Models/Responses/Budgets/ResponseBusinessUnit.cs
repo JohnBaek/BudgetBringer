@@ -3,7 +3,7 @@ namespace Models.Responses.Budgets;
 /// <summary>
 /// 비지니스 유닛 응답 모델
 /// </summary>
-public class ResponseBusinessUnit
+public class ResponseBusinessUnit : ResponseCommonWriter
 {
     /// <summary>
     /// 생성자

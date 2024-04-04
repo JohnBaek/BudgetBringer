@@ -80,7 +80,36 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         _dispatchService = dispatchService;
     }
 
-
+    /// <summary>
+    /// 셀렉터 매핑 정의
+    /// </summary>
+    private Expression<Func<DbModelBudgetApproved, ResponseBudgetApproved>> MapDataToResponse { get; init; } = item => new ResponseBudgetApproved
+    {
+        Id = item.Id,
+        IsAbove500K = item.IsAbove500K,
+        ApprovalDate = item.IsApprovalDateValid ? DateOnly.Parse(item.ApprovalDate).ToString("yyyy-MM-dd")
+                                                : item.ApprovalDate,
+        Description = item.Description,
+        SectorId = item.SectorId,
+        BusinessUnitId = item.BusinessUnitId,
+        CostCenterId = item.CostCenterId,
+        CountryBusinessManagerId = item.CountryBusinessManagerId,
+        SectorName = item.SectorName,
+        CostCenterName = item.CostCenterName,
+        CountryBusinessManagerName = item.CountryBusinessManagerName,
+        BusinessUnitName = item.BusinessUnitName,
+        PoNumber = item.PoNumber,
+        ApprovalStatus = item.ApprovalStatus,
+        ApprovalAmount = item.ApprovalAmount,
+        Actual = item.Actual,
+        OcProjectName = item.OcProjectName,
+        BossLineDescription = item.BossLineDescription,
+        IsApproved = item.IsApproved,
+        RegName = item.RegName ,
+        ModName = item.ModName ,
+        RegDate = item.RegDate ,
+        ModDate = item.ModDate ,
+    };
    
     /// <summary>
     /// 리스트를 가져온다.
@@ -98,37 +127,19 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.ApprovalStatus));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.ApprovalAmount));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.Actual));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.SectorName));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.CostCenterName));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.CountryBusinessManagerName));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.BusinessUnitName));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.OcProjectName));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.BossLineDescription));
-            
-            // 셀렉팅 정의
-            Expression<Func<DbModelBudgetApproved, ResponseBudgetApproved>> mapDataToResponse = item => new ResponseBudgetApproved
-            {
-                Id = item.Id,
-                ApprovalDate = item.ApprovalDate,
-                IsApproved = item.IsApproved,
-                IsAbove500K = item.IsAbove500K,
-                Description = item.Description,
-                SectorId = item.SectorId,
-                BusinessUnitId = item.BusinessUnitId,
-                CostCenterId = item.CostCenterId,
-                CountryBusinessManagerId = item.CountryBusinessManagerId,
-                CostCenterName = item.CostCenterName,
-                CountryBusinessManagerName = item.CountryBusinessManagerName,
-                BusinessUnitName = item.BusinessUnitName,
-                PoNumber = item.PoNumber,
-                ApprovalStatus = item.ApprovalStatus,
-                ApprovalAmount = item.ApprovalAmount,
-                Actual = item.Actual,
-                OcProjectName = item.OcProjectName,
-                BossLineDescription = item.BossLineDescription,
-            };
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegDate));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.RegDate));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModDate));
             
             // 결과를 반환한다.
-            return await _queryService.ToResponseListAsync(requestQuery, mapDataToResponse);
+            return await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
         }
         catch (Exception e)
         {
@@ -153,15 +164,15 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                 return new ResponseData<ResponseBudgetApproved>("ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요");
 
             // 기존데이터를 조회한다.
-            DbModelBudgetApproved? before =
-                await _dbContext.BudgetApproved.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
+            ResponseBudgetApproved? data =
+                await _dbContext.BudgetApproved.Where(i => i.Id == id.ToGuid())
+                    .Select(MapDataToResponse).FirstOrDefaultAsync();
             
             // 조회된 데이터가 없다면
-            if(before == null)
+            if(data == null)
                 return new ResponseData<ResponseBudgetApproved>("ERROR_IS_NONE_EXIST", "대상이 존재하지 않습니다.");
 
             // 데이터를 복사한다.
-            ResponseBudgetApproved data = before.FromCopyValue<ResponseBudgetApproved>()!;
             return new ResponseData<ResponseBudgetApproved> {Result = EnumResponseResult.Success, Data = data};
         }
         catch (Exception e)

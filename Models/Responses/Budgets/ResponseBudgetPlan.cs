@@ -3,7 +3,7 @@ namespace Models.Responses.Budgets;
 /// <summary>
 /// 예산정보 응답 클래스
 /// </summary>
-public class ResponseBudgetPlan
+public class ResponseBudgetPlan : ResponseCommonWriter
 {
     /// <summary>
     /// 예산 모델 아이디 
@@ -54,6 +54,11 @@ public class ResponseBudgetPlan
     /// DbModelCountryBusinessManager 아이디
     /// </summary>
     public Guid CountryBusinessManagerId { get; init; }
+    
+    /// <summary>
+    /// DbModelSector 명
+    /// </summary>
+    public string SectorName { get; set; } = ""; 
     
     /// <summary>
     /// DbModelCostCenter 명

@@ -81,6 +81,35 @@ public class BudgetPlanRepository : IBudgetPlanRepository
         _dispatchService = dispatchService;
     }
 
+    
+    /// <summary>
+    /// 셀렉터 매핑 정의
+    /// </summary>
+    private Expression<Func<DbModelBudgetPlan, ResponseBudgetPlan>> MapDataToResponse { get; init; } = item => new ResponseBudgetPlan
+        {
+            Id = item.Id,
+            IsAbove500K = item.IsAbove500K ,
+            ApprovalDate = item.IsApprovalDateValid ? DateOnly.Parse(item.ApprovalDate).ToString("yyyy-MM-dd") : item.ApprovalDate  ,
+            ApproveDateValue = item.ApproveDateValue ,
+            IsApprovalDateValid = item.IsApprovalDateValid ,
+            Description = item.Description ,
+            SectorId = item.SectorId ,
+            BusinessUnitId = item.BusinessUnitId ,
+            CostCenterId = item.CostCenterId ,
+            CountryBusinessManagerId = item.CountryBusinessManagerId ,
+            SectorName = item.SectorName ,
+            CostCenterName = item.CostCenterName ,
+            CountryBusinessManagerName = item.CountryBusinessManagerName ,
+            BusinessUnitName = item.BusinessUnitName ,
+            BudgetTotal = item.BudgetTotal ,
+            OcProjectName = item.OcProjectName ,
+            BossLineDescription = item.BossLineDescription ,
+            RegName = item.RegName ,
+            ModName = item.ModName ,
+            RegDate = item.RegDate ,
+            ModDate = item.ModDate ,
+        };
+    
     /// <summary>
     /// 리스트를 가져온다.
     /// </summary>
@@ -103,30 +132,13 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetPlan.BudgetTotal));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.OcProjectName));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.BossLineDescription));
-            
-            // 셀렉팅 정의
-            Expression<Func<DbModelBudgetPlan, ResponseBudgetPlan>> mapDataToResponse = item => new ResponseBudgetPlan
-            {
-                Id = item.Id,
-                IsAbove500K = item.IsAbove500K ,
-                ApprovalDate = item.IsApprovalDateValid ? DateOnly.Parse(item.ApprovalDate).ToString("yyyy-MM-dd") : item.ApprovalDate  ,
-                ApproveDateValue = item.ApproveDateValue ,
-                IsApprovalDateValid = item.IsApprovalDateValid ,
-                Description = item.Description ,
-                SectorId = item.SectorId ,
-                BusinessUnitId = item.BusinessUnitId ,
-                CostCenterId = item.CostCenterId ,
-                CountryBusinessManagerId = item.CountryBusinessManagerId ,
-                CostCenterName = item.CostCenterName ,
-                CountryBusinessManagerName = item.CountryBusinessManagerName ,
-                BusinessUnitName = item.BusinessUnitName ,
-                BudgetTotal = item.BudgetTotal ,
-                OcProjectName = item.OcProjectName ,
-                BossLineDescription = item.BossLineDescription ,
-            };
-            
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegDate));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.RegDate));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModDate));
+
             // 결과를 반환한다.
-            return await _queryService.ToResponseListAsync(requestQuery, mapDataToResponse);
+            return await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
         }
         catch (Exception e)
         {
@@ -150,15 +162,17 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             if (id.IsEmpty())
                 return new ResponseData<ResponseBudgetPlan>("ERROR_INVALID_PARAMETER", "필수 값을 입력해주세요");
 
-            // 기존데이터를 조회한다.
-            DbModelBudgetPlan? before = await _dbContext.BudgetPlans.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
+            // 데이터를 조회한다.
+            ResponseBudgetPlan? data = await _dbContext.BudgetPlans
+                .Where(i => i.Id == id.ToGuid())
+                .Select(MapDataToResponse) // MapDataToResponse 셀렉터를 적용
+                .FirstOrDefaultAsync();
             
             // 조회된 데이터가 없다면
-            if(before == null)
+            if(data == null)
                 return new ResponseData<ResponseBudgetPlan>("ERROR_IS_NONE_EXIST", "대상이 존재하지 않습니다.");
 
             // 데이터를 복사한다.
-            ResponseBudgetPlan data = before.FromCopyValue<ResponseBudgetPlan>()!;
             return new ResponseData<ResponseBudgetPlan> {Result = EnumResponseResult.Success, Data = data};
         }
         catch (Exception e)
@@ -438,14 +452,13 @@ public class BudgetPlanRepository : IBudgetPlanRepository
         return result;
     }
     
-    
     /// <summary>
     /// 데이터를 마이그리에션 한다.
     /// </summary>
     /// <returns></returns>
     public async Task<Response> MigrationAsync()
     {
-        Response result;
+        Response result = new Response();
         
         // 로그인한 사용자 정보를 가져온다.
         DbModelUser? user = await _userRepository.GetAuthenticatedUser();

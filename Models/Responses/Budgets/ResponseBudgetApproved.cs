@@ -7,7 +7,7 @@ namespace Models.Responses.Budgets;
 /// <summary>
 /// 예산정보 승인 정보 응답 클래스
 /// </summary>
-public class ResponseBudgetApproved
+public class ResponseBudgetApproved : ResponseCommonWriter
 {
     /// <summary>
     /// 예산 승인 모델 아이디 
@@ -54,6 +54,11 @@ public class ResponseBudgetApproved
     /// DbModelCountryBusinessManager 아이디
     /// </summary>
     public Guid CountryBusinessManagerId { get; init; }
+    
+    /// <summary>
+    /// DbModelSector 명
+    /// </summary>
+    public string SectorName { get; set; } = ""; 
     
     /// <summary>
     /// DbModelCostCenter 명
