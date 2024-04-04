@@ -10,6 +10,9 @@ namespace Models.DataModels;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public partial class DbModelBudgetPlan : DbModelDefault
 {
+    /// <summary>
+    /// 기본 생성자
+    /// </summary>
     public DbModelBudgetPlan()
     {
     }

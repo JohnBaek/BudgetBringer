@@ -10,7 +10,7 @@ namespace Providers.Services.Interfaces;
 /// </summary>
 public interface IBudgetApprovedService
 {
-    // <summary>
+    /// <summary>
     /// 리스트를 가져온다.
     /// </summary>
     /// <param name="requestQuery">쿼리 정보</param>

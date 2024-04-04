@@ -13,6 +13,13 @@ namespace Models.DataModels;
 public class DbModelBudgetApproved : DbModelDefault
 {
     /// <summary>
+    /// 기본 생성자
+    /// </summary>
+    public DbModelBudgetApproved()
+    {
+    }
+    
+    /// <summary>
     /// 예산 승인 모델 아이디 
     /// </summary>
     [Key]

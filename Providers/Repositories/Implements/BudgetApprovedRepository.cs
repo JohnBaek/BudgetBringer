@@ -30,7 +30,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
     /// </summary>
     private readonly ILogger<BudgetApprovedRepository> _logger;
     
-    /// <summary>222222
+    /// <summary>
     /// 사용자 리파지토리
     /// </summary>
     private readonly IUserRepository _userRepository;
@@ -122,21 +122,20 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         try
         {
             // 검색 메타정보 추가
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.IsAbove500K));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.ApprovalDate));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.Description));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.PoNumber));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.ApprovalStatus));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.ApprovalAmount));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.Actual));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.SectorName));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.CostCenterName));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.CountryBusinessManagerName));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.BusinessUnitName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.PoNumber));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.ApprovalStatus));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.ApprovalAmount));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.Actual));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.OcProjectName));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.BossLineDescription));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegName));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegDate));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.RegDate));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModDate));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.IsApproved));
             
             // 결과를 반환한다.
             return await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
@@ -172,7 +171,6 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             if(data == null)
                 return new ResponseData<ResponseBudgetApproved>("ERROR_IS_NONE_EXIST", "대상이 존재하지 않습니다.");
 
-            // 데이터를 복사한다.
             return new ResponseData<ResponseBudgetApproved> {Result = EnumResponseResult.Success, Data = data};
         }
         catch (Exception e)
@@ -182,7 +180,6 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
 
         return result;
     }
-
 
     /// <summary>
     /// 데이터를 업데이트한다.
@@ -222,32 +219,12 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             // 로그기록을 위한 데이터 스냅샷
             DbModelBudgetApproved snapshot = update.FromClone()!;
 
-            // 기안일이 정상적인 Date 데이터인지 여부 
-            bool isApprovalDateValid = DateOnly.TryParse(request.ApprovalDate, out DateOnly approvalDate);
+           
+            // 데이터를 바인딩한다
+            Response bidingResult = await SetBudgetPlanDispatchValidatorAsync(update, user , request);
             
-            // 정상적인 데이터인경우 
-            if (isApprovalDateValid)
-            {
-                update.IsApprovalDateValid = true;
-                update.ApproveDateValue = approvalDate;
-                update.Year = approvalDate.Year.ToString();
-                update.Month = approvalDate.Month.ToString("00");
-                update.Day = approvalDate.Day.ToString("00");
-            }
-            
-            // 데이터를 수정한다.
-            update.IsAbove500K = request.IsAbove500K;
-            update.ApprovalDate = request.ApprovalDate;
-            update.Description = request.Description;
-            update.PoNumber = request.PoNumber;
-            update.ApprovalStatus = request.ApprovalStatus;
-            update.ApprovalAmount = request.ApprovalAmount;
-            update.Actual = request.Actual;
-            update.OcProjectName = request.OcProjectName;
-            update.BossLineDescription = request.BossLineDescription;
-            update.ModName = user.DisplayName; 
-            update.ModDate = DateTime.Now; 
-            update.ModId = user.Id; 
+            if (bidingResult.Result != EnumResponseResult.Success)
+                return bidingResult;
             
             // 데이터베이스에 업데이트처리 
             _dbContext.BudgetApproved.Update(update);
@@ -299,33 +276,16 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             DbModelBudgetApproved add = new DbModelBudgetApproved
             {
                 Id = Guid.NewGuid(),
-                SectorId = request.SectorId,
-                
-                CostCenterId = request.CostCenterId,
-                BusinessUnitId = request.BusinessUnitId,
-                CountryBusinessManagerId = request.CountryBusinessManagerId,
-                //
-                // CostCenterName = costCenterName ,
-                // BusinessUnitName = businessUnitName,
-                // CountryBusinessManagerName = countryBusinessManagerName,
-                
-                IsAbove500K = request.IsAbove500K,
-                ApprovalDate = request.ApprovalDate,
-                Description = request.Description,
-                PoNumber = request.PoNumber,
-                ApprovalStatus = request.ApprovalStatus,
-                ApprovalAmount = request.ApprovalAmount,
-                Actual = request.Actual,
-                OcProjectName = request.OcProjectName,
-                BossLineDescription = request.BossLineDescription,
-                IsApproved = false,
-                RegName = user.DisplayName,
-                ModName = user.DisplayName,
-                RegDate = DateTime.Now,
-                ModDate = DateTime.Now,
-                RegId = user.Id,
-                ModId = user.Id,
+                RegName = "",
+                ModName = "",
             };
+            
+            // 데이터를 바인딩한다
+            Response bidingResult = await SetBudgetPlanDispatchValidatorAsync(add, user , request);
+            
+            // 바인딩에 실패한 경우
+            if (bidingResult.Result != EnumResponseResult.Success)
+                return new ResponseData<ResponseBudgetApproved>{ Code = bidingResult.Code, Message = bidingResult.Message };
             
             // 데이터베이스에 데이터 추가 
             await _dbContext.BudgetApproved.AddAsync(add);
@@ -378,8 +338,8 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                 return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
             
             // 기존데이터를 조회한다.
-            DbModelBusinessUnit? remove =
-                await _dbContext.BusinessUnits.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
+            DbModelBudgetApproved? remove =
+                await _dbContext.BudgetApproved.Where(i => i.Id == id.ToGuid()).FirstOrDefaultAsync();
             
             // 조회된 데이터가 없다면
             if(remove == null)
@@ -403,6 +363,105 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             e.LogError(_logger);
         }
     
+        return result;
+    }
+    
+    
+    /// <summary>
+    /// 인서트모델에 대한 유효성 검증및 데이터 추가
+    /// </summary>
+    /// <param name="model"></param>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    private async Task<Response> SetBudgetPlanDispatchValidatorAsync(DbModelBudgetApproved model, DbModelUser user, RequestBudgetApproved request)
+    {
+        Response result;
+        try
+        {
+            model.IsApprovalDateValid = false;
+            model.ApproveDateValue = null;
+            model.Year = "";
+            model.Month = "";
+            model.Day = "";
+            model.IsApproved = false;
+            model.ApprovalDate = request.ApprovalDate;
+            
+            // 기안일이 정상적인 Date 데이터인지 여부 
+            bool isApprovalDateValid = DateOnly.TryParse(request.ApprovalDate, out DateOnly approvalDate);
+
+            // 정상적인 데이터인경우 
+            if (isApprovalDateValid)
+            {
+                model.IsApprovalDateValid = true;
+                model.ApproveDateValue = approvalDate;
+                model.Year = approvalDate.Year.ToString();
+                model.Month = approvalDate.Month.ToString("00");
+                model.Day = approvalDate.Day.ToString("00");
+                
+                // 승인일이 정상인경우 승인으로 인정
+                model.IsApproved = true;
+                model.ApprovalDate = approvalDate.ToString("yyyy-MM-dd");
+            }
+  
+            // 코스트센터명 조회
+            string costCenterName = await _dispatchService.GetNameByIdAsync<DbModelCostCenter>
+                (nameof(DbModelCostCenter.Id), nameof(DbModelCostCenter.Value), request.CostCenterId);
+            // 코스트센터명이 조회되지 않는경우 
+            if(costCenterName.IsEmpty())
+                return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "코스트센터가 존재하지 않습니다."};
+            
+            // 컨트리 비지니스 매니저명 조회
+            string countryBusinessManagerName = await _dispatchService.GetNameByIdAsync<DbModelCountryBusinessManager>
+                (nameof(DbModelCountryBusinessManager.Id), nameof(DbModelCountryBusinessManager.Name), request.CountryBusinessManagerId);
+            // 컨트리 비지니스 매니저 가 조회되지 않는경우 
+            if(countryBusinessManagerName.IsEmpty())
+                return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "컨트리 비지니스 매니저가 존재하지 않습니다."};
+
+            // 비지니스유닛 명 조회
+            string businessUnitName = await _dispatchService.GetNameByIdAsync<DbModelBusinessUnit>
+                (nameof(DbModelBusinessUnit.Id), nameof(DbModelBusinessUnit.Name), request.BusinessUnitId);
+            // 비지니스유닛이 조회되지 않는경우 
+            if(businessUnitName.IsEmpty())
+                return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "비지니스유닛이 존재하지 않습니다."};
+            
+            // 섹터값 조회
+            string sectorName = await _dispatchService.GetNameByIdAsync<DbModelSector>
+                (nameof(DbModelSector.Id), nameof(DbModelSector.Value), request.SectorId);
+            // 섹터값이 조회되지 않을경우 
+            if(sectorName.IsEmpty())
+                return new Response{ Code = "ERROR_INVALID_PARAMETER", Message = "섹터정보가 올바르지 않습니다."};
+                        
+            model.IsAbove500K = request.IsAbove500K;
+            model.Description = request.Description;
+            model.SectorId = request.SectorId;
+            model.BusinessUnitId = request.BusinessUnitId;
+            model.CostCenterId = request.CostCenterId;
+            model.CountryBusinessManagerId = request.CountryBusinessManagerId;
+            model.SectorName = sectorName;
+            model.CostCenterName = costCenterName;
+            model.CountryBusinessManagerName = countryBusinessManagerName;
+            model.BusinessUnitName = businessUnitName;
+            model.PoNumber = request.PoNumber;
+            model.ApprovalStatus = request.ApprovalStatus;
+            model.ApprovalAmount = request.ApprovalAmount;
+            model.Actual = request.Actual;
+            model.OcProjectName = request.OcProjectName;
+            model.BossLineDescription = request.BossLineDescription;
+            model.RegName = user.DisplayName; 
+            model.ModName = user.DisplayName; 
+            model.RegDate = DateTime.Now; 
+            model.ModDate = DateTime.Now; 
+            model.RegId = user.Id; 
+            model.ModId = user.Id;
+          
+            return new Response() {Result = EnumResponseResult.Success};
+        }
+        catch (Exception e)
+        {
+            result = new Response { Code = "ERROR_DATABASE", Message = "처리중 예외가 발생했습니다.", Result = EnumResponseResult.Error };
+            e.LogError(_logger);
+        }
+
         return result;
     }
 }

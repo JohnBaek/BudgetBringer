@@ -248,89 +248,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
         return result;
     }
 
-    /// <summary>
-    /// 인서트모델에 대한 유효성 검증및 데이터 추가
-    /// </summary>
-    /// <param name="model"></param>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    private async Task<Response> SetBudgetPlanDispatchValidatorAsync(DbModelBudgetPlan model, DbModelUser user, RequestBudgetPlan request)
-    {
-        Response result;
-        try
-        {
-            // 기안일이 정상적인 Date 데이터인지 여부 
-            bool isApprovalDateValid = DateOnly.TryParse(request.ApprovalDate, out DateOnly approvalDate);
-            
-            // 정상적인 데이터인경우 
-            if (isApprovalDateValid)
-            {
-                model.IsApprovalDateValid = true;
-                model.ApproveDateValue = approvalDate;
-                model.Year = approvalDate.Year.ToString();
-                model.Month = approvalDate.Month.ToString("00");
-                model.Day = approvalDate.Day.ToString("00");
-            }
-            
-            // 코스트센터명 조회
-            string costCenterName = await _dispatchService.GetNameByIdAsync<DbModelCostCenter>
-                (nameof(DbModelCostCenter.Id), nameof(DbModelCostCenter.Value), request.CostCenterId);
-            // 코스트센터명이 조회되지 않는경우 
-            if(costCenterName.IsEmpty())
-                return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "코스트센터가 존재하지 않습니다."};
-            
-            // 컨트리 비지니스 매니저명 조회
-            string countryBusinessManagerName = await _dispatchService.GetNameByIdAsync<DbModelCountryBusinessManager>
-                (nameof(DbModelCountryBusinessManager.Id), nameof(DbModelCountryBusinessManager.Name), request.CountryBusinessManagerId);
-            // 컨트리 비지니스 매니저 가 조회되지 않는경우 
-            if(countryBusinessManagerName.IsEmpty())
-                return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "컨트리 비지니스 매니저가 존재하지 않습니다."};
-
-            // 비지니스유닛 명 조회
-            string businessUnitName = await _dispatchService.GetNameByIdAsync<DbModelBusinessUnit>
-                (nameof(DbModelBusinessUnit.Id), nameof(DbModelBusinessUnit.Name), request.BusinessUnitId);
-            // 비지니스유닛이 조회되지 않는경우 
-            if(businessUnitName.IsEmpty())
-                return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "비지니스유닛이 존재하지 않습니다."};
-            
-            // 섹터값 조회
-            string sectorName = await _dispatchService.GetNameByIdAsync<DbModelSector>
-                (nameof(DbModelSector.Id), nameof(DbModelSector.Value), request.SectorId);
-            // 섹터값이 조회되지 않을경우 
-            if(sectorName.IsEmpty())
-                return new Response{ Code = "ERROR_INVALID_PARAMETER", Message = "섹터정보가 올바르지 않습니다."};
-            
-            model.IsAbove500K = request.IsAbove500K;
-            model.ApprovalDate = request.ApprovalDate;
-            model.Description = request.Description;
-            model.SectorId = request.SectorId;
-            model.BusinessUnitId = request.BusinessUnitId;
-            model.CostCenterId = request.CostCenterId;
-            model.CountryBusinessManagerId = request.CountryBusinessManagerId;
-            model.BusinessUnitName = businessUnitName;
-            model.CostCenterName = costCenterName;
-            model.CountryBusinessManagerName = countryBusinessManagerName;
-            model.SectorName = sectorName;
-            model.BudgetTotal = request.BudgetTotal;
-            model.OcProjectName = request.OcProjectName;
-            model.BossLineDescription = request.BossLineDescription;
-            model.RegName = user.DisplayName; 
-            model.ModName = user.DisplayName; 
-            model.RegDate = DateTime.Now; 
-            model.ModDate = DateTime.Now; 
-            model.RegId = user.Id; 
-            model.ModId = user.Id;
-            return new Response() {Result = EnumResponseResult.Success};
-        }
-        catch (Exception e)
-        {
-            result = new Response { Code = "ERROR_DATABASE", Message = "처리중 예외가 발생했습니다.", Result = EnumResponseResult.Error };
-            e.LogError(_logger);
-        }
-
-        return result;
-    }
-    
+   
     /// <summary>
     /// 데이터를 추가한다.
     /// </summary>
@@ -451,6 +369,90 @@ public class BudgetPlanRepository : IBudgetPlanRepository
     
         return result;
     }
+    
+     /// <summary>
+    /// 인서트모델에 대한 유효성 검증및 데이터 추가
+    /// </summary>
+    /// <param name="model"></param>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    private async Task<Response> SetBudgetPlanDispatchValidatorAsync(DbModelBudgetPlan model, DbModelUser user, RequestBudgetPlan request)
+    {
+        Response result;
+        try
+        {
+            // 기안일이 정상적인 Date 데이터인지 여부 
+            bool isApprovalDateValid = DateOnly.TryParse(request.ApprovalDate, out DateOnly approvalDate);
+            
+            // 정상적인 데이터인경우 
+            if (isApprovalDateValid)
+            {
+                model.IsApprovalDateValid = true;
+                model.ApproveDateValue = approvalDate;
+                model.Year = approvalDate.Year.ToString();
+                model.Month = approvalDate.Month.ToString("00");
+                model.Day = approvalDate.Day.ToString("00");
+            }
+            
+            // 코스트센터명 조회
+            string costCenterName = await _dispatchService.GetNameByIdAsync<DbModelCostCenter>
+                (nameof(DbModelCostCenter.Id), nameof(DbModelCostCenter.Value), request.CostCenterId);
+            // 코스트센터명이 조회되지 않는경우 
+            if(costCenterName.IsEmpty())
+                return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "코스트센터가 존재하지 않습니다."};
+            
+            // 컨트리 비지니스 매니저명 조회
+            string countryBusinessManagerName = await _dispatchService.GetNameByIdAsync<DbModelCountryBusinessManager>
+                (nameof(DbModelCountryBusinessManager.Id), nameof(DbModelCountryBusinessManager.Name), request.CountryBusinessManagerId);
+            // 컨트리 비지니스 매니저 가 조회되지 않는경우 
+            if(countryBusinessManagerName.IsEmpty())
+                return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "컨트리 비지니스 매니저가 존재하지 않습니다."};
+
+            // 비지니스유닛 명 조회
+            string businessUnitName = await _dispatchService.GetNameByIdAsync<DbModelBusinessUnit>
+                (nameof(DbModelBusinessUnit.Id), nameof(DbModelBusinessUnit.Name), request.BusinessUnitId);
+            // 비지니스유닛이 조회되지 않는경우 
+            if(businessUnitName.IsEmpty())
+                return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "비지니스유닛이 존재하지 않습니다."};
+            
+            // 섹터값 조회
+            string sectorName = await _dispatchService.GetNameByIdAsync<DbModelSector>
+                (nameof(DbModelSector.Id), nameof(DbModelSector.Value), request.SectorId);
+            // 섹터값이 조회되지 않을경우 
+            if(sectorName.IsEmpty())
+                return new Response{ Code = "ERROR_INVALID_PARAMETER", Message = "섹터정보가 올바르지 않습니다."};
+            
+            model.IsAbove500K = request.IsAbove500K;
+            model.ApprovalDate = request.ApprovalDate;
+            model.Description = request.Description;
+            model.SectorId = request.SectorId;
+            model.BusinessUnitId = request.BusinessUnitId;
+            model.CostCenterId = request.CostCenterId;
+            model.CountryBusinessManagerId = request.CountryBusinessManagerId;
+            model.BusinessUnitName = businessUnitName;
+            model.CostCenterName = costCenterName;
+            model.CountryBusinessManagerName = countryBusinessManagerName;
+            model.SectorName = sectorName;
+            model.BudgetTotal = request.BudgetTotal;
+            model.OcProjectName = request.OcProjectName;
+            model.BossLineDescription = request.BossLineDescription;
+            model.RegName = user.DisplayName; 
+            model.ModName = user.DisplayName; 
+            model.RegDate = DateTime.Now; 
+            model.ModDate = DateTime.Now; 
+            model.RegId = user.Id; 
+            model.ModId = user.Id;
+            return new Response() {Result = EnumResponseResult.Success};
+        }
+        catch (Exception e)
+        {
+            result = new Response { Code = "ERROR_DATABASE", Message = "처리중 예외가 발생했습니다.", Result = EnumResponseResult.Error };
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+    
     
     /// <summary>
     /// 데이터를 마이그리에션 한다.
