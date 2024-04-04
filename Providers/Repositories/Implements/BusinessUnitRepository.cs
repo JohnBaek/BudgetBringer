@@ -87,7 +87,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
         try
         {
             // 검색 메타정보 추가
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBusinessUnit.Name));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBusinessUnit.Name));
             
             // 셀렉팅 정의
             Expression<Func<DbModelBusinessUnit, ResponseBusinessUnit>> mapDataToResponse = item => new ResponseBusinessUnit

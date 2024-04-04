@@ -93,16 +93,16 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         try
         {
             // 검색 메타정보 추가
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.Description));
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.PoNumber));
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.ApprovalStatus));
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.ApprovalAmount));
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.Actual));
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.CostCenterName));
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.CountryBusinessManagerName));
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.BusinessUnitName));
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.OcProjectName));
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.BossLineDescription));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.Description));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.PoNumber));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.ApprovalStatus));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.ApprovalAmount));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.Actual));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.CostCenterName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.CountryBusinessManagerName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.BusinessUnitName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.OcProjectName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.BossLineDescription));
             
             // 셀렉팅 정의
             Expression<Func<DbModelBudgetApproved, ResponseBudgetApproved>> mapDataToResponse = item => new ResponseBudgetApproved

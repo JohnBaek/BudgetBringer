@@ -86,7 +86,7 @@ public class SectorRepository : ISectorRepository
         try
         {
             // 검색 메타정보 추가
-            // requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseSector.Name));
+            // requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseSector.Name));
             
             // 셀렉팅 정의
             Expression<Func<DbModelBudgetPlan, ResponseSector>> mapDataToResponse = item => new ResponseSector

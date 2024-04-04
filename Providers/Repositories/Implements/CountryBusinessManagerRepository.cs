@@ -86,7 +86,7 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
         try
         {
             // 검색 메타정보 추가
-            // requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseCountryBusinessManager.Name));
+            // requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCountryBusinessManager.Name));
             
             // 셀렉팅 정의
             Expression<Func<DbModelBudgetPlan, ResponseCountryBusinessManager>> mapDataToResponse = item => new ResponseCountryBusinessManager

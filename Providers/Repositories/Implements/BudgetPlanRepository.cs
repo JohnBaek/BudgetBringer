@@ -84,13 +84,17 @@ public class BudgetPlanRepository : IBudgetPlanRepository
         try
         {
             // 검색 메타정보 추가
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetPlan.IsAbove500K));
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.ApprovalDate));
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.CostCenterName));
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.CountryBusinessManagerName));
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.BusinessUnitName));
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.OcProjectName));
-            requestQuery.AddSearchDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.BossLineDescription));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetPlan.IsAbove500K));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.ApprovalDate));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.ApproveDateValue));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.IsApprovalDateValid));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.Description));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.CostCenterName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.CountryBusinessManagerName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.BusinessUnitName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetPlan.BudgetTotal));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.OcProjectName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.BossLineDescription));
             
             // 셀렉팅 정의
             Expression<Func<DbModelBudgetPlan, ResponseBudgetPlan>> mapDataToResponse = item => new ResponseBudgetPlan
@@ -112,6 +116,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
                 OcProjectName = item.OcProjectName ,
                 BossLineDescription = item.BossLineDescription ,
             };
+            
             
             // 결과를 반환한다.
             return await _queryService.ToResponseListAsync(requestQuery, mapDataToResponse);
