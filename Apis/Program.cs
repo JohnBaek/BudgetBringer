@@ -3,6 +3,7 @@ using Apis.Middlewares;
 using Features.Filters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.OpenApi.Models;
 using Models.DataModels;
 using Providers.Repositories.Implements;
@@ -25,7 +26,8 @@ public static class Program
     private static void Main(string[] args)
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-        ConfigureServices(builder.Services , builder.Configuration);
+        
+        ConfigureServices(builder.Services , builder.Configuration , builder.Environment);
 
         // DB 컨텍스트 설정
         builder.Services.AddIdentity<DbModelUser, DbModelRole>()
@@ -88,13 +90,29 @@ public static class Program
     /// </summary>
     /// <param name="services">서비스 객체</param>
     /// <param name="configuration">컨피그 객체</param>
-    private static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration)
+    /// <param name="builderEnvironment">호스팅 환경 객체</param>
+    private static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration,
+        IWebHostEnvironment builderEnvironment)
     {
         // DB 컨텍스트 정보를 추가한다.
         string connectionString = configuration.GetConnectionString("AnalysisDatabase") ?? "";
-        services.AddDbContext<AnalysisDbContext>(options =>
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-
+        
+        // 디버그 환경일 경우 
+        if (builderEnvironment.IsDevelopment())
+        {
+            // SQL 쿼리 로그 출력 추가
+            services.AddDbContext<AnalysisDbContext>(options =>
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)) 
+                    .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
+                );
+        }
+        // 그외
+        else
+        {
+            services.AddDbContext<AnalysisDbContext>(options =>
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+        }
+        
         // 세션 유지 설정
         services.ConfigureApplicationCookie(options =>
         {
