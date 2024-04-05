@@ -21,6 +21,7 @@ public class DbModelCountryBusinessManagerBusinessUnit
     /// </summary>
     [Required]
     public Guid BusinessUnitId { get; set; }
+
     
     /// <summary>
     /// 컨트리 비지니스 매니저

@@ -139,19 +139,16 @@ public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelR
                     .HasForeignKey(ur => ur.UserId)
                     .IsRequired();
         });
-        
-        // 중간 엔티티를 사용한 다대다 관계 설정
-        modelBuilder.Entity<DbModelCountryBusinessManagerBusinessUnit>()
-            .HasKey(bc => new { bc.CountryBusinessManagerId, bc.BusinessUnitId });
-
-        modelBuilder.Entity<DbModelCountryBusinessManagerBusinessUnit>()
-            .HasOne(bc => bc.CountryBusinessManager)
-            .WithMany(b => b.BusinessUnits)
-            .HasForeignKey(bc => bc.CountryBusinessManagerId);
-
-        modelBuilder.Entity<DbModelCountryBusinessManagerBusinessUnit>()
-            .HasOne(bc => bc.BusinessUnit)
-            .WithMany(c => c.CountryBusinessManagers)
-            .HasForeignKey(bc => bc.BusinessUnitId);
+        modelBuilder.Entity<DbModelCountryBusinessManagerBusinessUnit>(entity =>
+        {
+            entity.ToTable("CountryBusinessManagerBusinessUnit");
+            entity.HasKey(bc => new { bc.CountryBusinessManagerId, bc.BusinessUnitId });
+            entity.HasOne(bc => bc.CountryBusinessManager)
+                .WithMany(b => b.CountryBusinessManagerBusinessUnits)
+                .HasForeignKey(bc => bc.CountryBusinessManagerId);
+            entity.HasOne(bc => bc.BusinessUnit)
+                .WithMany(c => c.CountryBusinessManagers)
+                .HasForeignKey(bc => bc.BusinessUnitId);
+        });
     }
 }

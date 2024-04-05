@@ -15,7 +15,7 @@ namespace Models.DataModels.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "BusinessUnits",
+                name: "CountryBusinessManagerBusinessUnits",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
@@ -239,7 +239,7 @@ namespace Models.DataModels.Migrations
                     table.ForeignKey(
                         name: "FK_BudgetApproved_BusinessUnits_BusinessUnitId",
                         column: x => x.BusinessUnitId,
-                        principalTable: "BusinessUnits",
+                        principalTable: "CountryBusinessManagerBusinessUnits",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -311,7 +311,7 @@ namespace Models.DataModels.Migrations
                     table.ForeignKey(
                         name: "FK_BudgetPlans_BusinessUnits_BusinessUnitId",
                         column: x => x.BusinessUnitId,
-                        principalTable: "BusinessUnits",
+                        principalTable: "CountryBusinessManagerBusinessUnits",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -501,7 +501,7 @@ namespace Models.DataModels.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_BusinessUnits_Name",
-                table: "BusinessUnits",
+                table: "CountryBusinessManagerBusinessUnits",
                 column: "Name",
                 unique: true);
 
@@ -594,7 +594,7 @@ namespace Models.DataModels.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
-                name: "BusinessUnits");
+                name: "CountryBusinessManagerBusinessUnits");
 
             migrationBuilder.DropTable(
                 name: "CostCenters");

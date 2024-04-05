@@ -2,6 +2,7 @@ using Features.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Responses;
+using Models.Responses.Process.ProcessApproved;
 using Models.Responses.Process.ProcessBusinessUnit;
 using Models.Responses.Process.ProcessOwner;
 using Providers.Services.Interfaces;
@@ -39,7 +40,7 @@ public class BudgetProcessController : Controller
     [ClaimRequirement("Permission","process-result,process-result-view")]
     public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetAsync()
     {
-        return await _budgetProcessService.GetOwnerBudgetAsync();
+        return await _budgetProcessService.GetOwnerBudgetSummaryAsync();
     }
     
     /// <summary>
@@ -50,6 +51,18 @@ public class BudgetProcessController : Controller
     [ClaimRequirement("Permission","process-result,process-result-view")]
     public async Task<ResponseData<ResponseProcessBusinessUnitSummary>> GetBusinessUnitBudgetAsync()
     {
-        return await _budgetProcessService.GetBusinessUnitBudgetAsync();
+        return await _budgetProcessService.GetBusinessUnitBudgetSummaryAsync();
+    }
+    
+    
+    /// <summary>
+    /// 승인 정보를 가져온다.
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("Approved")]
+    [ClaimRequirement("Permission","process-result,process-result-view")]
+    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAmountSummaryAsync()
+    {
+        return await _budgetProcessService.GetApprovedAmountSummaryAsync();
     }
 }

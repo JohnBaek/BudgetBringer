@@ -24,7 +24,7 @@ namespace Models.DataModels.Migrations
                     table.ForeignKey(
                         name: "FK_CountryBusinessManagerBusinessUnit_BusinessUnits_BusinessUni~",
                         column: x => x.BusinessUnitId,
-                        principalTable: "BusinessUnits",
+                        principalTable: "CountryBusinessManagerBusinessUnits",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(

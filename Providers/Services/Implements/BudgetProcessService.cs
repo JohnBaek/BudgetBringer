@@ -2,6 +2,7 @@ using Features.Extensions;
 using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.Responses;
+using Models.Responses.Process.ProcessApproved;
 using Models.Responses.Process.ProcessBusinessUnit;
 using Models.Responses.Process.ProcessOwner;
 using Providers.Repositories.Interfaces;
@@ -42,13 +43,13 @@ public class BudgetProcessService : IBudgetProcessService
     /// 정보만 나와야한다. 
     /// </summary>
     /// <returns></returns>
-    public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetAsync()
+    public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetSummaryAsync()
     {
         ResponseData<ResponseProcessOwnerSummary> response;
         
         try
         {
-            response = await _repository.GetOwnerBudgetAsync();
+            response = await _repository.GetOwnerBudgetSummaryAsync();
         }
         catch (Exception e)
         {
@@ -63,17 +64,40 @@ public class BudgetProcessService : IBudgetProcessService
     /// 비지니스 유닛별 프로세스 정보를 가져온다.
     /// </summary>
     /// <returns></returns>
-    public async Task<ResponseData<ResponseProcessBusinessUnitSummary>> GetBusinessUnitBudgetAsync()
+    public async Task<ResponseData<ResponseProcessBusinessUnitSummary>> GetBusinessUnitBudgetSummaryAsync()
     {
         ResponseData<ResponseProcessBusinessUnitSummary> response;
         
         try
         {
-            response = await _repository.GetBusinessUnitBudgetAsync();
+            response = await _repository.GetBusinessUnitBudgetSummaryAsync();
         }
         catch (Exception e)
         {
             response = new ResponseData<ResponseProcessBusinessUnitSummary>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
+            e.LogError(_logger);
+        }
+
+        return response;
+    }
+
+    /// <summary>
+    /// 승인된 금액 편성 진행상황을 가져온다.
+    /// 단, process-result-view 의 Claim 만 소유한 경우 로그인한 사용자의 부서가 일치하는
+    /// 정보만 나와야한다. 
+    /// </summary>
+    /// <returns></returns>
+    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAmountSummaryAsync()
+    {
+        ResponseData<ResponseProcessApprovedSummary> response;
+        
+        try
+        {
+            response = await _repository.GetApprovedAmountSummaryAsync();
+        }
+        catch (Exception e)
+        {
+            response = new ResponseData<ResponseProcessApprovedSummary>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 

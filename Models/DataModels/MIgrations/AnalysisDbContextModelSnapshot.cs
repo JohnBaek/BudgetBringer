@@ -400,7 +400,7 @@ namespace Models.DataModels.Migrations
 
                     b.HasIndex("BusinessUnitId");
 
-                    b.ToTable("CountryBusinessManagerBusinessUnit");
+                    b.ToTable("CountryBusinessManagerBusinessUnit", (string)null);
                 });
 
             modelBuilder.Entity("Models.DataModels.DbModelLogAction", b =>

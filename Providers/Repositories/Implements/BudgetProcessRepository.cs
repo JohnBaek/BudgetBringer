@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.DataModels;
 using Models.Responses;
+using Models.Responses.Process.ProcessApproved;
 using Models.Responses.Process.ProcessBusinessUnit;
 using Models.Responses.Process.ProcessOwner;
 using Models.Responses.Users;
@@ -67,7 +68,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
     /// 정보만 나와야한다. 
     /// </summary>
     /// <returns></returns>
-    public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetAsync()
+    public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetSummaryAsync()
     {
         ResponseData<ResponseProcessOwnerSummary> result = new ResponseData<ResponseProcessOwnerSummary>();
         try
@@ -171,7 +172,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
     /// 비지니스 유닛별 프로세스 정보를 가져온다.
     /// </summary>
     /// <returns></returns>
-    public async Task<ResponseData<ResponseProcessBusinessUnitSummary>> GetBusinessUnitBudgetAsync()
+    public async Task<ResponseData<ResponseProcessBusinessUnitSummary>> GetBusinessUnitBudgetSummaryAsync()
     {
         ResponseData<ResponseProcessBusinessUnitSummary> result = new ResponseData<ResponseProcessBusinessUnitSummary>();
         try
@@ -213,7 +214,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             // 모든 BusinessUnit 을 조회한다. 
             IQueryable<DbModelBusinessUnit> managersQuery = _dbContext.BusinessUnits
                 .AsNoTracking();
-            
+
             // 전체 Permit 이 아닌경우 
             if (!isPermitAll)
             {
@@ -223,7 +224,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                         .AsNoTracking()
                         .Where(i => i.CountryBusinessManagerId == user.CountryBusinessManagerId)
                         .Select(i => i.BusinessUnitId);
-                
+ 
                 // 본인의 부서만 확인한다.
                 managersQuery = managersQuery.Where(i => userUnitIds.Contains(i.Id));
             }
@@ -273,6 +274,115 @@ public class BudgetProcessRepository : IBudgetProcessRepository
         catch (Exception e)
         {
             result = new ResponseData<ResponseProcessBusinessUnitSummary>(EnumResponseResult.Error,"" ,"처리중 예외가 발생했습니다.", null);
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// 승인된 금액 편성 진행상황을 가져온다.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAmountSummaryAsync()
+    {
+        ResponseData<ResponseProcessApprovedSummary> result = new ResponseData<ResponseProcessApprovedSummary>();
+        try
+        {
+            // 로그인한 사용자의 정보를 가져온다.
+            // 로그인한 사용자 정보를 가져온다.
+            DbModelUser? user = await _userRepository.GetAuthenticatedUser();
+
+            // 사용자 정보가 없는경우 
+            if(user == null)
+                return new ResponseData<ResponseProcessApprovedSummary>(EnumResponseResult.Error,"ERROR_SESSION_TIMEOUT", "로그인 상태를 확인해주세요", null);
+            
+            // 로그인한 사용자의 모든 권한을 가져온다.
+            ResponseList<ResponseUserRole> roleResponse = await _userService.GetRolesByUserAsync();
+            
+            // 권한이 없을경우 
+            if(roleResponse.Items is {Count: 0} or null)
+                return new ResponseData<ResponseProcessApprovedSummary>(EnumResponseResult.Error,"NOT_ALLOWED", "권한이 없습니다.", null);
+            
+            // 대상하는 Claim 을 찾는다.
+            List<string> foundClaims = FindClaims(roleResponse.Items);
+
+            // 전체 권한을 가지고 있는지 여부 
+            bool isPermitAll = foundClaims.Contains("process-result");
+
+            // 현재 날짜 
+            DateTime today = DateTime.Now;
+            
+            // 현재 년도를 가져온다.
+            string year = today.ToString("yyyy");
+            
+            // 지난 년도를 가져온다.
+            string beforeYear = today.AddYears(-1).ToString("yyyy");
+            
+            // 현재년도와 지난년도에 해당하는 예산 계획을 가져온다.
+            List<DbModelBudgetApproved> budgetApproveds = await _dbContext.BudgetApproved
+                .Where(i => new[] { year,beforeYear }.Contains(i.Year))
+                .AsNoTracking()
+                .ToListAsync();
+            
+            // 모든 CBM 을 조회한다. 
+            IQueryable<DbModelCountryBusinessManager> managersQuery = _dbContext.CountryBusinessManagers
+                .AsNoTracking();
+            
+            // 전체 Permit 이 아닌경우 
+            if (!isPermitAll)
+                // 본인의 부서만 확인한다.
+                managersQuery = managersQuery.Where(i => i.Id == user.CountryBusinessManagerId);
+
+            // 전체 매니저를 조회한다.
+            List<DbModelCountryBusinessManager> managers = await managersQuery
+                .Include(i => i.CountryBusinessManagerBusinessUnits)
+                    .ThenInclude(v => v.BusinessUnit)
+                .AsNoTracking()
+                .ToListAsync();
+            
+            // 조회된 정보로 CHK 500K 이하 전년도 정보를 찾는다.
+            List<ResponseProcessApproved> yearBeforeBelow500K = ComputeApproved(  budgetApproveds, managers, beforeYear , false );
+            
+            // 조회된 정보로 CHK 500K 이하 당해년도 정보를 찾는다.
+            List<ResponseProcessApproved> yearBelow500K = ComputeApproved(  budgetApproveds, managers, year , false );
+
+            // 객체를 생성한다.
+            ResponseProcessApprovedSummary data = new ResponseProcessApprovedSummary();
+            
+            // 전체 Summary 정보
+            // 전년
+            ResponseProcessApprovedSummaryDetail beforeYearDetailBelow500K = new ResponseProcessApprovedSummaryDetail
+            {
+                Sequence = 1,
+                Title = $"{beforeYear}FY",
+                Items = yearBeforeBelow500K
+            };
+            // 당해년
+            ResponseProcessApprovedSummaryDetail yearDetailAbove500K = new ResponseProcessApprovedSummaryDetail
+            {
+                Sequence = 2,
+                Title = $"{year}FY",
+                Items = yearBelow500K
+            };
+            // 전체 Sum
+            List<ResponseProcessApproved> total = SumApproved(yearBeforeBelow500K,yearBelow500K);
+            ResponseProcessApprovedSummaryDetail detailTotal = new ResponseProcessApprovedSummaryDetail
+            {
+                Sequence = 3,
+                Title = $"{beforeYear}FY & {year}FY",
+                Items = total
+            };
+            
+            // 모든 리스트를 주입한다.
+            data.Items.Add(beforeYearDetailBelow500K);
+            data.Items.Add(yearDetailAbove500K);
+            data.Items.Add(detailTotal);
+            return new ResponseData<ResponseProcessApprovedSummary>(EnumResponseResult.Success, "", "", data);
+        }
+        catch (Exception e)
+        {
+            result = new ResponseData<ResponseProcessApprovedSummary>(EnumResponseResult.Error,"" ,"처리중 예외가 발생했습니다.", null);
             e.LogError(_logger);
         }
 
@@ -346,6 +456,75 @@ public class BudgetProcessRepository : IBudgetProcessRepository
         return result;
     }
 
+    /// <summary>
+    /// 승인정보를 합산한다.
+    /// </summary>
+    /// <param name="beforeYear"></param>
+    /// <param name="year"></param>
+    /// <returns></returns>
+    private List<ResponseProcessApproved> SumApproved(List<ResponseProcessApproved> beforeYear, List<ResponseProcessApproved> year)
+    {
+        List<ResponseProcessApproved> result = new List<ResponseProcessApproved>();
+
+        try
+        {
+            // 두개의 리스트를 합친다.
+            return
+                beforeYear.Zip(year, (below, above) => new ResponseProcessApproved()
+                {
+                    CountryBusinessManagerId = below.CountryBusinessManagerId, // 둘은 동일한 ID를 가정
+                    CountryBusinessManagerName = below.CountryBusinessManagerName, // 이름도 동일하다고 가정
+                    PoIssueAmountSpending = below.PoIssueAmountSpending + above.PoIssueAmountSpending,
+                    PoIssueAmount = below.PoIssueAmount + above.PoIssueAmount,
+                    NotPoIssueAmount = below.NotPoIssueAmount + above.NotPoIssueAmount ,
+                    ApprovedAmount = below.ApprovedAmount + above.ApprovedAmount,
+                    BusinessUnits = SumApprovedBusinessUnits(below.BusinessUnits, above.BusinessUnits)
+                }).ToList();
+        }
+        catch (Exception e)
+        {
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+    
+    
+    /// <summary>
+    /// 내부의 비지니스 유닛별 합산을 처리한다.
+    /// </summary>
+    /// <param name="beforeYearBusinessUnits"></param>
+    /// <param name="yearBusinessUnits"></param>
+    /// <returns></returns>
+    private List<ResponseProcessApproved> SumApprovedBusinessUnits(List<ResponseProcessApproved> beforeYearBusinessUnits, List<ResponseProcessApproved> yearBusinessUnits)
+    {
+        var combined = new List<ResponseProcessApproved>();
+
+        // 비즈니스 유닛 ID 별로 그룹핑하고, 각각에 대해 합산을 진행
+        var allBusinessUnits = beforeYearBusinessUnits.Concat(yearBusinessUnits).ToList();
+        var groupedById = allBusinessUnits.GroupBy(bu => bu.CountryBusinessManagerId);
+
+        foreach (var group in groupedById)
+        {
+            var groupedBusinessUnits = group.ToList();
+            var aggregatedBusinessUnit = groupedBusinessUnits.First();
+
+            foreach (var bu in groupedBusinessUnits.Skip(1))
+            {
+                aggregatedBusinessUnit.PoIssueAmountSpending += bu.PoIssueAmountSpending;
+                aggregatedBusinessUnit.PoIssueAmount += bu.PoIssueAmount;
+                aggregatedBusinessUnit.NotPoIssueAmount += bu.NotPoIssueAmount;
+                aggregatedBusinessUnit.ApprovedAmount += bu.ApprovedAmount;
+                // 재귀 호출
+                aggregatedBusinessUnit.BusinessUnits = SumApprovedBusinessUnits(aggregatedBusinessUnit.BusinessUnits, bu.BusinessUnits);
+            }
+
+            combined.Add(aggregatedBusinessUnit);
+        }
+
+        return combined;
+    }
+    
 
     /// <summary>
     /// Below500K 의 정보를 찾아 바인딩한다.
@@ -492,6 +671,93 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                 };
                 
                 result.Add(add);
+            }
+        }
+        catch (Exception e)
+        {
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+    
+    
+    /// <summary>
+    /// Below500K 의 승인금액 정보를 찾아 바인딩한다.
+    /// </summary>
+    /// <param name="budgetApproveds"></param>
+    /// <param name="managers"></param>
+    /// <param name="year"></param>
+    /// <param name="isAbove500K"></param>
+    /// <returns></returns>
+    private List<ResponseProcessApproved> ComputeApproved( 
+        List<DbModelBudgetApproved> budgetApproveds ,
+        List<DbModelCountryBusinessManager> managers ,
+        string year ,
+        bool isAbove500K
+        )
+    {
+        List<ResponseProcessApproved> result = new List<ResponseProcessApproved>();
+
+        try
+        {
+            // 모든 매니저에 대해 처리
+            foreach (DbModelCountryBusinessManager manager in managers)
+            {
+                // 쿼리 베이스
+                IEnumerable<DbModelBudgetApproved> query = budgetApproveds.Where(i =>
+                    i.CountryBusinessManagerId == manager.Id &&
+                    i.IsAbove500K == isAbove500K &&
+                    i.Year == year
+                ).ToList();
+                
+                // 들어갈 데이터 
+                ResponseProcessApproved managerApproved = new ResponseProcessApproved();
+
+                // 매니저가 소유한 비지니스 유닛에 대한 처리 
+                foreach (var businessUnit in manager.CountryBusinessManagerBusinessUnits)
+                {
+                    // 승인된 금액 중 PO 발행건 합산금액
+                    double poIssueAmountSpending = query
+                        .Where(i => i.ApprovalStatus == EnumApprovalStatus.InVoicePublished)
+                        .Sum(i => i.ApprovalAmount );
+                
+                    // 승인된 금액 중 PO 미 발행건 합산금액
+                    double poIssueAmount = query
+                        .Where(i => i.ApprovalStatus == EnumApprovalStatus.PoPublished)
+                        .Sum(i => i.ApprovalAmount );
+                
+                    // PO 미 발행건 합산금액 
+                    double notPoIssueAmount = query
+                        .Where(i => i.ApprovalStatus == EnumApprovalStatus.PoNotYetPublished)
+                        .Sum(i => i.ApprovalAmount );
+                
+                    // 승인된 금액 전체 [승인된 금액 중 PO 발행건 합산금액] + [PO 미 발행건 합산금액 ]
+                    double approvedAmount = poIssueAmountSpending + notPoIssueAmount;
+                
+                    // 데이터를 만든다.
+                    ResponseProcessApproved add = new ResponseProcessApproved
+                    {
+                        BusinessUnitId = businessUnit.BusinessUnit!.Id ,
+                        BusinessUnitName = businessUnit.BusinessUnit!.Name ,
+                        CountryBusinessManagerId = manager.Id ,
+                        CountryBusinessManagerName = manager.Name ,
+                        PoIssueAmountSpending = poIssueAmountSpending,
+                        PoIssueAmount = poIssueAmount,
+                        NotPoIssueAmount = notPoIssueAmount,
+                        ApprovedAmount = approvedAmount,
+                    };
+                    managerApproved.BusinessUnits.Add(add);
+                }
+                
+                // 데이터를 만든다.
+                managerApproved.CountryBusinessManagerId = manager.Id ;
+                managerApproved.CountryBusinessManagerName = manager.Name ;
+                managerApproved.PoIssueAmountSpending = managerApproved.BusinessUnits.Sum(i => i.PoIssueAmountSpending);
+                managerApproved.PoIssueAmount = managerApproved.BusinessUnits.Sum(i => i.PoIssueAmount);
+                managerApproved.NotPoIssueAmount = managerApproved.BusinessUnits.Sum(i => i.NotPoIssueAmount);
+                managerApproved.ApprovedAmount = managerApproved.BusinessUnits.Sum(i => i.ApprovedAmount);
+                result.Add(managerApproved);
             }
         }
         catch (Exception e)
