@@ -2,7 +2,7 @@ using Features.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Responses;
-using Models.Responses.Process.Owner;
+using Models.Responses.Process.ProcessOwner;
 using Providers.Services.Interfaces;
 
 namespace Apis.Controllers;
@@ -31,10 +31,10 @@ public class BudgetProcessController : Controller
     }
 
     /// <summary>
-    /// Owner 별 Budget 프로세스 정보를 가져온다.
+    /// ProcessOwner 별 Budget 프로세스 정보를 가져온다.
     /// </summary>
     /// <returns></returns>
-    [HttpGet("Owner")]
+    [HttpGet("ProcessOwner")]
     [ClaimRequirement("Permission","process-result,process-result-view")]
     public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetAsync()
     {

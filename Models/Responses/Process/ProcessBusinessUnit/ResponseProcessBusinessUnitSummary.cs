@@ -1,7 +1,7 @@
-namespace Models.Responses.Process.BusinessUnit;
+namespace Models.Responses.Process.ProcessBusinessUnit;
 
 /// <summary>
-/// 결과중 개별 Owner 별 통계 데이터 모음
+/// 결과중 개별 ProcessOwner 별 통계 데이터 모음
 /// </summary>
 public class ResponseProcessBusinessUnitSummary
 {

@@ -568,7 +568,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
                         .Select(v => v.CostCenterId).Contains(i.Id))
                         .ToListAsync();
         
-                    // BusinessUnit 조회
+                    // ProcessBusinessUnit 조회
                     businessUnits = await _dbContext.BusinessUnits
                         .Where(i => budgetPlansInvalidName
                         .Select(v => v.BusinessUnitId).Contains(i.Id))
@@ -705,7 +705,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
                         .Select(v => v.CostCenterId).Contains(i.Id))
                         .ToListAsync();
         
-                    // BusinessUnit 조회
+                    // ProcessBusinessUnit 조회
                     businessUnits = await _dbContext.BusinessUnits
                         .Where(i => approvedNames
                         .Select(v => v.BusinessUnitId).Contains(i.Id))

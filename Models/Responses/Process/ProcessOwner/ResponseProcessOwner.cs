@@ -1,9 +1,9 @@
-namespace Models.Responses.Process.BusinessUnit;
+namespace Models.Responses.Process.ProcessOwner;
 
 /// <summary>
-/// 결과중 개별 Owner 별 통계 데이터 
+/// 결과중 개별 ProcessOwner 별 통계 데이터 
 /// </summary>
-public class ResponseProcessBusinessUnit
+public class ResponseProcessOwner
 {
     /// <summary>
     /// 컨트리 비지니스매니저 아이디 
@@ -37,10 +37,10 @@ public class ResponseProcessBusinessUnit
     /// 올해 & 작년 Budget 확정된 것 ( ex: 2023FY&2024FY )
     /// 승인된 작년 + 이번년도 전체 예산
     /// </summary>
-    public double BudgetApprovedYearBeforeSum { get; set; }
+    public double BudgetApprovedYearSum { get; set; }
     
     /// <summary>
-    /// 올해 남은 예산 ( BudgetYear - BudgetApprovedYearBeforeSum )
+    /// 올해 남은 예산 ( BudgetYear - BudgetApprovedYearSum )
     /// 2024 년 남은 Budget
     /// [올해 Budget] - [승인된 작년 + 이번년도 전체 예산]
     /// </summary>

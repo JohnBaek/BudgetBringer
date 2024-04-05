@@ -1,5 +1,5 @@
 using Models.Responses;
-using Models.Responses.Process.Owner;
+using Models.Responses.Process.ProcessOwner;
 
 namespace Providers.Repositories.Interfaces;
 

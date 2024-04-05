@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.DataModels;
 using Models.Responses;
-using Models.Responses.Process.Owner;
+using Models.Responses.Process.ProcessOwner;
 using Models.Responses.Users;
 using Providers.Repositories.Interfaces;
 using Providers.Services.Interfaces;
@@ -181,7 +181,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                 BudgetYear = below.BudgetYear + above.BudgetYear,
                 BudgetApprovedYearBefore = below.BudgetApprovedYearBefore + above.BudgetApprovedYearBefore,
                 BudgetApprovedYear = below.BudgetApprovedYear + above.BudgetApprovedYear,
-                BudgetApprovedYearBeforeSum = below.BudgetApprovedYearBeforeSum + above.BudgetApprovedYearBeforeSum,
+                BudgetApprovedYearSum = below.BudgetApprovedYearSum + above.BudgetApprovedYearSum,
                 BudgetRemainingYear = below.BudgetRemainingYear + above.BudgetRemainingYear
             }).ToList();
         }
@@ -256,7 +256,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                     BudgetYear = budgetYear,
                     BudgetApprovedYearBefore = budgetApprovedYearBefore,
                     BudgetApprovedYear = budgetApprovedYear,
-                    BudgetApprovedYearBeforeSum = budgetApprovedYearBeforeSum,
+                    BudgetApprovedYearSum = budgetApprovedYearBeforeSum,
                     BudgetRemainingYear = budgetRemainingYear
                 };
                 

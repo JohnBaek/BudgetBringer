@@ -51,7 +51,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
     /// <summary>
     /// 로그 카테고리명
     /// </summary>
-    private const string LogCategory = "[BusinessUnit]";
+    private const string LogCategory = "[ProcessBusinessUnit]";
 
     /// <summary>
     /// 생성자

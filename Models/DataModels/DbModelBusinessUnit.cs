@@ -23,4 +23,9 @@ public class DbModelBusinessUnit : DbModelDefault
     [MaxLength(255)]
     [Required]
     public required string Name { get; set; }
+    
+    /// <summary>
+    /// 관계 정보
+    /// </summary>
+    public virtual ICollection<DbModelCountryBusinessManagerBusinessUnit>? CountryBusinessManagers { get; set; }
 }

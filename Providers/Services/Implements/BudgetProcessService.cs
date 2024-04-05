@@ -2,7 +2,7 @@ using Features.Extensions;
 using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.Responses;
-using Models.Responses.Process.Owner;
+using Models.Responses.Process.ProcessOwner;
 using Providers.Repositories.Interfaces;
 using Providers.Services.Interfaces;
 
@@ -56,5 +56,10 @@ public class BudgetProcessService : IBudgetProcessService
         }
 
         return response;
+    }
+
+    public Task<ResponseData<ResponseProcessOwnerSummary>> GetBusinessUnitBudgetAsync()
+    {
+        throw new NotImplementedException();
     }
 }

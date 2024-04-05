@@ -1,6 +1,4 @@
-using Models.Responses.Process.Owner;
-
-namespace Models.Responses.Process.BusinessUnit;
+namespace Models.Responses.Process.ProcessBusinessUnit;
 
 /// <summary>
 /// 상세

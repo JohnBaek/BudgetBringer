@@ -1,4 +1,4 @@
-namespace Models.Responses.Process.Owner;
+namespace Models.Responses.Process.ProcessOwner;
 
 /// <summary>
 /// 상세

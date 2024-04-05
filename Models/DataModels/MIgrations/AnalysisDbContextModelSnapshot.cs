@@ -388,6 +388,21 @@ namespace Models.DataModels.Migrations
                     b.ToTable("CountryBusinessManagers", (string)null);
                 });
 
+            modelBuilder.Entity("Models.DataModels.DbModelCountryBusinessManagerBusinessUnit", b =>
+                {
+                    b.Property<Guid>("CountryBusinessManagerId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("BusinessUnitId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("CountryBusinessManagerId", "BusinessUnitId");
+
+                    b.HasIndex("BusinessUnitId");
+
+                    b.ToTable("CountryBusinessManagerBusinessUnit");
+                });
+
             modelBuilder.Entity("Models.DataModels.DbModelLogAction", b =>
                 {
                     b.Property<Guid>("Id")
@@ -755,6 +770,25 @@ namespace Models.DataModels.Migrations
                     b.Navigation("Sector");
                 });
 
+            modelBuilder.Entity("Models.DataModels.DbModelCountryBusinessManagerBusinessUnit", b =>
+                {
+                    b.HasOne("Models.DataModels.DbModelBusinessUnit", "BusinessUnit")
+                        .WithMany("CountryBusinessManagers")
+                        .HasForeignKey("BusinessUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.DataModels.DbModelCountryBusinessManager", "CountryBusinessManager")
+                        .WithMany("BusinessUnits")
+                        .HasForeignKey("CountryBusinessManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BusinessUnit");
+
+                    b.Navigation("CountryBusinessManager");
+                });
+
             modelBuilder.Entity("Models.DataModels.DbModelLogAction", b =>
                 {
                     b.HasOne("Models.DataModels.DbModelUser", "DbModelUser")
@@ -825,6 +859,16 @@ namespace Models.DataModels.Migrations
                         .IsRequired();
 
                     b.Navigation("DbModelUser");
+                });
+
+            modelBuilder.Entity("Models.DataModels.DbModelBusinessUnit", b =>
+                {
+                    b.Navigation("CountryBusinessManagers");
+                });
+
+            modelBuilder.Entity("Models.DataModels.DbModelCountryBusinessManager", b =>
+                {
+                    b.Navigation("BusinessUnits");
                 });
 
             modelBuilder.Entity("Models.DataModels.DbModelRole", b =>
