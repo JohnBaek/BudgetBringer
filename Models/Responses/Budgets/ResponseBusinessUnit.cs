@@ -31,7 +31,7 @@ public class ResponseBusinessUnit : ResponseCommonWriter
     /// <summary>
     /// 유닛명 (유니크)
     /// </summary>
-    public required string Name { get; init; }
+    public string Name { get; init; }
     
     /// <summary>
     /// 등록일 (필수)

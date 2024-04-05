@@ -24,4 +24,9 @@ public class ResponseCountryBusinessManager : ResponseCommonWriter
     /// 수정일 (필수)
     /// </summary>
     public DateTime ModDate { get; init; }
+
+    /// <summary>
+    /// 비지니스 유닛
+    /// </summary>
+    public List<ResponseBusinessUnit> BusinessUnits { get; set; } = new List<ResponseBusinessUnit>();
 }

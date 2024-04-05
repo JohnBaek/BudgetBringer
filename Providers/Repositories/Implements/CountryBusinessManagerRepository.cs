@@ -108,7 +108,12 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModDate));
             
             // 결과를 반환한다.
-            return await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
+            result = await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
+            
+            // 조회에 성공했을 경우 
+            if (result is { Result: EnumResponseResult.Success, Items.Count: > 0 })
+                // 각 비지니스 컨트리 매니저에 비지니스 유닛을 바인딩한다.
+                await SetAddBusinessUnitsAsync(result.Items);
         }
         catch (Exception e)
         {
@@ -116,6 +121,42 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// 각 비지니스 컨트리 매니저에 비지니스 유닛을 바인딩한다.
+    /// </summary>
+    /// <param name="managers"></param>
+    private async Task SetAddBusinessUnitsAsync(List<ResponseCountryBusinessManager> managers)
+    {
+        try
+        {
+            // 관계 키를 전체 조회한다.
+            List<DbModelCountryBusinessManagerBusinessUnit> relations = 
+                await _dbContext.CountryBusinessManagerBusinessUnits
+                    .Include(i => i.BusinessUnit)
+                    .AsNoTracking()
+                    .ToListAsync();
+            
+            // 조회된 모든 매니저에대해 처리한다.
+            foreach (ResponseCountryBusinessManager manager in managers)
+            {
+                // 관계 정보를 찾는다.
+                List<DbModelCountryBusinessManagerBusinessUnit> relation =
+                    relations.Where(i => i.CountryBusinessManagerId == manager.Id)
+                        .ToList();
+                
+                // 비지니스 유닛을 추가한다.
+                foreach (DbModelCountryBusinessManagerBusinessUnit item in relation)
+                {
+                    manager.BusinessUnits.Add(new ResponseBusinessUnit(item.BusinessUnit.Id, item.BusinessUnit.Name));
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            e.LogError(_logger);
+        }
     }
 
     /// <summary>
@@ -142,6 +183,20 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
             if(before == null)
                 return new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error,"ERROR_IS_NONE_EXIST", "대상이 존재하지 않습니다.",null);
 
+            // 관계 키를 전체 조회한다.
+            List<DbModelCountryBusinessManagerBusinessUnit> relations = 
+                await _dbContext.CountryBusinessManagerBusinessUnits
+                    .Include(i => i.BusinessUnit)
+                    .AsNoTracking()
+                    .Where(i => i.CountryBusinessManagerId == before.Id)
+                    .ToListAsync();
+            
+            // 비지니스 유닛을 추가한다.
+            foreach (DbModelCountryBusinessManagerBusinessUnit item in relations)
+            {
+                before.BusinessUnits.Add(new ResponseBusinessUnit(item.BusinessUnit.Id, item.BusinessUnit.Name));
+            }
+            
             // 데이터를 복사한다.
             return new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Success, "", "", before);
         }
