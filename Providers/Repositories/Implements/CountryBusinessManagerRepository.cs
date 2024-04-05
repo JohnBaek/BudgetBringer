@@ -399,4 +399,151 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
 
         return result;
     }
+
+    /// <summary>
+    /// 매니저에 비지니스 유닛을 추가한다.
+    /// </summary>
+    /// <param name="managerId"></param>
+    /// <param name="unitId"></param>
+    /// <returns></returns>
+    public async Task<ResponseData<ResponseCountryBusinessManager>> AddUnitAsync(string managerId, string unitId)
+    {
+        ResponseData<ResponseCountryBusinessManager> result;
+
+        // 요청이 유효하지 않은경우
+        if (managerId.IsEmpty() || unitId.IsEmpty())
+            return new ResponseData<ResponseCountryBusinessManager> {Code = "ERROR_INVALID_PARAMETER", Message = "필수 값을 입력해주세요"};
+
+        // 매니저 조회
+        DbModelCountryBusinessManager? manager = await _dbContext.CountryBusinessManagers
+            .Where(i => i.Id == managerId.ToGuid())
+            .FirstOrDefaultAsync();
+        
+        // 찾지 못한경우
+        if (manager == null)
+            return new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error, "ERROR_IS_NONE_EXIST",
+                "대상이 존재하지 않습니다.", null);
+        
+        // 유닛 조회
+        DbModelBusinessUnit? unit = await _dbContext.BusinessUnits
+            .Where(i => i.Id == unitId.ToGuid())
+            .FirstOrDefaultAsync();
+        
+        // 찾지 못한경우
+        if (unit == null)
+            return new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error, "ERROR_IS_NONE_EXIST",
+                "대상이 존재하지 않습니다.", null);
+        
+        // 이미 추가된 관계인지 확인
+        bool exist = await _dbContext.CountryBusinessManagerBusinessUnits
+            .AnyAsync(i =>
+                i.CountryBusinessManagerId == managerId.ToGuid() &&
+                i.BusinessUnitId == unitId.ToGuid()
+            );
+        
+        // 추가된 관계인경우
+        if (exist)
+            return new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error, "ERROR_IS_NONE_EXIST",
+                "이미 추가되어있습니다.", null);
+        
+        // 트랜잭션을 시작한다.
+        using IDbContextTransaction transaction = await _dbContext.Database.BeginTransactionAsync();
+        try
+        {
+      
+            // 로그인한 사용자 정보를 가져온다.
+            DbModelUser? user = await _userRepository.GetAuthenticatedUser();
+
+            // 사용자 정보가 없는경우 
+            if (user == null)
+                return new ResponseData<ResponseCountryBusinessManager> {Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
+
+            // Insert 될 데이터를 생성한다.
+            DbModelCountryBusinessManagerBusinessUnit relation = new DbModelCountryBusinessManagerBusinessUnit
+            {
+                CountryBusinessManagerId = managerId.ToGuid(),
+                BusinessUnitId = unitId.ToGuid(),
+            };
+            
+            // 대상을 추가한다.
+            await _dbContext.AddAsync(relation);
+            await _dbContext.SaveChangesAsync();
+
+            // 커밋한다.
+            await transaction.CommitAsync();
+
+            // 데이터조회
+            result = await this.GetAsync(managerId);
+
+            // 로그 기록
+            await _logActionWriteService.WriteDeletion(relation, user, "매니저 정보에서 비지니스 유닛 추가", LogCategory);
+        }
+        catch (Exception e)
+        {
+            await transaction.RollbackAsync();
+            result = new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error, "ERROR_DATA_EXCEPTION", "처리중 예외가 발생했습니다.", null);
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// 매니저에 비지니스 유닛을 제거한다..
+    /// </summary>
+    /// <param name="managerId"></param>
+    /// <param name="unitId"></param>
+    /// <returns></returns>
+    public async Task<Response> DeleteUnitAsync(string managerId, string unitId)
+    {
+        Response result;
+        
+        // 요청이 유효하지 않은경우
+        if (managerId.IsEmpty() || unitId.IsEmpty())
+            return new ResponseData<ResponseCountryBusinessManager> {Code = "ERROR_INVALID_PARAMETER", Message = "필수 값을 입력해주세요"};
+        
+        // 이미 추가된 관계인지 확인
+        DbModelCountryBusinessManagerBusinessUnit? remove = await _dbContext.CountryBusinessManagerBusinessUnits
+            .Where(i =>
+                i.CountryBusinessManagerId == managerId.ToGuid() &&
+                i.BusinessUnitId == unitId.ToGuid()
+            ).FirstOrDefaultAsync();
+        
+        // 찾지 못한경우
+        if(remove == null)
+            return new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error, "ERROR_IS_NONE_EXIST",
+                "대상이 존재하지 않습니다", null);
+
+        // 트랜잭션을 시작한다.
+        await using IDbContextTransaction transaction = await _dbContext.Database.BeginTransactionAsync();
+
+        try
+        {
+            // 로그인한 사용자 정보를 가져온다.
+            DbModelUser? user = await _userRepository.GetAuthenticatedUser();
+
+            // 사용자 정보가 없는경우 
+            if (user == null)
+                return new Response {Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
+
+            // 대상을 삭제한다.
+            _dbContext.Remove(remove);
+            await _dbContext.SaveChangesAsync();
+
+            // 커밋한다.
+            await transaction.CommitAsync();
+            result = new Response(EnumResponseResult.Success, "", "");
+
+            // 로그 기록
+            await _logActionWriteService.WriteDeletion(remove, user, $"매니저 정보에서 비지니스 유닛 삭제", LogCategory);
+        }
+        catch (Exception e)
+        {
+            await transaction.RollbackAsync();
+            result = new Response(EnumResponseResult.Error, "ERROR_DATA_EXCEPTION", "처리중 예외가 발생했습니다.");
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
 }

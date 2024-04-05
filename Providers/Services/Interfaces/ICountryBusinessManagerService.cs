@@ -46,4 +46,21 @@ public interface ICountryBusinessManagerService
     /// <param name="id">대상 아이디값</param>
     /// <returns></returns>
     Task<Response> DeleteAsync(string id);
+    
+    /// <summary>
+    /// 매니저에 비지니스 유닛을 추가한다.
+    /// </summary>
+    /// <param name="managerId"></param>
+    /// <param name="unitId"></param>
+    /// <returns></returns>
+    Task<ResponseData<ResponseCountryBusinessManager>> AddUnitAsync(string managerId , string unitId);
+    
+    
+    /// <summary>
+    /// 매니저에 비지니스 유닛을 제거한다..
+    /// </summary>
+    /// <param name="managerId"></param>
+    /// <param name="unitId"></param>
+    /// <returns></returns>
+    Task<Response> DeleteUnitAsync(string managerId , string unitId);
 }

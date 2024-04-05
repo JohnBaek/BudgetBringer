@@ -148,4 +148,50 @@ public class CountryBusinessManagerService : ICountryBusinessManagerService
 
         return response;
     }
+
+    /// <summary>
+    /// 매니저에 비지니스 유닛을 추가한다.
+    /// </summary>
+    /// <param name="managerId"></param>
+    /// <param name="unitId"></param>
+    /// <returns></returns>
+    public async Task<ResponseData<ResponseCountryBusinessManager>> AddUnitAsync(string managerId, string unitId)
+    {
+        ResponseData<ResponseCountryBusinessManager> response;
+        
+        try
+        {
+            response = await _repository.AddUnitAsync(managerId,unitId);
+        }
+        catch (Exception e)
+        {
+            response = new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
+            e.LogError(_logger);
+        }
+
+        return response;
+    }
+
+    /// <summary>
+    /// 매니저에 비지니스 유닛을 제거한다..
+    /// </summary>
+    /// <param name="managerId"></param>
+    /// <param name="unitId"></param>
+    /// <returns></returns>
+    public async Task<Response> DeleteUnitAsync(string managerId, string unitId)
+    {
+        Response response;
+        
+        try
+        {
+            response = await _repository.DeleteUnitAsync(managerId,unitId);
+        }
+        catch (Exception e)
+        {
+            response = new ResponseData<ResponseCountryBusinessManager>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
+            e.LogError(_logger);
+        }
+
+        return response;
+    }
 }

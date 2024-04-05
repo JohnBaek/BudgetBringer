@@ -25,10 +25,10 @@ public class DbModelCountryBusinessManagerBusinessUnit
     /// <summary>
     /// 컨트리 비지니스 매니저
     /// </summary>
-    public virtual required DbModelCountryBusinessManager CountryBusinessManager { get; init; }
+    public virtual DbModelCountryBusinessManager? CountryBusinessManager { get; init; }
     
     /// <summary>
     /// 비지니스 유닛
     /// </summary>
-    public virtual required DbModelBusinessUnit BusinessUnit { get; init; }
+    public virtual DbModelBusinessUnit? BusinessUnit { get; init; }
 }

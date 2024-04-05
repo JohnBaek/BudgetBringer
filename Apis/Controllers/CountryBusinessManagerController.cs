@@ -91,4 +91,36 @@ public class CountryBusinessManagerController : Controller
     public async Task<Response> DeleteAsync(string id){
         return await _countryBusinessManagerService.DeleteAsync(id);
     }
+    
+    /// <summary>
+    /// 매니저에 비지니스 유닛을 추가한다.
+    /// </summary>
+    /// <param name="managerId"></param>
+    /// <param name="unitId"></param>
+    /// <returns></returns>
+    [HttpPost("{managerId}/BusinessUnit/{unitId}")]
+    [ClaimRequirement("Permission","common-code")]
+    public async Task<ResponseData<ResponseCountryBusinessManager>> AddUnitAsync(
+        [FromRoute] string managerId , 
+        [FromRoute] string unitId
+        )
+    {
+        return await _countryBusinessManagerService.AddUnitAsync(managerId,unitId);
+    }
+    
+    /// <summary>
+    /// 매니저에 비지니스 유닛을 삭제한다.
+    /// </summary>
+    /// <param name="managerId"></param>
+    /// <param name="unitId"></param>
+    /// <returns></returns>
+    [HttpDelete("{managerId}/BusinessUnit/{unitId}")]
+    [ClaimRequirement("Permission","common-code")]
+    public async Task<Response> DeleteAsync(       
+        [FromRoute] string managerId , 
+        [FromRoute] string unitId 
+        )
+    {
+        return await _countryBusinessManagerService.DeleteUnitAsync(managerId,unitId);
+    }
 }
