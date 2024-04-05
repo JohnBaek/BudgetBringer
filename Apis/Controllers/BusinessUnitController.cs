@@ -37,7 +37,7 @@ public class BusinessUnitController : Controller
     /// <param name="requestQuery">요청 정보</param>
     /// <returns></returns>
     [HttpGet("")]
-    [ClaimRequirement("Permission","budget-plan")]
+    [ClaimRequirement("Permission","common-code")]
     public async Task<ResponseList<ResponseBusinessUnit>> GetListAsync([FromQuery] RequestQuery requestQuery)
     {
         return await _businessUnitService.GetListAsync(requestQuery);
@@ -49,7 +49,7 @@ public class BusinessUnitController : Controller
     /// <param name="id">아이디</param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    [ClaimRequirement("Permission","budget-plan")]
+    [ClaimRequirement("Permission","common-code")]
     public async Task<ResponseData<ResponseBusinessUnit>> GetAsync([FromRoute] string id)
     {
         return await _businessUnitService.GetAsync(id);
@@ -63,7 +63,7 @@ public class BusinessUnitController : Controller
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost("{id}")]
-    [ClaimRequirement("Permission","budget-plan")]
+    [ClaimRequirement("Permission","common-code")]
     public async Task<Response> UpdateAsync([FromRoute] string id , RequestBusinessUnit request)
     {
         return await _businessUnitService.UpdateAsync(id , request);
@@ -75,7 +75,7 @@ public class BusinessUnitController : Controller
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost("")]
-    [ClaimRequirement("Permission","budget-plan")]
+    [ClaimRequirement("Permission","common-code")]
     public async Task<ResponseData<ResponseBusinessUnit>> AddAsync(RequestBusinessUnit request)
     {
         return await _businessUnitService.AddAsync(request);
@@ -87,7 +87,7 @@ public class BusinessUnitController : Controller
     /// <param name="id">대상 아이디값</param>
     /// <returns></returns>
     [HttpDelete("{id}")]
-    [ClaimRequirement("Permission","budget-plan")]
+    [ClaimRequirement("Permission","common-code")]
     public async Task<Response> DeleteAsync(string id){
         return await _businessUnitService.DeleteAsync(id);
     }

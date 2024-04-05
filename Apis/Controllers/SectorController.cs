@@ -37,7 +37,7 @@ public class SectorController : Controller
     /// <param name="requestQuery">요청 정보</param>
     /// <returns></returns>
     [HttpGet("")]
-    [ClaimRequirement("Permission","budget-plan")]
+    [ClaimRequirement("Permission","common-code")]
     public async Task<ResponseList<ResponseSector>> GetListAsync([FromQuery] RequestQuery requestQuery)
     {
         return await _sectorService.GetListAsync(requestQuery);
@@ -49,7 +49,7 @@ public class SectorController : Controller
     /// <param name="id">아이디</param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    [ClaimRequirement("Permission","budget-plan")]
+    [ClaimRequirement("Permission","common-code")]
     public async Task<ResponseData<ResponseSector>> GetAsync([FromRoute] string id)
     {
         return await _sectorService.GetAsync(id);
@@ -63,7 +63,7 @@ public class SectorController : Controller
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost("{id}")]
-    [ClaimRequirement("Permission","budget-plan")]
+    [ClaimRequirement("Permission","common-code")]
     public async Task<Response> UpdateAsync([FromRoute] string id , RequestSector request)
     {
         return await _sectorService.UpdateAsync(id , request);
@@ -75,7 +75,7 @@ public class SectorController : Controller
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost("")]
-    [ClaimRequirement("Permission","budget-plan")]
+    [ClaimRequirement("Permission","common-code")]
     public async Task<ResponseData<ResponseSector>> AddAsync(RequestSector request)
     {
         return await _sectorService.AddAsync(request);
@@ -87,7 +87,7 @@ public class SectorController : Controller
     /// <param name="id">대상 아이디값</param>
     /// <returns></returns>
     [HttpDelete("{id}")]
-    [ClaimRequirement("Permission","budget-plan")]
+    [ClaimRequirement("Permission","common-code")]
     public async Task<Response> DeleteAsync(string id){
         return await _sectorService.DeleteAsync(id);
     }

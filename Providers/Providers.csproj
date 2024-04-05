@@ -15,19 +15,4 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
-    <ItemGroup>
-      <EmbeddedResource Update="Resources\CodeResources.resx">
-        <Generator>ResXFileCodeGenerator</Generator>
-        <LastGenOutput>CodeResources.Designer.cs</LastGenOutput>
-      </EmbeddedResource>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Update="Resources\CodeResources.Designer.cs">
-        <DesignTime>True</DesignTime>
-        <AutoGen>True</AutoGen>
-        <DependentUpon>CodeResources.resx</DependentUpon>
-      </Compile>
-    </ItemGroup>
-
 </Project>

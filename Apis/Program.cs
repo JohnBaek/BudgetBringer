@@ -130,6 +130,7 @@ public static class Program
         services.AddScoped<ISectorRepository,SectorRepository>();
         services.AddScoped<IBudgetPlanRepository,BudgetPlanRepository>();
         services.AddScoped<IBudgetApprovedRepository,BudgetApprovedRepository>();
+        services.AddScoped<IBudgetProcessRepository,BudgetProcessRepository>();
         
         // 서비스 레이어 추가
         services.AddScoped<IAuthenticationService, AuthenticationService>();
@@ -143,6 +144,7 @@ public static class Program
         services.AddScoped<IBudgetApprovedService, BudgetApprovedService>();
         services.AddScoped<ICountryBusinessManagerService, CountryBusinessManagerService>();
         services.AddScoped<IDispatchService, DispatchService>();
+        services.AddScoped<IBudgetProcessService,BudgetProcessService>();
         
         services.AddTransient<IQueryService, QueryService>();
     }
