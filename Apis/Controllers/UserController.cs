@@ -49,7 +49,6 @@ public class UserController : Controller
         _userService = userService;
     }
     
-    
     /// <summary>
     /// 로그인한 사용자의 Claim 정보를 가져온다.
     /// </summary>

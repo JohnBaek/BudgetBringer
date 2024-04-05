@@ -1,0 +1,92 @@
+#### 테스트 요청
+#http://localhost:5048/api/v1/Authentication/IsAuthenticated
+
+### 로그인 테스트
+POST http://localhost:5048/api/v1/Authentication/Login
+Content-Type: application/json
+Cookie: key=first-value
+
+{
+  "loginId": "sgs_AnoldKim",
+  "password": "Pass%word1"
+}
+
+### 로그인 테스트
+POST http://localhost:5048/api/v1/Authentication/Login
+Content-Type: application/json
+Cookie: key=first-value
+
+{
+  "loginId": "sgs_ByungchanHong",
+  "password": "Pass%word2"
+}
+
+### 로그인 테스트
+POST http://localhost:5048/api/v1/Authentication/Login
+Content-Type: application/json
+Cookie: key=first-value
+
+{
+  "loginId": "sgs_JeffJang",
+  "password": "Pass%word3"
+}
+
+### 로그인 테스트
+POST http://localhost:5048/api/v1/Authentication/Login
+Content-Type: application/json
+Cookie: key=first-value
+
+{
+  "loginId": "sgs_DerekLee",
+  "password": "Pass%word4"
+}
+
+### 로그인 테스트
+POST http://localhost:5048/api/v1/Authentication/Login
+Content-Type: application/json
+Cookie: key=first-value
+
+{
+  "loginId": "sgs_AlbertLim",
+  "password": "Pass%word5"
+}
+
+### 로그인 테스트
+POST http://localhost:5048/api/v1/Authentication/Login
+Content-Type: application/json
+Cookie: key=first-value
+
+{
+  "loginId": "sgs_YuriHong",
+  "password": "Pass%word6"
+}
+
+### 로그인 테스트
+POST http://localhost:5048/api/v1/Authentication/Login
+Content-Type: application/json
+Cookie: key=first-value
+
+{
+  "loginId": "sgs_WuhongJu",
+  "password": "Pass%word7"
+}
+
+### 로그인 테스트
+POST http://localhost:5048/api/v1/Authentication/Login
+Content-Type: application/json
+Cookie: key=first-value
+
+{
+  "loginId": "sgs_BCHong",
+  "password": "Pass%word8"
+}
+
+### 로그인 테스트
+POST http://localhost:5048/api/v1/Authentication/Login
+Content-Type: application/json
+Cookie: key=first-value
+
+{
+  "loginId": "sgs_SandersBae",
+  "password": "Pass%word9"
+}

@@ -68,6 +68,17 @@ public class SeedDataService : IHostedService
         await CreateUserAsync(userManager: userManager , role:"Admin" , loginId:"admin" , displayName:"관리자", password:"Qkfka!@12" );
         // 사용자를 생성한다.
         await CreateUserAsync(userManager: userManager , role:"User" , loginId:"commonuser" , displayName:"일반 사용자", password:"Qkfka!@12" );
+        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_AnoldKim" , displayName:"Anold Kim", password:"Pass%word1" );
+        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_ByungchanHong" , displayName:"Byungchan Hong", password:"Pass%word2" );
+        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_JeffJang" , displayName:"Jeff Jang", password:"Pass%word3" );
+        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_DerekLee" , displayName:"Derek Lee", password:"Pass%word4" );
+        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_AlbertLim" , displayName:"Albert Lim", password:"Pass%word5" );
+        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_YuriHong" , displayName:"Yuri Hong", password:"Pass%word6" );
+        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_WuhongJu" , displayName:"Wuhong Ju", password:"Pass%word7" );
+        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_BCHong" , displayName:"BC Hong", password:"Pass%word8" );
+        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_SandersBae" , displayName:"Sanders Bae", password:"Pass%word9" );
+        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_BruceMoon" , displayName:"Bruce Moon", password:"Pass%word10" );
+        
         await CreateUserWithSpecifyAsync(userManager , role:"User" , loginId:"sgs" , displayName:"SGS", password:"Qkfka!212", targetPermission: "process-result" , description: "결과페이지 전체 권한 부여" );
         
         Console.WriteLine("[User and DbModelRole Initialize End]".WithDateTime());    
