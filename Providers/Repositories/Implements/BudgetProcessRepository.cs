@@ -66,9 +66,9 @@ public class BudgetProcessRepository : IBudgetProcessRepository
     /// 정보만 나와야한다. 
     /// </summary>
     /// <returns></returns>
-    public async Task<ResponseData<ResponseOwnerSummary>> GetOwnerBudgetAsync()
+    public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetAsync()
     {
-        ResponseData<ResponseOwnerSummary> result = new ResponseData<ResponseOwnerSummary>();
+        ResponseData<ResponseProcessOwnerSummary> result = new ResponseData<ResponseProcessOwnerSummary>();
         try
         {
             // 로그인한 사용자의 정보를 가져온다.
@@ -77,14 +77,14 @@ public class BudgetProcessRepository : IBudgetProcessRepository
 
             // 사용자 정보가 없는경우 
             if(user == null)
-                return new ResponseData<ResponseOwnerSummary>(EnumResponseResult.Error,"ERROR_SESSION_TIMEOUT", "로그인 상태를 확인해주세요", null);
+                return new ResponseData<ResponseProcessOwnerSummary>(EnumResponseResult.Error,"ERROR_SESSION_TIMEOUT", "로그인 상태를 확인해주세요", null);
             
             // 로그인한 사용자의 모든 권한을 가져온다.
             ResponseList<ResponseUserRole> roleResponse = await _userService.GetRolesByUserAsync();
             
             // 권한이 없을경우 
             if(roleResponse.Items is {Count: 0} or null)
-                return new ResponseData<ResponseOwnerSummary>(EnumResponseResult.Error,"NOT_ALLOWED", "권한이 없습니다.", null);
+                return new ResponseData<ResponseProcessOwnerSummary>(EnumResponseResult.Error,"NOT_ALLOWED", "권한이 없습니다.", null);
             
             // 대상하는 Claim 을 찾는다.
             List<string> foundClaims = FindClaims(roleResponse.Items);
@@ -119,32 +119,32 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             List<DbModelCountryBusinessManager> managers = await managersQuery.ToListAsync();
             
             // 조회된 정보로 CHK 500K 이하 정보를 찾는다.
-            List<ResponseOwner> below500K = ComputeOwner(  budgetPlans, managers, year, beforeYear , false );
+            List<ResponseProcessOwner> below500K = ComputeOwner(  budgetPlans, managers, year, beforeYear , false );
             
             // 조회된 정보로 CHK 500K 이상 정보를 찾는다.
-            List<ResponseOwner> above500K = ComputeOwner(  budgetPlans, managers, year, beforeYear , true );
+            List<ResponseProcessOwner> above500K = ComputeOwner(  budgetPlans, managers, year, beforeYear , true );
 
             // 객체를 생성한다.
-            ResponseOwnerSummary data = new ResponseOwnerSummary();
+            ResponseProcessOwnerSummary data = new ResponseProcessOwnerSummary();
             
             // 전체 Summary 정보
             // Below 500K 추가
-            ResponseOwnerSummaryDetail detailBelow500K = new ResponseOwnerSummaryDetail
+            ResponseProcessOwnerSummaryDetail detailBelow500K = new ResponseProcessOwnerSummaryDetail
             {
                 Sequence = 1,
                 Title = "CAPEX below CHF500K",
                 Items = below500K
             };
             // Above 500K 추가
-            ResponseOwnerSummaryDetail detailAbove500K = new ResponseOwnerSummaryDetail
+            ResponseProcessOwnerSummaryDetail detailAbove500K = new ResponseProcessOwnerSummaryDetail
             {
                 Sequence = 2,
                 Title = "CAPEX above CHF500K",
                 Items = above500K
             };
             // 전체 Sum
-            List<ResponseOwner> total = SumOwner(below500K,above500K);
-            ResponseOwnerSummaryDetail detailTotal = new ResponseOwnerSummaryDetail
+            List<ResponseProcessOwner> total = SumOwner(below500K,above500K);
+            ResponseProcessOwnerSummaryDetail detailTotal = new ResponseProcessOwnerSummaryDetail
             {
                 Sequence = 3,
                 Title = "Total",
@@ -155,26 +155,26 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             data.Items.Add(detailBelow500K);
             data.Items.Add(detailAbove500K);
             data.Items.Add(detailTotal);
-            return new ResponseData<ResponseOwnerSummary>(EnumResponseResult.Success, "", "", data);
+            return new ResponseData<ResponseProcessOwnerSummary>(EnumResponseResult.Success, "", "", data);
         }
         catch (Exception e)
         {
-            result = new ResponseData<ResponseOwnerSummary>(EnumResponseResult.Error,"" ,"처리중 예외가 발생했습니다.", null);
+            result = new ResponseData<ResponseProcessOwnerSummary>(EnumResponseResult.Error,"" ,"처리중 예외가 발생했습니다.", null);
             e.LogError(_logger);
         }
 
         return result;
     }
 
-    private List<ResponseOwner> SumOwner(List<ResponseOwner> below500K, List<ResponseOwner> above500K)
+    private List<ResponseProcessOwner> SumOwner(List<ResponseProcessOwner> below500K, List<ResponseProcessOwner> above500K)
     {
-        List<ResponseOwner> result = new List<ResponseOwner>();
+        List<ResponseProcessOwner> result = new List<ResponseProcessOwner>();
 
         try
         {
             // 두개의 리스트를 합친다.
             return
-            below500K.Zip(above500K, (below, above) => new ResponseOwner
+            below500K.Zip(above500K, (below, above) => new ResponseProcessOwner
             {
                 CountryBusinessManagerId = below.CountryBusinessManagerId, // 둘은 동일한 ID를 가정
                 CountryBusinessManagerName = below.CountryBusinessManagerName, // 이름도 동일하다고 가정
@@ -203,14 +203,14 @@ public class BudgetProcessRepository : IBudgetProcessRepository
     /// <param name="beforeYear"></param>
     /// <param name="isAbove500K"></param>
     /// <returns></returns>
-    private List<ResponseOwner> ComputeOwner( 
+    private List<ResponseProcessOwner> ComputeOwner( 
         List<DbModelBudgetPlan> budgetPlans ,
         List<DbModelCountryBusinessManager> managers ,
         string year, string beforeYear ,
         bool isAbove500K
         )
     {
-        List<ResponseOwner> result = new List<ResponseOwner>();
+        List<ResponseProcessOwner> result = new List<ResponseProcessOwner>();
 
         try
         {
@@ -249,7 +249,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                 double budgetRemainingYear = budgetYear - budgetApprovedYearBeforeSum;
 
                 // 데이터를 만든다.
-                ResponseOwner add = new ResponseOwner
+                ResponseProcessOwner add = new ResponseProcessOwner
                 {
                     CountryBusinessManagerId = manager.Id ,
                     CountryBusinessManagerName = manager.Name ,

@@ -14,5 +14,5 @@ public interface IBudgetProcessRepository
     /// 정보만 나와야한다. 
     /// </summary>
     /// <returns></returns>
-    Task<ResponseData<ResponseOwnerSummary>> GetOwnerBudgetAsync();
+    Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetAsync();
 }

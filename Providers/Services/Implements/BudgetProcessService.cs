@@ -41,9 +41,9 @@ public class BudgetProcessService : IBudgetProcessService
     /// 정보만 나와야한다. 
     /// </summary>
     /// <returns></returns>
-    public async Task<ResponseData<ResponseOwnerSummary>> GetOwnerBudgetAsync()
+    public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetAsync()
     {
-        ResponseData<ResponseOwnerSummary> response;
+        ResponseData<ResponseProcessOwnerSummary> response;
         
         try
         {
@@ -51,7 +51,7 @@ public class BudgetProcessService : IBudgetProcessService
         }
         catch (Exception e)
         {
-            response = new ResponseData<ResponseOwnerSummary>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
+            response = new ResponseData<ResponseProcessOwnerSummary>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
             e.LogError(_logger);
         }
 

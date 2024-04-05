@@ -1,9 +1,9 @@
-namespace Models.Responses.Process.Owner;
+namespace Models.Responses.Process.BusinessUnit;
 
 /// <summary>
 /// 결과중 개별 Owner 별 통계 데이터 
 /// </summary>
-public class ResponseOwner
+public class ResponseProcessBusinessUnit
 {
     /// <summary>
     /// 컨트리 비지니스매니저 아이디 

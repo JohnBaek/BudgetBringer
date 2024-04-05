@@ -36,7 +36,7 @@ public class BudgetProcessController : Controller
     /// <returns></returns>
     [HttpGet("Owner")]
     [ClaimRequirement("Permission","process-result,process-result-view")]
-    public async Task<ResponseData<ResponseOwnerSummary>> GetOwnerBudgetAsync()
+    public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetAsync()
     {
         return await _budgetProcessService.GetOwnerBudgetAsync();
     }

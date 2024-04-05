@@ -1,9 +1,11 @@
-namespace Models.Responses.Process.Owner;
+using Models.Responses.Process.Owner;
+
+namespace Models.Responses.Process.BusinessUnit;
 
 /// <summary>
 /// 상세
 /// </summary>
-public class ResponseOwnerSummaryDetail
+public class ResponseProcessBusinessUnitSummaryDetail
 {
     /// <summary>
     /// 시퀀스 정보 , 총 3가지의 종류로 나가기때문
@@ -21,5 +23,5 @@ public class ResponseOwnerSummaryDetail
     /// <summary>
     /// 상세 정보 리스트
     /// </summary>
-    public List<ResponseOwner> Items { get; set; } = new List<ResponseOwner>();
+    public List<ResponseProcessBusinessUnit> Items { get; set; } = new List<ResponseProcessBusinessUnit>();
 }
