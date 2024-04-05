@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.DataModels;
 using Models.Responses;
+using Models.Responses.Process.ProcessBusinessUnit;
 using Models.Responses.Process.ProcessOwner;
 using Models.Responses.Users;
 using Providers.Repositories.Interfaces;
@@ -166,6 +167,124 @@ public class BudgetProcessRepository : IBudgetProcessRepository
         return result;
     }
 
+    /// <summary>
+    /// 비지니스 유닛별 프로세스 정보를 가져온다.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<ResponseData<ResponseProcessBusinessUnitSummary>> GetBusinessUnitBudgetAsync()
+    {
+        ResponseData<ResponseProcessBusinessUnitSummary> result = new ResponseData<ResponseProcessBusinessUnitSummary>();
+        try
+        {
+            // 로그인한 사용자의 정보를 가져온다.
+            DbModelUser? user = await _userRepository.GetAuthenticatedUser();
+
+            // 사용자 정보가 없는경우 
+            if(user == null)
+                return new ResponseData<ResponseProcessBusinessUnitSummary>(EnumResponseResult.Error,"ERROR_SESSION_TIMEOUT", "로그인 상태를 확인해주세요", null);
+            
+            // 로그인한 사용자의 모든 권한을 가져온다.
+            ResponseList<ResponseUserRole> roleResponse = await _userService.GetRolesByUserAsync();
+            
+            // 권한이 없을경우 
+            if(roleResponse.Items is {Count: 0} or null)
+                return new ResponseData<ResponseProcessBusinessUnitSummary>(EnumResponseResult.Error,"NOT_ALLOWED", "권한이 없습니다.", null);
+            
+            // 대상하는 Claim 을 찾는다.
+            List<string> foundClaims = FindClaims(roleResponse.Items);
+
+            // 전체 권한을 가지고 있는지 여부 
+            bool isPermitAll = foundClaims.Contains("process-result");
+
+            // 현재 날짜 
+            DateTime today = DateTime.Now;
+            
+            // 현재 년도를 가져온다.
+            string year = today.ToString("yyyy");
+            
+            // 지난 년도를 가져온다.
+            string beforeYear = today.AddYears(-1).ToString("yyyy");
+            
+            // 현재년도와 지난년도에 해당하는 예산 계획을 가져온다.
+            List<DbModelBudgetPlan> budgetPlans = await _dbContext.BudgetPlans
+                .AsNoTracking()
+                .ToListAsync();
+            
+            // 모든 BusinessUnit 을 조회한다. 
+            IQueryable<DbModelBusinessUnit> managersQuery = _dbContext.BusinessUnits
+                .AsNoTracking();
+            
+            // 전체 Permit 이 아닌경우 
+            if (!isPermitAll)
+            {
+                // 로그인한 사용자의 유닛정보를 조회한다.
+                IQueryable<Guid> userUnitIds =
+                    _dbContext.CountryBusinessManagerBusinessUnits
+                        .AsNoTracking()
+                        .Where(i => i.CountryBusinessManagerId == user.CountryBusinessManagerId)
+                        .Select(i => i.BusinessUnitId);
+                
+                // 본인의 부서만 확인한다.
+                managersQuery = managersQuery.Where(i => userUnitIds.Contains(i.Id));
+            }
+        
+            // 전체 비지니스 유닛을 조회한다.
+            List<DbModelBusinessUnit> managers = await managersQuery.ToListAsync();
+            
+            // 조회된 정보로 CHK 500K 이하 정보를 찾는다.
+            List<ResponseProcessBusinessUnit> below500K = ComputeBusinessUnit(  budgetPlans, managers, year, beforeYear , false );
+            
+            // 조회된 정보로 CHK 500K 이상 정보를 찾는다.
+            List<ResponseProcessBusinessUnit> above500K = ComputeBusinessUnit(  budgetPlans, managers, year, beforeYear , true );
+
+            // 객체를 생성한다.
+            ResponseProcessBusinessUnitSummary data = new ResponseProcessBusinessUnitSummary();
+            
+            // 전체 Summary 정보
+            // Below 500K 추가
+            ResponseProcessBusinessUnitSummaryDetail detailBelow500K = new ResponseProcessBusinessUnitSummaryDetail
+            {
+                Sequence = 1,
+                Title = "CAPEX below CHF500K",
+                Items = below500K
+            };
+            // Above 500K 추가
+            ResponseProcessBusinessUnitSummaryDetail detailAbove500K = new ResponseProcessBusinessUnitSummaryDetail
+            {
+                Sequence = 2,
+                Title = "CAPEX above CHF500K",
+                Items = above500K
+            };
+            // 전체 Sum
+            List<ResponseProcessBusinessUnit> total = SumUnit(below500K,above500K);
+            ResponseProcessBusinessUnitSummaryDetail detailTotal = new ResponseProcessBusinessUnitSummaryDetail
+            {
+                Sequence = 3,
+                Title = "Total",
+                Items = total
+            };
+            
+            // 모든 리스트를 주입한다.
+            data.Items.Add(detailBelow500K);
+            data.Items.Add(detailAbove500K);
+            data.Items.Add(detailTotal);
+            return new ResponseData<ResponseProcessBusinessUnitSummary>(EnumResponseResult.Success, "", "", data);
+        }
+        catch (Exception e)
+        {
+            result = new ResponseData<ResponseProcessBusinessUnitSummary>(EnumResponseResult.Error,"" ,"처리중 예외가 발생했습니다.", null);
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// 오너 정보를 합산한다.
+    /// </summary>
+    /// <param name="below500K"></param>
+    /// <param name="above500K"></param>
+    /// <returns></returns>
     private List<ResponseProcessOwner> SumOwner(List<ResponseProcessOwner> below500K, List<ResponseProcessOwner> above500K)
     {
         List<ResponseProcessOwner> result = new List<ResponseProcessOwner>();
@@ -184,6 +303,40 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                 BudgetApprovedYearSum = below.BudgetApprovedYearSum + above.BudgetApprovedYearSum,
                 BudgetRemainingYear = below.BudgetRemainingYear + above.BudgetRemainingYear
             }).ToList();
+        }
+        catch (Exception e)
+        {
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+    
+    
+    /// <summary>
+    /// 오너 정보를 합산한다.
+    /// </summary>
+    /// <param name="below500K"></param>
+    /// <param name="above500K"></param>
+    /// <returns></returns>
+    private List<ResponseProcessBusinessUnit> SumUnit(List<ResponseProcessBusinessUnit> below500K, List<ResponseProcessBusinessUnit> above500K)
+    {
+        List<ResponseProcessBusinessUnit> result = new List<ResponseProcessBusinessUnit>();
+
+        try
+        {
+            // 두개의 리스트를 합친다.
+            return
+                below500K.Zip(above500K, (below, above) => new ResponseProcessBusinessUnit
+                {
+                    BusinessUnitId = below.BusinessUnitId, // 둘은 동일한 ID를 가정
+                    BusinessUnitName = below.BusinessUnitName, // 이름도 동일하다고 가정
+                    BudgetYear = below.BudgetYear + above.BudgetYear,
+                    BudgetApprovedYearBefore = below.BudgetApprovedYearBefore + above.BudgetApprovedYearBefore,
+                    BudgetApprovedYear = below.BudgetApprovedYear + above.BudgetApprovedYear,
+                    BudgetApprovedYearSum = below.BudgetApprovedYearSum + above.BudgetApprovedYearSum,
+                    BudgetRemainingYear = below.BudgetRemainingYear + above.BudgetRemainingYear
+                }).ToList();
         }
         catch (Exception e)
         {
@@ -253,6 +406,84 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                 {
                     CountryBusinessManagerId = manager.Id ,
                     CountryBusinessManagerName = manager.Name ,
+                    BudgetYear = budgetYear,
+                    BudgetApprovedYearBefore = budgetApprovedYearBefore,
+                    BudgetApprovedYear = budgetApprovedYear,
+                    BudgetApprovedYearSum = budgetApprovedYearBeforeSum,
+                    BudgetRemainingYear = budgetRemainingYear
+                };
+                
+                result.Add(add);
+            }
+        }
+        catch (Exception e)
+        {
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+    
+    
+    /// <summary>
+    /// Below500K 의 정보를 찾아 바인딩한다.
+    /// </summary>
+    /// <param name="budgetPlans"></param>
+    /// <param name="units"></param>
+    /// <param name="year"></param>
+    /// <param name="beforeYear"></param>
+    /// <param name="isAbove500K"></param>
+    /// <returns></returns>
+    private List<ResponseProcessBusinessUnit> ComputeBusinessUnit( 
+        List<DbModelBudgetPlan> budgetPlans ,
+        List<DbModelBusinessUnit> units ,
+        string year, string beforeYear ,
+        bool isAbove500K
+        )
+    {
+        List<ResponseProcessBusinessUnit> result = new List<ResponseProcessBusinessUnit>();
+
+        try
+        {
+            // 모든 매니저에 대해 처리
+            foreach (DbModelBusinessUnit unit in units)
+            {
+                // 쿼리 베이스
+                IEnumerable<DbModelBudgetPlan> query = budgetPlans.Where(i =>
+                    i.BusinessUnitId == unit.Id &&
+                    i.IsAbove500K == isAbove500K 
+                ).ToList();
+                
+                // 당해년도 승인된/승인안됨 포함 전체 예산
+                double budgetYear = query.Sum(i => i.BudgetTotal);
+                
+                // 승인된 전 년도 전체 예산
+                double budgetApprovedYearBefore = query.Where(i =>
+                    i.Year == beforeYear &&
+                    i.IsApprovalDateValid
+                ).Sum(i => i.BudgetTotal);
+                
+                // 승인된 이번년도 전체 예산
+                double budgetApprovedYear = query.Where(i =>
+                    i.Year == year &&
+                    i.IsApprovalDateValid
+                ).Sum(i => i.BudgetTotal);
+                
+                // 승인된 작년 + 이번년도 전체 예산 의 합
+                double budgetApprovedYearBeforeSum = query.Where(i =>
+                    new []{ year, beforeYear }.Contains(i.Year) &&
+                    i.IsApprovalDateValid
+                ).Sum(i => i.BudgetTotal);
+                
+                // 2024 년 남은 Budget
+                // [올해 Budget] - [승인된 작년 + 이번년도 전체 예산]
+                double budgetRemainingYear = budgetYear - budgetApprovedYearBeforeSum;
+
+                // 데이터를 만든다.
+                ResponseProcessBusinessUnit add = new ResponseProcessBusinessUnit
+                {
+                    BusinessUnitId = unit.Id ,
+                    BusinessUnitName = unit.Name ,
                     BudgetYear = budgetYear,
                     BudgetApprovedYearBefore = budgetApprovedYearBefore,
                     BudgetApprovedYear = budgetApprovedYear,

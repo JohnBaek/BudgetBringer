@@ -2,6 +2,7 @@ using Features.Extensions;
 using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.Responses;
+using Models.Responses.Process.ProcessBusinessUnit;
 using Models.Responses.Process.ProcessOwner;
 using Providers.Repositories.Interfaces;
 using Providers.Services.Interfaces;
@@ -58,8 +59,24 @@ public class BudgetProcessService : IBudgetProcessService
         return response;
     }
 
-    public Task<ResponseData<ResponseProcessOwnerSummary>> GetBusinessUnitBudgetAsync()
+    /// <summary>
+    /// 비지니스 유닛별 프로세스 정보를 가져온다.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<ResponseData<ResponseProcessBusinessUnitSummary>> GetBusinessUnitBudgetAsync()
     {
-        throw new NotImplementedException();
+        ResponseData<ResponseProcessBusinessUnitSummary> response;
+        
+        try
+        {
+            response = await _repository.GetBusinessUnitBudgetAsync();
+        }
+        catch (Exception e)
+        {
+            response = new ResponseData<ResponseProcessBusinessUnitSummary>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
+            e.LogError(_logger);
+        }
+
+        return response;
     }
 }

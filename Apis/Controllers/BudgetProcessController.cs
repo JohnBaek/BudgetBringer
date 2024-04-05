@@ -2,6 +2,7 @@ using Features.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Responses;
+using Models.Responses.Process.ProcessBusinessUnit;
 using Models.Responses.Process.ProcessOwner;
 using Providers.Services.Interfaces;
 
@@ -39,5 +40,16 @@ public class BudgetProcessController : Controller
     public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetAsync()
     {
         return await _budgetProcessService.GetOwnerBudgetAsync();
+    }
+    
+    /// <summary>
+    /// BusinessUnit 별 Budget 프로세스 정보를 가져온다.
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("BusinessUnit")]
+    [ClaimRequirement("Permission","process-result,process-result-view")]
+    public async Task<ResponseData<ResponseProcessBusinessUnitSummary>> GetBusinessUnitBudgetAsync()
+    {
+        return await _budgetProcessService.GetBusinessUnitBudgetAsync();
     }
 }

@@ -1,4 +1,5 @@
 using Models.Responses;
+using Models.Responses.Process.ProcessBusinessUnit;
 using Models.Responses.Process.ProcessOwner;
 
 namespace Providers.Services.Interfaces;
@@ -22,5 +23,5 @@ public interface IBudgetProcessService
     /// 정보만 나와야한다. 
     /// </summary>
     /// <returns></returns>
-    Task<ResponseData<ResponseProcessOwnerSummary>> GetBusinessUnitBudgetAsync();
+    Task<ResponseData<ResponseProcessBusinessUnitSummary>> GetBusinessUnitBudgetAsync();
 }
