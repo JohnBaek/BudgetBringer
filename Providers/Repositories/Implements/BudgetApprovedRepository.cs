@@ -88,8 +88,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
     {
         Id = item.Id,
         IsAbove500K = item.IsAbove500K,
-        ApprovalDate = item.IsApprovalDateValid ? DateOnly.Parse(item.ApprovalDate).ToString("yyyy-MM-dd")
-                                                : item.ApprovalDate,
+        ApprovalDate = item.ApprovalDate ,
         Description = item.Description,
         SectorId = item.SectorId,
         BusinessUnitId = item.BusinessUnitId,
@@ -122,6 +121,13 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         ResponseList<ResponseBudgetApproved> result;
         try
         {
+            // 기본 Sort가 없을 경우 
+            if (requestQuery.SortOrders is { Count: 0 })
+            {
+                requestQuery.SortOrders.Add("Desc");
+                requestQuery.SortFields?.Add(nameof(ResponseBudgetApproved.ApprovalDate));
+            }
+            
             // 검색 메타정보 추가
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.IsAbove500K));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.ApprovalDate));

@@ -1,5 +1,7 @@
 using System.Reflection;
 using Apis.Middlewares;
+using Features;
+using Features.Debounce;
 using Features.Filters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -149,6 +151,7 @@ public static class Program
         services.AddScoped<IBudgetPlanRepository,BudgetPlanRepository>();
         services.AddScoped<IBudgetApprovedRepository,BudgetApprovedRepository>();
         services.AddScoped<IBudgetProcessRepository,BudgetProcessRepository>();
+        services.AddScoped<IBudgetAnalysisCacheRepository,BudgetAnalysisCacheRepository>();
         
         // 서비스 레이어 추가
         services.AddScoped<IAuthenticationService, AuthenticationService>();
@@ -163,7 +166,9 @@ public static class Program
         services.AddScoped<ICountryBusinessManagerService, CountryBusinessManagerService>();
         services.AddScoped<IDispatchService, DispatchService>();
         services.AddScoped<IBudgetProcessService,BudgetProcessService>();
+        services.AddScoped<IBudgetAnalysisCacheService,BudgetAnalysisCacheService>();
         
+        services.AddSingleton<DebounceManager>();
         services.AddTransient<IQueryService, QueryService>();
     }
 }

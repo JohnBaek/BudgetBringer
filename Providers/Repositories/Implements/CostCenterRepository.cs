@@ -100,6 +100,13 @@ public class CostCenterRepository : ICostCenterRepository
         ResponseList<ResponseCostCenter> result = new ResponseList<ResponseCostCenter>();
         try
         {
+            // 기본 Sort가 없을 경우 
+            if (requestQuery.SortOrders is { Count: 0 })
+            {
+                requestQuery.SortOrders.Add("Asc");
+                requestQuery.SortFields?.Add(nameof(ResponseCostCenter.Value));
+            }
+            
             // 검색 메타정보 추가
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCostCenter.Value));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegName));

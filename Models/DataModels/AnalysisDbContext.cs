@@ -49,6 +49,11 @@ public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelR
     /// 컨트리 비지니스 매니저(1) : 비지니스 유닛 (N) 관계 테이블 
     /// </summary>
     public required DbSet<DbModelCountryBusinessManagerBusinessUnit> CountryBusinessManagerBusinessUnits { get; set; }
+
+    /// <summary>
+    /// 통계 캐시 테이블
+    /// </summary>
+    public required DbSet<DbModelBudgetAnalysisCache>  BudgetAnalysisCache { get; set; }
     
     /// <summary>
     /// 생성자
@@ -149,6 +154,13 @@ public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelR
             entity.HasOne(bc => bc.BusinessUnit)
                 .WithMany(c => c.CountryBusinessManagers)
                 .HasForeignKey(bc => bc.BusinessUnitId);
+        });
+        modelBuilder.Entity<DbModelBudgetAnalysisCache>(entity =>
+        {
+            entity.ToTable("BudgetAnalysisCache");
+            entity.HasKey(i => i.Id);
+            entity.Property(i => i.JsonRaw)
+                .HasColumnType("LONGTEXT");
         });
     }
 }

@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Text;
+using Features;
+using Features.Debounce;
 using Features.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -57,6 +59,11 @@ public class BudgetPlanRepository : IBudgetPlanRepository
     private readonly IDispatchService _dispatchService;
 
     /// <summary>
+    /// 디바운서
+    /// </summary>
+    private readonly DebounceManager _debounceManager;
+
+    /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="logger">로거</param>
@@ -65,13 +72,15 @@ public class BudgetPlanRepository : IBudgetPlanRepository
     /// <param name="userRepository">유저 리파지토리</param>
     /// <param name="logActionWriteService">액션 로그 기록 서비스</param>
     /// <param name="dispatchService">디스패처 서비스</param>
+    /// <param name="debounceManager"></param>
     public BudgetPlanRepository(
         ILogger<BudgetPlanRepository> logger
         , AnalysisDbContext dbContext
         , IQueryService queryService
         , IUserRepository userRepository
         , ILogActionWriteService logActionWriteService
-        , IDispatchService dispatchService)
+        , IDispatchService dispatchService
+        , DebounceManager debounceManager)
     {
         _logger = logger;
         _dbContext = dbContext;
@@ -79,6 +88,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
         _userRepository = userRepository;
         _logActionWriteService = logActionWriteService;
         _dispatchService = dispatchService;
+        _debounceManager = debounceManager;
     }
 
     
@@ -89,7 +99,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
         {
             Id = item.Id,
             IsAbove500K = item.IsAbove500K ,
-            ApprovalDate = item.IsApprovalDateValid ? DateOnly.Parse(item.ApprovalDate).ToString("yyyy-MM-dd") : item.ApprovalDate  ,
+            ApprovalDate = item.ApprovalDate ,
             ApproveDateValue = item.ApproveDateValue ,
             IsApprovalDateValid = item.IsApprovalDateValid ,
             Description = item.Description ,
@@ -120,6 +130,13 @@ public class BudgetPlanRepository : IBudgetPlanRepository
         ResponseList<ResponseBudgetPlan> result = new ResponseList<ResponseBudgetPlan>();
         try
         {
+            // 기본 Sort가 없을 경우 
+            if (requestQuery.SortOrders is { Count: 0 })
+            {
+                requestQuery.SortOrders.Add("Desc");
+                requestQuery.SortFields?.Add(nameof(ResponseBudgetApproved.ApprovalDate));
+            }
+            
             // 검색 메타정보 추가
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetPlan.IsAbove500K));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.ApprovalDate));
@@ -136,7 +153,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegDate));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.RegDate));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModDate));
-
+            
             // 결과를 반환한다.
             return await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
         }
@@ -247,7 +264,6 @@ public class BudgetPlanRepository : IBudgetPlanRepository
     
         return result;
     }
-
    
     /// <summary>
     /// 데이터를 추가한다.

@@ -28,23 +28,19 @@ public class RequestQuery
     /// <summary>
     /// (사용자로부터 입력 받음) 검색 키워드 
     /// </summary>
-    public IReadOnlyList<string>? SearchKeywords { get; init; }
-    
+    public List<string>? SearchKeywords { get; init; } = new List<string>();
     /// <summary>
     ///(사용자로부터 입력 받음)  검색 필드
     /// </summary>
-    public IReadOnlyList<string>? SearchFields { get; init; }
-    
+    public List<string>? SearchFields { get; init; } = new List<string>();   
     /// <summary>
     /// (사용자로부터 입력 받음) Sort 종류 
     /// </summary>
-    public IReadOnlyList<string>? SortOrders { get; init; }
-    
+    public List<string>? SortOrders { get; init; } = new List<string>();   
     /// <summary>
     ///(사용자로부터 입력 받음)  Sort 필드
     /// </summary>
-    public IReadOnlyList<string>? SortFields { get; init; }
-    
+    public List<string>? SortFields { get; init; } = new List<string>();   
 
     /// <summary>
     /// 검색 메타 정보 

@@ -100,6 +100,13 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
         ResponseList<ResponseCountryBusinessManager> result = new ResponseList<ResponseCountryBusinessManager>();
         try
         {
+            // 기본 Sort가 없을 경우 
+            if (requestQuery.SortOrders is { Count: 0 })
+            {
+                requestQuery.SortOrders.Add("Asc");
+                requestQuery.SortFields?.Add(nameof(ResponseCountryBusinessManager.Name));
+            }
+            
             // 검색 메타정보 추가
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCountryBusinessManager.Name));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegName));

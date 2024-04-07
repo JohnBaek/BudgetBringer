@@ -99,6 +99,13 @@ public class BusinessUnitRepository : IBusinessUnitRepository
         ResponseList<ResponseBusinessUnit> result = new ResponseList<ResponseBusinessUnit>();
         try
         {
+            // 기본 Sort가 없을 경우 
+            if (requestQuery.SortOrders is { Count: 0 })
+            {
+                requestQuery.SortOrders.Add("Asc");
+                requestQuery.SortFields?.Add(nameof(ResponseBusinessUnit.Name));
+            }
+            
             // 검색 메타정보 추가
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBusinessUnit.Name));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegName));
