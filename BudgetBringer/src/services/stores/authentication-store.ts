@@ -1,5 +1,7 @@
 import {defineStore} from "pinia";
 import {ResponseUser} from "../../models/responses/users/response-user";
+import {authenticationService} from "../api-services/authentication-service";
+import {EnumResponseResult} from "../../models/enums/enum-response-result";
 
 
 /**
@@ -25,7 +27,7 @@ export const AuthenticationStore = defineStore('authenticated', {
   state: (): AuthenticationState => {
     return {
       isAuthenticated: false,
-      authenticatedUser: new ResponseUser()
+      authenticatedUser: JSON.parse(localStorage.getItem('authenticatedUser') || '{}')
     }
   },
   actions: {
@@ -36,6 +38,9 @@ export const AuthenticationStore = defineStore('authenticated', {
     updateAuthenticated( userInformation: ResponseUser) {
       this.isAuthenticated = true;
       this.authenticatedUser = userInformation;
+
+      // 로컬 스토리지에 사용자의 정보를 저장한다.
+      localStorage.setItem('authenticatedUser', JSON.stringify(userInformation));
     },
 
     /**
@@ -43,7 +48,34 @@ export const AuthenticationStore = defineStore('authenticated', {
      */
     clearAuthenticated() {
       this.isAuthenticated = false;
-      this.authenticatedUser = new ResponseUser()
+      this.authenticatedUser = new ResponseUser();
+
+      // 로컬 스토리지에 사용자의 정보를 제거한다.
+      localStorage.removeItem('authenticatedUser')
+    },
+
+
+    /**
+     * Permission 여부를 확인한다.
+     * @param permissions
+     */
+    hasPermission(permissions: Array<string>): boolean {
+      let isHasPermission : boolean = false;
+
+      // 모든 역할에 대해 검색한다.
+      for (const role of this.authenticatedUser.roles) {
+
+        console.log('role.claims',role.claims);
+
+        // Claim 값에서 값이 있는지 찾는다.
+        isHasPermission = role.claims.some(i => permissions.includes(i.value));
+
+        // 찾은경우
+        if(isHasPermission)
+          break;
+      }
+
+      return isHasPermission;
     }
   }
 });

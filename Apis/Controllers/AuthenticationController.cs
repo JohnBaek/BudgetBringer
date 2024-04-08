@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Models.DataModels;
 using Models.Requests.Login;
 using Models.Responses;
+using Models.Responses.Users;
 using Providers.Services;
 using Providers.Services.Interfaces;
 
@@ -47,7 +48,7 @@ public class AuthenticationController
     /// <param name="request">로그인 정보</param>
     /// <returns>로그인결과</returns>
     [HttpPost("Login")]
-    public async Task<Response> TryLogin(RequestLogin request)
+    public async Task<ResponseData<ResponseUser>> TryLogin(RequestLogin request)
     {
         return await _authenticationService.TryLoginAsync(request);
     }

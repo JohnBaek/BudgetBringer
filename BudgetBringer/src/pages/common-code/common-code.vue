@@ -7,6 +7,7 @@ import {log} from "node:util";
 import {BudgetPlanGridData} from "../budget/budget-plan/budget-plan-grid-data";
 import CommonCodeGrid from "./common-code-grid.vue";
 import {CommonCodeGridDataModel} from "./common-code-grid-data";
+import {AuthenticationStore} from "../../services/stores/authentication-store";
 
 /**
  * 통신중 여부
@@ -55,6 +56,13 @@ const addUnderCodeModel = ref({
   description: ''
 });
 
+
+/**
+ * 인증 상태 관리
+ */
+const authenticationStore = AuthenticationStore();
+
+console.log('authenticationStore.authenticatedUser',authenticationStore.authenticatedUser);
 
 
 /**

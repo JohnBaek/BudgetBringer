@@ -58,4 +58,14 @@ public class UserController : Controller
     {
         return await _userService.GetRolesByUserAsync();
     }
+    
+    /// <summary>
+    /// 로그인한 사용자의  보를 가져온다.
+    /// </summary>
+    /// <returns>로그인결과</returns>
+    [HttpGet("")]
+    public async Task<ResponseData<ResponseUser>> GetUserAsync()
+    {
+        return await _userService.GetUserAsync();
+    }
 }

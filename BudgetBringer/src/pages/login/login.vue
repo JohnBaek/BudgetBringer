@@ -2,11 +2,11 @@
 import LoginLogo from "./login-logo.vue";
 import {RequestLogin} from "../../models/requests/login/request-login";
 import {ref} from "vue";
-import {loginService} from "../../services/login-service";
+import {authenticationService} from "../../services/api-services/authentication-service";
 import {EnumResponseResult} from "../../models/enums/enum-response-result";
 import {messageService} from "../../services/message-service";
 import router from "../../router";
-import LoginDialogConfirmLogout from "./login-dialog-confirm-logout.vue";
+import {AuthenticationStore} from "../../services/stores/authentication-store";
 
 /**
  * 통신중 여부
@@ -19,6 +19,12 @@ const inCommunication = ref(false);
 const request = ref(new RequestLogin('',''));
 
 /**
+ * 인증 상태 관리
+ */
+const authenticationStore = AuthenticationStore();
+
+
+/**
  * 로그인 요청
  */
 const requestLoginAsync = async () => {
@@ -29,23 +35,24 @@ const requestLoginAsync = async () => {
   // 통신중 플래그를 변경한다.
   inCommunication.value = true;
 
-  // TODO 로그인 테스트를 위한 Fake 타임아웃
-  setTimeout(async () => {
-    // 로그인을 시도 한다.
-    const response = await loginService.requestLoginAsync(request.value);
+  // 서버로 통신한다.
+  authenticationService.tryLoginAsync(request.value).subscribe({
+    async next(response) {
+      // 요청에 실패한경우
+      if (response.result != EnumResponseResult.success) {
+        messageService.showError(`[${response.code}] ${response.message}`);
+        return;
+      }
 
-    // 통신중 플래그 원위치
-    inCommunication.value = false;
+      // 데이터를 업데이트한다.
+      authenticationStore.updateAuthenticated(response.data);
+      await router.push('/budget/process');
+    },
+    complete() {
+      inCommunication.value = false;
+    },
+  })
 
-    // 실패한경우
-    if(response.result !== EnumResponseResult.success) {
-      messageService.showError(response.message);
-      return;
-    }
-
-    // 메인 페이지로 이동한다.
-    await router.push('/common-code');
-  }, 1000 * 2);
 };
 </script>
 

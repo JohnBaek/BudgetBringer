@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import CommonLogo from "../shared/common-logo.vue";
-import {inject, onBeforeMount, ref} from "vue";
+import {inject, onBeforeMount, Ref, ref} from "vue";
 import {DrawerLink} from "./models/drawer-link";
 import {RoutingStore} from "../stores/routing-store";
 import LoginDialogConfirmLogout from "./login/login-dialog-confirm-logout.vue";
+import {AuthenticationStore} from "../services/stores/authentication-store";
+import {ResponseUser} from "../models/responses/users/response-user";
 
 /**
  * Drawer 상태
@@ -43,10 +45,13 @@ const clickMenu = (drawerLink: DrawerLink) => {
   emits('changeMenu' , drawerLink);
 
   // drawer 를 닫는다.
-  miniDrawer.value = false;
+  (miniDrawer as Ref<boolean>).value = false;
 }
 
-
+/**
+ * 로그인한 사용자 정보
+ */
+const authenticatedUser = ref<ResponseUser>();
 
 /**
  * 로그아웃 다이얼로그
@@ -57,7 +62,26 @@ const logout = ref(false);
  * 마운팅 되기전 핸들링
  */
 onBeforeMount(() =>{
-  links.value = routingStore.getRoutingList();
+  // 모든 라우팅을 가져온다.
+  const routes = routingStore.getRoutingList();
+
+  // 인증 상태관리를 가져온다.
+  const authenticationStore = AuthenticationStore();
+
+  // 인증상태가 반영된 라우팅 정보
+  const routingWithClaims = [];
+
+  // 모든 라우팅정보에 대해 처리한다.
+  for (const route of routes) {
+    // 권한이 있는경우
+    if(authenticationStore.hasPermission((route as DrawerLink).permissions)) {
+      routingWithClaims.push(route);
+    }
+  }
+  links.value = routingWithClaims;
+
+  // 로그인한 사용자 정보를 가져온다.
+  authenticatedUser.value = authenticationStore.authenticatedUser as ResponseUser;
 })
 </script>
 
@@ -70,7 +94,7 @@ onBeforeMount(() =>{
       <v-spacer></v-spacer>
       <span class="mb-5"></span>
       <span class="text-grey">
-        <b class="text-black">관리자님</b> 안녕하세요.
+        <b class="text-black">{{authenticatedUser.name}} 님</b> 안녕하세요.
       </span>
     </v-container>
 
@@ -90,6 +114,16 @@ onBeforeMount(() =>{
           <v-label class="ml-5 text-shades-black"><b>{{item.title}}</b></v-label>
         </v-list-item-title>
       </v-list-item>
+
+      <v-expansion-panels elevation="0">
+        <v-expansion-panel
+          elevation="0"
+          v-for="i in 3"
+          :key="i"
+          text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+          title="Item"
+        ></v-expansion-panel>
+      </v-expansion-panels>
     </v-list>
 
     <template v-slot:append>

@@ -38,6 +38,11 @@ public class UserService : IUserService
     /// IHttpContextAccessor
     /// </summary>
     private readonly IHttpContextAccessor _httpContextAccessor;
+    
+    /// <summary>
+    /// 사용자 리파지토리
+    /// </summary>
+    private readonly IUserRepository _userRepository;
 
     /// <summary>
     /// 생성자
@@ -46,16 +51,18 @@ public class UserService : IUserService
     /// <param name="userManager">사용자 매니저</param>
     /// <param name="roleManager">역할 매니저</param>
     /// <param name="httpContextAccessor">IHttpContextAccessor</param>
+    /// <param name="userRepository"></param>
     public UserService( 
         ILogger<UserService> logger
         , UserManager<DbModelUser> userManager
         , RoleManager<DbModelRole> roleManager
-        , IHttpContextAccessor httpContextAccessor)
+        , IHttpContextAccessor httpContextAccessor, IUserRepository userRepository)
     {
         _logger = logger;
         _userManager = userManager;
         _roleManager = roleManager;
         _httpContextAccessor = httpContextAccessor;
+        _userRepository = userRepository;
     }
     
     /// <summary>
@@ -131,6 +138,34 @@ public class UserService : IUserService
             e.LogError(_logger);
         }
     
+        return result;
+    }
+
+    /// <summary>
+    /// 로그인한 사용자의 정보를 가져온다.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<ResponseData<ResponseUser>> GetUserAsync()
+    {
+        ResponseData<ResponseUser> result;
+
+        try
+        {
+            DbModelUser? user = await _userRepository.GetAuthenticatedUser();
+            if(user == null)
+                return new ResponseData<ResponseUser>{ Code = "ERR", Message = "사용자의 정보가 존재하지 않습니다." };
+
+            ResponseUser resultUser = new ResponseUser();
+            resultUser.Name = user.DisplayName;
+
+            return new ResponseData<ResponseUser>(EnumResponseResult.Success, "", "", resultUser);
+        }
+        catch (Exception e)
+        {
+            result = new ResponseData<ResponseUser>{ Code = "ERR", Message = "처리중 예외가 발생했습니다." };
+            e.LogError(_logger);
+        }
+
         return result;
     }
 }

@@ -31,6 +31,11 @@ public class AuthenticationService : IAuthenticationService
     /// 사인인 매니저 
     /// </summary>
     private readonly ISignInService<DbModelUser> _signInService;
+    
+    /// <summary>
+    /// 유저 리파지토리
+    /// </summary>
+    private readonly IUserService _userService;
 
     /// <summary>
     /// 생성자
@@ -38,11 +43,12 @@ public class AuthenticationService : IAuthenticationService
     /// <param name="logger">로거</param>
     /// <param name="userRepository">사용자 리파지토리</param>
     /// <param name="signInService"></param>
-    public AuthenticationService( ILogger<AuthenticationService> logger, IUserRepository userRepository, ISignInService<DbModelUser> signInService)
+    public AuthenticationService( ILogger<AuthenticationService> logger, IUserRepository userRepository, ISignInService<DbModelUser> signInService, IUserService userService)
     {
         _logger = logger;
         _userRepository = userRepository;
         _signInService = signInService;
+        _userService = userService;
     }
     
     /// <summary>
@@ -90,13 +96,14 @@ public class AuthenticationService : IAuthenticationService
                     Message = loginResult.Message
                 };
             
+            
             // 성공한 경우 
             return new ResponseData<ResponseUser>
             {
                 Result = EnumResponseResult.Success ,
                 IsAuthenticated = true,
                 Code = loginResult.Code,
-                Data = new ResponseUser{ Name = loginUser.DisplayName},
+                Data = new ResponseUser{ Name = loginUser.DisplayName , Roles = (await _userService.GetRolesByUserAsync()).Items! },
                 Message = loginResult.Message
             };
         }

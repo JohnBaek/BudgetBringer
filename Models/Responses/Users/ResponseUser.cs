@@ -15,5 +15,5 @@ public class ResponseUser
     /// <summary>
     /// 사용자 권한
     /// </summary>
-    public List<string> Roles { get; set; } = new List<string>();
+    public List<ResponseUserRole> Roles { get; set; } = new List<ResponseUserRole>();
 }

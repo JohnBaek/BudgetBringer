@@ -17,6 +17,7 @@ export default defineConfig({
     VueRouter({
       dts: 'src/typed-router.d.ts',
     }),
+
     Layouts(),
     AutoImport({
       imports: [
@@ -70,5 +71,12 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5048/api', // API 서버 주소
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
   },
 })

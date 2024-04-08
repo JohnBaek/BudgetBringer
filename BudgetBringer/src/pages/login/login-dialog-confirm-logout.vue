@@ -1,11 +1,27 @@
 <script setup lang="ts">
-  import router from "../../router";
+import router from "../../router";
+import {authenticationService} from "../../services/api-services/authentication-service";
+import {AuthenticationStore} from "../../services/stores/authentication-store";
+
+/**
+   * 인증 상태 관리
+   */
+  const authenticationStore = AuthenticationStore();
 
   /**
-   * 로그아웃
+   * 로그아웃을 처리한다.
    */
   const logout = () => {
-    router.push('/login');
+    // 서버로 통신한다.
+    authenticationService.logout().subscribe({
+      next() {
+        // 데이터를 업데이트한다.
+        authenticationStore.clearAuthenticated();
+      },
+      async complete() {
+        await router.push('/login');
+      },
+    })
   }
 </script>
 
