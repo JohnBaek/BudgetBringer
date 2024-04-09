@@ -11,10 +11,7 @@ public class ResponseProcessBusinessUnitSummaryDetail
     public int Sequence { get; set; } = 0;
 
     /// <summary>
-    /// 타이틀 정보
-    /// CAPEX below CHF500K
-    /// CAPEX above CHF500K
-    /// Total CAPEX
+    /// 타이틀 정보 CAPEX below CHF500K CAPEX above CHF500K Total CAPEX
     /// </summary>
     public string Title { get; set; } = "";
 

@@ -4,7 +4,7 @@ using Models.Common.Enums;
 namespace Models.Requests.Budgets;
 
 /// <summary>
-/// 예산정보 승인 정보 응답 클래스
+/// 예산정보 승인 정보 요청 클래스
 /// </summary>
 public class RequestBudgetApproved : RequestBase
 {

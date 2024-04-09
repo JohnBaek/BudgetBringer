@@ -13,10 +13,7 @@ public class ResponseProcessApprovedSummaryDetail
     public int Sequence { get; set; } = 0;
 
     /// <summary>
-    /// 타이틀 정보
-    /// - 전년도 2023FY
-    /// - 올해 2024FY
-    /// - 전년도 2023FY & 올해 2024FY
+    /// 타이틀 정보 - 전년도 2023FY - 올해 2024FY - 전년도 2023FY & 올해 2024FY
     /// </summary>
     public string Title { get; set; } = "";
 

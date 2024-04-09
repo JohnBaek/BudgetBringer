@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Models.Requests.Budgets;
 
 /// <summary>
-/// 코스트 센터 응답 모델
+/// 코스트 센터 요청 모델
 /// </summary>
 public class RequestCostCenter : RequestBase
 {

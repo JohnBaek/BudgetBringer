@@ -16,33 +16,27 @@ public class ResponseProcessBusinessUnit
     public string BusinessUnitName { get; set; }  = "";
 
     /// <summary>
-    /// 올년도 Budget ( ex: 2024FY )
-    /// 당해년도 전체 예산
+    /// 올년도 Budget ( ex: 2024FY ) 당해년도 전체 예산
     /// </summary>
     public double BudgetYear { get; set; }
     
     /// <summary>
-    /// 작년 Budget 확정된 것 ( ex: 2023FY )
-    /// 승인된 전 년도 전체 예산
+    /// 작년 Budget 확정된 것 ( ex: 2023FY ) 승인된 전 년도 전체 예산
     /// </summary>
     public double BudgetApprovedYearBefore { get; set; }
     
     /// <summary>
-    /// 올해 Budget 확정된 것 ( ex: 2024FY )
-    /// 승인된 이번년도 전체 예산
+    /// 올해 Budget 확정된 것 ( ex: 2024FY ) 승인된 이번년도 전체 예산
     /// </summary>
     public double BudgetApprovedYear { get; set; }
     
     /// <summary>
-    /// 올해 & 작년 Budget 확정된 것 ( ex: 2023FY&2024FY )
-    /// 승인된 작년 + 이번년도 전체 예산
+    /// 올해 & 작년 Budget 확정된 것 ( ex: 2023FY&2024FY ) 승인된 작년 + 이번년도 전체 예산
     /// </summary>
     public double BudgetApprovedYearSum { get; set; }
     
     /// <summary>
-    /// 올해 남은 예산 ( BudgetYear - BudgetApprovedYearSum )
-    /// 2024 년 남은 Budget
-    /// [올해 Budget] - [승인된 작년 + 이번년도 전체 예산]
+    /// 올해 남은 예산 ( BudgetYear - BudgetApprovedYearSum ) 2024 년 남은 Budget [올해 Budget] - [승인된 작년 + 이번년도 전체 예산]
     /// </summary>
     public double BudgetRemainingYear { get; set; }
 }
