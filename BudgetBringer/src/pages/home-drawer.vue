@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CommonLogo from "../shared/common-logo.vue";
 import {inject, onBeforeMount, Ref, ref} from "vue";
-import {DrawerLink} from "./models/drawer-link";
+import {DrawerLink} from "./models-view/drawer-link";
 import {RoutingStore} from "../stores/routing-store";
 import LoginDialogConfirmLogout from "./login/login-dialog-confirm-logout.vue";
 import {AuthenticationStore} from "../services/stores/authentication-store";
@@ -20,7 +20,7 @@ const routingStore = RoutingStore();
 /**
  * 메뉴정보
  */
-const links = ref([]);
+const links = ref(Array<DrawerLink>());
 
 /**
  * 미니 Drawer
@@ -41,6 +41,10 @@ const emits = defineEmits<{
  * @param drawerLink Drawer 링크 정보
  */
 const clickMenu = (drawerLink: DrawerLink) => {
+  // 컨테이너(그룹) 인경우
+  if(drawerLink.isContainerMenu)
+    return;
+
   // changeMenu 를 notify 한다.
   emits('changeMenu' , drawerLink);
 
@@ -94,7 +98,7 @@ onBeforeMount(() =>{
       <v-spacer></v-spacer>
       <span class="mb-5"></span>
       <span class="text-grey">
-        <b class="text-black">{{authenticatedUser.name}} 님</b> 안녕하세요.
+        <b class="text-black">{{(authenticatedUser as ResponseUser).name}} 님</b> 안녕하세요.
       </span>
     </v-container>
 
@@ -109,21 +113,36 @@ onBeforeMount(() =>{
         link
         @click="clickMenu(item)"
       >
-        <v-list-item-title>
+        <!-- 그룹 메뉴가 아닌경우 ( 일반 메뉴 ) -->
+        <v-list-item-title v-if="item.isContainerMenu == false">
           <v-icon class="mb-1">{{item.icon}}</v-icon>
           <v-label class="ml-5 text-shades-black"><b>{{item.title}}</b></v-label>
         </v-list-item-title>
-      </v-list-item>
 
-      <v-expansion-panels elevation="0">
-        <v-expansion-panel
-          elevation="0"
-          v-for="i in 3"
-          :key="i"
-          text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-          title="Item"
-        ></v-expansion-panel>
-      </v-expansion-panels>
+        <!-- 그룹메뉴인 경우 -->
+        <v-list-group v-if="item.isContainerMenu">
+          <template v-slot:activator="{ props }">
+            <v-list-item
+              v-bind="props"
+            >
+              <v-list-item-title>
+                <v-label class="ml-7 text-shades-black"><b>{{item.title}}</b></v-label>
+              </v-list-item-title>
+            </v-list-item>
+          </template>
+
+          <v-list-item
+            v-for="(item, key) in item.childMenus"
+            :key="key"
+            link
+            @click="clickMenu(item)"
+          >
+            <v-list-item-title>
+              <v-label class="ml-3 text-shades-black"><b>{{item.title}}</b></v-label>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list-group>
+      </v-list-item>
     </v-list>
 
     <template v-slot:append>
@@ -158,7 +177,7 @@ onBeforeMount(() =>{
                 :value="item"
                 @click="clickMenu(item)"
         >
-          <v-list-item>
+          <v-list-item v-if="item.isContainerMenu == false">
             <v-btn  variant="flat">
               <v-list-item-title class="d-flex align-center">
                 <v-icon>{{item.icon}}</v-icon>
@@ -166,7 +185,34 @@ onBeforeMount(() =>{
               </v-list-item-title>
             </v-btn>
           </v-list-item>
+
+          <!-- 그룹메뉴인 경우 -->
+          <v-list-group v-if="item.isContainerMenu">
+            <template v-slot:activator="{ props }">
+              <v-list-item
+                v-bind="props"
+              >
+                <v-list-item-title>
+                  <h3 class="ml-11">{{item.title}}</h3>
+                </v-list-item-title>
+              </v-list-item>
+            </template>
+
+            <v-list-item
+              v-for="(item, key) in item.childMenus"
+              :key="key"
+              link
+              @click="clickMenu(item)"
+            >
+              <v-list-item-title>
+                <h3 class="ml-7 mt-2">{{item.title}}</h3>
+              </v-list-item-title>
+            </v-list-item>
+          </v-list-group>
         </v-list>
+
+
+
         <v-list>
           <v-list-item>
             <v-row>
@@ -204,4 +250,9 @@ onBeforeMount(() =>{
   padding: 20px;
   border-radius: 10px;
 }
+
+.custom-expansion-panel .v-expansion-panel-header {
+  border: none !important;
+}
+
 </style>

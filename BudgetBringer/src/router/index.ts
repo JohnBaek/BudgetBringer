@@ -130,7 +130,7 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
     // 인증여부 확인
     if (!response.isAuthenticated) {
       authenticationStore.clearAuthenticated();
-      messageService.showError("인증정보가 없거나 만료되었습니다.");
+      // messageService.showError("인증정보가 없거나 만료되었습니다.");
       next("/Login");
     }
 
@@ -144,7 +144,7 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
       console.log('requiredPermissions',requiredPermissions);
 
       // 권한을 가지고있는지 확인한다.
-      const hasPermission = requiredPermissions.some(permission => authenticationStore.hasPermission(permission));
+      const hasPermission = requiredPermissions.some(permission => authenticationStore.hasPermission([permission]));
 
       // 권한이 없는경우
       if(!hasPermission) {

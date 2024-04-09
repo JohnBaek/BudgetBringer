@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {DrawerLink} from "../pages/models/drawer-link";
+import {DrawerLink} from "../pages/models-view/drawer-link";
 import {toRaw} from "vue";
 
 interface RoutingState {
@@ -19,11 +19,16 @@ export const RoutingStore = defineStore('routingStore', {
       return  {
         currentRoute : null ,
         drawerRouting: [
-          new DrawerLink('공통코드', '공통코드를 관리합니다.', '/common-code', 'mdi-code-tags', ['common-code']),
-          new DrawerLink('예산계획', '예산계획을 세우고 작성합니다.', '/budget/plan', 'mdi-notebook', ['budget-plan']),
-          new DrawerLink('예산승인', '계획된 예산을 승인합니다.', '/budget/approved', 'mdi-check', ['budget-approved']),
-          new DrawerLink('예산진행현황', '예산 사용 진행 현황에 대해서 확인합니다.', '/budget/process', 'mdi-currency-usd', ['process-result','process-result-view']),
-          new DrawerLink('액션로그', '사용자 작업 로그에대해서 확인합니다.', '/logs/action', 'mdi-notebook-minus-outline', ['log-action','log-action-view']),
+          new DrawerLink('예산계획', '예산계획을 세우고 작성합니다.', '/budget/plan', 'mdi-notebook', ['budget-plan'],false,[]),
+          new DrawerLink('예산승인', '계획된 예산을 승인합니다.', '/budget/approved', 'mdi-check', ['budget-approved'],false,[]),
+          new DrawerLink('예산진행현황', '예산 사용 진행 현황에 대해서 확인합니다.', '/budget/process', 'mdi-currency-usd', ['process-result','process-result-view'],false,[]),
+          new DrawerLink('액션로그', '사용자 작업 로그에대해서 확인합니다.', '/logs/action', 'mdi-notebook-minus-outline', ['log-action','log-action-view'],false,[]),
+          new DrawerLink('공통코드관리', '', '', 'mdi-code-tags', ['common-code'] , true,[
+            new DrawerLink('CostCenter', 'CostCenter 를 관리합니다.', '', '', ['common-code'] , false,[]),
+            new DrawerLink('BusinessUnit', 'BusinessUnit 를 관리합니다.', '', '', ['common-code'] , false,[]),
+            new DrawerLink('Sector', 'Sector 를 관리합니다.', '', '', ['common-code'] , false,[]),
+            new DrawerLink('CBM', 'CountryBusinessManager 를 관리합니다.', '', '', ['common-code'] , false,[]),
+          ]),
         ]
       }
   },

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import HomeDrawer from "./home-drawer.vue";
-import {DrawerLink} from "./models/drawer-link";
+import {DrawerLink} from "./models-view/drawer-link";
 import router from "../router";
 import {onBeforeMount, onMounted, provide, ref, watch} from "vue";
 import {useRoute} from "vue-router";

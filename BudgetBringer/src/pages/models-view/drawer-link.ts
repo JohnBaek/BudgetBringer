@@ -9,14 +9,18 @@ export class DrawerLink {
    * @param route 라우팅 패스
    * @param icon 아이콘 정보
    * @param permissions 상세 권한 정보
+   * @param isContainerMenu
+   * @param childMenus
    */
 
-  constructor(title: string,description: string,  route: string, icon: string, permissions:Array<string>) {
+  constructor(title: string,description: string,  route: string, icon: string, permissions:Array<string>,  isContainerMenu:boolean, childMenus:Array<DrawerLink>) {
     this.title = title;
     this.description = description;
     this.route = route;
     this.icon = icon;
     this.permissions = permissions;
+    this.isContainerMenu = isContainerMenu;
+    this.childMenus = childMenus;
   }
 
   /**
@@ -43,4 +47,14 @@ export class DrawerLink {
    * 설명
    */
   public description: string = "";
+
+  /**
+   * 컨테이너 메뉴 여부
+   */
+  public isContainerMenu: boolean = false;
+
+  /**
+   * 차일드 메뉴
+   */
+  public childMenus: Array<DrawerLink> = [];
 }
