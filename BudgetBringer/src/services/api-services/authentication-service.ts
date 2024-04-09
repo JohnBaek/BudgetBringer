@@ -27,7 +27,6 @@ export const authenticationService  = {
     return HttpService.requestGet(`${baseURI}/Logout`);
   },
 
-
   /**
    * 로그인여부를 확인한다.
    */

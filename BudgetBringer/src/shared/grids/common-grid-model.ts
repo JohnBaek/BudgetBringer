@@ -15,6 +15,7 @@ export abstract class CommonGridModel<T> {
    */
   isUseInsert : boolean;
 
+
   /**
    * 넘버 포매터
    * @param params

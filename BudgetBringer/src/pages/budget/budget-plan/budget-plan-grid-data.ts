@@ -1,13 +1,14 @@
 import {CommonGridModel} from "../../../shared/grids/common-grid-model";
+import {ResponseBudgetPlan} from "../../../models/responses/budgets/response-budget-plan";
 
 /**
  * 예산 그리드 모델
  */
-export class BudgetPlanGridData extends CommonGridModel<BudgetGridRowDataModel>{
+export class BudgetPlanGridData extends CommonGridModel<ResponseBudgetPlan>{
   /**
    * 표현할 그리드의 RowData 를 받는다.
    */
-  items : Array<BudgetGridRowDataModel>;
+  items : ResponseBudgetPlan[];
   /**
    * 컬럼정보
    */
@@ -25,7 +26,7 @@ export class BudgetPlanGridData extends CommonGridModel<BudgetGridRowDataModel>{
     this.columDefined = [
       // 승인일
       {
-        field: "ApprovalDate",
+        field: "approvalDate",
         headerClass: 'ag-grids-custom-header',
         headerName:"Approval Date" ,
         showDisabledCheckboxes: true,
@@ -33,42 +34,42 @@ export class BudgetPlanGridData extends CommonGridModel<BudgetGridRowDataModel>{
       },
       // 섹터
       {
-        field: "Sector",
+        field: "sectorName",
         headerClass: 'ag-grids-custom-header',
         headerName:"Sector",
         width:100,
       },
       // 부서
       {
-        field: "Bu",
+        field: "businessUnitName",
         headerClass: 'ag-grids-custom-header',
         headerName:"BU",
         width:100,
       },
       // CC
       {
-        field: "Cc",
+        field: "costCenterName",
         headerClass: 'ag-grids-custom-header',
         headerName:"CC"  ,
         width:100,
       },
       // 국가별 매니저
       {
-        field: "Cbm",
+        field: "countryBusinessManagerName",
         headerClass: 'ag-grids-custom-header',
         headerName:"CBM"  ,
         width:130,
       },
       // 설명
       {
-        field: "Description",
+        field: "bossLineDescription",
         headerClass: 'ag-grids-custom-header',
         headerName:"Description"  ,
-        width:500,
+        width:200,
       },
       // 예산
       {
-        field: "FvBudget",
+        field: "budgetTotal",
         headerClass: 'ag-grids-custom-header',
         headerName:"FvBudget"  ,
         valueFormatter: this.numberValueFormatter,
@@ -77,39 +78,5 @@ export class BudgetPlanGridData extends CommonGridModel<BudgetGridRowDataModel>{
     this.isUseInsert = false;
     this.items = [];
   }
-}
-
-/**
- * 예산 그리드 데이터 모델
- */
-export class BudgetGridRowDataModel {
-  /**
-   * 승인일 ( 텍스트 형태도 가능 )
-   */
-  ApprovalDate: string;
-  /**
-   * 섹터코드
-   */
-  Sector:string;
-  /**
-   * 부서코드
-   */
-  Bu:string;
-  /**
-   * CC 코드
-   */
-  Cc:string;
-  /**
-   * Country Business Manager
-   */
-  Cbm:string;
-  /**
-   * 설명
-   */
-  Description: string;
-  /**
-   * 예산
-   */
-  FvBudget:number;
 }
 

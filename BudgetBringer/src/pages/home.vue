@@ -2,7 +2,7 @@
 import HomeDrawer from "./home-drawer.vue";
 import {DrawerLink} from "./models-view/drawer-link";
 import router from "../router";
-import {onBeforeMount, onMounted, provide, ref, watch} from "vue";
+import {onBeforeMount, onMounted, provide, ref} from "vue";
 import {useRoute} from "vue-router";
 import {RoutingStore} from "../stores/routing-store";
 
@@ -16,7 +16,7 @@ provide('miniDrawer',miniDrawer);
 /**
  * 현재 보관중인 링크 정보
  */
-let currentLink = ref(new DrawerLink('','','',''));
+let currentLink = ref(new DrawerLink('','','','',false,[]));
 
 /**
  * 라우트 서비스

@@ -1,20 +1,16 @@
 <script setup lang="ts" generic="T">
 import {AgGridVue} from "ag-grid-vue3";
-import {ref} from "vue";
-import {communicationService, CommunicationService} from "../../services/communication-service";
+import {onMounted, ref} from "vue";
+import {RequestQuery} from "../../models/requests/query/request-query";
+import {HttpService} from "../../services/api-services/http-service";
+import {EnumResponseResult} from "../../models/enums/enum-response-result";
+import {messageService} from "../../services/message-service";
+import {ResponseList} from "../../models/responses/response-list";
 
 /**
  * Prop 정의
  */
 const props = defineProps({
-  /**
-   * 표현할 그리드의 RowData 를 받는다.
-   */
-  inputRowData : {
-    Type: Array<T> ,
-    required: true ,
-    default: []
-  },
   /**
    * 컬럼정보
    */
@@ -55,8 +51,15 @@ const props = defineProps({
     Type: String ,
     required: false ,
     default: '600px'
+  },
+  queryRequest: {
+    type: RequestQuery ,
+    required: true ,
   }
 });
+
+
+let queryRequest: RequestQuery = props.queryRequest;
 
 /**
  * 선택된 row
@@ -86,15 +89,14 @@ const emits = defineEmits<{
 
 
 /**
- * 그리드의 rowData
+ * 통신중 여부
  */
-const items = ref(null);
+const inCommunication = ref(false);
 
 /**
- *  스켈레톤 로더
+ * 그리드의 rowData
  */
-// TODO 테스트
-setTimeout(() =>{items.value = props.inputRowData; },1000);
+const items = ref([]);
 
 /**
  * 그리드의 column 데이터
@@ -133,6 +135,9 @@ const gridColumnApi = ref(null);
 const onGridReady = (params) => {
   gridApi.value = params.api;
   gridColumnApi.value = params.columnApi;
+
+  // 데이터를 로드한다.
+  LoadGrid();
 };
 
 
@@ -185,7 +190,6 @@ const createPinnedCellPlaceholder = (colDefined : any) => {
  */
 const defaultColDefined = isUseInsert ? {
   flex: 1,
-
   valueFormatter: (params) =>
     isEmptyPinnedCell(params) ?
       createPinnedCellPlaceholder(params) : undefined,
@@ -260,6 +264,48 @@ const refresh = () => {
     emits('onRefresh');
 }
 
+/**
+ * 온마운트 핸들링
+ */
+onMounted(() => {
+});
+
+
+/**
+ * 그리드를 로드한다.
+ * @constructor
+ */
+const LoadGrid = () => {
+  // 데이터를 요청한다.
+  HttpService.requestGet<ResponseList<any>>(queryRequest.apiUri,queryRequest)
+    .subscribe({
+      async next(response) {
+        // 조회에 싪패한경우
+        if(response.result != EnumResponseResult.success) {
+          messageService.showError(response.message);
+          return;
+        }
+
+        // 요청에 실패한경우
+        if (response.result != EnumResponseResult.success) {
+          messageService.showError(`[${response.code}] ${response.message}`);
+          return;
+        }
+        // 데이터를 추가한다.
+        items.value = (response.items).concat(items.value);
+
+        console.log('columDefined',columDefined);
+        console.log('items.value ',items.value );
+
+        // 계속 조회 가능
+        if(response.Skip * response.PageCount < response.TotalCount)
+          queryRequest.skip++;
+      },
+      complete() {
+        inCommunication.value = false;
+      },
+    });
+};
 
 </script>
 

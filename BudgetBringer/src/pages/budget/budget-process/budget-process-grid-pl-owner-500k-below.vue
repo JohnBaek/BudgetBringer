@@ -1,7 +1,14 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import CommonGrid from "../../../shared/grids/common-grid.vue";
-import {BudgetProcessGridPLOwner } from "./budget-process-grid-pl-owner-data";
+import {BudgetProcessGridPLOwner} from "./budget-process-grid-pl-owner-data";
+import {RequestQuery} from "../../../models/requests/query/request-query";
+import {HttpService} from "../../../services/api-services/http-service";
+import {ResponseList} from "../../../models/responses/response-list";
+import {ResponseBudgetPlan} from "../../../models/responses/budgets/response-budget-plan";
+import {EnumResponseResult} from "../../../models/enums/enum-response-result";
+import {messageService} from "../../../services/message-service";
+import router from "../../../router";
 
 /**
  * Prop 정의
@@ -56,9 +63,23 @@ const onNewRowAdded = (params) => {
 }
 
 /**
+ * 쿼리 정보
+ */
+const requestQuery :RequestQuery = {
+  apiUri : 'BudgetPlan' ,
+  pageCount: 40 ,
+  skip: 0 ,
+  searchFields: ['IsAbove500K'] ,
+  searchKeywords: [ 'true' ],
+  sortFields: [ 'ApprovalDate' ],
+  sortOrders: [ 'desc' ],
+}
+
+/**
  * 그리드 데이터
  */
 const items = ref(gridModel.items);
+
 </script>
 
 <template>
@@ -70,7 +91,9 @@ const items = ref(gridModel.items);
                :input-colum-defined="gridModel.columDefined"
                :input-row-data="items"
                height="600px"
-               @onNewRowAdded="onNewRowAdded"/>
+               @onNewRowAdded="onNewRowAdded"
+               :query-request="requestQuery"
+  />
 </template>
 
 <style scoped lang="css">

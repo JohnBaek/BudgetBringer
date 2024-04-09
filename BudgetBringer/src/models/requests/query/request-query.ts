@@ -3,6 +3,11 @@
  */
 export class RequestQuery {
   /**
+   * api URI
+   */
+  apiUri: string = '';
+
+  /**
    *  스킵
    */
   skip: number = 0;
