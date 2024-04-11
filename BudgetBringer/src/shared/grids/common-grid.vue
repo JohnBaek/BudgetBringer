@@ -6,8 +6,6 @@ import {HttpService} from "../../services/api-services/http-service";
 import {EnumResponseResult} from "../../models/enums/enum-response-result";
 import {ResponseList} from "../../models/responses/response-list";
 import {communicationService} from "../../services/communication-service";
-import commonGridFilterContains from "./common-grid-filter-contains.vue";
-import CommonGridFilterContains from "./common-grid-filter-contains.vue";
 
 
 /**
@@ -86,7 +84,7 @@ const emits = defineEmits<{
   (e: 'onRemove', params): any,
 
   // 업데이트 버튼 클릭
-  (e: 'onUpdate'): any,
+  (e: 'onUpdate', params): any,
 
   // 리프레쉬 버튼 클릭
   (e: 'onRefresh'): any,
@@ -374,7 +372,8 @@ const remove = () => {
  * 수정 팝업 명령
  */
 const update = () => {
-    emits('onUpdate');
+  const selectedRows = gridApi.value.getSelectedRows();
+  emits('onUpdate',selectedRows[0]);
 }
 
 /**
@@ -409,7 +408,7 @@ onMounted(() => {
       <div class="mt-2">
         <v-btn variant="outlined" @click="add()" class="mr-2" color="info">추가</v-btn>
         <v-btn variant="outlined" @click="remove()" class="mr-2" color="error" :disabled="selectedRows.length == 0">삭제</v-btn>
-        <v-btn variant="outlined" @click="update()" :disabled="selectedRows.length == 0" color="warning">수정</v-btn>
+        <v-btn variant="outlined" @click="update()" :disabled="selectedRows.length != 1" color="warning">수정</v-btn>
         <v-icon @click="refresh()" class="ml-3" size="x-large" color="green" style="cursor: pointer;">mdi-refresh-circle</v-icon>
         <v-spacer class="mt-1"></v-spacer>
         <span class="text-grey">그리드를 shift 버튼을 누른채로 클릭하면 여러 행을 선택할수 있습니다.</span>
