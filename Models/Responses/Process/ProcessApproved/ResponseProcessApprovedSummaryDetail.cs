@@ -1,5 +1,3 @@
-using Models.Responses.Process.ProcessBusinessUnit;
-
 namespace Models.Responses.Process.ProcessApproved;
 
 /// <summary>

@@ -1,5 +1,3 @@
-using Models.DataModels;
-
 namespace Models.Responses.Users;
 
 /// <summary>

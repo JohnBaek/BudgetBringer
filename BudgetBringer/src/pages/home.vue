@@ -16,7 +16,7 @@ provide('miniDrawer',miniDrawer);
 /**
  * 현재 보관중인 링크 정보
  */
-let currentLink = ref(new DrawerLink('','','','',false,[]));
+let currentLink = ref(new DrawerLink('','','','',[],false,[]));
 
 /**
  * 라우트 서비스
@@ -44,7 +44,6 @@ onBeforeMount(() => {
   // 라우팅 정보를 업데이트한다.
   const result = routingStore.tryUpdateRoute(route.fullPath);
 
-  // TODO 로그인 여부 판별해서 home 으로 라우트
   // 라우팅 정보를 찾는데 성공한경우
   if(result)
     // 라우팅정보를 업데이트 한다.

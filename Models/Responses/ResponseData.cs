@@ -1,5 +1,4 @@
 using Models.Common.Enums;
-using Models.DataModels;
 
 namespace Models.Responses;
 

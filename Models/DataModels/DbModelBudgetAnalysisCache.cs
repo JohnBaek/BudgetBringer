@@ -1,6 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Runtime;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Models.Common.Enums;
 
 namespace Models.DataModels;

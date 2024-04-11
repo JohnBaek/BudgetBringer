@@ -27,12 +27,12 @@ const items = ref(gridModel.items);
  * 쿼리 정보
  */
 const requestQuery :RequestQuery = {
-  apiUri : 'BudgetPlan' ,
+  apiUri : '/api/v1/BudgetPlan' ,
   pageCount: 40 ,
   skip: 0 ,
-  searchFields: ['IsAbove500K'] ,
-  searchKeywords: [ 'true' ],
-  sortFields: [ 'ApprovalDate' ],
+  searchFields: ['isAbove500K'] ,
+  searchKeywords: [ 'false' ],
+  sortFields: [ 'approvalDate' ],
   sortOrders: [ 'desc' ],
 }
 </script>

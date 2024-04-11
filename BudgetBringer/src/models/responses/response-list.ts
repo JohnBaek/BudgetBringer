@@ -11,13 +11,13 @@ export class ResponseList<T> extends  Response {
   /**
    * 스킵
    */
-  Skip: number;
+  skip: number;
   /**
    * 페이지 카운트
    */
-  PageCount: number;
+  pageCount: number;
   /**
    * 전체 수
    */
-  TotalCount: number;
+  totalCount: number;
 }

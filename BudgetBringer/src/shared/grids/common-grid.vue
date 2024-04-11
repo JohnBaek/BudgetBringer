@@ -4,8 +4,8 @@ import {onMounted, ref} from "vue";
 import {RequestQuery} from "../../models/requests/query/request-query";
 import {HttpService} from "../../services/api-services/http-service";
 import {EnumResponseResult} from "../../models/enums/enum-response-result";
-import {messageService} from "../../services/message-service";
 import {ResponseList} from "../../models/responses/response-list";
+
 
 /**
  * Prop 정의
@@ -58,15 +58,16 @@ const props = defineProps({
   }
 });
 
+let items = [];
 
-let queryRequest: RequestQuery = props.queryRequest;
-
+/**
+ * 쿼리 요청을 복사한다.
+ */
+let queryRequest: RequestQuery = Object.assign({},props.queryRequest) ;
 /**
  * 선택된 row
  */
 const selectedRows = ref([]);
-
-
 /**
  * emit 정의
  */
@@ -86,28 +87,25 @@ const emits = defineEmits<{
   // 리프레쉬 버튼 클릭
   (e: 'onRefresh'): any,
 }>();
-
+defineExpose({
+  doRefresh() {
+    console.log('defineExpose','doRefresh')
+    refresh();
+  } ,
+});
 
 /**
  * 통신중 여부
  */
-const inCommunication = ref(false);
-
-/**
- * 그리드의 rowData
- */
-const items = ref([]);
-
+const inCommunication  = ref(false);
 /**
  * 그리드의 column 데이터
  */
 const columDefined = ref([...props.inputColumDefined]);
-
 /**
  * 인서트 Grid 사용여부
  */
 const isUseInsert = props.isUseInsert;
-
 /**
  * 입력 데이터
  */
@@ -117,17 +115,18 @@ let inputRow = {};
  * Top 인서트 Pine
  */
 const pinnedTopRowData = isUseInsert ? [inputRow] : [];
-
 /**
  * Grid API
  */
 const gridApi = ref();
-
 /**
  * Grid Column API
  */
 const gridColumnApi = ref(null);
-
+/**
+ * 그리드 파라미터
+ */
+const gridParams = ref(null);
 /**
  * gridReady 이벤트 핸들러
  * @param params 파라미터
@@ -135,11 +134,68 @@ const gridColumnApi = ref(null);
 const onGridReady = (params) => {
   gridApi.value = params.api;
   gridColumnApi.value = params.columnApi;
+  gridParams.value = params;
 
-  // 데이터를 로드한다.
-  LoadGrid();
+  // 데이터 소스를 바인딩한다.
+  gridApi.value.setDatasource(dataSource);
 };
 
+
+// 그리드 인피니티 스크롤 관련 기본 설정값
+const rowModelType = 'infinite';
+const rowBuffer = 0;
+const cacheBlockSize = queryRequest.pageCount;
+const cacheOverflowSize = 2;
+const maxConcurrentDatasourceRequests = 1;
+const infiniteInitialRowCount = 100;
+const maxBlocksInCache = 10;
+
+/**
+ * 데이터 소스 정의
+ */
+const dataSource = {
+  getRows: (params) => {
+    // 서버로부터 데이터를 요청하는 URL 구성
+    HttpService.requestGet<ResponseList<any>>(queryRequest.apiUri , queryRequest).subscribe({
+      next(response) {
+
+        console.log('common grid response',response);
+
+
+        if(response.result === EnumResponseResult.success) {
+          // 마지막 행
+          let lastRow = -1;
+
+          // 행이 남아있지 않은경우
+          if (response.totalCount <= params.endRow) {
+            lastRow = response.totalCount;
+          }
+
+          response.items.forEach(i => items.push(i));
+          const rows = items.slice(params.startRow, params.endRow);
+          console.log('items',items);
+          console.log('rows',rows);
+
+
+          queryRequest.skip += queryRequest.pageCount;
+
+          console.log('queryRequest.skip', queryRequest.skip);
+          console.log('queryRequest.pageCount', queryRequest.pageCount);
+
+          // 성공 콜백 호출, 데이터와 마지막 로우 인덱스 전달
+          params.successCallback(rows, lastRow);
+        } else {
+          // 실패 처리
+          params.successCallback([], 0);
+        }
+      },
+      error(err) {
+        console.error('Error loading data', err);
+        params.successCallback([], 0);
+      }
+    });
+  }
+};
 
 /**
  * 데이터 입력 완료 판별
@@ -194,29 +250,29 @@ const defaultColDefined = isUseInsert ? {
     isEmptyPinnedCell(params) ?
       createPinnedCellPlaceholder(params) : undefined,
 } : {};
-
-/**
- * Cell 이 열렸다 닫혔을때
- * @param params Cell 파라미터
- */
-const onCellEditingStopped = (params) => {
-  // 인서트 그리드를 사용하지 않는경우 제외한다.
-  if(!isUseInsert)
-    return;
-
-  // 데이터 입력이 완료된경우
-  if (isUseInsert && isPinnedRowDataCompleted(params)) {
-
-    // 최상단에 추가된 데이터를 추가한다.
-    items.value = [inputRow,...items.value];
-
-    // 부모 컴포넌트에게 전달
-    emits('onNewRowAdded' , inputRow);
-    inputRow = {};
-    // 최상단 Row 를 초기화한다.
-    params.api.setPinnedTopRowData([inputRow]);
-  }
-}
+//
+// /**
+//  * Cell 이 열렸다 닫혔을때
+//  * @param params Cell 파라미터
+//  */
+// const onCellEditingStopped = (params) => {
+//   // 인서트 그리드를 사용하지 않는경우 제외한다.
+//   if(!isUseInsert)
+//     return;
+//
+//   // 데이터 입력이 완료된경우
+//   if (isUseInsert && isPinnedRowDataCompleted(params)) {
+//
+//     // 최상단에 추가된 데이터를 추가한다.
+//     items.value = [inputRow,...items.value];
+//
+//     // 부모 컴포넌트에게 전달
+//     emits('onNewRowAdded' , inputRow);
+//     inputRow = {};
+//     // 최상단 Row 를 초기화한다.
+//     params.api.setPinnedTopRowData([inputRow]);
+//   }
+// }
 
 /**
  * 그리드의 셀렉트가 변경되었을때
@@ -226,14 +282,6 @@ const onSelectionChanged = () => {
   selectedRows.value = gridApi.value.getSelectedRows();
   console.log('onSelectionChanged' , selectedRows);
 };
-
-/**
- * 데이터 삭제
- */
-const removeItems = () => {
-  const selectedRows = gridApi.value.getSelectedRows();
-  console.log('selectedRows',selectedRows);
-}
 
 /**
  * 추가 팝업 명령
@@ -261,7 +309,15 @@ const update = () => {
  * 새로고침 명령
  */
 const refresh = () => {
-    emits('onRefresh');
+  emits('onRefresh');
+
+  // 최초 상태의 조회 조건을 복원한다.
+  queryRequest = Object.assign({},props.queryRequest);
+  items = [];
+  gridApi.value.refreshInfiniteCache();
+
+  // gridApi.value.purgeInfiniteCache();
+  console.log('Refresh Grid');
 }
 
 /**
@@ -269,44 +325,6 @@ const refresh = () => {
  */
 onMounted(() => {
 });
-
-
-/**
- * 그리드를 로드한다.
- * @constructor
- */
-const LoadGrid = () => {
-  // 데이터를 요청한다.
-  HttpService.requestGet<ResponseList<any>>(queryRequest.apiUri,queryRequest)
-    .subscribe({
-      async next(response) {
-        // 조회에 싪패한경우
-        if(response.result != EnumResponseResult.success) {
-          messageService.showError(response.message);
-          return;
-        }
-
-        // 요청에 실패한경우
-        if (response.result != EnumResponseResult.success) {
-          messageService.showError(`[${response.code}] ${response.message}`);
-          return;
-        }
-        // 데이터를 추가한다.
-        items.value = (response.items).concat(items.value);
-
-        console.log('columDefined',columDefined);
-        console.log('items.value ',items.value );
-
-        // 계속 조회 가능
-        if(response.Skip * response.PageCount < response.TotalCount)
-          queryRequest.skip++;
-      },
-      complete() {
-        inCommunication.value = false;
-      },
-    });
-};
-
 </script>
 
 <template>
@@ -323,21 +341,24 @@ const LoadGrid = () => {
     </v-col>
   </v-row>
 
-  <!--공통 그리드-->
   <ag-grid-vue
-    :rowData="items"
+    style="width: 100%; height: 600px;"
     :columnDefs="columDefined"
-    :pinnedTopRowData="pinnedTopRowData"
+    @grid-ready="onGridReady"
     :defaultColDef="defaultColDefined"
+    :rowBuffer="rowBuffer"
+    :rowSelection="'multiple'"
+    :rowModelType="rowModelType"
+    :cacheBlockSize="cacheBlockSize"
+    :cacheOverflowSize="cacheOverflowSize"
+    :maxConcurrentDatasourceRequests="maxConcurrentDatasourceRequests"
+    :infiniteInitialRowCount="infiniteInitialRowCount"
+    :maxBlocksInCache="maxBlocksInCache"
+    class="ag-theme-alpine"
+    :pinnedTopRowData="pinnedTopRowData"
     :getRowStyle="getRowStyle"
     :style="{ width, height }"
-    :localeText="{ noRowsToShow: '데이터가 없습니다.' }"
     @selection-changed="onSelectionChanged"
-    @grid-ready="onGridReady"
-    @cell-editing-stopped="onCellEditingStopped"
-    @keyup.esc="removeItems"
-    rowSelection='multiple'
-    class="ag-theme-alpine"
   >
   </ag-grid-vue>
 </template>

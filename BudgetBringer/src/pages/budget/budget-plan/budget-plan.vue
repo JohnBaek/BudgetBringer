@@ -36,7 +36,6 @@
 </style>
 
 <script setup="ts">
-import BudgetPlanGrid from "./budget-plan-grid-above-500k.vue";
 import BudgetPlanGridAbove500k from "./budget-plan-grid-above-500k.vue";
 import BudgetPlanGridBelow500k from "./budget-plan-grid-below-500k.vue";
 

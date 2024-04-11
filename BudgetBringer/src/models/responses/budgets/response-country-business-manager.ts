@@ -4,7 +4,7 @@ import {ResponseBusinessUnit} from "./response-business-unit";
 /**
  * CBM 관리 응답 모델
  */
-export class ResponseCostCenter extends ResponseCommonWriter {
+export class ResponseCountryBusinessManager extends ResponseCommonWriter {
   /**
    * 아이디
    */

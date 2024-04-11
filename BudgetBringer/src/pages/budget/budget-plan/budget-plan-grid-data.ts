@@ -62,7 +62,7 @@ export class BudgetPlanGridData extends CommonGridModel<ResponseBudgetPlan>{
       },
       // 설명
       {
-        field: "bossLineDescription",
+        field: "description",
         headerClass: 'ag-grids-custom-header',
         headerName:"Description"  ,
         width:200,
