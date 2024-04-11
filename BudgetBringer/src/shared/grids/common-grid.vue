@@ -5,6 +5,9 @@ import {RequestQuery} from "../../models/requests/query/request-query";
 import {HttpService} from "../../services/api-services/http-service";
 import {EnumResponseResult} from "../../models/enums/enum-response-result";
 import {ResponseList} from "../../models/responses/response-list";
+import {communicationService} from "../../services/communication-service";
+import commonGridFilterContains from "./common-grid-filter-contains.vue";
+import CommonGridFilterContains from "./common-grid-filter-contains.vue";
 
 
 /**
@@ -68,6 +71,7 @@ let queryRequest: RequestQuery = Object.assign({},props.queryRequest) ;
  * 선택된 row
  */
 const selectedRows = ref([]);
+
 /**
  * emit 정의
  */
@@ -89,7 +93,6 @@ const emits = defineEmits<{
 }>();
 defineExpose({
   doRefresh() {
-    console.log('defineExpose','doRefresh')
     refresh();
   } ,
 });
@@ -138,7 +141,81 @@ const onGridReady = (params) => {
 
   // 데이터 소스를 바인딩한다.
   gridApi.value.setDatasource(dataSource);
+
+  // 필터 이벤트를 핸들링한다.
+  gridApi.value.addEventListener('filterChanged', () => {
+    console.log("[filterChanged]");
+    changedFilter();
+  });
+
+  // Sorting 이벤트를 핸들링한다.
+  gridApi.value.addEventListener('sortChanged', (event) => {
+    changeSort();
+  });
 };
+
+/**
+ * 소팅 변경시
+ */
+const changeSort = () => {
+  // Sort 모델을 가져온다.
+  const models = gridApi.value.getColumnState().filter(s => s.sort !== null);
+
+  // 쿼리 정보 복원을 위한
+  const queryRequestCloned: RequestQuery = Object.assign({},props.queryRequest) ;
+
+  // 검색정보를 초기화한다.
+  queryRequest.skip = queryRequestCloned.skip;
+  queryRequest.sortOrders = [];
+  queryRequest.sortFields = [];
+
+  // 모든 sort 에 대해처리
+  for (let i=0; i<models.length; i++) {
+    const model = models[i];
+    queryRequest.sortFields.push(model.colId);
+    queryRequest.sortOrders.push(model.sort);
+  }
+
+  // 스크롤 위치를 맨 위로 초기화
+  gridApi.value.ensureIndexVisible(0);
+
+  // 데이터를 초기화한다.
+  items = [];
+}
+
+
+/**
+ * 필터링 변경시
+ */
+const changedFilter = () => {
+  // 필터링 모델을 가져온다.
+  const filterModel = gridApi.value.getFilterModel();
+
+  // 쿼리 정보 복원을 위한
+  const queryRequestCloned: RequestQuery = Object.assign({},props.queryRequest) ;
+
+  // 검색정보를 초기화한다.
+  queryRequest.searchFields = queryRequestCloned.searchFields.slice();
+  queryRequest.searchKeywords = queryRequestCloned.searchKeywords.slice();
+  queryRequest.skip = queryRequestCloned.skip;
+
+  // 데이터를 초기화한다.
+  items = [];
+
+  // 스크롤 위치를 맨 위로 초기화
+  gridApi.value.ensureIndexVisible(0);
+
+  // 모든 필터에 대해 처리한다.
+  for (const key in filterModel) {
+    if (Object.prototype.hasOwnProperty.call(filterModel, key)) {
+      // 현재 키(필드 이름)에 대한 필터 객체를 얻습니다.
+      const filterObject = filterModel[key];
+
+      queryRequest.searchFields.push(key);
+      queryRequest.searchKeywords.push(filterObject.filter);
+    }
+  }
+}
 
 
 // 그리드 인피니티 스크롤 관련 기본 설정값
@@ -155,13 +232,12 @@ const maxBlocksInCache = 10;
  */
 const dataSource = {
   getRows: (params) => {
+    // 커뮤니케이션 시작
+    communicationService.inCommunication();
+
     // 서버로부터 데이터를 요청하는 URL 구성
     HttpService.requestGet<ResponseList<any>>(queryRequest.apiUri , queryRequest).subscribe({
       next(response) {
-
-        console.log('common grid response',response);
-
-
         if(response.result === EnumResponseResult.success) {
           // 마지막 행
           let lastRow = -1;
@@ -173,14 +249,7 @@ const dataSource = {
 
           response.items.forEach(i => items.push(i));
           const rows = items.slice(params.startRow, params.endRow);
-          console.log('items',items);
-          console.log('rows',rows);
-
-
           queryRequest.skip += queryRequest.pageCount;
-
-          console.log('queryRequest.skip', queryRequest.skip);
-          console.log('queryRequest.pageCount', queryRequest.pageCount);
 
           // 성공 콜백 호출, 데이터와 마지막 로우 인덱스 전달
           params.successCallback(rows, lastRow);
@@ -192,7 +261,11 @@ const dataSource = {
       error(err) {
         console.error('Error loading data', err);
         params.successCallback([], 0);
-      }
+      },
+      complete() {
+        // 커뮤니케이션 시작
+        communicationService.offCommunication();
+      },
     });
   }
 };
@@ -280,7 +353,6 @@ const defaultColDefined = isUseInsert ? {
 const onSelectionChanged = () => {
   // 선택된 Row 를 업데이트한다.
   selectedRows.value = gridApi.value.getSelectedRows();
-  console.log('onSelectionChanged' , selectedRows);
 };
 
 /**
@@ -314,10 +386,14 @@ const refresh = () => {
   // 최초 상태의 조회 조건을 복원한다.
   queryRequest = Object.assign({},props.queryRequest);
   items = [];
-  gridApi.value.refreshInfiniteCache();
+
+  // 스크롤 위치를 맨 위로 초기화
+  gridApi.value.ensureIndexVisible(0);
+
+  // 캐싱 날리기
+  gridApi.value.purgeInfiniteCache();
 
   // gridApi.value.purgeInfiniteCache();
-  console.log('Refresh Grid');
 }
 
 /**

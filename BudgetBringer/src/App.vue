@@ -68,7 +68,6 @@ onUnmounted(() => {
 
   // 모든 구독정보를 정리한다.
   subscribes.forEach(subs => {
-    console.log('구독정보 정리');
     subs.unsubscribe();
   });
 });

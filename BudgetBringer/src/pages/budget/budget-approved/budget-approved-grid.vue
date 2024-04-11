@@ -14,7 +14,7 @@ const gridModel = new BudgetApprovedGridData();
  * @param params 파라미터
  */
 const onNewRowAdded = (params) => {
-  console.log('onNewRowAdded',params);
+
 }
 
 /**

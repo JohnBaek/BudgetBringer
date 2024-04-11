@@ -102,12 +102,6 @@ const getRowStyle = ({ node }) =>
  * @param params
  */
 const isEmptyPinnedCell = (params) => {
-  console.log(params.node);
-
-  console.log('isEmptyPinnedCell',(params.node.rowPinned === 'top' && params.value == null) ||
-    (params.node.rowPinned === 'top' && params.value === ''))
-
-
   return (
     (params.node.rowPinned === 'top' && params.value == null) ||
     (params.node.rowPinned === 'top' && params.value === '')

@@ -134,14 +134,11 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
       next("/Login");
     }
 
-    console.log('to.meta.permissions',to.meta.permissions);
 
     // Permission 이 필요한경우
     if (to.meta.permissions) {
       // 요구하는 Claim 정보를 가져온다.
       const requiredPermissions = to.meta.permissions as string [];
-
-      console.log('requiredPermissions',requiredPermissions);
 
       // 권한을 가지고있는지 확인한다.
       const hasPermission = requiredPermissions.some(permission => authenticationStore.hasPermission([permission]));

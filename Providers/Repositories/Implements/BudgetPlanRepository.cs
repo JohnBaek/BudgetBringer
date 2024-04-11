@@ -134,7 +134,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             if (requestQuery.SortOrders is { Count: 0 })
             {
                 requestQuery.SortOrders.Add("Desc");
-                requestQuery.SortFields?.Add(nameof(ResponseBudgetApproved.ApprovalDate));
+                requestQuery.SortFields?.Add(nameof(ResponseBudgetApproved.RegDate));
             }
             
             // 검색 메타정보 추가
@@ -145,6 +145,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.Description));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.CostCenterName));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.CountryBusinessManagerName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.SectorName));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.BusinessUnitName));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetPlan.BudgetTotal));
             requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.OcProjectName));

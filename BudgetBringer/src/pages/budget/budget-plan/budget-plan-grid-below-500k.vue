@@ -15,7 +15,7 @@ const gridModel = new BudgetPlanGridData();
  * @param params 파라미터
  */
 const onNewRowAdded = (params) => {
-  console.log('onNewRowAdded',params);
+
 }
 
 /**
@@ -28,7 +28,7 @@ const items = ref(gridModel.items);
  */
 const requestQuery :RequestQuery = {
   apiUri : '/api/v1/BudgetPlan' ,
-  pageCount: 40 ,
+  pageCount: 100 ,
   skip: 0 ,
   searchFields: ['isAbove500K'] ,
   searchKeywords: [ 'false' ],

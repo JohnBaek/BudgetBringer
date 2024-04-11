@@ -59,7 +59,7 @@ const gridModel = new BudgetProcessGridPLOwner(props.fullDate as string , props.
  * @param params 파라미터
  */
 const onNewRowAdded = (params) => {
-  console.log('onNewRowAdded',params);
+
 }
 
 /**

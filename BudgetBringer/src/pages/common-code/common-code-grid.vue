@@ -43,7 +43,7 @@ const addUnderCodeModel = ref(new CommonCodeGridDataModel());
  * @param params 파라미터
  */
 const onNewRowAdded = (params) => {
-  console.log('onNewRowAdded',params);
+
 }
 
 /**
@@ -56,7 +56,6 @@ const onAdd = () => {
   rootCode.value.code = currentRootCode.code;
   rootCode.value.description = currentRootCode.description;
 
-  console.log('rootCode' , rootCode);
 
   underCodeAddDialog.value = true;
 }

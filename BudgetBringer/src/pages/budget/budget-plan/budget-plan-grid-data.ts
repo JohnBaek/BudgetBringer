@@ -30,6 +30,8 @@ export class BudgetPlanGridData extends CommonGridModel<ResponseBudgetPlan>{
         headerClass: 'ag-grids-custom-header',
         headerName:"Approval Date" ,
         showDisabledCheckboxes: true,
+        filter: 'agTextColumnFilter',
+        floatingFilter: true,
         width:130,
       },
       // 섹터
@@ -37,7 +39,9 @@ export class BudgetPlanGridData extends CommonGridModel<ResponseBudgetPlan>{
         field: "sectorName",
         headerClass: 'ag-grids-custom-header',
         headerName:"Sector",
+        floatingFilter: true,
         width:100,
+        filter: 'agTextColumnFilter',
       },
       // 부서
       {
@@ -45,6 +49,8 @@ export class BudgetPlanGridData extends CommonGridModel<ResponseBudgetPlan>{
         headerClass: 'ag-grids-custom-header',
         headerName:"BU",
         width:100,
+        floatingFilter: true,
+        filter: 'agTextColumnFilter',
       },
       // CC
       {
@@ -52,6 +58,8 @@ export class BudgetPlanGridData extends CommonGridModel<ResponseBudgetPlan>{
         headerClass: 'ag-grids-custom-header',
         headerName:"CC"  ,
         width:100,
+        floatingFilter: true,
+        filter: 'agTextColumnFilter',
       },
       // 국가별 매니저
       {
@@ -59,12 +67,20 @@ export class BudgetPlanGridData extends CommonGridModel<ResponseBudgetPlan>{
         headerClass: 'ag-grids-custom-header',
         headerName:"CBM"  ,
         width:130,
+        floatingFilter: true,
+        filter: 'agTextColumnFilter',
       },
       // 설명
       {
         field: "description",
         headerClass: 'ag-grids-custom-header',
         headerName:"Description"  ,
+        filter: "agTextColumnFilter",
+        filterParams: {
+          filterOptions: ["포함하는"],
+          maxNumConditions: 1,
+        },
+        floatingFilter: true,
         width:200,
       },
       // 예산

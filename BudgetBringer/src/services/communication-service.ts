@@ -21,7 +21,6 @@ export class CommunicationService {
   inCommunication() {
     this.communication = true;
     this.communicationSubject.next(true);
-    console.log('inCommunication')
   }
 
   /**

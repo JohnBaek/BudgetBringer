@@ -30,7 +30,6 @@ onMounted(() => {
  * @param params 파라미터
  */
 const onNewRowAdded = (params) => {
-  console.log('onNewRowAdded',params);
 }
 
 /**
@@ -38,11 +37,11 @@ const onNewRowAdded = (params) => {
  */
 const requestQuery :RequestQuery = {
   apiUri : '/api/v1/BudgetPlan' ,
-  pageCount: 40 ,
+  pageCount: 100 ,
   skip: 0 ,
   searchFields: ['isAbove500K'] ,
   searchKeywords: [ 'true' ],
-  sortFields: [ 'approvalDate' ],
+  sortFields: [ 'regDate' ],
   sortOrders: [ 'desc' ],
 }
 
@@ -50,6 +49,11 @@ const requestQuery :RequestQuery = {
  * 데이터 추가 다이얼로그
  */
 const addDialog = ref(false);
+
+/**
+ * 삭제 다이얼로그
+ */
+const removeDialog = ref(false);
 
 /**
  * 데이터 추가 원본 요청 데이터
@@ -62,8 +66,6 @@ model.value.isAbove500K = true;
  * 데이터를 추가한다.
  */
 const requestAdd = () => {
-  console.log('requestAdd',model);
-
   // 유효하지 않은경우
   if(isValid() == false) {
     messageService.showWarning("입력하지 않은 데이터가 있습니다");
@@ -76,7 +78,6 @@ const requestAdd = () => {
   // 데이터를 입력한다.
   HttpService.requestPost<ResponseData<ResponseBudgetPlan>>(requestQuery.apiUri , model.value).subscribe({
     next(response) {
-      console.log('requestAdd',response);
 
       // 요청에 실패한경우
       if(response.result !== EnumResponseResult.success) {
@@ -166,9 +167,41 @@ let removeItems : Array<ResponseBudgetPlan> = [];
  * @param items
  */
 const remove = (items : Array<ResponseBudgetPlan>) => {
+  removeDialog.value = true;
+
   // 삭제할 데이터를 보관
   removeItems = items;
 }
+
+/**
+ * 데이터를 삭제한다.
+ */
+const removeData = () => {
+  // 모든 데이터에 대해 처리
+  for (const data of removeItems) {
+    communicationService.inCommunication();
+    HttpService.requestDelete<ResponseData<any>>(`${requestQuery.apiUri}/${data.id}`).subscribe({
+      next(response) {
+        // 요청에 실패한경우
+        if(response.result !== EnumResponseResult.success) {
+          messageService.showError(`[${response.code}] ${response.message}`);
+          return;
+        }
+        messageService.showSuccess(`데이터가 삭제되었습니다.`);
+      } ,
+      error(err) {
+        console.error('Error loading data', err);
+      } ,
+      complete() {
+        removeDialog.value = false;
+        gridRef.value.doRefresh();
+        communicationService.offCommunication();
+      },
+    });
+  }
+
+}
+
 
 </script>
 
@@ -204,6 +237,16 @@ const remove = (items : Array<ResponseBudgetPlan>) => {
           <v-btn variant="outlined" @click="addDialog = false" class="mr-2" color="error">취소</v-btn>
         </v-col>
       </v-row>
+    </v-card>
+  </v-dialog>
+
+  <!--삭제 다이얼로그-->
+  <v-dialog v-model="removeDialog" width="auto">
+    <v-card min-width="250" title="코드 삭제" text="삭제하시겠습니까?">
+      <template v-slot:actions>
+        <v-btn class="ms-auto" text="확인" @click="removeData"
+        ></v-btn>
+      </template>
     </v-card>
   </v-dialog>
 </template>

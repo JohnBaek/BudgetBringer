@@ -65,7 +65,6 @@ export const AuthenticationStore = defineStore('authenticated', {
       // 모든 역할에 대해 검색한다.
       for (const role of this.authenticatedUser.roles) {
 
-        console.log('role.claims',role.claims);
 
         // Claim 값에서 값이 있는지 찾는다.
         isHasPermission = role.claims.some(i => permissions.includes(i.value));
