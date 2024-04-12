@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using Features.Extensions;
 using Microsoft.Extensions.Logging;
@@ -94,7 +95,7 @@ public class LogActionWriteService : ILogActionWriteService
         
         try
         {
-            // 반영 전 데이터를 시리얼라이즈 한다.
+            //  반영 전 데이터를 시리얼라이즈 한다.
             string beforeJson = JsonConvert.SerializeObject(before);
 
             // 로그를 작성한다.
@@ -112,6 +113,20 @@ public class LogActionWriteService : ILogActionWriteService
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// 특정 프러퍼티 값을 null 로 변경한다.
+    /// </summary>
+    /// <param name="before"></param>
+    /// <param name="propertyName"></param>
+    public static void SetNullIfPropertyExists(object obj, string propertyName)
+    {
+        PropertyInfo? propertyInfo = obj.GetType().GetProperty(propertyName);
+        if (propertyInfo != null && propertyInfo.CanWrite)
+        {
+            propertyInfo.SetValue(obj, null);
+        }
     }
 
     /// <summary>

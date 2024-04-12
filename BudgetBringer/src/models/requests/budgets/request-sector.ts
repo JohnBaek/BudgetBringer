@@ -5,5 +5,5 @@ export class RequestSector  {
   /**
    * 섹터 값
    */
-  name: string;
+  value: string;
 }

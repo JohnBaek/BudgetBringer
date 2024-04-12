@@ -43,16 +43,23 @@ onBeforeMount(() => {
 
   // 라우팅 정보를 업데이트한다.
   const result = routingStore.tryUpdateRoute(route.fullPath);
+  console.log('라우팅 정보를 업데이트한다.',result);
 
   // 라우팅 정보를 찾는데 성공한경우
-  if(result)
+  if(result) {
     // 라우팅정보를 업데이트 한다.
     currentLink.value = routingStore.getCurrentRoute();
+    console.log('라우팅정보를 업데이트 한다.',result);
+  }
+
 
   // 실패한 경우
-  if(!result)
+  if(!result) {
     // 페이지 없음으로 이동
     router.push('/no-page');
+    console.log('페이지 없음으로 이동');
+  }
+
 });
 
 

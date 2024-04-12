@@ -271,7 +271,7 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
             result = new Response(EnumResponseResult.Success,"","");
             
             // 로그 기록
-            await _logActionWriteService.WriteUpdate(snapshot, update, user , "",LogCategory);
+            await _logActionWriteService.WriteUpdate(snapshot.FromCopyValue<ResponseCountryBusinessManager>(), update.FromCopyValue<ResponseCountryBusinessManager>(), user , "",LogCategory);
         }
         catch (Exception e)
         {
@@ -341,7 +341,7 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
             result = new ResponseData<ResponseCountryBusinessManager>{ Result = EnumResponseResult.Success , Data = added.Data };
             
             // 로그 기록
-            await _logActionWriteService.WriteAddition(add, user , "",LogCategory);
+            await _logActionWriteService.WriteAddition(add.FromCopyValue<ResponseCountryBusinessManager>(), user , "",LogCategory);
         }
         catch (Exception e)
         {
@@ -395,7 +395,7 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
             result = new Response(EnumResponseResult.Success, "", "");
 
             // 로그 기록
-            await _logActionWriteService.WriteDeletion(remove, user, "", LogCategory);
+            await _logActionWriteService.WriteDeletion(remove.FromCopyValue<ResponseCountryBusinessManager>(), user, "", LogCategory);
         }
         catch (Exception e)
         {
@@ -483,7 +483,7 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
             result = await this.GetAsync(managerId);
 
             // 로그 기록
-            await _logActionWriteService.WriteDeletion(relation, user, "매니저 정보에서 비지니스 유닛 추가", LogCategory);
+            await _logActionWriteService.WriteDeletion(relation.FromCopyValue<ResponseCountryBusinessManager>(), user, "매니저 정보에서 비지니스 유닛 추가", LogCategory);
         }
         catch (Exception e)
         {
@@ -542,7 +542,7 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
             result = new Response(EnumResponseResult.Success, "", "");
 
             // 로그 기록
-            await _logActionWriteService.WriteDeletion(remove, user, $"매니저 정보에서 비지니스 유닛 삭제", LogCategory);
+            await _logActionWriteService.WriteDeletion(remove.FromCopyValue<ResponseCountryBusinessManager>(), user, $"매니저 정보에서 비지니스 유닛 삭제", LogCategory);
         }
         catch (Exception e)
         {

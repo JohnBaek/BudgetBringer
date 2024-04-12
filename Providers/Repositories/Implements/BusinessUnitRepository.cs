@@ -213,7 +213,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
             result = new Response(EnumResponseResult.Success,"","");
             
             // 로그 기록
-            await _logActionWriteService.WriteUpdate(snapshot, update, user , "",LogCategory);
+            await _logActionWriteService.WriteUpdate(snapshot.FromCopyValue<ResponseBusinessUnit>(), update.FromCopyValue<ResponseBusinessUnit>(), user , "",LogCategory);
         }
         catch (Exception e)
         {
@@ -283,7 +283,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
             result = new ResponseData<ResponseBusinessUnit>{ Result = EnumResponseResult.Success , Data = added.Data };
             
             // 로그 기록
-            await _logActionWriteService.WriteAddition(add, user , "",LogCategory);
+            await _logActionWriteService.WriteAddition(add.FromCopyValue<ResponseBusinessUnit>(), user , "",LogCategory);
         }
         catch (Exception e)
         {
@@ -337,7 +337,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
             result = new Response(EnumResponseResult.Success,"","");
             
             // 로그 기록
-            await _logActionWriteService.WriteDeletion(remove, user , "",LogCategory);
+            await _logActionWriteService.WriteDeletion(remove.FromCopyValue<ResponseBusinessUnit>(), user , "",LogCategory);
         }
         catch (Exception e)
         {

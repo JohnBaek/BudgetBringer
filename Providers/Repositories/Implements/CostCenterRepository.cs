@@ -216,7 +216,7 @@ public class CostCenterRepository : ICostCenterRepository
             result = new Response(EnumResponseResult.Success,"","");
             
             // 로그 기록
-            await _logActionWriteService.WriteUpdate(snapshot, update, user , "",LogCategory);
+            await _logActionWriteService.WriteUpdate(snapshot.FromCopyValue<ResponseCostCenter>(), update.FromCopyValue<ResponseCostCenter>(), user , "",LogCategory);
         }
         catch (Exception e)
         {
@@ -286,7 +286,7 @@ public class CostCenterRepository : ICostCenterRepository
             result = new ResponseData<ResponseCostCenter>{ Result = EnumResponseResult.Success , Data = added.Data };
             
             // 로그 기록
-            await _logActionWriteService.WriteAddition(add, user , "",LogCategory);
+            await _logActionWriteService.WriteAddition(add.FromCopyValue<ResponseCostCenter>(), user , "",LogCategory);
         }
         catch (Exception e)
         {
@@ -340,7 +340,7 @@ public class CostCenterRepository : ICostCenterRepository
             result = new Response(EnumResponseResult.Success, "", "");
 
             // 로그 기록
-            await _logActionWriteService.WriteDeletion(remove, user, "", LogCategory);
+            await _logActionWriteService.WriteDeletion(remove.FromCopyValue<ResponseCostCenter>(), user, "", LogCategory);
         }
         catch (Exception e)
         {

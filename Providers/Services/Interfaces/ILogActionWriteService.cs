@@ -31,7 +31,7 @@ public interface ILogActionWriteService
     /// <param name="category">카테고리</param>
     /// <typeparam name="T">모델 T</typeparam>
     /// <returns></returns>
-    Task<Response> WriteAddition<T>(T before, DbModelUser user, string contents, string category) 
+    Task<Response> WriteAddition<T>(T? before, DbModelUser user, string contents, string category) 
         where T : class;
 
 

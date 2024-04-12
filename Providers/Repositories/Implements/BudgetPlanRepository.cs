@@ -253,7 +253,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             result = new Response{ Result = EnumResponseResult.Success};
             
             // 로그 기록
-            await _logActionWriteService.WriteUpdate(snapshot, update, user , "",LogCategory);
+            await _logActionWriteService.WriteUpdate(snapshot.FromCopyValue<ResponseBudgetPlan>(), update.FromCopyValue<ResponseBudgetPlan>(), user , "",LogCategory);
         }
         catch (Exception e)
         {
@@ -320,7 +320,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             result = new ResponseData<ResponseBudgetPlan>{ Result = EnumResponseResult.Success , Data = added.Data };
             
             // 로그 기록
-            await _logActionWriteService.WriteAddition(add, user , "",LogCategory);
+            await _logActionWriteService.WriteAddition(add.FromCopyValue<ResponseBudgetPlan>(), user , "",LogCategory);
         }
         catch (Exception e)
         {
@@ -374,7 +374,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             result = new Response(EnumResponseResult.Success,"","");
             
             // 로그 기록
-            await _logActionWriteService.WriteDeletion(remove, user , "",LogCategory);
+            await _logActionWriteService.WriteDeletion(remove.FromCopyValue<ResponseBudgetPlan>(), user , "",LogCategory);
         }
         catch (Exception e)
         {

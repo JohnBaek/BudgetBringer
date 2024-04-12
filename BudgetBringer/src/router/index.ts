@@ -1,7 +1,6 @@
 import {createRouter, createWebHistory, NavigationGuardNext, RouteLocationNormalized, RouteRecordRaw} from 'vue-router'
 import home from "../pages/home.vue";
 import login from "../pages/login/login.vue";
-import commonCode from "../pages/common-code/common-code.vue";
 import BudgetPlan from "../pages/budget/budget-plan/budget-plan.vue";
 import NoPage from "../pages/no-page.vue";
 import BudgetApproved from "../pages/budget/budget-approved/budget-approved.vue";
@@ -11,6 +10,10 @@ import {AuthenticationStore} from "../services/stores/authentication-store";
 import {messageService} from "../services/message-service";
 import {authenticationService} from "../services/api-services/authentication-service";
 import {firstValueFrom} from "rxjs";
+import CostCenter from "../pages/common-code/cost-center/cost-center.vue";
+import BusinessUnit from "../pages/common-code/business-unit/business-unit.vue";
+import Sector from "../pages/common-code/sector/sector.vue";
+import CountryBusinessManager from "../pages/common-code/country-business-manager/country-business-manager.vue";
 
 
 /**
@@ -46,8 +49,33 @@ const routes: Array<RouteRecordRaw> = [
         // 코드관리/공통코드 페이지
         path: '/common-code',
         name: 'common-code',
-        component: commonCode,
-        meta: { requiresAuth: true , permissions: ['common-code'] },
+        meta: { requiresAuth: true },
+        children : [
+          {
+            path: 'cost-center',
+            name: 'CostCenter',
+            component: CostCenter,
+            meta: { requiresAuth: true , permissions: ['common-code'] },
+          },
+          {
+            path: 'business-unit',
+            name: 'BusinessUnit',
+            component: BusinessUnit,
+            meta: { requiresAuth: true , permissions: ['common-code'] },
+          },
+          {
+            path: 'sector',
+            name: 'Sector',
+            component: Sector,
+            meta: { requiresAuth: true , permissions: ['common-code'] },
+          },
+          {
+            path: 'country-business-manager',
+            name: 'CountryBusinessManager',
+            component: CountryBusinessManager,
+            meta: { requiresAuth: true , permissions: ['common-code'] },
+          },
+        ]
       },
       // 예산 관련 컴포넌트
       {
@@ -133,7 +161,6 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
       // messageService.showError("인증정보가 없거나 만료되었습니다.");
       next("/Login");
     }
-
 
     // Permission 이 필요한경우
     if (to.meta.permissions) {

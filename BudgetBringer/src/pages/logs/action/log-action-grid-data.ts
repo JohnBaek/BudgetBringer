@@ -1,15 +1,17 @@
 import {CommonGridModel} from "../../../shared/grids/common-grid-model";
 import {ResponseBudgetApproved} from "../../../models/responses/budgets/response-budget-approved";
 import {EnumApprovalStatus} from "../../../models/enums/enum-approval-status";
+import {ResponseLogAction} from "../../../models/responses/logs/response-log-action";
+import {EnumDatabaseLogActionType} from "../../../models/enums/enum-database-log-action-type";
 
 /**
  * 예산 그리드 모델
  */
-export class LogActionGridData extends CommonGridModel<ResponseBudgetApproved>{
+export class LogActionGridData extends CommonGridModel<ResponseLogAction>{
   /**
    * 표현할 그리드의 RowData 를 받는다.
    */
-  items : Array<ResponseBudgetApproved>;
+  items : Array<ResponseLogAction>;
   /**
    * 컬럼정보
    */
@@ -33,6 +35,37 @@ export class LogActionGridData extends CommonGridModel<ResponseBudgetApproved>{
         filter: 'agTextColumnFilter',
         floatingFilter: true,
         width:145,
+      },
+      {
+        field: "actionType",
+        headerClass: 'ag-grids-custom-header',
+        headerName:"액션종류" ,
+        showDisabledCheckboxes: true,
+        filter: 'agTextColumnFilter',
+        floatingFilter: true,
+        width:145,
+        cellRenderer: (params) => {
+          switch (params.value) {
+            case EnumDatabaseLogActionType.Add:
+              return "추가";
+            case EnumDatabaseLogActionType.Update:
+              return "수정";
+            case EnumDatabaseLogActionType.Delete:
+              return "삭제";
+            default:
+              return "알 수 없는 상태"; // 값이 열거형에 없는 경우
+          }
+        },
+        cellStyle: (params) => {
+          switch (params.value) {
+            case EnumDatabaseLogActionType.Add:
+              return { backgroundColor: 'green', color: 'white' };
+            case EnumDatabaseLogActionType.Update:
+              return { backgroundColor: 'yellow', color: 'black' };
+            case EnumDatabaseLogActionType.Delete:
+              return { backgroundColor: 'red', color: 'white' };
+          }
+        }
       },
       {
         field: "contents",

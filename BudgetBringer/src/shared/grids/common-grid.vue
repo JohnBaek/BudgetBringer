@@ -6,6 +6,7 @@ import {HttpService} from "../../services/api-services/http-service";
 import {EnumResponseResult} from "../../models/enums/enum-response-result";
 import {ResponseList} from "../../models/responses/response-list";
 import {communicationService} from "../../services/communication-service";
+import CommonSelect from "../common-select.vue";
 
 /**
  * Prop 정의
@@ -105,6 +106,10 @@ const columDefined = ref([...props.inputColumDefined]);
  * 인서트 Grid 사용여부
  */
 const isUseInsert = props.isUseInsert;
+/**
+ * 디테일 다이얼로그
+ */
+const detailDialogReference = ref(false);
 /**
  * 입력 데이터
  */
@@ -234,6 +239,10 @@ const dataSource = {
     // 서버로부터 데이터를 요청하는 URL 구성
     HttpService.requestGet<ResponseList<any>>(queryRequest.apiUri , queryRequest).subscribe({
       next(response) {
+        if(response == null)
+          return;
+
+
         if(response.result === EnumResponseResult.success) {
           // 마지막 행
           let lastRow = -1;
@@ -376,8 +385,32 @@ const refresh = () => {
 
   // 캐싱 날리기
   gridApi.value.purgeInfiniteCache();
+}
 
-  // gridApi.value.purgeInfiniteCache();
+let detailData = ref();
+
+const toPascalCase = (str) => {
+  return str
+  .replace(new RegExp(/[-_]+/, 'g'), ' ') // 대시와 언더스코어를 공백으로 대체
+  .replace(new RegExp(/[^\w\s]/, 'g'), '') // 문자와 공백이 아닌 모든 것 제거
+  .replace(
+    /\s+(.)(\w*)/g, // 각 단어를 대문자로 시작하도록 변경
+    (_, firstChar, rest) => firstChar.toUpperCase() + rest.toLowerCase()
+  )
+  .replace(/\s/g, '') // 공백 제거
+  .replace(
+    /^./, // 첫 글자도 대문자로
+    str => str.toUpperCase()
+  );
+}
+
+/**
+ * 셀 더블 클릭시
+ */
+const onCellDoubleClicked = (event) => {
+  console.log();
+  detailData.value = event.data;
+  detailDialogReference.value = true;
 }
 
 /**
@@ -419,8 +452,47 @@ onMounted(() => {
     :getRowStyle="getRowStyle"
     :style="{ width, height }"
     @selection-changed="onSelectionChanged"
+    @cell-double-clicked="onCellDoubleClicked"
   >
   </ag-grid-vue>
+
+  <!--데이터 수정 다이얼로그-->
+  <v-dialog v-model="detailDialogReference" width="80%">
+    <v-card elevation="1" rounded class="mb-10 pa-5">
+      <v-card-title class=" mt-5"><h4>상세정보</h4>
+      </v-card-title>
+      <v-row dense>
+        <v-col cols="12" md="12" lg="12">
+          <div v-for="(value, key) in detailData" :key="key">
+            <div v-if="key.toString().toLowerCase().indexOf('id') == -1">
+              <!-- "content"가 포함된 키에 대해 v-textarea 사용 -->
+              <v-textarea
+                v-if="key.toString().toLowerCase().indexOf('content') > -1"
+                :label="toPascalCase(key)"
+                v-model="detailData[key]"
+                variant="outlined"
+                auto-grow
+                readonly>
+              </v-textarea>
+
+              <!-- "content"가 포함되지 않은 나머지 키에 대해 v-text-field 사용 -->
+              <v-text-field
+                v-else
+                :label="toPascalCase(key)"
+                v-model="detailData[key]"
+                variant="outlined"
+                auto-grow
+                readonly>
+              </v-text-field>
+            </div>
+          </div>
+        </v-col>
+        <v-col>
+          <v-btn variant="outlined" @click="detailDialogReference = false" class="mr-2" color="error">닫기</v-btn>
+        </v-col>
+      </v-row>
+    </v-card>
+  </v-dialog>
 </template>
 
 <style lang="css" >

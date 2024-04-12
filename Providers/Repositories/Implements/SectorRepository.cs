@@ -215,7 +215,7 @@ public class SectorRepository : ISectorRepository
             result = new Response(EnumResponseResult.Success,"","");
             
             // 로그 기록
-            await _logActionWriteService.WriteUpdate(snapshot, update, user , "",LogCategory);
+            await _logActionWriteService.WriteUpdate(snapshot.FromCopyValue<ResponseSector>(), update.FromCopyValue<ResponseSector>(), user , "",LogCategory);
         }
         catch (Exception e)
         {
@@ -285,7 +285,7 @@ public class SectorRepository : ISectorRepository
             result = new ResponseData<ResponseSector>{ Result = EnumResponseResult.Success , Data = added.Data };
             
             // 로그 기록
-            await _logActionWriteService.WriteAddition(add, user , "",LogCategory);
+            await _logActionWriteService.WriteAddition(add.FromCopyValue<ResponseSector>(), user , "",LogCategory);
         }
         catch (Exception e)
         {
@@ -339,7 +339,7 @@ public class SectorRepository : ISectorRepository
             result = new Response(EnumResponseResult.Success, "", "");
 
             // 로그 기록
-            await _logActionWriteService.WriteDeletion(remove, user, "", LogCategory);
+            await _logActionWriteService.WriteDeletion(remove.FromCopyValue<ResponseSector>(), user, "", LogCategory);
         }
         catch (Exception e)
         {

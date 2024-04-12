@@ -240,7 +240,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             result = new Response(EnumResponseResult.Success,"","");
             
             // 로그 기록
-            await _logActionWriteService.WriteUpdate(snapshot, update, user , "",LogCategory);
+            await _logActionWriteService.WriteUpdate(snapshot.FromCopyValue<ResponseBudgetApproved>(), update.FromCopyValue<ResponseBudgetApproved>(), user , "",LogCategory);
         }
         catch (Exception e)
         {
@@ -359,7 +359,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             result = new Response(EnumResponseResult.Success,"","");
             
             // 로그 기록
-            await _logActionWriteService.WriteDeletion(remove, user , "",LogCategory);
+            await _logActionWriteService.WriteDeletion(remove.FromCopyValue<ResponseBudgetApproved>(), user , "",LogCategory);
         }
         catch (Exception e)
         {
