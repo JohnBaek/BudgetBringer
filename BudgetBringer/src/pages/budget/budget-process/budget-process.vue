@@ -15,36 +15,17 @@
           </v-tab>
         </v-tabs>
 
-
         <v-window v-model="tab">
           <v-window-item value="Owner">
               <v-row>
-                <v-col cols="12" md="4">
-                  <budget-process-grid-pl-owner500k-below
+                <v-col cols="12" md="12" >
+                  <budget-process-grid-pl-owner
                     :full-date="fullDate"
                     :year="year"
                     title="CAPEX below CHF500K"
                     sub-title="500K 아래의 정보"
                   >
-                  </budget-process-grid-pl-owner500k-below>
-                </v-col>
-                <v-col cols="12" md="4">
-                  <budget-process-grid-pl-owner500k-below
-                    :full-date="fullDate"
-                    :year="year"
-                    title="CAPEX above CHF500K"
-                    sub-title="500K 이상의 정보"
-                  >
-                  </budget-process-grid-pl-owner500k-below>
-                </v-col>
-                <v-col cols="12" md="4">
-                  <budget-process-grid-pl-owner500k-below
-                    :full-date="fullDate"
-                    :year="year"
-                    title="Total Amount"
-                    sub-title="전체 합산 정보 "
-                  >
-                  </budget-process-grid-pl-owner500k-below>
+                  </budget-process-grid-pl-owner>
                 </v-col>
               </v-row>
           </v-window-item>
@@ -58,7 +39,7 @@
 </style>
 
 <script setup="ts">
-import BudgetProcessGridPlOwner500kBelow from "./budget-process-grid-pl-owner-500k-below.vue";
+import BudgetProcessGridPlOwner from "./budget-process-grid-pl-owner.vue";
 
 
 /**

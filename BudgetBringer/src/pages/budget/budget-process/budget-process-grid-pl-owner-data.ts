@@ -1,5 +1,4 @@
 import {CommonGridModel} from "../../../shared/grids/common-grid-model";
-import CommonGridRendererSkeleton from "../../../shared/grids/common-grid-renderer-skeleton.vue";
 
 /**
  * 진생상황 P&L Owner 그리드 모델
@@ -28,29 +27,27 @@ export class BudgetProcessGridPLOwner extends CommonGridModel<BudgetProcessGridP
     this.columDefined = [
       // 날짜
       {
-        field: "Date",
+        field: "countryBusinessManagerName",
         headerName: date,
         headerClass: 'ag-grids-custom-header',
-        width:"120",
-        cellRendererFramework: CommonGridRendererSkeleton,
       },
-      // 예산
-      {
-        field: "Currency",
-        headerName:`KRW` ,
-        headerClass: 'ag-grids-custom-header',
-        width:"80",
-        cellRendererFramework: CommonGridRendererSkeleton,
-      },
+      // // 예산
+      // {
+      //   field: "Currency",
+      //   headerName:`KRW` ,
+      //   headerClass: 'ag-grids-custom-header',
+      //   cellRendererFramework: CommonGridRendererSkeleton,
+      // },
       // 예산
       {
         headerName:`${year.toString()}FY` ,
         headerClass: 'ag-grids-custom-header',
         children: [
           {
-            field: "Budget",
-            width:"100",
+            headerName:'BudgetYear',
+            field: "budgetYear",
             headerClass: 'ag-grids-custom-header',
+            valueFormatter: this.numberValueFormatter,
           }
         ]
       },
@@ -60,10 +57,10 @@ export class BudgetProcessGridPLOwner extends CommonGridModel<BudgetProcessGridP
         headerClass: 'ag-grids-custom-header',
         children: [
           {
-            width:"150",
-            field: "Approved",
+            field: "budgetApprovedYearSum",
             headerClass: 'ag-grids-custom-header',
-            headerName:'ApprovedAmount'
+            headerName:'ApprovedAmount',
+            valueFormatter: this.numberValueFormatter,
           }
         ]
       },
@@ -73,9 +70,10 @@ export class BudgetProcessGridPLOwner extends CommonGridModel<BudgetProcessGridP
         headerClass: 'ag-grids-custom-header',
         children: [
           {
-            width:"150",
-            field: "RemainingBudget",
+            field: "budgetRemainingYear",
             headerClass: 'ag-grids-custom-header',
+            headerName:'RemainingYear',
+            valueFormatter: this.numberValueFormatter,
           }
         ]
       },

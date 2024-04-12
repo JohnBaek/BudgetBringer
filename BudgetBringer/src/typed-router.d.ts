@@ -23,7 +23,7 @@ declare module 'vue-router/auto-routes' {
     '/budget/budget-plan/budget-plan': RouteRecordInfo<'/budget/budget-plan/budget-plan', '/budget/budget-plan/budget-plan', Record<never, never>, Record<never, never>>,
     '/budget/budget-plan/budget-plan-grid': RouteRecordInfo<'/budget/budget-plan/budget-plan-grid', '/budget/budget-plan/budget-plan-grid', Record<never, never>, Record<never, never>>,
     '/budget/budget-process/budget-process': RouteRecordInfo<'/budget/budget-process/budget-process', '/budget/budget-process/budget-process', Record<never, never>, Record<never, never>>,
-    '/budget/budget-process/budget-process-grid-pl-owner-500k-below': RouteRecordInfo<'/budget/budget-process/budget-process-grid-pl-owner-500k-below', '/budget/budget-process/budget-process-grid-pl-owner-500k-below', Record<never, never>, Record<never, never>>,
+    '/budget/budget-process/budget-process-grid-pl-owner': RouteRecordInfo<'/budget/budget-process/budget-process-grid-pl-owner', '/budget/budget-process/budget-process-grid-pl-owner', Record<never, never>, Record<never, never>>,
     '/common-code/business-unit/business-unit': RouteRecordInfo<'/common-code/business-unit/business-unit', '/common-code/business-unit/business-unit', Record<never, never>, Record<never, never>>,
     '/common-code/business-unit/business-unit-grid': RouteRecordInfo<'/common-code/business-unit/business-unit-grid', '/common-code/business-unit/business-unit-grid', Record<never, never>, Record<never, never>>,
     '/common-code/cost-center/cost-center': RouteRecordInfo<'/common-code/cost-center/cost-center', '/common-code/cost-center/cost-center', Record<never, never>, Record<never, never>>,
