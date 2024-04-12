@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {BudgetPlanGridData} from "./budget-plan-grid-data";
 import CommonGrid from "../../../shared/grids/common-grid.vue";
 import {RequestQuery} from "../../../models/requests/query/request-query";
@@ -21,15 +21,34 @@ const gridModel = new BudgetPlanGridData();
 /**
  * 쿼리 정보
  */
-const requestQuery :RequestQuery = {
+let requestQuery :RequestQuery = {
   apiUri : '/api/v1/BudgetPlan' ,
   pageCount: 100 ,
   skip: 0 ,
-  searchFields: ['isAbove500K'] ,
-  searchKeywords: [ 'true' ],
+  searchFields: [] ,
+  searchKeywords: [],
   sortFields: [ 'regDate' ],
   sortOrders: [ 'desc' ],
 }
+/**
+ * props 정의
+ */
+const props = defineProps({
+  /**
+   * isAbove500k 정보
+   */
+  isAbove500k: {
+    Type: String,
+    required: true,
+  },
+  /**
+   * title 정보
+   */
+  title: {
+    Type: String,
+    required: true,
+  },
+});
 /**
  * 데이터 추가 다이얼로그
  */
@@ -62,6 +81,19 @@ let businessUnitsReference = ref([]);
  * 삭제할 데이터
  */
 let removeItems : Array<ResponseBudgetPlan> = [];
+/**
+ * 수정할 데이터
+ */
+let updateItem: ResponseBudgetPlan;
+
+/**
+ * 마운트핸들링
+ */
+onMounted(() => {
+  requestQuery.searchKeywords.push(props.isAbove500k.toString());
+  requestQuery.searchFields.push("isAbove500k");
+});
+
 /**
  * countryBusinessManager 가 변경 되었을때
  * @param countryBusinessManagerId
@@ -96,7 +128,7 @@ const onDataUpdatedCBM = (items: any) => {
 /**
  * 데이터를 추가한다.
  */
-const requestAdd = () => {
+const requestAddData = () => {
   // 유효하지 않은경우
   if(isValidModel() == false) {
     messageService.showWarning("입력하지 않은 데이터가 있습니다");
@@ -118,7 +150,8 @@ const requestAdd = () => {
       messageService.showSuccess(`데이터가 등록되었습니다.`);
     } ,
     error(err) {
-      console.error('Error loading data', err);
+      messageService.showError('Error loading data'+err);
+      communicationService.offCommunication();
     } ,
     complete() {
       // 다이얼로그를 닫는다.
@@ -158,11 +191,21 @@ const showRemoveDialog = (items : Array<ResponseBudgetPlan>) => {
 }
 
 /**
+ * 추가 팝업을 요청한다.
+ */
+const showAddDialog = () => {
+  addDialogReference.value = true;
+  modelReference.value = new RequestBudgetPlan();
+  modelReference.value.isAbove500K = (props.isAbove500k as String).toLowerCase() == "true";
+}
+
+/**
  * 데이터 수정 팝업을 요청한다.
  * @param item 수정할 데이터
  */
 const showUpdateDialog = (item: ResponseBudgetPlan) => {
   communicationService.inCommunication();
+  updateItem = item;
 
   // 서버에서 대상하는 데이터를 조회한다.
   HttpService.requestGet<ResponseData<ResponseBudgetPlan>>(`${requestQuery.apiUri}/${item.id}`).subscribe({
@@ -188,7 +231,7 @@ const showUpdateDialog = (item: ResponseBudgetPlan) => {
       updateDialogReference.value = true;
     } ,
     error(err) {
-      console.error('Error loading data', err);
+      messageService.showError('Error loading data'+err);
     } ,
     complete() {
       communicationService.offCommunication();
@@ -199,7 +242,7 @@ const showUpdateDialog = (item: ResponseBudgetPlan) => {
 /**
  * 데이터를 삭제한다.
  */
-const removeData = () => {
+const requestRemoveData = () => {
   // 모든 데이터에 대해 처리
   for (const data of removeItems) {
     communicationService.inCommunication();
@@ -213,7 +256,7 @@ const removeData = () => {
         messageService.showSuccess(`데이터가 삭제되었습니다.`);
       } ,
       error(err) {
-        console.error('Error loading data', err);
+        messageService.showError('Error loading data'+err);
       } ,
       complete() {
         removeDialogReference.value = false;
@@ -227,7 +270,34 @@ const removeData = () => {
 /**
  * 데이터를 수정한다.
  */
-const updateData = () => {
+const requestUpdateData = () => {
+  // 유효하지 않은경우
+  if(isValidModel() == false) {
+    messageService.showWarning("입력하지 않은 데이터가 있습니다");
+    return;
+  }
+
+
+  communicationService.inCommunication();
+  HttpService.requestPut<ResponseData<any>>(`${requestQuery.apiUri}/${updateItem.id}`, modelReference.value).subscribe({
+    next(response) {
+      // 요청에 실패한경우
+      if(response.result !== EnumResponseResult.success) {
+        messageService.showError(`[${response.code}] ${response.message}`);
+        return;
+      }
+      messageService.showSuccess(`데이터가 수정 되었습니다.`);
+    } ,
+    error() {
+      updateDialogReference.value = false;
+      communicationService.offCommunication();
+    } ,
+    complete() {
+      gridReference.value.doRefresh();
+      updateDialogReference.value = false;
+      communicationService.offCommunication();
+    },
+  });
 }
 </script>
 
@@ -236,7 +306,7 @@ const updateData = () => {
                :input-colum-defined="gridModel.columDefined"
                :is-use-buttons="true"
                :query-request="requestQuery"
-               @onAdd="addDialogReference = true"
+               @onAdd="showAddDialog"
                @onRemove="showRemoveDialog"
                @onUpdate="showUpdateDialog"
                ref="gridReference"
@@ -244,7 +314,7 @@ const updateData = () => {
   <!--데이터 추가 다이얼로그-->
   <v-dialog v-model="addDialogReference" width="auto">
     <v-card elevation="1" rounded class="mb-10 pa-5">
-      <v-card-title class=" mt-5"><h4>Above 500k 예산추가</h4>
+      <v-card-title class=" mt-5"><h4>{{ props.title }} 예산추가</h4>
       </v-card-title>
       <v-card-subtitle class="">예산을 추가합니다 생성된 코드명은 변경할 수 없습니다. 엔터키를 누르면 등록됩니다.<br>취소를 원하시는 경우 ESC 키를 눌러주세요</v-card-subtitle>
       <v-row dense>
@@ -253,12 +323,12 @@ const updateData = () => {
           <v-select required v-model="modelReference.businessUnitId" label="Business Unit" item-title="name" item-value="id" :items="businessUnitsReference" :disabled="businessUnitsReference.length === 0"></v-select>
           <common-select required v-model="modelReference.costCenterId" title="value" value="id" label="Cost Center" requestApiUri="/api/v1/CostCenter" />
           <common-select required v-model="modelReference.sectorId" title="value" value="id" label="Sector" requestApiUri="/api/v1/Sector" />
-          <v-text-field required v-model="modelReference.approvalDate" label="Approval Date" variant="outlined" @keyup.enter="requestAdd()"></v-text-field>
-          <v-text-field v-model="modelReference.description" label="Description" variant="outlined" @keyup.enter="requestAdd()"></v-text-field>
-          <v-text-field v-model="modelReference.budgetTotal" label="BudgetTotal" variant="outlined" @keyup.enter="requestAdd()"></v-text-field>
-          <v-text-field v-model="modelReference.ocProjectName" label="OcProjectName" variant="outlined" @keyup.enter="requestAdd()"></v-text-field>
-          <v-text-field v-model="modelReference.bossLineDescription" label="BossLine Description" variant="outlined" @keyup.enter="requestAdd()"></v-text-field>
-          <v-btn variant="outlined" @click="requestAdd()" class="mr-2" color="info" >추가</v-btn>
+          <v-text-field required v-model="modelReference.approvalDate" label="Approval Date" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
+          <v-text-field v-model="modelReference.description" label="Description" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
+          <v-text-field v-model="modelReference.budgetTotal" label="BudgetTotal" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
+          <v-text-field v-model="modelReference.ocProjectName" label="OcProjectName" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
+          <v-text-field v-model="modelReference.bossLineDescription" label="BossLine Description" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
+          <v-btn variant="outlined" @click="requestAddData()" class="mr-2" color="info" >추가</v-btn>
           <v-btn variant="outlined" @click="addDialogReference = false" class="mr-2" color="error">취소</v-btn>
         </v-col>
       </v-row>
@@ -268,7 +338,7 @@ const updateData = () => {
   <!--데이터 수정 다이얼로그-->
   <v-dialog v-model="updateDialogReference" width="auto">
     <v-card elevation="1" rounded class="mb-10 pa-5">
-      <v-card-title class=" mt-5"><h4>Above 500k 예산수정</h4>
+      <v-card-title class=" mt-5"><h4>{{ props.title }} 예산수정</h4>
       </v-card-title>
       <v-card-subtitle class="">예산을 추가합니다 생성된 코드명은 변경할 수 없습니다. 엔터키를 누르면 등록됩니다.<br>취소를 원하시는 경우 ESC 키를 눌러주세요</v-card-subtitle>
       <v-row dense>
@@ -277,12 +347,12 @@ const updateData = () => {
           <v-select required v-model="modelReference.businessUnitId" label="Business Unit" item-title="name" item-value="id" :items="businessUnitsReference" :disabled="businessUnitsReference.length === 0"></v-select>
           <common-select required v-model="modelReference.costCenterId" title="value" value="id" label="Cost Center" requestApiUri="/api/v1/CostCenter" />
           <common-select required v-model="modelReference.sectorId" title="value" value="id" label="Sector" requestApiUri="/api/v1/Sector" />
-          <v-text-field required v-model="modelReference.approvalDate" label="Approval Date" variant="outlined" @keyup.enter="requestAdd()"></v-text-field>
-          <v-text-field v-model="modelReference.description" label="Description" variant="outlined" @keyup.enter="requestAdd()"></v-text-field>
-          <v-text-field v-model="modelReference.budgetTotal" label="BudgetTotal" variant="outlined" @keyup.enter="requestAdd()"></v-text-field>
-          <v-text-field v-model="modelReference.ocProjectName" label="OcProjectName" variant="outlined" @keyup.enter="requestAdd()"></v-text-field>
-          <v-text-field v-model="modelReference.bossLineDescription" label="BossLine Description" variant="outlined" @keyup.enter="requestAdd()"></v-text-field>
-          <v-btn variant="outlined" @click="updateData()" class="mr-2" color="info" >수정</v-btn>
+          <v-text-field required v-model="modelReference.approvalDate" label="Approval Date" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
+          <v-text-field v-model="modelReference.description" label="Description" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
+          <v-text-field v-model="modelReference.budgetTotal" label="BudgetTotal" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
+          <v-text-field v-model="modelReference.ocProjectName" label="OcProjectName" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
+          <v-text-field v-model="modelReference.bossLineDescription" label="BossLine Description" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
+          <v-btn variant="outlined" @click="requestUpdateData()" class="mr-2" color="info" >수정</v-btn>
           <v-btn variant="outlined" @click="updateDialogReference = false" class="mr-2" color="error">취소</v-btn>
         </v-col>
       </v-row>
@@ -293,7 +363,7 @@ const updateData = () => {
   <v-dialog v-model="removeDialogReference" width="auto">
     <v-card min-width="250" title="코드 삭제" text="삭제하시겠습니까?">
       <template v-slot:actions>
-        <v-btn class="ms-auto" text="확인" @click="removeData"
+        <v-btn class="ms-auto" text="확인" @click="requestRemoveData"
         ></v-btn>
       </template>
     </v-card>

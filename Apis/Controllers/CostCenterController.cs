@@ -62,7 +62,7 @@ public class CostCenterController : Controller
     /// <param name="id">아이디</param>
     /// <param name="request"></param>
     /// <returns></returns>
-    [HttpPost("{id}")]
+    [HttpPut("{id}")]
     [ClaimRequirement("Permission","common-code")]
     public async Task<Response> UpdateAsync([FromRoute] string id , RequestCostCenter request)
     {

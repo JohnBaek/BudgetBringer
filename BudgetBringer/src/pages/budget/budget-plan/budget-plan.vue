@@ -19,12 +19,12 @@
         <v-window v-model="tab">
           <!--Above 500K Budget-->
           <v-window-item  value="above">
-            <budget-plan-grid-above500k />
+            <budget-plan-grid isAbove500k="true"  title="Above 500K (Budget)"/>
           </v-window-item>
 
           <!--Below 500K Budget-->
           <v-window-item value="below">
-            <budget-plan-grid-below500k />
+            <budget-plan-grid isAbove500k="false"  title="Below 500K (Budget)"/>
           </v-window-item>
         </v-window>
       </v-sheet>
@@ -36,8 +36,7 @@
 </style>
 
 <script setup="ts">
-import BudgetPlanGridAbove500k from "./budget-plan-grid-above-500k.vue";
-import BudgetPlanGridBelow500k from "./budget-plan-grid-below-500k.vue";
+import BudgetPlanGrid from "./budget-plan-grid.vue";
 
 /**
  * 탭 데이터

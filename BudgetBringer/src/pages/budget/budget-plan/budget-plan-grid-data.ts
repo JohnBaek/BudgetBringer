@@ -81,7 +81,31 @@ export class BudgetPlanGridData extends CommonGridModel<ResponseBudgetPlan>{
           maxNumConditions: 1,
         },
         floatingFilter: true,
-        width:200,
+        width:250,
+      },
+      {
+        field: "ocProjectName",
+        headerClass: 'ag-grids-custom-header',
+        headerName:"OcProjectName"  ,
+        filter: "agTextColumnFilter",
+        filterParams: {
+          filterOptions: ["포함하는"],
+          maxNumConditions: 1,
+        },
+        floatingFilter: true,
+        width:250,
+      },
+      {
+        field: "bossLineDescription",
+        headerClass: 'ag-grids-custom-header',
+        headerName:"BossLineDescription"  ,
+        filter: "agTextColumnFilter",
+        filterParams: {
+          filterOptions: ["포함하는"],
+          maxNumConditions: 1,
+        },
+        floatingFilter: true,
+        width:250,
       },
       // 예산
       {

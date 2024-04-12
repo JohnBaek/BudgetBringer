@@ -59,8 +59,7 @@
 
 <script setup="ts">
 import BudgetProcessGridPlOwner500kBelow from "./budget-process-grid-pl-owner-500k-below.vue";
-import BudgetPlanGridBelow500k from "../budget-plan/budget-plan-grid-below-500k.vue";
-import BudgetPlanGridAbove500k from "../budget-plan/budget-plan-grid-above-500k.vue";
+
 
 /**
  * 오늘 날짜

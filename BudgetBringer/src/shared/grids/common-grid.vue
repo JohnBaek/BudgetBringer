@@ -7,7 +7,6 @@ import {EnumResponseResult} from "../../models/enums/enum-response-result";
 import {ResponseList} from "../../models/responses/response-list";
 import {communicationService} from "../../services/communication-service";
 
-
 /**
  * Prop 정의
  */
@@ -53,6 +52,9 @@ const props = defineProps({
     required: false ,
     default: '600px'
   },
+  /**
+   * 쿼리 리퀘스트
+   */
   queryRequest: {
     type: RequestQuery ,
     required: true ,
@@ -95,10 +97,7 @@ defineExpose({
   } ,
 });
 
-/**
- * 통신중 여부
- */
-const inCommunication  = ref(false);
+
 /**
  * 그리드의 column 데이터
  */
@@ -147,7 +146,7 @@ const onGridReady = (params) => {
   });
 
   // Sorting 이벤트를 핸들링한다.
-  gridApi.value.addEventListener('sortChanged', (event) => {
+  gridApi.value.addEventListener('sortChanged', () => {
     changeSort();
   });
 };
@@ -268,19 +267,6 @@ const dataSource = {
   }
 };
 
-/**
- * 데이터 입력 완료 판별
- * @param params 파라미터
- */
-const isPinnedRowDataCompleted = (params) => {
-  // 최상위 로우가 아닌경우
-  if (params.rowPinned !== 'top'){
-    return;
-  }
-  // 모든 Row 가 입력되었다면 true
-  return columDefined.value.filter(i => i.field != '')
-              .every((def) => inputRow[def.field]);
-}
 
 /**
  * pined 된 행의 스타일 정보
@@ -411,7 +397,7 @@ onMounted(() => {
         <v-btn variant="outlined" @click="update()" :disabled="selectedRows.length != 1" color="warning">수정</v-btn>
         <v-icon @click="refresh()" class="ml-3" size="x-large" color="green" style="cursor: pointer;">mdi-refresh-circle</v-icon>
         <v-spacer class="mt-1"></v-spacer>
-        <span class="text-grey">그리드를 shift 버튼을 누른채로 클릭하면 여러 행을 선택할수 있습니다.</span>
+        <span class="text-grey">shift 버튼을 누른채로 클릭하면 여러 행을 선택할수 있습니다.</span>
       </div>
     </v-col>
   </v-row>
@@ -439,17 +425,6 @@ onMounted(() => {
 </template>
 
 <style lang="css" >
-.ag-grid-custom-header {
-  white-space: normal;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Roboto", sans-serif;
-  font-weight: bold;
-  font-size: 13px;
-}
-
 @keyframes skeleton-loading {
   0% {
     background-color: rgba(165, 165, 165, 0.1);
@@ -460,9 +435,5 @@ onMounted(() => {
   100% {
     background-color: rgba(165, 165, 165, 0.1);
   }
-}
-
-.skeleton-cell {
-  animation: skeleton-loading 1.5s infinite ease-in-out;
 }
 </style>
