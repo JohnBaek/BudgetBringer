@@ -29,12 +29,11 @@ const props = defineProps({
     default: false
   },
   /**
-   * Delete 그리드 사용여부
+   * 사용할 버튼
    */
-  isUseButtons: {
-    Type: Boolean ,
-    required: true ,
-    default: false
+  useButtons: {
+    Type: Array<string> ,
+    default: ['add','update','delete','refresh']
   },
   /**
    * 너비
@@ -389,15 +388,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-row class="mt-1 mb-1" v-if="isUseButtons">
+  <v-row class="mt-1 mb-1">
     <v-col>
       <div class="mt-2">
-        <v-btn variant="outlined" @click="add()" class="mr-2" color="info">추가</v-btn>
-        <v-btn variant="outlined" @click="remove()" class="mr-2" color="error" :disabled="selectedRows.length == 0">삭제</v-btn>
-        <v-btn variant="outlined" @click="update()" :disabled="selectedRows.length != 1" color="warning">수정</v-btn>
-        <v-icon @click="refresh()" class="ml-3" size="x-large" color="green" style="cursor: pointer;">mdi-refresh-circle</v-icon>
-        <v-spacer class="mt-1"></v-spacer>
-        <span class="text-grey">shift 버튼을 누른채로 클릭하면 여러 행을 선택할수 있습니다.</span>
+        <v-btn v-if="props.useButtons.includes('add')" variant="outlined" @click="add()" class="mr-2" color="info">추가</v-btn>
+        <v-btn v-if="props.useButtons.includes('delete')" variant="outlined" @click="remove()" class="mr-2" color="error" :disabled="selectedRows.length == 0">삭제</v-btn>
+        <v-btn v-if="props.useButtons.includes('update')" variant="outlined" @click="update()" :disabled="selectedRows.length != 1" color="warning">수정</v-btn>
+        <v-icon v-if="props.useButtons.includes('refresh')" @click="refresh()" class="ml-3" size="x-large" color="green" style="cursor: pointer;">mdi-refresh-circle</v-icon>
+        <v-spacer v-if="props.useButtons.length > 0" class="mt-1"></v-spacer>
+        <span class="text-grey" v-if="props.useButtons.includes('delete')">shift 버튼을 누른채로 클릭하면 여러 행을 선택할수 있습니다.</span>
       </div>
     </v-col>
   </v-row>

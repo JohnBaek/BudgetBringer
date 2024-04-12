@@ -1,3 +1,5 @@
+using Models.Common.Enums;
+
 namespace Models.Responses.Logs;
 
 /// <summary>
@@ -13,11 +15,21 @@ public class ResponseLogAction
     /// <summary>
     /// 등록자명 
     /// </summary>
-    public required string RegName { get; init;}
+    public string RegName { get; init;} = "";
 
     /// <summary>
     /// 내용 
     /// </summary>
-    public required string Contents { get; init;}
+    public string Contents { get; init;} = "";
+
+    /// <summary>
+    /// 카테고리 
+    /// </summary>
+    public string Category { get; init; } = "";
+    
+    /// <summary>
+    /// 액션타입
+    /// </summary>
+    public EnumDatabaseLogActionType ActionType { get; set; }
 
 }

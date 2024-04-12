@@ -1,20 +1,7 @@
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using FluentAssertions;
 using JetBrains.Annotations;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using Models.Common.Enums;
-using Models.DataModels;
-using Models.Requests.Login;
-using Models.Responses;
 using Moq;
-using Providers.Repositories;
 using Providers.Repositories.Interfaces;
-using Providers.Services;
 using Providers.Services.Implements;
-using Providers.Services.Interfaces;
-using Xunit;
 
 namespace Providers.Tests.Services;
 

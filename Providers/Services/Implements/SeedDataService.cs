@@ -1,12 +1,9 @@
-using System.ComponentModel;
 using System.Security.Claims;
 using Features.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Models.DataModels;
 
 namespace Providers.Services.Implements;

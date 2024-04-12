@@ -1,10 +1,11 @@
+using System.Linq.Expressions;
 using Features.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.DataModels;
 using Models.Requests.Query;
 using Models.Responses;
+using Models.Responses.Logs;
 using Providers.Repositories.Interfaces;
 using Providers.Services.Interfaces;
 
@@ -27,58 +28,70 @@ public class LogActionRepository : ILogActionRepository
     
 
     /// <summary>
-    /// 사용자 리파지토리
-    /// </summary>
-    private readonly IUserRepository _userRepository;
-
-    /// <summary>
     /// 쿼리 서비스
     /// </summary>
     private readonly IQueryService _queryService;
 
-    /// <summary>
-    /// 액션 로그 기록 서비스
-    /// </summary>
-    private readonly ILogActionWriteService _logActionWriteService;
 
-    /// <summary>
-    /// 로그 카테고리명
-    /// </summary>
-    private const string LogCategory = "[BudgetApproved]";
-    
     /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="logger">로거</param>
     /// <param name="dbContext">디비컨텍스트</param>
-    public LogActionRepository(ILogger<LogActionRepository> logger, AnalysisDbContext dbContext)
+    /// <param name="queryService">쿼리서비스</param>
+    public LogActionRepository(ILogger<LogActionRepository> logger, AnalysisDbContext dbContext, IQueryService queryService)
     {
         _logger = logger;
         _dbContext = dbContext;
+        _queryService = queryService;
     }
-
     
+        
+    /// <summary>
+    /// 셀렉터 매핑 정의
+    /// </summary>
+    private Expression<Func<DbModelLogAction, ResponseLogAction>> MapDataToResponse { get; init; } = item => new ResponseLogAction
+    {
+        RegDate = item.RegDate,
+        RegName = item.RegName ?? "",
+        Contents = item.Contents,
+        Category = item.Category,
+        ActionType = item.ActionType,
+    };
+
+
     /// <summary>
     /// 리스트를 가져온다.
     /// </summary>
     /// <param name="requestQuery">쿼리 정보</param>
     /// <returns></returns>
-    public async Task<List<DbModelLogAction>> GetListAsync(RequestQuery requestQuery)
+    public async Task<ResponseList<ResponseLogAction>> GetListAsync(RequestQuery requestQuery)
     {
-        List<DbModelLogAction> result = [];
-        
+        ResponseList<ResponseLogAction> result = new ResponseList<ResponseLogAction>();
         try
         {
-            result = await _dbContext.LogActions.AsNoTracking()
-                .Skip(requestQuery.Skip)
-                .Take(requestQuery.PageCount)
-                .ToListAsync();
+            // 기본 Sort가 없을 경우 
+            if (requestQuery.SortOrders is { Count: 0 })
+            {
+                requestQuery.SortOrders.Add("Desc");
+                requestQuery.SortFields?.Add(nameof(ResponseLogAction.RegDate));
+            }
+            
+            // 검색 메타정보 추가
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains ,nameof(ResponseLogAction.RegDate));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains ,nameof(ResponseLogAction.RegName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains ,nameof(ResponseLogAction.Contents));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains ,nameof(ResponseLogAction.Category));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains ,nameof(ResponseLogAction.ActionType));
+            
+            // 결과를 반환한다.
+            result = await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
         }
         catch (Exception e)
         {
             e.LogError(_logger);
         }
-    
+
         return result;
     }
 

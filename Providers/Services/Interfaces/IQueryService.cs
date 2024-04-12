@@ -1,5 +1,4 @@
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
 using Models.Common.Query;
 using Models.Requests.Query;
 using Models.Responses;

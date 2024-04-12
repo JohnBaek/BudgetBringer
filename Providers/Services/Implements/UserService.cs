@@ -7,7 +7,6 @@ using Models.Common.Enums;
 using Models.DataModels;
 using Models.Responses;
 using Models.Responses.Users;
-using Providers.Repositories;
 using Providers.Repositories.Interfaces;
 using Providers.Services.Interfaces;
 using Exception = System.Exception;

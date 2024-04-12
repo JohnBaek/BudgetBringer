@@ -2,6 +2,7 @@ using Models.Common.Enums;
 using Models.DataModels;
 using Models.Requests.Query;
 using Models.Responses;
+using Models.Responses.Logs;
 
 namespace Providers.Repositories.Interfaces;
 
@@ -15,7 +16,7 @@ public interface ILogActionRepository
     /// </summary>
     /// <param name="requestQuery">쿼리 정보</param>
     /// <returns></returns>
-    Task<List<DbModelLogAction>> GetListAsync(RequestQuery requestQuery);
+    Task<ResponseList<ResponseLogAction>> GetListAsync(RequestQuery requestQuery);
 
     /// <summary>
     /// 로그를 추가한다.

@@ -5,7 +5,6 @@ using Models.DataModels;
 using Models.Requests.Login;
 using Models.Responses;
 using Models.Responses.Users;
-using Providers.Repositories;
 using Providers.Repositories.Interfaces;
 using Providers.Services.Interfaces;
 using Exception = System.Exception;

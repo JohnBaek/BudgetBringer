@@ -1,11 +1,9 @@
 using System.Reflection;
 using Apis.Middlewares;
-using Features;
 using Features.Debounce;
 using Features.Filters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.OpenApi.Models;
 using Models.DataModels;
 using Providers.Repositories.Implements;
@@ -161,6 +159,7 @@ public static class Program
         services.AddScoped<ISectorService, SectorService>();
         services.AddScoped<ICostCenterService, CostCenterService>();
         services.AddScoped<ILogActionWriteService, LogActionWriteService>();
+        services.AddScoped<ILogActionService, LogActionService>();
         services.AddScoped<IBudgetPlanService, BudgetPlanService>();
         services.AddScoped<IBudgetApprovedService, BudgetApprovedService>();
         services.AddScoped<ICountryBusinessManagerService, CountryBusinessManagerService>();

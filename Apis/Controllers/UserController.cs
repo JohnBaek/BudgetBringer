@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Models.DataModels;
 using Models.Responses;
 using Models.Responses.Users;
-using Providers.Services;
 using Providers.Services.Interfaces;
 
 namespace Apis.Controllers;

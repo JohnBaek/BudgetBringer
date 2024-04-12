@@ -1,7 +1,5 @@
 using Models.Common.Enums;
-using Models.Requests.Login;
 using Models.Responses;
-using Models.Responses.Users;
 
 namespace Providers.Services.Interfaces;
 

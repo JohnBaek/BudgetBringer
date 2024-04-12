@@ -2,7 +2,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Features.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.Common.Query;
