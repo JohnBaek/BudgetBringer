@@ -7,65 +7,61 @@ export class RequestBudgetApproved {
   /**
    * 500K 이상 예산 여부
    */
-  isAbove500K: boolean;
-
+  isAbove500K: boolean = true;
   /**
    * 기안일 ( 날짜가아닌 일반 스트링데이터도 포함 될 수 있다. )
    */
-  approvalDate: string;
-
+  approvalDate: string = '';
   /**
    * 설명
    */
-  description: string | null;
-
+  description: string | null = '';
   /**
    * 섹터 아이디
    */
-  sectorId: string;
-
+  sectorId: string = '';
   /**
    * DbModelBusinessUnit 아이디
    */
-  businessUnitId: string;
+  businessUnitId: string = '';
 
   /**
    * DbModelCostCenter 아이디
    */
-  costCenterId: string;
+  costCenterId: string = '';
 
   /**
    * DbModelCountryBusinessManager 아이디
    */
-  countryBusinessManagerId: string;
+  countryBusinessManagerId: string = '';
 
   /**
    * 인보이스 번호
    */
-  poNumber: number;
+  poNumber: number = 0;
 
   /**
    * 승인 상태 : PO 전/후 , Invoice 발행 여부
    */
-  approvalStatus: EnumApprovalStatus;
+  approvalStatus: EnumApprovalStatus = EnumApprovalStatus.None;
 
   /**
    * 승인된 예산
    */
-  approvalAmount: number;
+  approvalAmount: number = 0;
 
   /**
    * Actual
    */
-  actual: number;
+  actual: number = 0;
 
   /**
    * OcProjectName
    */
-  ocProjectName: string | null;
+  ocProjectName: string | null = '';
 
   /**
    * BossLineDescription
    */
-  bossLineDescription: string | null;
+  bossLineDescription: string | null = '';
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted,ref} from "vue";
+import {onMounted, ref} from "vue";
 import CommonGrid from "../../../shared/grids/common-grid.vue";
 import {BudgetApprovedGridData} from "./budget-approved-grid-data";
 import {RequestQuery} from "../../../models/requests/query/request-query";
@@ -13,6 +13,7 @@ import {EnumResponseResult} from "../../../models/enums/enum-response-result";
 import {RequestBudgetApproved} from "../../../models/requests/budgets/request-budget-approved";
 import {firstValueFrom} from "rxjs";
 import CommonSelect from "../../../shared/common-select.vue";
+import {ApprovalStatusDescriptions} from "../../../models/enums/enum-approval-status";
 
 /**
  * 그리드 모델
@@ -30,6 +31,10 @@ let requestQuery :RequestQuery = {
   sortFields: [ 'regDate' ],
   sortOrders: [ 'desc' ],
 }
+/**
+ * 스테이터스
+ */
+const statusOptions = ref();
 /**
  * props 정의
  */
@@ -92,6 +97,11 @@ let updateItem: ResponseBudgetApproved;
 onMounted(() => {
   requestQuery.searchKeywords.push(props.isAbove500k.toString());
   requestQuery.searchFields.push("isAbove500k");
+
+  statusOptions.value = Object.entries(ApprovalStatusDescriptions).map(([status, description]) => ({
+    status: parseInt(status),
+    description
+  }));
 });
 
 /**
@@ -177,6 +187,10 @@ const isValidModel = () => {
     || modelReference.value.countryBusinessManagerId === '') {
     return false;
   }
+
+  console.log(modelReference.value);
+
+  return true;
 }
 
 /**
@@ -314,18 +328,27 @@ const requestUpdateData = () => {
   <!--데이터 추가 다이얼로그-->
   <v-dialog v-model="addDialogReference" width="auto">
     <v-card elevation="1" rounded class="mb-10 pa-5">
-      <v-card-title class=" mt-5"><h4>{{ props.title }} 예산추가</h4>
+      <v-card-title class=" mt-5"><h4>{{ props.title }} 예산승인추가</h4>
       </v-card-title>
-      <v-card-subtitle class="">예산을 추가합니다 생성된 코드명은 변경할 수 없습니다. 엔터키를 누르면 등록됩니다.<br>취소를 원하시는 경우 ESC 키를 눌러주세요</v-card-subtitle>
+      <v-card-subtitle class="">예산승인을 추가합니다 생성된 코드명은 변경할 수 없습니다. 엔터키를 누르면 등록됩니다.<br>취소를 원하시는 경우 ESC 키를 눌러주세요</v-card-subtitle>
       <v-row dense>
         <v-col cols="12" md="12" class="mt-5">
           <common-select required v-model="modelReference.countryBusinessManagerId" @onChange="onChangeCountryBusinessManager" @onDataUpdated="onDataUpdatedCBM" title="name" value="id" label="Country Business Manager" requestApiUri="/api/v1/CountryBusinessManager" />
+          <v-select
+            v-model="modelReference.approvalStatus"
+            :items="statusOptions"
+            item-value="status"
+            item-title="description"
+            label="승인 상태"
+          ></v-select>
           <v-select required v-model="modelReference.businessUnitId" label="Business Unit" item-title="name" item-value="id" :items="businessUnitsReference" :disabled="businessUnitsReference.length === 0"></v-select>
           <common-select required v-model="modelReference.costCenterId" title="value" value="id" label="Cost Center" requestApiUri="/api/v1/CostCenter" />
           <common-select required v-model="modelReference.sectorId" title="value" value="id" label="Sector" requestApiUri="/api/v1/Sector" />
           <v-text-field required v-model="modelReference.approvalDate" label="Approval Date" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
+          <v-text-field v-model="modelReference.poNumber" label="PoNumber" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
           <v-text-field v-model="modelReference.description" label="Description" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
-          <v-text-field v-model="modelReference.actual" label="BudgetTotal" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
+          <v-text-field v-model="modelReference.actual" label="Actual" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
+          <v-text-field v-model="modelReference.approvalAmount" label="ApprovalAmount" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
           <v-text-field v-model="modelReference.ocProjectName" label="OcProjectName" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
           <v-text-field v-model="modelReference.bossLineDescription" label="BossLine Description" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
           <v-btn variant="outlined" @click="requestAddData()" class="mr-2" color="info" >추가</v-btn>
@@ -338,18 +361,27 @@ const requestUpdateData = () => {
   <!--데이터 수정 다이얼로그-->
   <v-dialog v-model="updateDialogReference" width="auto">
     <v-card elevation="1" rounded class="mb-10 pa-5">
-      <v-card-title class=" mt-5"><h4>{{ props.title }} 예산수정</h4>
+      <v-card-title class=" mt-5"><h4>{{ props.title }} 예산승인수정</h4>
       </v-card-title>
-      <v-card-subtitle class="">예산을 추가합니다 생성된 코드명은 변경할 수 없습니다. 엔터키를 누르면 등록됩니다.<br>취소를 원하시는 경우 ESC 키를 눌러주세요</v-card-subtitle>
+      <v-card-subtitle class="">예산승인을 추가합니다 생성된 코드명은 변경할 수 없습니다. 엔터키를 누르면 등록됩니다.<br>취소를 원하시는 경우 ESC 키를 눌러주세요</v-card-subtitle>
       <v-row dense>
         <v-col cols="12" md="12" class="mt-5">
           <common-select required v-model="modelReference.countryBusinessManagerId" @onChange="onChangeCountryBusinessManager" @onDataUpdated="onDataUpdatedCBM" title="name" value="id" label="Country Business Manager" requestApiUri="/api/v1/CountryBusinessManager" />
+          <v-select
+            v-model="modelReference.approvalStatus"
+            :items="statusOptions"
+            item-value="status"
+            item-title="description"
+            label="승인 상태"
+          ></v-select>
           <v-select required v-model="modelReference.businessUnitId" label="Business Unit" item-title="name" item-value="id" :items="businessUnitsReference" :disabled="businessUnitsReference.length === 0"></v-select>
           <common-select required v-model="modelReference.costCenterId" title="value" value="id" label="Cost Center" requestApiUri="/api/v1/CostCenter" />
           <common-select required v-model="modelReference.sectorId" title="value" value="id" label="Sector" requestApiUri="/api/v1/Sector" />
           <v-text-field required v-model="modelReference.approvalDate" label="Approval Date" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
+          <v-text-field v-model="modelReference.poNumber" label="PoNumber" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
           <v-text-field v-model="modelReference.description" label="Description" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
-          <v-text-field v-model="modelReference.actual" label="BudgetTotal" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
+          <v-text-field v-model="modelReference.actual" label="Actual" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
+          <v-text-field v-model="modelReference.approvalAmount" label="ApprovalAmount" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
           <v-text-field v-model="modelReference.ocProjectName" label="OcProjectName" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
           <v-text-field v-model="modelReference.bossLineDescription" label="BossLine Description" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
           <v-btn variant="outlined" @click="requestUpdateData()" class="mr-2" color="info" >수정</v-btn>

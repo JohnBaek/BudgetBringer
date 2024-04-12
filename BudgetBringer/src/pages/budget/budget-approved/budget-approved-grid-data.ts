@@ -34,12 +34,6 @@ export class BudgetApprovedGridData extends CommonGridModel<ResponseBudgetApprov
         field: "approvalStatus",
         headerClass: 'ag-grids-custom-header',
         headerName:"ApprovalStatus"  ,
-        filter: "agTextColumnFilter",
-        filterParams: {
-          filterOptions: ["포함하는"],
-          maxNumConditions: 1,
-        },
-        floatingFilter: true,
         width:160,
         cellRenderer: (params) => {
           switch (params.value) {
@@ -122,7 +116,14 @@ export class BudgetApprovedGridData extends CommonGridModel<ResponseBudgetApprov
       {
         field: "actual",
         headerClass: 'ag-grids-custom-header',
-        headerName:"ActualAmount"  ,
+        headerName:"Actual"  ,
+        valueFormatter: this.numberValueFormatter,
+        width:130,
+      },
+      {
+        field: "approvalAmount",
+        headerClass: 'ag-grids-custom-header',
+        headerName:"ApprovalAmount"  ,
         valueFormatter: this.numberValueFormatter,
         width:130,
       },
