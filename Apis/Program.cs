@@ -72,9 +72,13 @@ public static class Program
         // 그 외 환경
         else
         {
+            // 스웨거 사용 
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            
             // 예외시 라우팅 추가 
             app.UseExceptionHandler("/Error");
-            app.UseHsts();
+            // app.UseHsts();
         }
         
         app.UseStaticFiles();
