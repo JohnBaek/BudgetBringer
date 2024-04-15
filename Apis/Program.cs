@@ -119,8 +119,22 @@ public static class Program
             options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         });
         
-        // 데이터 Seed 호스트 서비스 등록 ( 서비스 시작시 구동 )
-        services.AddHostedService<SeedDataService>();
+        // 구성 빌더 설정
+        IConfigurationBuilder builder = new ConfigurationBuilder()
+            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+        
+        // 데이터 베이스 초기화 여부 설정을 가져온다.
+        IConfiguration config = builder.Build();
+        bool databaseInitialize = config.GetValue<bool>("DatabaseInitialize");
+        
+        // 초기화를 해야하는 경우 
+        if (databaseInitialize)
+        {
+            // 데이터 Seed 호스트 서비스 등록 ( 서비스 시작시 구동 )
+            services.AddHostedService<SeedDataService>();    
+        }
+        
         // HttpContext 전역 서비스 레이어에서 사용 
         services.AddHttpContextAccessor();
         
