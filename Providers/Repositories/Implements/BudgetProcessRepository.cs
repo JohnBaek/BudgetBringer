@@ -474,6 +474,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                 {
                     CountryBusinessManagerId = below.CountryBusinessManagerId, // 둘은 동일한 ID를 가정
                     CountryBusinessManagerName = below.CountryBusinessManagerName, // 이름도 동일하다고 가정
+                    BusinessUnitId = below.BusinessUnitId,
                     PoIssueAmountSpending = below.PoIssueAmountSpending + above.PoIssueAmountSpending,
                     PoIssueAmount = below.PoIssueAmount + above.PoIssueAmount,
                     NotPoIssueAmount = below.NotPoIssueAmount + above.NotPoIssueAmount ,
@@ -713,27 +714,47 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                 
                 // 들어갈 데이터 
                 ResponseProcessApproved managerApproved = new ResponseProcessApproved();
+                
+                // 데이터를 만든다.
+                managerApproved.CountryBusinessManagerId = manager.Id ;
+                managerApproved.CountryBusinessManagerName = manager.Name ;
+                result.Add(managerApproved);
+                
+                double sumPoIssueAmountSpending = 0.0;
+                double sumPoIssueAmount = 0.0;
+                double sumNotPoIssueAmount = 0.0;
+                double sumApprovedAmount = 0.0;
 
                 // 매니저가 소유한 비지니스 유닛에 대한 처리 
                 foreach (var businessUnit in manager.CountryBusinessManagerBusinessUnits)
                 {
                     // 승인된 금액 중 PO 발행건 합산금액
                     double poIssueAmountSpending = query
-                        .Where(i => i.ApprovalStatus == EnumApprovalStatus.InVoicePublished)
+                        .Where(i => 
+                            i.BusinessUnitId == businessUnit.BusinessUnitId &&
+                            i.ApprovalStatus == EnumApprovalStatus.InVoicePublished)
                         .Sum(i => i.ApprovalAmount );
+                    sumPoIssueAmountSpending += poIssueAmountSpending;
                 
                     // 승인된 금액 중 PO 미 발행건 합산금액
                     double poIssueAmount = query
-                        .Where(i => i.ApprovalStatus == EnumApprovalStatus.PoPublished)
+                        .Where(i =>
+                            i.BusinessUnitId == businessUnit.BusinessUnitId &&
+                            i.ApprovalStatus == EnumApprovalStatus.PoPublished)
                         .Sum(i => i.ApprovalAmount );
+                    sumPoIssueAmount += poIssueAmount;
                 
                     // PO 미 발행건 합산금액 
                     double notPoIssueAmount = query
-                        .Where(i => i.ApprovalStatus == EnumApprovalStatus.PoNotYetPublished)
+                        .Where(i =>
+                            i.BusinessUnitId == businessUnit.BusinessUnitId &&
+                            i.ApprovalStatus == EnumApprovalStatus.PoNotYetPublished)
                         .Sum(i => i.ApprovalAmount );
+                    sumNotPoIssueAmount += notPoIssueAmount;
                 
                     // 승인된 금액 전체 [승인된 금액 중 PO 발행건 합산금액] + [PO 미 발행건 합산금액 ]
                     double approvedAmount = poIssueAmountSpending + notPoIssueAmount;
+                    sumApprovedAmount += approvedAmount;
                 
                     // 데이터를 만든다.
                     ResponseProcessApproved add = new ResponseProcessApproved
@@ -741,23 +762,31 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                         BusinessUnitId = businessUnit.BusinessUnit!.Id ,
                         BusinessUnitName = businessUnit.BusinessUnit!.Name ,
                         CountryBusinessManagerId = manager.Id ,
-                        CountryBusinessManagerName = manager.Name ,
+                        CountryBusinessManagerName = businessUnit.BusinessUnit!.Name ,
                         PoIssueAmountSpending = poIssueAmountSpending,
                         PoIssueAmount = poIssueAmount,
                         NotPoIssueAmount = notPoIssueAmount,
                         ApprovedAmount = approvedAmount,
                     };
-                    managerApproved.BusinessUnits.Add(add);
+                    result.Add(add);
                 }
                 
-                // 데이터를 만든다.
-                managerApproved.CountryBusinessManagerId = manager.Id ;
-                managerApproved.CountryBusinessManagerName = manager.Name ;
-                managerApproved.PoIssueAmountSpending = managerApproved.BusinessUnits.Sum(i => i.PoIssueAmountSpending);
-                managerApproved.PoIssueAmount = managerApproved.BusinessUnits.Sum(i => i.PoIssueAmount);
-                managerApproved.NotPoIssueAmount = managerApproved.BusinessUnits.Sum(i => i.NotPoIssueAmount);
-                managerApproved.ApprovedAmount = managerApproved.BusinessUnits.Sum(i => i.ApprovedAmount);
-                result.Add(managerApproved);
+                managerApproved.PoIssueAmountSpending = sumPoIssueAmountSpending;
+                managerApproved.PoIssueAmount = sumPoIssueAmount;
+                managerApproved.NotPoIssueAmount = sumNotPoIssueAmount;
+                managerApproved.ApprovedAmount = sumApprovedAmount;
+                
+                // // 데이터를 만든다.
+                // managerApproved.CountryBusinessManagerId = manager.Id ;
+                // managerApproved.CountryBusinessManagerName = manager.Name ;
+                // managerApproved.PoIssueAmountSpending = managerApproved.BusinessUnits.Sum(i => i.PoIssueAmountSpending);
+                // managerApproved.PoIssueAmount = managerApproved.BusinessUnits.Sum(i => i.PoIssueAmount);
+                // managerApproved.NotPoIssueAmount = managerApproved.BusinessUnits.Sum(i => i.NotPoIssueAmount);
+                // managerApproved.ApprovedAmount = managerApproved.BusinessUnits.Sum(i => i.ApprovedAmount);
+                // result.Add(managerApproved);
+                //
+                //
+                // result.AddRange(managerApproved.BusinessUnits);
             }
         }
         catch (Exception e)

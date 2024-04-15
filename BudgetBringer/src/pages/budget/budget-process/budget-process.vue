@@ -8,9 +8,9 @@
             P&L Owner
           </v-tab>
           <v-tab value="Bu">
-            BU
+            Business Unit
           </v-tab>
-          <v-tab value="Below">
+          <v-tab value="Approved">
             Below CHF500K Approved
           </v-tab>
         </v-tabs>
@@ -29,6 +29,35 @@
                 </v-col>
               </v-row>
           </v-window-item>
+
+          <v-window-item value="Bu">
+            <v-row>
+              <v-col cols="12" md="12" >
+                <budget-process-grid-bu
+                  :full-date="fullDate"
+                  :year="year"
+                  title="CAPEX below CHF500K"
+                  sub-title="500K 아래의 정보"
+                >
+                </budget-process-grid-bu>
+              </v-col>
+            </v-row>
+          </v-window-item>
+
+          <v-window-item value="Approved">
+            <v-row>
+              <v-col cols="12" md="12" >
+                <budget-process-grid-approved
+                  :full-date="fullDate"
+                  :year="year"
+                  title="CAPEX below CHF500K"
+                  sub-title="500K 아래의 정보"
+                  :masterDetail="true"
+                >
+                </budget-process-grid-approved>
+              </v-col>
+            </v-row>
+          </v-window-item>
         </v-window>
       </v-sheet>
     </div>
@@ -40,6 +69,9 @@
 
 <script setup="ts">
 import BudgetProcessGridPlOwner from "./budget-process-grid-pl-owner.vue";
+import BudgetProcessGridBu from "./budget-process-grid-bu.vue";
+import BudgetProcessGridApproved from "./budget-process-grid-approved.vue";
+import BusinessUnit from "../../common-code/business-unit/business-unit.vue";
 
 
 /**
