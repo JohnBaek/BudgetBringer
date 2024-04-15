@@ -45,5 +45,5 @@ sudo docker save sgs/budget-bringer-database:latest -o "builds/$FILENAME"
 
 echo "File saved to builds/$FILENAME"
 
-docker run --name budget-bringer-database --restart=unless-stopped --network=sgs-net --ip=172.28.0.11 -p 8880:80 -d sgs/budget-bringer-database:latest
+docker run --name budget-bringer-database --restart=unless-stopped --network=sgs-net --ip=172.28.0.30 -p 3309:3306 -d sgs/budget-bringer-database:latest
 

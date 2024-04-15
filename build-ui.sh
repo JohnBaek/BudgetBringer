@@ -1,7 +1,3 @@
-git fetch origin
-git reset --hard origin/main
-git clean -df
-
 backup_tag=$(date +"%Y%m%d%H%M%S")
 
 # "sgs/budget-bringer-ui:latest"를 제외한 모든 "sgs/budget-bringer-ui" 이미지를 삭제
@@ -43,5 +39,5 @@ sudo docker save sgs/budget-bringer-ui:latest -o "builds/$FILENAME"
 
 echo "File saved to builds/$FILENAME"
 
-docker run --name budget-bringer-ui --restart=unless-stopped --network=sgs-net --ip=172.28.0.10 -p 8880:80 -d sgs/budget-bringer-ui:latest
+docker run --name budget-bringer-ui --restart=unless-stopped --network=sgs-net --ip=172.28.0.10 -p 8002:80 -d sgs/budget-bringer-ui:latest
 

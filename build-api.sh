@@ -1,7 +1,3 @@
-# git fetch origin
-# git reset --hard origin/main
-# git clean -df
-
 cp ./Apis/Dockerfile ./
 
 backup_tag=$(date +"%Y%m%d%H%M%S")
@@ -45,5 +41,5 @@ sudo docker save sgs/budget-bringer-api:latest -o "builds/$FILENAME"
 
 echo "File saved to builds/$FILENAME"
 
-docker run --name budget-bringer-api --restart=unless-stopped --network=sgs-net --ip=172.28.0.11 -p 8880:80 -d sgs/budget-bringer-api:latest
+docker run --name budget-bringer-api --restart=unless-stopped --network=sgs-net --ip=172.28.0.11 -p 8001:80 -d sgs/budget-bringer-api:latest
 
