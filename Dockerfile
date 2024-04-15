@@ -1,9 +1,17 @@
-﻿FROM mariadb:11.2.3
-COPY ./Resources/DataBase/my.cnf /etc/mysql/conf.d/
 
-ENV MYSQL_ROOT_PASSWORD=sgsRootPassword
-ENV MYSQL_DATABASE=budget-bringer
-ENV MYSQL_USER=sgsanalysisuser
-ENV MYSQL_PASSWORD=analysisPassword
+FROM node:lts-alpine as build-stage
 
-EXPOSE 3306
+WORKDIR /app
+
+COPY ./BudgetBringer ./
+
+RUN rm -rf node_modules package-lock.json && npm install
+
+RUN npm run build
+
+FROM nginx:stable-alpine as production-stage
+
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

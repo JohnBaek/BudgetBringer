@@ -1,3 +1,5 @@
+cp ./BudgetBringer/Dockerfile ./
+
 backup_tag=$(date +"%Y%m%d%H%M%S")
 
 # "sgs/budget-bringer-ui:latest"를 제외한 모든 "sgs/budget-bringer-ui" 이미지를 삭제
@@ -16,7 +18,7 @@ fi
 sudo docker rmi sgs/budget-bringer-ui:latest
 
 # 이미지를 새로 빌드
-docker build --no-cache -f BudgetBringer/Dockerfile -t sgs/budget-bringer-ui BudgetBringer/
+sudo docker build -t sgs/budget-bringer-ui .
 sleep 5
 
 

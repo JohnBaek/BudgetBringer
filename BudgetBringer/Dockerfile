@@ -3,11 +3,9 @@ FROM node:lts-alpine as build-stage
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY ./BudgetBringer ./
 
 RUN rm -rf node_modules package-lock.json && npm install
-
-COPY . .
 
 RUN npm run build
 
