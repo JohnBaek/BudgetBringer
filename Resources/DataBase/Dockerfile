@@ -1,5 +1,5 @@
 ﻿FROM mariadb:11.2.3
-COPY my.cnf /etc/mysql/conf.d/
+COPY ./Resources/DataBase/my.cnf /etc/mysql/conf.d/
 
 ENV MYSQL_ROOT_PASSWORD=sgsRootPassword
 ENV MYSQL_DATABASE=budget-bringer

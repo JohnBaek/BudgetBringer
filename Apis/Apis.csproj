@@ -45,6 +45,9 @@
 
     <ItemGroup>
       <Content Remove="Logs\**" />
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
