@@ -22,11 +22,10 @@ export class CountryBusinessManagerGridData extends CommonGridModel<ResponseCoun
   constructor() {
     super();
     this.columDefined = [
-      // 승인일
       {
         field: "name",
         headerClass: 'ag-grids-custom-header',
-        headerName:"Nalue" ,
+        headerName:"Name" ,
         showDisabledCheckboxes: true,
         filter: 'agTextColumnFilter',
         floatingFilter: true,

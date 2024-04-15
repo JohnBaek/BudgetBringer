@@ -90,6 +90,9 @@ const emits = defineEmits<{
 
   // 리프레쉬 버튼 클릭
   (e: 'onRefresh'): any,
+
+  // 셀클릭시
+  (e: 'onCellClicked', params) : any,
 }>();
 defineExpose({
   doRefresh() {
@@ -414,6 +417,15 @@ const onCellDoubleClicked = (event) => {
 }
 
 /**
+ * 셀 클릭시
+ * @param event
+ */
+const onCellClicked = (event) => {
+  console.log('onCellClicked',event)
+  emits('onCellClicked', event.data);
+}
+
+/**
  * 온마운트 핸들링
  */
 onMounted(() => {
@@ -453,6 +465,7 @@ onMounted(() => {
     :style="{ width, height }"
     @selection-changed="onSelectionChanged"
     @cell-double-clicked="onCellDoubleClicked"
+    @cell-clicked="onCellClicked"
   >
   </ag-grid-vue>
 

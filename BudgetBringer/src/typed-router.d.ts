@@ -32,6 +32,7 @@ declare module 'vue-router/auto-routes' {
     '/common-code/cost-center/cost-center-grid': RouteRecordInfo<'/common-code/cost-center/cost-center-grid', '/common-code/cost-center/cost-center-grid', Record<never, never>, Record<never, never>>,
     '/common-code/country-business-manager/country-business-manager': RouteRecordInfo<'/common-code/country-business-manager/country-business-manager', '/common-code/country-business-manager/country-business-manager', Record<never, never>, Record<never, never>>,
     '/common-code/country-business-manager/country-business-manager-grid': RouteRecordInfo<'/common-code/country-business-manager/country-business-manager-grid', '/common-code/country-business-manager/country-business-manager-grid', Record<never, never>, Record<never, never>>,
+    '/common-code/country-business-manager/country-business-manager-units-grid': RouteRecordInfo<'/common-code/country-business-manager/country-business-manager-units-grid', '/common-code/country-business-manager/country-business-manager-units-grid', Record<never, never>, Record<never, never>>,
     '/common-code/sector/sector': RouteRecordInfo<'/common-code/sector/sector', '/common-code/sector/sector', Record<never, never>, Record<never, never>>,
     '/common-code/sector/sector-grid': RouteRecordInfo<'/common-code/sector/sector-grid', '/common-code/sector/sector-grid', Record<never, never>, Record<never, never>>,
     '/home': RouteRecordInfo<'/home', '/home', Record<never, never>, Record<never, never>>,

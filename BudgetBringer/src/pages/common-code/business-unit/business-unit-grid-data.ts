@@ -23,7 +23,7 @@ export class BusinessUnitGridData extends CommonGridModel<ResponseBusinessUnit>{
       {
         field: "name",
         headerClass: 'ag-grids-custom-header',
-        headerName:"Nalue" ,
+        headerName:"Value" ,
         showDisabledCheckboxes: true,
         filter: 'agTextColumnFilter',
         floatingFilter: true,

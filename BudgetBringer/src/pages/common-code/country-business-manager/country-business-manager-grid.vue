@@ -171,6 +171,15 @@ const showUpdateDialog = (item: ResponseCountryBusinessManager) => {
   });
 }
 
+
+/**
+ * emit 정의
+ */
+const emits = defineEmits<{
+  // 셀클릭시
+  (e: 'onCellClicked', params) : any,
+}>();
+
 /**
  * 데이터를 삭제한다.
  */
@@ -197,6 +206,10 @@ const requestRemoveData = () => {
       },
     });
   }
+}
+
+const cbmCellClicked = (data) => {
+  emits('onCellClicked',data);
 }
 
 /**
@@ -239,6 +252,7 @@ const requestUpdateData = () => {
                @onAdd="showAddDialog"
                @onRemove="showRemoveDialog"
                @onUpdate="showUpdateDialog"
+               @onCellClicked="cbmCellClicked"
                ref="gridReference"
   />
   <!--데이터 추가 다이얼로그-->
