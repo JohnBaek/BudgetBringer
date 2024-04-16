@@ -41,5 +41,5 @@ sudo docker save sgs/budget-bringer-proxy:latest -o "builds/$FILENAME"
 
 echo "File saved to builds/$FILENAME"
 
-docker run --name budget-bringer-proxy --restart=unless-stopped --network=sgs-net --ip=172.28.0.40 -p 8000:80 -d sgs/budget-bringer-proxy:latest
+docker run --name budget-bringer-proxy -e TZ=Asia/Seoul --restart=unless-stopped --network=sgs-net --ip=172.28.0.40 -p 8000:80 -d sgs/budget-bringer-proxy:latest
 

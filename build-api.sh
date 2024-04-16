@@ -41,5 +41,5 @@ sudo docker save sgs/budget-bringer-api:latest -o "builds/$FILENAME"
 
 echo "File saved to builds/$FILENAME"
 
-docker run --name budget-bringer-api --restart=unless-stopped --network=sgs-net --ip=172.28.0.11 -d sgs/budget-bringer-api:latest
+docker run --name budget-bringer-api -e TZ=Asia/Seoul --restart=unless-stopped -v ./mysql:/var/lib/mysql --network=sgs-net --ip=172.28.0.11 -d sgs/budget-bringer-api:latest
 
