@@ -33,8 +33,6 @@ public class HandleUnauthorizedMiddleware
         // 파이프라인의 다음 미들웨어 실행
         await _requestDelegate(httpContext);
         
-        
-        
         // 인증되지 않은 사용자 인경우 
         if (httpContext.Response.StatusCode == (int)HttpStatusCode.Unauthorized || httpContext.Response.StatusCode == (int)HttpStatusCode.NotFound)
         {
@@ -43,7 +41,7 @@ public class HandleUnauthorizedMiddleware
             Response response = new Response
             {
                 Code = "UNAUTHORIZED",
-                Message = "로그인 후 이용해주세요",
+                Message = $"로그인 후 이용해주세요 [{ httpContext.Response.StatusCode }]",
                 IsAuthenticated = false,
                 Result = EnumResponseResult.Error
             };
