@@ -108,12 +108,13 @@ public static class Program
     {
         // DB 컨텍스트 정보를 추가한다.
         string connectionString = configuration.GetConnectionString("AnalysisDatabase") ?? "";
-
-        Console.WriteLine($"[connectionString] {connectionString}");
+        Console.WriteLine($"[Connection String] {connectionString} [Environment] {builderEnvironment.EnvironmentName}");
         
         // 디버그 환경일 경우 
         if (builderEnvironment.IsDevelopment())
         {
+            Console.WriteLine($"[Add SQL Bulk Logging]");
+            
             // SQL 쿼리 로그 출력 추가
             services.AddDbContext<AnalysisDbContext>(options =>
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)) 
