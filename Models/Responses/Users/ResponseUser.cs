@@ -13,7 +13,7 @@ public class ResponseUser
     /// <summary>
     /// 이름 
     /// </summary>
-    public string Name { get; set; } = "";
+    public string DisplayName { get; set; } = "";
     
     /// <summary>
     /// 로그인 아이디 

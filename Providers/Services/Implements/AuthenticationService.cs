@@ -102,7 +102,7 @@ public class AuthenticationService : IAuthenticationService
                 Result = EnumResponseResult.Success ,
                 IsAuthenticated = true,
                 Code = loginResult.Code,
-                Data = new ResponseUser{ Name = loginUser.DisplayName , Roles = (await _userService.GetRolesByUserAsync()).Items! },
+                Data = new ResponseUser{ DisplayName = loginUser.DisplayName , Roles = (await _userService.GetRolesByUserAsync()).Items! },
                 Message = loginResult.Message
             };
         }

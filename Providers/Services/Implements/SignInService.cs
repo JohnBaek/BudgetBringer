@@ -48,7 +48,7 @@ public class SignInService : ISignInService<DbModelUser>
     /// </summary>
     /// <param name="dbModelUser">The dbModelUser to sign-in.</param>
     /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
-    /// <param name="authenticationMethod">Name of the method used to authenticate the dbModelUser.</param>
+    /// <param name="authenticationMethod">DisplayName of the method used to authenticate the dbModelUser.</param>
     /// <returns>The task object representing the asynchronous operation.</returns>
     public async Task SignInAsync(DbModelUser dbModelUser, bool isPersistent, string? authenticationMethod = null)
     {

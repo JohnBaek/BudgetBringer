@@ -778,7 +778,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                 
                 // // 데이터를 만든다.
                 // managerApproved.CountryBusinessManagerId = manager.Id ;
-                // managerApproved.CountryBusinessManagerName = manager.Name ;
+                // managerApproved.CountryBusinessManagerName = manager.DisplayName ;
                 // managerApproved.PoIssueAmountSpending = managerApproved.BusinessUnits.Sum(i => i.PoIssueAmountSpending);
                 // managerApproved.PoIssueAmount = managerApproved.BusinessUnits.Sum(i => i.PoIssueAmount);
                 // managerApproved.NotPoIssueAmount = managerApproved.BusinessUnits.Sum(i => i.NotPoIssueAmount);

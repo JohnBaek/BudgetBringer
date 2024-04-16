@@ -19,7 +19,7 @@ public interface ISignInService<in TUser> where TUser : DbModelUser
     /// </summary>
     /// <param name="user">The dbModelUser to sign-in.</param>
     /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
-    /// <param name="authenticationMethod">Name of the method used to authenticate the dbModelUser.</param>
+    /// <param name="authenticationMethod">DisplayName of the method used to authenticate the dbModelUser.</param>
     /// <returns>The task object representing the asynchronous operation.</returns>
     Task SignInAsync(TUser user, bool isPersistent, string? authenticationMethod = null);
 

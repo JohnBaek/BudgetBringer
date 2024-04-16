@@ -333,7 +333,7 @@ namespace Models.DataModels.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
@@ -353,7 +353,7 @@ namespace Models.DataModels.Migrations
 
                     b.HasIndex("ModId");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("DisplayName")
                         .IsUnique();
 
                     b.HasIndex("RegId");
@@ -423,7 +423,7 @@ namespace Models.DataModels.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
@@ -443,7 +443,7 @@ namespace Models.DataModels.Migrations
 
                     b.HasIndex("ModId");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("DisplayName")
                         .IsUnique();
 
                     b.HasIndex("RegId");
@@ -511,7 +511,7 @@ namespace Models.DataModels.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("DisplayName")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
@@ -756,13 +756,13 @@ namespace Models.DataModels.Migrations
                     b.Property<string>("LoginProvider")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("DisplayName")
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("Value")
                         .HasColumnType("longtext");
 
-                    b.HasKey("UserId", "LoginProvider", "Name");
+                    b.HasKey("UserId", "LoginProvider", "DisplayName");
 
                     b.ToTable("UserTokens", (string)null);
                 });

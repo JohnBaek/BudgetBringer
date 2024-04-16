@@ -502,7 +502,7 @@ namespace Models.DataModels.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_BusinessUnits_Name",
                 table: "CountryBusinessManagerBusinessUnits",
-                column: "Name",
+                column: "DisplayName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -514,7 +514,7 @@ namespace Models.DataModels.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_CountryBusinessManagers_Name",
                 table: "CountryBusinessManagers",
-                column: "Name",
+                column: "DisplayName",
                 unique: true);
 
             migrationBuilder.CreateIndex(

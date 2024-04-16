@@ -93,7 +93,7 @@ public class UserRepository : IUserRepository
     private Expression<Func<DbModelUser, ResponseUser>> MapDataToResponse { get; init; } = item => new ResponseUser()
     {
         Id = item.Id,
-        Name = item.DisplayName,
+        DisplayName = item.DisplayName,
         LoginId = item.LoginId ,
     };
     
@@ -226,12 +226,12 @@ public class UserRepository : IUserRepository
             if (requestQuery.SortOrders is { Count: 0 })
             {
                 requestQuery.SortOrders.Add("Asc");
-                requestQuery.SortFields?.Add(nameof(ResponseUser.Name));
+                requestQuery.SortFields?.Add(nameof(ResponseUser.DisplayName));
             }
             
             // 검색 메타정보 추가
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseUser.Name));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseUser.LoginId));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(DbModelUser.DisplayName));
+            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(DbModelUser.LoginId));
             
             // 결과를 반환한다.
             return await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);

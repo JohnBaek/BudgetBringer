@@ -157,7 +157,7 @@ public class UserService : IUserService
                 return new ResponseData<ResponseUser>{ Code = "ERR", Message = "사용자의 정보가 존재하지 않습니다." };
 
             ResponseUser resultUser = new ResponseUser();
-            resultUser.Name = user.DisplayName;
+            resultUser.DisplayName = user.DisplayName;
 
             return new ResponseData<ResponseUser>(EnumResponseResult.Success, "", "", resultUser);
         }
