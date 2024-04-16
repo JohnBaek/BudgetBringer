@@ -5,10 +5,17 @@ import {ResponseUserRole} from "./response-user-role";
  */
 export class ResponseUser {
   /**
+   * 아이디
+   */
+  id : string = '';
+  /**
    * 유저명
    */
-  name : string = '';
-
+  displayName : string = '';
+  /**
+   * 로그인 아이디
+   */
+  loginId: string = '';
   /**
    * 사용자 역할
    */

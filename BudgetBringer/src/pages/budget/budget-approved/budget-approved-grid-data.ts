@@ -193,7 +193,7 @@ export class BudgetApprovedGridData extends CommonGridModel<ResponseBudgetApprov
       // {
       //   field: "regName",
       //   headerClass: 'ag-grids-custom-header',
-      //   headerName:"Reg Name"  ,
+      //   headerName:"Registration Name"  ,
       //   filter: "agTextColumnFilter",
       //   filterParams: {
       //     filterOptions: ["포함하는"],

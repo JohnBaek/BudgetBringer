@@ -14,6 +14,7 @@ import CostCenter from "../pages/common-code/cost-center/cost-center.vue";
 import BusinessUnit from "../pages/common-code/business-unit/business-unit.vue";
 import Sector from "../pages/common-code/sector/sector.vue";
 import CountryBusinessManager from "../pages/common-code/country-business-manager/country-business-manager.vue";
+import UserManagement from "../pages/admin/user/user-management.vue";
 
 
 /**
@@ -45,6 +46,19 @@ const routes: Array<RouteRecordRaw> = [
     component: home,
     meta: { requiresAuth: true },
     children: [
+      {
+        path: '/users',
+        name: 'users',
+        meta: { requiresAuth: true },
+        children : [
+          {
+            path: 'management',
+            name: 'UserManagement',
+            component: UserManagement,
+            meta: { requiresAuth: true , role: ['admin'] },
+          }
+        ]
+      },
       {
         // 코드관리/공통코드 페이지
         path: '/common-code',

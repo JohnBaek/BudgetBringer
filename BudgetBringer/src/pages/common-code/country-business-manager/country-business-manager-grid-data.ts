@@ -1,7 +1,4 @@
 import {CommonGridModel} from "../../../shared/grids/common-grid-model";
-import {ResponseBudgetApproved} from "../../../models/responses/budgets/response-budget-approved";
-import {EnumApprovalStatus} from "../../../models/enums/enum-approval-status";
-import {ResponseBusinessUnit} from "../../../models/responses/budgets/response-business-unit";
 import {ResponseCountryBusinessManager} from "../../../models/responses/budgets/response-country-business-manager";
 
 /**
@@ -34,7 +31,7 @@ export class CountryBusinessManagerGridData extends CommonGridModel<ResponseCoun
       {
         field: "regDate",
         headerClass: 'ag-grids-custom-header',
-        headerName:"Reg Date"  ,
+        headerName:"Registration Date"  ,
         filter: "agTextColumnFilter",
         filterParams: {
           filterOptions: ["포함하는"],
@@ -60,7 +57,7 @@ export class CountryBusinessManagerGridData extends CommonGridModel<ResponseCoun
       {
         field: "regName",
         headerClass: 'ag-grids-custom-header',
-        headerName:"Reg Name"  ,
+        headerName:"Registration Name"  ,
         filter: "agTextColumnFilter",
         filterParams: {
           filterOptions: ["포함하는"],

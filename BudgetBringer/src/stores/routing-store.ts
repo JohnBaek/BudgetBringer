@@ -19,6 +19,7 @@ export const RoutingStore = defineStore('routingStore', {
       return  {
         currentRoute : null ,
         drawerRouting: [
+          new DrawerLink('사용자관리', '사용자를 관리합니다.', '/users/management', 'mdi-account', ['budget-plan'],false,[]),
           new DrawerLink('예산계획', '예산계획을 세우고 작성합니다.', '/budget/plan', 'mdi-notebook', ['budget-plan'],false,[]),
           new DrawerLink('예산승인', '계획된 예산을 승인합니다.', '/budget/approved', 'mdi-check', ['budget-approved'],false,[]),
           new DrawerLink('예산진행현황', '예산 사용 진행 현황에 대해서 확인합니다.', '/budget/process', 'mdi-currency-usd', ['process-result','process-result-view'],false,[]),
@@ -59,8 +60,6 @@ export const RoutingStore = defineStore('routingStore', {
         return false;
 
       this.currentRoute = finds[0];
-
-      console.log(this.currentRoute);
       return true;
     },
 

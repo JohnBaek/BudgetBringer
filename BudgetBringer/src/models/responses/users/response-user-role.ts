@@ -8,7 +8,6 @@ export class ResponseUserRole {
    * 역할 명
    */
   name : string;
-
   /**
    * 상세 권한
    */

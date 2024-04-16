@@ -1,6 +1,4 @@
 import {CommonGridModel} from "../../../shared/grids/common-grid-model";
-import {ResponseBudgetApproved} from "../../../models/responses/budgets/response-budget-approved";
-import {EnumApprovalStatus} from "../../../models/enums/enum-approval-status";
 import {ResponseCostCenter} from "../../../models/responses/budgets/response-cost-center";
 
 /**
@@ -34,7 +32,7 @@ export class CostCenterGridData extends CommonGridModel<ResponseCostCenter>{
       {
         field: "regDate",
         headerClass: 'ag-grids-custom-header',
-        headerName:"Reg Date"  ,
+        headerName:"Registration Date"  ,
         filter: "agTextColumnFilter",
         filterParams: {
           filterOptions: ["포함하는"],
@@ -60,7 +58,7 @@ export class CostCenterGridData extends CommonGridModel<ResponseCostCenter>{
       {
         field: "regName",
         headerClass: 'ag-grids-custom-header',
-        headerName:"Reg Name"  ,
+        headerName:"Registration Name"  ,
         filter: "agTextColumnFilter",
         filterParams: {
           filterOptions: ["포함하는"],

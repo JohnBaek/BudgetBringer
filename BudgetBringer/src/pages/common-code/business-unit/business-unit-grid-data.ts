@@ -32,7 +32,7 @@ export class BusinessUnitGridData extends CommonGridModel<ResponseBusinessUnit>{
       {
         field: "regDate",
         headerClass: 'ag-grids-custom-header',
-        headerName:"Reg Date"  ,
+        headerName:"Registration Date"  ,
         filter: "agTextColumnFilter",
         filterParams: {
           filterOptions: ["포함하는"],
@@ -58,7 +58,7 @@ export class BusinessUnitGridData extends CommonGridModel<ResponseBusinessUnit>{
       {
         field: "regName",
         headerClass: 'ag-grids-custom-header',
-        headerName:"Reg Name"  ,
+        headerName:"Registration Name"  ,
         filter: "agTextColumnFilter",
         filterParams: {
           filterOptions: ["포함하는"],
