@@ -236,7 +236,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
                 return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "대상이 존재하지 않습니다."};
             
             // 로그기록을 위한 데이터 스냅샷
-            DbModelBudgetPlan snapshot = update.FromClone()!;
+            DbModelBudgetPlan snapshot = update.ToClone()!;
             
             // 데이터를 바인딩한다
             Response bidingResult = await SetBudgetPlanDispatchValidatorAsync(update, user , request);

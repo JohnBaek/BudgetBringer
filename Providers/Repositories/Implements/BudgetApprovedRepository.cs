@@ -223,7 +223,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                 return new Response(EnumResponseResult.Success,"ERROR_TARGET_DOES_NOT_FOUND", "대상이 존재하지 않습니다.");
             
             // 로그기록을 위한 데이터 스냅샷
-            DbModelBudgetApproved snapshot = update.FromClone()!;
+            DbModelBudgetApproved snapshot = update.ToClone()!;
 
             // 데이터를 바인딩한다
             Response bidingResult = await SetBudgetPlanDispatchValidatorAsync(update, user , request);

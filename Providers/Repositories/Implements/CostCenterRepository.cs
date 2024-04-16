@@ -196,7 +196,7 @@ public class CostCenterRepository : ICostCenterRepository
                 return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "대상이 존재하지 않습니다."};
             
             // 로그기록을 위한 데이터 스냅샷
-            DbModelCostCenter snapshot = update.FromClone()!;
+            DbModelCostCenter snapshot = update.ToClone()!;
           
             // 데이터를 수정한다.
             update.Value = request.Value;

@@ -14,7 +14,7 @@ public static class ObjectExtension
     /// <param name="source">원본 데이터</param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static T? FromClone<T>(this T? source) where T : class
+    public static T? ToClone<T>(this T? source) where T : class
     {
         // 원본데이터가 유효하지 않을경우 
         if (source == null) 
