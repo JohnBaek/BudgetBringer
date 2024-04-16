@@ -98,7 +98,7 @@ onBeforeMount(() =>{
       <v-spacer></v-spacer>
       <span class="mb-5"></span>
       <span class="text-grey">
-        <b class="text-black">{{(authenticatedUser as ResponseUser).name}} 님</b> 안녕하세요.
+        <b class="text-black">{{(authenticatedUser as ResponseUser).displayName}} 님</b> 안녕하세요.
       </span>
     </v-container>
 
