@@ -60,9 +60,9 @@ public static class Program
         });
         
         // Serilog 로거 설정
-        // builder.Host.UseSerilog((hostingContext, loggerConfiguration) => 
-        //     loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));        
-        //         
+        builder.Host.UseSerilog((hostingContext, loggerConfiguration) => 
+            loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));        
+                
         // 웹 어플리케이션을 빌드한다.
         WebApplication app = builder.Build();
 
