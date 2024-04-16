@@ -33,8 +33,14 @@ public class HandleUnauthorizedMiddleware
         // 파이프라인의 다음 미들웨어 실행
         await _requestDelegate(httpContext);
         
+        // 정상적인경우 
+        if (httpContext.Response.StatusCode == (int) HttpStatusCode.OK ||
+            httpContext.Response.StatusCode == (int) HttpStatusCode.Accepted)
+        {
+            await _requestDelegate(httpContext);
+        }
         // 인증되지 않은 사용자 인경우 
-        if (httpContext.Response.StatusCode == (int)HttpStatusCode.Unauthorized || httpContext.Response.StatusCode == (int)HttpStatusCode.NotFound)
+        else if (httpContext.Response.StatusCode == (int)HttpStatusCode.Unauthorized || httpContext.Response.StatusCode == (int)HttpStatusCode.NotFound)
         {
             httpContext.Response.StatusCode = (int) HttpStatusCode.OK;
             httpContext.Response.ContentType = "application/json";
