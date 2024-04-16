@@ -47,7 +47,7 @@ public class HandleUnauthorizedMiddleware
             Response response = new Response
             {
                 Code = "UNAUTHORIZED",
-                Message = $"로그인 후 이용해주세요 [{ httpContext.Response.StatusCode }]",
+                Message = $"로그인 후 이용해주세요 [{ httpContext.Response.StatusCode }] [{(int)HttpStatusCode.OK}] , HttpStatusCode.OK == httpContext.Response.StatusCode : [{httpContext.Response.StatusCode == (int) HttpStatusCode.OK }]",
                 IsAuthenticated = false,
                 Result = EnumResponseResult.Error
             };
