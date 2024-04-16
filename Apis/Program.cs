@@ -91,7 +91,7 @@ public static class Program
         
         app.UseStaticFiles();
         app.UseAuthentication();
-        app.UseHandleUnauthorized();
+        // app.UseHandleUnauthorized();
         app.UseAuthorization();
         app.MapControllers();
         app.Run();
