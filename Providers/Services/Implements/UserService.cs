@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.DataModels;
+using Models.Requests.Query;
+using Models.Requests.Users;
 using Models.Responses;
 using Models.Responses.Users;
 using Providers.Repositories.Interfaces;
@@ -158,6 +160,50 @@ public class UserService : IUserService
             resultUser.Name = user.DisplayName;
 
             return new ResponseData<ResponseUser>(EnumResponseResult.Success, "", "", resultUser);
+        }
+        catch (Exception e)
+        {
+            result = new ResponseData<ResponseUser>{ Code = "ERR", Message = "처리중 예외가 발생했습니다." };
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// 리스트를 가져온다.
+    /// </summary>
+    /// <param name="requestQuery">쿼리 정보</param>
+    /// <returns></returns>
+    public async Task<ResponseList<ResponseUser>> GetListAsync(RequestQuery requestQuery)
+    {
+        ResponseList<ResponseUser> response;
+        
+        try
+        {
+            response = await _userRepository.GetListAsync(requestQuery);
+        }
+        catch (Exception e)
+        {
+            response = new ResponseList<ResponseUser>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
+            e.LogError(_logger);
+        }
+
+        return response;
+    }
+
+    /// <summary>
+    /// 패스워드를 변경한다 ( Role Admin 인 사용자만 가능 )
+    /// </summary>
+    /// <param name="request">패스워드 변경정보</param>
+    /// <returns></returns>
+    public async Task<Response> UpdatePasswordAsync(RequestUserChangePassword request)
+    {
+        Response result;
+
+        try
+        {
+            return await _userRepository.UpdatePasswordAsync(request);
         }
         catch (Exception e)
         {

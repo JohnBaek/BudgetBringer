@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.DataModels;
+using Models.Requests.Login;
+using Models.Requests.Query;
+using Models.Requests.Users;
 using Models.Responses;
 using Models.Responses.Users;
 using Providers.Services.Interfaces;
@@ -9,12 +12,12 @@ namespace Apis.Controllers;
 
 
 /// <summary>
-/// 유저 컨트롤러 
+/// 관리자 컨트롤러 
 /// </summary>
 [ApiController]
+[Authorize(Roles = "Admin")]
 [Route("api/v1/[controller]")]
-[Authorize]
-public class UserController : Controller
+public class AdminController
 {
     /// <summary>
     /// 로그인 서비스
@@ -22,26 +25,26 @@ public class UserController : Controller
     private readonly IAuthenticationService _authenticationService;
 
     /// <summary>
-    /// 유저 리파지토리
-    /// </summary>
-    private readonly IUserService _userService;
-
-    /// <summary>
     /// 사인인 서비스
     /// </summary>
     /// <returns></returns>
     private readonly ISignInService<DbModelUser> _signInService;
     
+    /// <summary>
+    /// 유저 리파지토리
+    /// </summary>
+    private readonly IUserService _userService;
 
     /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="authenticationService">로그인 서비스</param>
     /// <param name="signInService">사인인 서비스</param>
-    /// <param name="userService">유저 서비스</param>
-    public UserController(
+    /// <param name="userService"></param>
+    public AdminController(
         IAuthenticationService authenticationService
-        , ISignInService<DbModelUser> signInService, IUserService userService) 
+        , ISignInService<DbModelUser> signInService
+        , IUserService userService) 
     {
         _authenticationService = authenticationService;
         _signInService = signInService;
@@ -49,23 +52,24 @@ public class UserController : Controller
     }
     
     /// <summary>
-    /// 로그인한 사용자의 Claim 정보를 가져온다.
+    /// 리스트를 가져온다.
     /// </summary>
-    /// <returns>로그인결과</returns>
-    [HttpGet("Roles")]
-    public async Task<ResponseList<ResponseUserRole>> GetUserClaimsAsync()
+    /// <param name="requestQuery">요청 정보</param>
+    /// <returns></returns>
+    [HttpGet("Users")]
+    public async Task<ResponseList<ResponseUser>> GetListAsync([FromQuery] RequestQuery requestQuery)
     {
-        return await _userService.GetRolesByUserAsync();
+        return await _userService.GetListAsync(requestQuery);
     }
     
     /// <summary>
-    /// 로그인한 사용자의 정보를 가져온다.
+    /// 사용자의 패스워드를 변경한다.
     /// </summary>
-    /// <returns>로그인결과</returns>
-    [HttpGet("")]
-    public async Task<ResponseData<ResponseUser>> GetUserAsync()
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPut("Users")]
+    public async Task<Response> UpdateAsync(RequestUserChangePassword request)
     {
-        return await _userService.GetUserAsync();
+        return await _userService.UpdatePasswordAsync(request);
     }
-    
 }

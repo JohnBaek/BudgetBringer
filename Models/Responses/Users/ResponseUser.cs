@@ -6,9 +6,19 @@ namespace Models.Responses.Users;
 public class ResponseUser 
 {
     /// <summary>
+    /// 아이디 
+    /// </summary>
+    public Guid Id { get; init; }
+    
+    /// <summary>
     /// 이름 
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = "";
+    
+    /// <summary>
+    /// 로그인 아이디 
+    /// </summary>
+    public string LoginId { get; init; } = "";
 
     /// <summary>
     /// 사용자 권한
