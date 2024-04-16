@@ -2,6 +2,7 @@ using System.Reflection;
 using Apis.Middlewares;
 using Features.Debounce;
 using Features.Filters;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -33,6 +34,12 @@ public static class Program
         builder.Services.AddIdentity<DbModelUser, DbModelRole>()
             .AddEntityFrameworkStores<AnalysisDbContext>()
             .AddDefaultTokenProviders();
+
+        // Reverse Proxy 설정
+        builder.Services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        });
 
         // 스웨거 설정
         builder.Services.AddSwaggerGen(swagger =>
@@ -78,6 +85,7 @@ public static class Program
             
             // 예외시 라우팅 추가 
             app.UseExceptionHandler("/Error");
+            app.UseForwardedHeaders();
             // app.UseHsts();
         }
         
