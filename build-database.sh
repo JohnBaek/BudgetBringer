@@ -45,5 +45,5 @@ sudo docker save sgs/budget-bringer-database:latest -o "builds/$FILENAME"
 
 echo "File saved to builds/$FILENAME"
 
-docker run --name budget-bringer-database -e TZ=Asia/Seoul --restart=unless-stopped -v /mnt/datadisk1/sources/tmp:/tmp -v /mnt/datadisk1/sources/budget-data:/var/lib/mysql --network=sgs-net --ip=172.28.0.30 -p 3309:3306 -d sgs/budget-bringer-database:latest --innodb-flush-method=O_DSYNC
+docker run --name budget-bringer-database --privileged	-e TZ=Asia/Seoul --restart=unless-stopped -v /mnt/datadisk1/sources/tmp:/tmp -v /mnt/datadisk1/sources/budget-data:/var/lib/mysql --network=sgs-net --ip=172.28.0.30 -p 3309:3306 -d sgs/budget-bringer-database:latest --innodb-flush-method=O_DSYNC
 
