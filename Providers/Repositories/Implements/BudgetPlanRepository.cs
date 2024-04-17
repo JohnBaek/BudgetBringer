@@ -409,6 +409,15 @@ public class BudgetPlanRepository : IBudgetPlanRepository
                 model.Month = approvalDate.Month.ToString("00");
                 model.Day = approvalDate.Day.ToString("00");
             }
+            // 정상적인 데이터가 아닌경우 
+            else
+            {
+                model.IsApprovalDateValid = false;
+                model.ApproveDateValue = approvalDate;
+                model.Year = "";
+                model.Month = "";
+                model.Day = "";
+            }
             
             // 코스트센터명 조회
             string costCenterName = await _dispatchService.GetNameByIdAsync<DbModelCostCenter>
