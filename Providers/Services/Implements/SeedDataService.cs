@@ -63,6 +63,7 @@ public class SeedDataService : IHostedService
             
         // 관리자를 생성한다.
         await CreateUserAsync(userManager: userManager , role:"Admin" , loginId:"admin" , displayName:"관리자", password:"Qkfka!@12" );
+        await CreateUserAsync(userManager: userManager , role:"Admin" , loginId:"sgs_mike_admin" , displayName:"Mike(Admin)", password:"Pass%word12" );
         // 사용자를 생성한다.
         await CreateUserAsync(userManager: userManager , role:"User" , loginId:"commonuser" , displayName:"일반 사용자", password:"Qkfka!@12" );
         await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_AnoldKim" , displayName:"Anold Kim", password:"Pass%word1" );
@@ -77,6 +78,7 @@ public class SeedDataService : IHostedService
         await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_BruceMoon" , displayName:"Bruce Moon", password:"Pass%word10" );
         
         await CreateUserWithSpecifyAsync(userManager , role:"User" , loginId:"sgs" , displayName:"SGS", password:"Qkfka!212", targetPermission: "process-result" , description: "결과페이지 전체 권한 부여" );
+        await CreateUserWithSpecifyAsync(userManager , role:"User" , loginId:"sgs_mike_user" , displayName:"Mike", password:"Pass%word12", targetPermission: "process-result" , description: "결과페이지 전체 권한 부여" );
         
         Console.WriteLine("[User and DbModelRole Initialize End]".WithDateTime());    
     }
