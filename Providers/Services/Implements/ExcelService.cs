@@ -73,17 +73,21 @@ public class ExcelService : IExcelService
                 // Set Cell Value
                 cell.Value = item.ExcelHeaderName;
             }
+
+            // Store rowHeaderRanges
+            string rowCellRange = $"A1:{GetColumnName(columnIndex - 1)}1";
             
             // Set Header Style
-            worksheet.Row(1).Style.Font.Bold = true;
-            worksheet.Row(1).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
-            worksheet.Row(1).Style.Alignment.SetVertical(XLAlignmentVerticalValues.Center);
-            worksheet.Row(1).Style.Fill.BackgroundColor = XLColor.CornflowerBlue;
+            IXLRange headerRange = worksheet.Range(rowCellRange);
+            headerRange.Style.Font.Bold = true;
+            headerRange.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+            headerRange.Style.Alignment.SetVertical(XLAlignmentVerticalValues.Center);
+            headerRange.Style.Fill.BackgroundColor = XLColor.CornflowerBlue;
+            headerRange.Style.Border.TopBorder = XLBorderStyleValues.Medium;
+            headerRange.Style.Border.BottomBorder = XLBorderStyleValues.Medium;
+            headerRange.Style.Border.LeftBorder = XLBorderStyleValues.Medium;
+            headerRange.Style.Border.RightBorder = XLBorderStyleValues.Medium;
             worksheet.Row(1).Height = 40;
-            worksheet.Row(1).Style.Border.TopBorder = XLBorderStyleValues.Medium;
-            worksheet.Row(1).Style.Border.BottomBorder = XLBorderStyleValues.Medium;
-            worksheet.Row(1).Style.Border.LeftBorder = XLBorderStyleValues.Medium;
-            worksheet.Row(1).Style.Border.RightBorder = XLBorderStyleValues.Medium;
             worksheet.SheetView.FreezeRows(1);
             
             int rowIndex = 2;
@@ -134,15 +138,21 @@ public class ExcelService : IExcelService
                         worksheet.Cell(dataCell).Value = doubleValue;
                     }
                     columnIndex++;
-                                            
-                    worksheet.Row(rowIndex).Style.Border.TopBorder = XLBorderStyleValues.Thin;
-                    worksheet.Row(rowIndex).Style.Border.BottomBorder = XLBorderStyleValues.Thin;
-                    worksheet.Row(rowIndex).Style.Border.LeftBorder = XLBorderStyleValues.Thin;
-                    worksheet.Row(rowIndex).Style.Border.RightBorder = XLBorderStyleValues.Thin;
                 }
                 rowIndex++;
             }
             
+            // Default Row Defined Range
+            string cellStart = "A2";
+            string cellEnd = $"{GetColumnName(columnIndex - 1)}{rowIndex}";
+            
+            // Set Default Rows to Style
+            IXLRange defaultRows = worksheet.Range($"{cellStart}:{cellEnd}");
+            defaultRows.Style.Border.TopBorder = XLBorderStyleValues.Thin;
+            defaultRows.Style.Border.BottomBorder = XLBorderStyleValues.Thin;
+            defaultRows.Style.Border.LeftBorder = XLBorderStyleValues.Thin;
+            defaultRows.Style.Border.RightBorder = XLBorderStyleValues.Thin;
+
             // Add Row for Sum
             columnIndex = 1;
             foreach (RequestQuerySearchMeta meta in requestQuery.SearchMetas.Where(i => i.IsIncludeExcelHeader))
@@ -155,11 +165,17 @@ public class ExcelService : IExcelService
                 worksheet.Cell(dataCell).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
                 worksheet.Cell(dataCell).Style.Alignment.SetVertical(XLAlignmentVerticalValues.Center);
                 
+                // Store rowHeaderRanges
+                rowCellRange = $"A{rowIndex}:{GetColumnName(columnIndex)}{rowIndex}";
+            
+                // Set Header Style
+                IXLRange cellRange = worksheet.Range(rowCellRange);
+                
                 // Set default Style for row
-                worksheet.Row(rowIndex).Style.Border.TopBorder = XLBorderStyleValues.Thick;
-                worksheet.Row(rowIndex).Style.Border.BottomBorder = XLBorderStyleValues.Thick;
-                worksheet.Row(rowIndex).Style.Border.LeftBorder = XLBorderStyleValues.Thick;
-                worksheet.Row(rowIndex).Style.Border.RightBorder = XLBorderStyleValues.Thick;
+                cellRange.Style.Border.TopBorder = XLBorderStyleValues.Medium;
+                cellRange.Style.Border.BottomBorder = XLBorderStyleValues.Medium;
+                cellRange.Style.Border.LeftBorder = XLBorderStyleValues.Medium;
+                cellRange.Style.Border.RightBorder = XLBorderStyleValues.Medium;
                 worksheet.Row(rowIndex).Height = 40;
                 
                 // Is need to SUM COLUMN?
