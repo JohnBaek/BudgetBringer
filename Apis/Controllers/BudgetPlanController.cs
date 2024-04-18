@@ -1,6 +1,8 @@
+using ClosedXML.Excel;
 using Features.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Models.Common.Enums;
 using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
@@ -23,12 +25,20 @@ public class BudgetPlanController : Controller
     private readonly IBudgetPlanService _budgetPlanService;
 
     /// <summary>
+    /// Excel Provider
+    /// </summary>
+    private readonly IExcelService _excelService;
+
+
+    /// <summary>
     /// 생성자 
     /// </summary>
     /// <param name="budgetPlanService">비지니스 유닛 서비스 </param>
-    public BudgetPlanController(IBudgetPlanService budgetPlanService)
+    /// <param name="excelService">Excel Provider</param>
+    public BudgetPlanController(IBudgetPlanService budgetPlanService, IExcelService excelService)
     {
         _budgetPlanService = budgetPlanService;
+        _excelService = excelService;
     }
     
     /// <summary>
@@ -40,7 +50,7 @@ public class BudgetPlanController : Controller
     [ClaimRequirement("Permission","budget-plan")]
     public async Task<ResponseList<ResponseBudgetPlan>> GetListAsync([FromQuery] RequestQuery requestQuery)
     {
-        return await _budgetPlanService.GetListAsync(requestQuery);
+        return await _budgetPlanService.GetListAsync(GetDefinedSearchMeta(requestQuery));
     }
 
     /// <summary>
@@ -101,5 +111,78 @@ public class BudgetPlanController : Controller
     public async Task<Response> Migration()
     {
         return await _budgetPlanService.MigrationAsync();
+    }
+
+    /// <summary>
+    /// Export Excel
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("Export/Excel")]
+    public async Task<IActionResult> ExportExcel([FromQuery] RequestQuery requestQuery)
+    {
+        // Define request 
+        requestQuery = GetDefinedSearchMeta(requestQuery);
+
+        // Get data
+        ResponseList<ResponseBudgetPlan> response = await GetListAsync(requestQuery);
+
+        // Response is failed
+        if (response.Error)
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response(EnumResponseResult.Error,"","처리중 예외가 발생했습니다."));
+        
+        // Create Instance
+        XLWorkbook workbook = new XLWorkbook();
+
+        // Find index for 'isabove500k'
+        int foundIndex = requestQuery.SearchFields!.FindIndex(i => i.ToLower() == "isabove500k");
+        string sheetName = "Above 500K (Budget)";
+        
+        // Is founded 'isabove500k'
+        if (foundIndex > -1)
+        {
+            // To parse value
+            bool isAbove = Convert.ToBoolean(requestQuery.SearchKeywords?[foundIndex]);
+
+            // Set sheet name
+            sheetName = (isAbove) ? "Above 500K (Budget)" : "Below 500K (Budget)";
+        }
+
+        // Make data For worksheet 
+        workbook = _excelService.AddDataToWorkbook(sheetName: sheetName, workbook: workbook, requestQuery: requestQuery, items: response.Items!);
+
+        // Create Stream for generate file
+        MemoryStream stream = new MemoryStream();
+        
+        // Save workbook to memory stream
+        workbook.SaveAs(stream);
+        stream.Position = 0; 
+        
+        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "report.xlsx");
+    }
+    
+    /// <summary>
+    /// Return RequestQuery object to set Search Meta 
+    /// </summary>
+    /// <param name="requestQuery">request</param>
+    /// <returns></returns>
+    private RequestQuery GetDefinedSearchMeta(RequestQuery requestQuery)
+    {
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetPlan.IsAbove500K));
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.ApprovalDate) , "APPROVAL DATE" , true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.ApproveDateValue));
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.IsApprovalDateValid));
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.Description), "DESCRIPTION", true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.CostCenterName), "COST CENTER NAME", true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.CountryBusinessManagerName), "COUNTRY BUSINESS MANAGER NAME", true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.SectorName), "SECTOR NAME", true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.BusinessUnitName), "BUSINESS UNIT NAME", true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetPlan.BudgetTotal), "BUDGET TOTAL", true , isSum: true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.OcProjectName), "OC-PROJECT NAME", true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.BossLineDescription), "BOSS-LINE DESCRIPTION", true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegName));
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegDate));
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.RegDate));
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModDate));
+        return requestQuery;      
     }
 }

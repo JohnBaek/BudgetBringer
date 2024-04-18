@@ -1,5 +1,6 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestProjectMapping/=ED5DE710_002DC5CA_002D4098_002DA4BE_002D8D8B83D8F66D/@EntryIndexedValue">Providers.Tests</s:String>
+	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">/Users/john/Library/Caches/JetBrains/Rider2023.3/resharper-host/temp/Rider/vAny/CoverageData/_SgsAnalysis.-1602769702/Snapshot/snapshot.utdcvr</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestProjectMapping/=ED5DE710_002DC5CA_002D4098_002DA4BE_002D8D8B83D8F66D/@EntryIndexedValue">34D7E900-A1F2-4A84-9B85-82453A5463EB</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestTemplateMapping/=xUnit/@EntryIndexedValue">33ff99d8-b1ad-4ed5-a4fd-376b97c2c841</s:String>
 	<s:Boolean x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/ShowAdvancedOptions/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8016dfcf_002D3b60_002D4a08_002D9343_002D43a9d4220709/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TryLoginAsync_Success" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
@@ -7,8 +8,14 @@
     &lt;TestAncestor&gt;
       &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.AuthenticationServiceTest&lt;/TestId&gt;
       &lt;TestId&gt;xUnit::6710A9B8-8A8D-4614-8871-E83EF038EB18::net8.0::Apis.Tests.CommonTests.Request_ChangeResponseMessage_WhenNotAuthorized&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.Implements.BudgetPlanServiceTest.GetListAsync_ReturnsValidData&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.Implements.BudgetPlanServiceTest.GetAsync_ReturnsData&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.Implements.BudgetPlanServiceTest.UpdateAsync_ReturnsSuccessResponse&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.Implements.BudgetPlanServiceTest.DeleteAsync_ReturnsSuccessResponse&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::34D7E900-A1F2-4A84-9B85-82453A5463EB::net8.0::Providers.Tests.Services.Implements.BudgetPlanServiceTest&lt;/TestId&gt;
     &lt;/TestAncestor&gt;
     &lt;Project Location="/Users/john/Projects/SgsAnalysis/Apis.Tests" Presentation="&amp;lt;Apis.Tests&amp;gt;" /&gt;
+    &lt;Project Location="/Users/john/Projects/SgsAnalysis/Providers.Tests" Presentation="&amp;lt;Providers.Tests&amp;gt;" /&gt;
   &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String>
 	<s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=Providers_002FResources_002FCodeResources/@EntryIndexedValue">True</s:Boolean>

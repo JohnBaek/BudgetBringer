@@ -35,7 +35,7 @@ public class BusinessUnitController : Controller
     /// 리스트를 가져온다.
     /// </summary>
     /// <param name="requestQuery">요청 정보</param>
-    /// <returns></returns>
+    /// <returns></returns> 
     [HttpGet("")]
     [ClaimRequirement("Permission","common-code")]
     public async Task<ResponseList<ResponseBusinessUnit>> GetListAsync([FromQuery] RequestQuery requestQuery)

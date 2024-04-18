@@ -3,17 +3,37 @@ using Models.Common.Enums;
 namespace Models.Requests.Query;
 
 /// <summary>
-/// 쿼리 SearchMeta 
+/// Query Search Meta Informations 
 /// </summary>
 public class RequestQuerySearchMeta
 {
     /// <summary>
-    /// 쿼리 검색 타입
+    /// Type of Query search
     /// </summary>
     public EnumQuerySearchType SearchType { get; set; } = EnumQuerySearchType.Equals;
 
     /// <summary>
-    /// 필드명
+    /// Field Name
     /// </summary>
     public string Field { get; set; } = "";
+    
+    /// <summary>
+    /// Excel Header Name
+    /// </summary>
+    public string ExcelHeaderName { get; set; } = "";
+
+    /// <summary>
+    /// True: Include Excel Columns
+    /// </summary>
+    public bool IsIncludeExcelHeader { get; set; } = false;
+
+    /// <summary>
+    /// Value of Sum
+    /// </summary>
+    public double Sum { get; set; } = 0;
+
+    /// <summary>
+    /// Is Have to Sum?
+    /// </summary>
+    public bool isSum { get; set; }
 }

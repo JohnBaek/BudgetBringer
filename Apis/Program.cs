@@ -191,6 +191,7 @@ public static class Program
         services.AddScoped<IDispatchService, DispatchService>();
         services.AddScoped<IBudgetProcessService,BudgetProcessService>();
         services.AddScoped<IBudgetAnalysisCacheService,BudgetAnalysisCacheService>();
+        services.AddScoped<IExcelService,ExcelService>();
         
         services.AddSingleton<DebounceManager>();
         services.AddTransient<IQueryService, QueryService>();

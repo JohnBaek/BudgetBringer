@@ -33,6 +33,38 @@ export class HttpService {
     return ajax.getJSON<T>(fullUrl);
   }
 
+
+  /**
+   * GET request For Blob file
+   * @param url
+   * @param params
+   */
+  static requestGetFile(url: string, params?: Record<string, any>): Observable<Blob> {
+    const searchParams = new URLSearchParams();
+
+    // 파라미터 처리
+    if (params) {
+      for (const [key, value] of Object.entries(params)) {
+        if (Array.isArray(value)) {
+          value.forEach(item => searchParams.append(key, item));
+        } else {
+          searchParams.append(key, value);
+        }
+      }
+    }
+
+    const queryString = searchParams.toString() ? `?${searchParams}` : '';
+    const fullUrl = `${url}${queryString}`;
+
+    return ajax({
+      url: fullUrl,
+      method: 'GET',
+      responseType: 'blob'
+    }).pipe(
+      map(response => response.response)
+    ) as Observable<Blob>;
+  }
+
   /**
    * POST 요청을 수행하는 메서드.
    * @param url 요청할 리소스의 URL

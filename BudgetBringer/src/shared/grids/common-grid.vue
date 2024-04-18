@@ -6,7 +6,7 @@ import {HttpService} from "../../services/api-services/http-service";
 import {EnumResponseResult} from "../../models/enums/enum-response-result";
 import {ResponseList} from "../../models/responses/response-list";
 import {communicationService} from "../../services/communication-service";
-import CommonSelect from "../common-select.vue";
+
 
 /**
  * Prop 정의
@@ -29,12 +29,19 @@ const props = defineProps({
     required: true ,
     default: false
   },
+
+  gridTitle: {
+    Type: String,
+    required: false,
+    default: ''
+  },
+
   /**
    * 사용할 버튼
    */
   useButtons: {
     Type: Array<string> ,
-    default: ['add','update','delete','refresh']
+    default: ['add','update','delete','refresh', 'excel']
   },
   /**
    * 너비
@@ -374,6 +381,62 @@ const update = () => {
 }
 
 /**
+ * Request to server for excel
+ */
+const exportExcel = () => {
+  console.log('exportExcel');
+  communicationService.inCommunication();
+
+  // Copy Reference
+  const _queryRequest = Object.assign({}, queryRequest);
+  _queryRequest.skip = 0;
+  _queryRequest.pageCount = 1000000;
+
+  // 서버로부터 데이터를 요청하는 URL 구성
+  HttpService.requestGetFile(`${queryRequest.apiUri}/export/excel` , _queryRequest).subscribe({
+    next(response) {
+      if(response == null)
+        return;
+
+      // Create URL dummy link
+      const url = window.URL.createObjectURL(response);
+
+      // Create Anchor dummy
+      const link = document.createElement('a');
+
+      // Simulate Click
+      link.href = url;
+      link.setAttribute('download', `${getFormattedDate()}_${props.gridTitle}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+
+      // Remove Dummy
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    },
+    error(err) {
+      console.error('Error loading data', err);
+    },
+    complete() {
+      // 커뮤니케이션 시작
+      communicationService.offCommunication();
+    },
+  });
+}
+
+const getFormattedDate = () => {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+
+  return `${year}${month}${day}_${hours}${minutes}${seconds}_`;
+}
+
+/**
  * 새로고침 명령
  */
 const refresh = () => {
@@ -439,7 +502,8 @@ onMounted(() => {
         <v-btn v-if="props.useButtons.includes('add')" variant="outlined" @click="add()" class="mr-2" color="info">추가</v-btn>
         <v-btn v-if="props.useButtons.includes('delete')" variant="outlined" @click="remove()" class="mr-2" color="error" :disabled="selectedRows.length == 0">삭제</v-btn>
         <v-btn v-if="props.useButtons.includes('update')" variant="outlined" @click="update()" :disabled="selectedRows.length != 1" color="warning">수정</v-btn>
-        <v-icon v-if="props.useButtons.includes('refresh')" @click="refresh()" class="ml-3" size="x-large" color="green" style="cursor: pointer;">mdi-refresh-circle</v-icon>
+        <v-icon v-if="props.useButtons.includes('refresh')" @click="refresh()" class="ml-3" size="x-large" color="blue" style="cursor: pointer;">mdi-refresh-circle</v-icon>
+        <v-icon v-if="props.useButtons.includes('excel')" @click="exportExcel()" class="ml-3" size="x-large"  color="green" style="cursor: pointer;">mdi-file-excel-outline</v-icon>
         <v-spacer v-if="props.useButtons.length > 0" class="mt-1"></v-spacer>
         <span class="text-grey" v-if="props.useButtons.includes('delete')">shift 버튼을 누른채로 클릭하면 여러 행을 선택할수 있습니다.</span>
       </div>

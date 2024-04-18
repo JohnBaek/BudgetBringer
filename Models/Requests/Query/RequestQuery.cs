@@ -60,4 +60,24 @@ public class RequestQuery
             Field = fieldName ,
         });
     }
+
+    /// <summary>
+    /// 메타 정보를 추가한다.
+    /// </summary>
+    /// <param name="searchType"></param>
+    /// <param name="fieldName"></param>
+    /// <param name="excelHeaderName"></param>
+    /// <param name="isIncludeExcelHeader"></param>
+    /// <param name="isSum"></param>
+    public void AddSearchAndSortDefine(EnumQuerySearchType searchType, string fieldName, string excelHeaderName , bool isIncludeExcelHeader, bool isSum = false)
+    {
+        SearchMetas.Add(new RequestQuerySearchMeta
+        {
+            SearchType = searchType ,
+            Field = fieldName ,
+            ExcelHeaderName = excelHeaderName ,
+            IsIncludeExcelHeader = isIncludeExcelHeader ,
+            isSum = isSum ,
+        });
+    }
 }

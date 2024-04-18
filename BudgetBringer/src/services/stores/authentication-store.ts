@@ -1,7 +1,5 @@
 import {defineStore} from "pinia";
 import {ResponseUser} from "../../models/responses/users/response-user";
-import {authenticationService} from "../api-services/authentication-service";
-import {EnumResponseResult} from "../../models/enums/enum-response-result";
 
 
 /**

@@ -309,6 +309,7 @@ const requestUpdateData = () => {
                @onAdd="showAddDialog"
                @onRemove="showRemoveDialog"
                @onUpdate="showUpdateDialog"
+               :grid-title="((props.isAbove500k as String).toLowerCase() == 'true') ? '예산계획_Above_500K_Budget' : '예산계획_Below_500K_Budget'"
                ref="gridReference"
   />
   <!--데이터 추가 다이얼로그-->

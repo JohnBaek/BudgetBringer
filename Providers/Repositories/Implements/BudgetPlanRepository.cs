@@ -136,24 +136,6 @@ public class BudgetPlanRepository : IBudgetPlanRepository
                 requestQuery.SortFields?.Add(nameof(ResponseBudgetApproved.RegDate));
             }
             
-            // 검색 메타정보 추가
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetPlan.IsAbove500K));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.ApprovalDate));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.ApproveDateValue));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.IsApprovalDateValid));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.Description));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.CostCenterName));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.CountryBusinessManagerName));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.SectorName));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.BusinessUnitName));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetPlan.BudgetTotal));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.OcProjectName));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.BossLineDescription));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegName));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegDate));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.RegDate));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModDate));
-            
             // 결과를 반환한다.
             return await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
         }

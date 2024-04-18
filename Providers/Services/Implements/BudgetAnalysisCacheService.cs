@@ -8,7 +8,7 @@ using Providers.Services.Interfaces;
 namespace Providers.Services.Implements;
 
 /// <summary>
-/// 캐시서비스
+/// 예산 분석 서비스
 /// </summary>
 public class BudgetAnalysisCacheService : IBudgetAnalysisCacheService
 {

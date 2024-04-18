@@ -47,4 +47,19 @@ public class Response
     /// 응답 결과
     /// </summary>
     public EnumResponseResult Result { get; set; } = EnumResponseResult.Error;
+
+    /// <summary>
+    /// Is Response Success?
+    /// </summary>
+    public bool Success => Result == EnumResponseResult.Success;
+    
+    /// <summary>
+    /// Is Response Error?
+    /// </summary>
+    public bool Error => Result == EnumResponseResult.Error;
+    
+    /// <summary>
+    /// Is Response Warning?
+    /// </summary>
+    public bool Warning => Result == EnumResponseResult.Warning;
 }
