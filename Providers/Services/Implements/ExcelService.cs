@@ -68,32 +68,33 @@ public class ExcelService : IExcelService
             worksheet.Row(1).Style.Border.RightBorder = XLBorderStyleValues.Medium;
             worksheet.SheetView.FreezeRows(1);
             
-            
             int rowIndex = 2;
+            List<RequestQuerySearchMeta> targetHeaders = requestQuery.SearchMetas.Where(i => i.IsIncludeExcelHeader).ToList();
+            
             // Process All Data
             foreach (T data in items)
             {
                 columnIndex = 1;
-                foreach (RequestQuerySearchMeta meta in requestQuery.SearchMetas.Where(i => i.IsIncludeExcelHeader))
+                foreach (RequestQuerySearchMeta meta in targetHeaders)
                 {
                     // Find Property By Field Name
                     PropertyInfo? propertyInfo = data?.GetType().GetProperty(meta.Field);
                 
-                    // Exist Field In Property
-                    if (propertyInfo != null) 
-                    {
-                        string dataCell = $"{GetColumnName(columnIndex)}{rowIndex}";
-                        var value = propertyInfo.GetValue(data); // Reflection을 이용해 값을 가져옴
-                        worksheet.Cell(dataCell).Value = value?.ToString();
+                    // Not Exist
+                    if(propertyInfo == null)
+                        continue;
+                    
+                    string dataCell = $"{GetColumnName(columnIndex)}{rowIndex}";
+                    var value = propertyInfo.GetValue(data); // Reflection을 이용해 값을 가져옴
+                    worksheet.Cell(dataCell).Value = value?.ToString();
                         
-                        // Need to Sum
-                        if (meta.isSum && double.TryParse(value?.ToString(), out double doubleValue))
-                        {
-                            meta.Sum += doubleValue;
-                            worksheet.Cell(dataCell).Style.NumberFormat.Format = "#,##0";
-                            worksheet.Cell(dataCell).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
-                            worksheet.Cell(dataCell).Value = doubleValue;
-                        }
+                    // Need to Sum
+                    if (meta.isSum && double.TryParse(value?.ToString(), out double doubleValue))
+                    {
+                        meta.Sum += doubleValue;
+                        worksheet.Cell(dataCell).Style.NumberFormat.Format = "#,##0";
+                        worksheet.Cell(dataCell).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
+                        worksheet.Cell(dataCell).Value = doubleValue;
                     }
                     columnIndex++;
                                             
