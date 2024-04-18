@@ -25,6 +25,24 @@ public class ExcelService : IExcelService
     {
         _logger = logger;
     }
+    
+    /// <summary>
+    /// Predefined Colors for enum type
+    /// </summary>
+    private readonly List<XLColor> _colors =
+    [
+        XLColor.AshGrey,
+        XLColor.YellowProcess,
+        XLColor.GreenPigment,
+        XLColor.DeepSkyBlue,
+        XLColor.ElectricLime,
+        XLColor.FluorescentYellow,
+        XLColor.GreenYellow,
+        XLColor.HotPink,
+        XLColor.CornflowerBlue,
+        XLColor.Jade
+    ];
+    
 
     /// <summary>
     /// Generate work book for 
@@ -86,7 +104,26 @@ public class ExcelService : IExcelService
                     
                     string dataCell = $"{GetColumnName(columnIndex)}{rowIndex}";
                     var value = propertyInfo.GetValue(data); // Reflection을 이용해 값을 가져옴
-                    worksheet.Cell(dataCell).Value = value?.ToString();
+                    
+                    // Is Enum Type
+                    if (meta.EnumType != null)
+                    {
+                        // Parse the enum, cast it, and get the description
+                        Enum enumValue = (Enum)Enum.Parse(meta.EnumType, value?.ToString() ?? "");
+                        worksheet.Cell(dataCell).Value = enumValue.GetDescription();
+                        
+                        // Get index of enum
+                        int index = Convert.ToInt32(value);
+                        XLColor color = GetColorFromIndex(index);
+                        
+                        // Set Color
+                        worksheet.Cell(dataCell).Style.Fill.BackgroundColor = color;
+                    }
+                    // Others
+                    else
+                    {
+                        worksheet.Cell(dataCell).Value = value?.ToString();
+                    }
                         
                     // Need to Sum
                     if (meta.isSum && double.TryParse(value?.ToString(), out double doubleValue))
@@ -166,5 +203,16 @@ public class ExcelService : IExcelService
         }
 
         return columnName;
+    }
+    
+    
+    /// <summary>
+    /// Gets Colors from colors table in circularity
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    private XLColor GetColorFromIndex(int index)
+    {
+        return _colors[index % _colors.Count]; 
     }
 }

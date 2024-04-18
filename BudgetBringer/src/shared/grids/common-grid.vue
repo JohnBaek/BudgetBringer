@@ -63,7 +63,7 @@ const props = defineProps({
    * 쿼리 리퀘스트
    */
   queryRequest: {
-    type: RequestQuery ,
+    type: Object as () => RequestQuery ,
     required: true ,
   }
 });
@@ -151,7 +151,7 @@ const onGridReady = (params) => {
   gridParams.value = params;
 
   // 데이터 소스를 바인딩한다.
-  gridApi.value.setDatasource(dataSource);
+  gridApi.value.setGridOption('datasource', dataSource)
 
   // 필터 이벤트를 핸들링한다.
   gridApi.value.addEventListener('filterChanged', () => {
@@ -511,9 +511,12 @@ onMounted(() => {
   </v-row>
 
   <ag-grid-vue
-    style="width: 100%; height: 600px;"
-    :columnDefs="columDefined"
     @grid-ready="onGridReady"
+    @selection-changed="onSelectionChanged"
+    @cell-double-clicked="onCellDoubleClicked"
+    @cell-clicked="onCellClicked"
+    class="ag-theme-alpine"
+    :columnDefs="columDefined"
     :defaultColDef="defaultColDefined"
     :rowBuffer="rowBuffer"
     :rowSelection="'multiple'"
@@ -523,13 +526,9 @@ onMounted(() => {
     :maxConcurrentDatasourceRequests="maxConcurrentDatasourceRequests"
     :infiniteInitialRowCount="infiniteInitialRowCount"
     :maxBlocksInCache="maxBlocksInCache"
-    class="ag-theme-alpine"
     :pinnedTopRowData="pinnedTopRowData"
     :getRowStyle="getRowStyle"
     :style="{ width, height }"
-    @selection-changed="onSelectionChanged"
-    @cell-double-clicked="onCellDoubleClicked"
-    @cell-clicked="onCellClicked"
   >
   </ag-grid-vue>
 

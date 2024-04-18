@@ -43,13 +43,11 @@ onBeforeMount(() => {
 
   // 라우팅 정보를 업데이트한다.
   const result = routingStore.tryUpdateRoute(route.fullPath);
-  console.log('라우팅 정보를 업데이트한다.',result);
 
   // 라우팅 정보를 찾는데 성공한경우
   if(result) {
     // 라우팅정보를 업데이트 한다.
     currentLink.value = routingStore.getCurrentRoute();
-    console.log('라우팅정보를 업데이트 한다.',result);
   }
 
 

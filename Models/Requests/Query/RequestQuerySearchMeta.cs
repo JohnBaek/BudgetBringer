@@ -36,4 +36,9 @@ public class RequestQuerySearchMeta
     /// Is Have to Sum?
     /// </summary>
     public bool isSum { get; set; }
+
+    /// <summary>
+    /// If value has EnumType this will be not null
+    /// </summary>
+    public Type? EnumType { get; set; } = null;
 }
