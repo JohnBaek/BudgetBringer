@@ -1,5 +1,6 @@
 using ClosedXML.Excel;
 using Features.Attributes;
+using Features.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Common.Enums;
@@ -167,6 +168,7 @@ public class BudgetPlanController : Controller
     /// <returns></returns>
     private RequestQuery GetDefinedSearchMeta(RequestQuery requestQuery)
     {
+        requestQuery.SearchMetas = [];
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetPlan.IsAbove500K));
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.ApprovalDate) , "APPROVAL DATE" , true);
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.ApproveDateValue));
