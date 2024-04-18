@@ -45,7 +45,7 @@ public class ExcelService : IExcelService
     
 
     /// <summary>
-    /// Generate work book for 
+    /// Add Data to XLWorkbook for export
     /// </summary>
     /// <param name="workbook"></param>
     /// <param name="requestQuery"></param>
@@ -107,8 +107,9 @@ public class ExcelService : IExcelService
                         continue;
                     
                     string dataCell = $"{GetColumnName(columnIndex)}{rowIndex}";
-                    var value = propertyInfo.GetValue(data); // Reflection을 이용해 값을 가져옴
-                    
+                    var value = propertyInfo.GetValue(data); 
+                    worksheet.Cell(dataCell).Value = value?.ToString();
+
                     // Is Enum Type
                     if (meta.EnumType != null)
                     {
@@ -123,11 +124,6 @@ public class ExcelService : IExcelService
                         // Set Color
                         worksheet.Cell(dataCell).Style.Fill.BackgroundColor = color;
                     }
-                    // Others
-                    else
-                    {
-                        worksheet.Cell(dataCell).Value = value?.ToString();
-                    }
                         
                     // Need to Sum
                     if (meta.isSum && double.TryParse(value?.ToString(), out double doubleValue))
@@ -141,10 +137,19 @@ public class ExcelService : IExcelService
                 }
                 rowIndex++;
             }
+
+
+            // Has any isSum is true? should add Bottom
+            bool needToSumBottom = requestQuery.SearchMetas.Any(i => i.isSum);
+            int rowEndIndex = rowIndex;
+            
+            // Not need to Sum bottom
+            if (needToSumBottom == false)
+                rowEndIndex--;
             
             // Default Row Defined Range
             string cellStart = "A2";
-            string cellEnd = $"{GetColumnName(columnIndex - 1)}{rowIndex}";
+            string cellEnd = $"{GetColumnName(columnIndex - 1)}{rowEndIndex}";
             
             // Set Default Rows to Style
             IXLRange defaultRows = worksheet.Range($"{cellStart}:{cellEnd}");
@@ -152,7 +157,15 @@ public class ExcelService : IExcelService
             defaultRows.Style.Border.BottomBorder = XLBorderStyleValues.Thin;
             defaultRows.Style.Border.LeftBorder = XLBorderStyleValues.Thin;
             defaultRows.Style.Border.RightBorder = XLBorderStyleValues.Thin;
-
+            
+            // Not need to Sum bottom
+            if (needToSumBottom == false)
+            {
+                // Set auto-resize for Column Width
+                worksheet.Columns().AdjustToContents();
+                return workbook;
+            }
+            
             // Add Row for Sum
             columnIndex = 1;
             foreach (RequestQuerySearchMeta meta in requestQuery.SearchMetas.Where(i => i.IsIncludeExcelHeader))

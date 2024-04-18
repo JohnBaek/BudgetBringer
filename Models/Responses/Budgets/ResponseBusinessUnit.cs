@@ -32,14 +32,4 @@ public class ResponseBusinessUnit : ResponseCommonWriter
     /// 유닛명 (유니크)
     /// </summary>
     public string Name { get; init; }
-    
-    /// <summary>
-    /// 등록일 (필수)
-    /// </summary>
-    public DateTime RegDate { get; init; }
-    
-    /// <summary>
-    /// 수정일 (필수)
-    /// </summary>
-    public DateTime ModDate { get; init; }
 }
