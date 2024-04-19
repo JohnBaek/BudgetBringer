@@ -8,5 +8,6 @@ public class ResponseProcessBusinessUnitSummary
     /// <summary>
     /// 오너정보
     /// </summary>
-    public List<ResponseProcessBusinessUnitSummaryDetail> Items { get; set; } = new List<ResponseProcessBusinessUnitSummaryDetail>();
+    // ReSharper disable once CollectionNeverQueried.Global
+    public List<ResponseProcessSummaryDetail<ResponseProcessBusinessUnit>> Items { get; set; } = [];
 }

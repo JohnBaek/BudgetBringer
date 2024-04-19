@@ -8,5 +8,6 @@ public class ResponseProcessOwnerSummary
     /// <summary>
     /// 오너정보
     /// </summary>
-    public List<ResponseProcessOwnerSummaryDetail> Items { get; set; } = new List<ResponseProcessOwnerSummaryDetail>();
+    // ReSharper disable once CollectionNeverQueried.Global
+    public List<ResponseProcessSummaryDetail<ResponseProcessOwner>> Items { get; set; } = [];
 }

@@ -6,8 +6,8 @@ import {HttpService} from "../../services/api-services/http-service";
 import {EnumResponseResult} from "../../models/enums/enum-response-result";
 import {ResponseList} from "../../models/responses/response-list";
 import {communicationService} from "../../services/communication-service";
-
-
+import CommonGridButtonGroup from "./common-grid-button-group.vue";
+import {CommonGridButtonGroupDefinesButtonEmits} from "./common-grid-button-group-defines";
 /**
  * Prop 정의
  */
@@ -67,47 +67,19 @@ const props = defineProps({
     required: true ,
   }
 });
-
 let items = [];
-
 /**
  * 쿼리 요청을 복사한다.
  */
 let queryRequest: RequestQuery = Object.assign({},props.queryRequest) ;
 /**
- * 선택된 row
+ * Current selected rows list.
  */
 const selectedRows = ref([]);
-
 /**
- * emit 정의
+ * Defines dispatches.
  */
-const emits = defineEmits<{
-  // 신규 데이터가 추가되었을때
-  (e: 'onNewRowAdded', params): any,
-
-  // 추가 버튼 클릭
-  (e: 'onAdd'): any,
-
-  // 삭제 버튼 클릭
-  (e: 'onRemove', params): any,
-
-  // 업데이트 버튼 클릭
-  (e: 'onUpdate', params): any,
-
-  // 리프레쉬 버튼 클릭
-  (e: 'onRefresh'): any,
-
-  // 셀클릭시
-  (e: 'onCellClicked', params) : any,
-}>();
-defineExpose({
-  doRefresh() {
-    refresh();
-  } ,
-});
-
-
+const emits = defineEmits<CommonGridButtonGroupDefinesButtonEmits>();
 /**
  * 그리드의 column 데이터
  */
@@ -124,7 +96,6 @@ const detailDialogReference = ref(false);
  * 입력 데이터
  */
 let inputRow = {};
-
 /**
  * Top 인서트 Pine
  */
@@ -358,28 +329,29 @@ const onSelectionChanged = () => {
 };
 
 /**
- * 추가 팝업 명령
+ * dispatch add
  */
 const add = () => {
-    emits('onAdd');
+  emits('onAdd');
 }
-
 /**
- * 삭제 명령
+ * dispatch remove
  */
 const remove = () => {
   const selectedRows = gridApi.value.getSelectedRows();
   emits('onRemove' , selectedRows);
 }
-
 /**
- * 수정 팝업 명령
+ * dispatch update
  */
 const update = () => {
+  // Get Selected rows
   const selectedRows = gridApi.value.getSelectedRows();
-  emits('onUpdate',selectedRows[0]);
+  // Has not selected rows
+  if(selectedRows.length == 0)
+    return;
+  emits('onUpdate' , selectedRows[0]);
 }
-
 /**
  * Request to server for excel
  */
@@ -389,10 +361,12 @@ const exportExcel = () => {
 
   // Copy Reference
   const _queryRequest = Object.assign({}, queryRequest);
+
+  // Manipulate Range conditions
   _queryRequest.skip = 0;
   _queryRequest.pageCount = 1000000;
 
-  // 서버로부터 데이터를 요청하는 URL 구성
+  // Request to Server
   HttpService.requestGetFile(`${queryRequest.apiUri}/export/excel` , _queryRequest).subscribe({
     next(response) {
       if(response == null)
@@ -499,17 +473,20 @@ onMounted(() => {
   <v-row class="mt-1 mb-1">
     <v-col>
       <div class="mt-2">
-        <v-btn v-if="props.useButtons.includes('add')" variant="outlined" @click="add()" class="mr-2" color="info">추가</v-btn>
-        <v-btn v-if="props.useButtons.includes('delete')" variant="outlined" @click="remove()" class="mr-2" color="error" :disabled="selectedRows.length == 0">삭제</v-btn>
-        <v-btn v-if="props.useButtons.includes('update')" variant="outlined" @click="update()" :disabled="selectedRows.length != 1" color="warning">수정</v-btn>
-        <v-icon v-if="props.useButtons.includes('refresh')" @click="refresh()" class="ml-3" size="x-large" color="blue" style="cursor: pointer;">mdi-refresh-circle</v-icon>
-        <v-icon v-if="props.useButtons.includes('excel')" @click="exportExcel()" class="ml-3" size="x-large"  color="green" style="cursor: pointer;">mdi-file-excel-outline</v-icon>
-        <v-spacer v-if="props.useButtons.length > 0" class="mt-1"></v-spacer>
-        <span class="text-grey" v-if="props.useButtons.includes('delete')">shift 버튼을 누른채로 클릭하면 여러 행을 선택할수 있습니다.</span>
+        <!-- Action Buttons -->
+        <common-grid-button-group
+          :selected-rows="selectedRows"
+          @on-add="add()"
+          @on-remove="remove()"
+          @on-update="update()"
+          @on-refresh="refresh()"
+          @on-export-excel="exportExcel()"
+        />
       </div>
     </v-col>
   </v-row>
 
+  <!-- Grid -->
   <ag-grid-vue
     @grid-ready="onGridReady"
     @selection-changed="onSelectionChanged"
@@ -571,16 +548,5 @@ onMounted(() => {
   </v-dialog>
 </template>
 
-<style lang="css" >
-@keyframes skeleton-loading {
-  0% {
-    background-color: rgba(165, 165, 165, 0.1);
-  }
-  50% {
-    background-color: rgba(165, 165, 165, 0.3);
-  }
-  100% {
-    background-color: rgba(165, 165, 165, 0.1);
-  }
-}
+<style lang="css" scoped>
 </style>

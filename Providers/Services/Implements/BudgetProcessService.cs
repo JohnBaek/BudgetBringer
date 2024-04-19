@@ -82,18 +82,39 @@ public class BudgetProcessService : IBudgetProcessService
     }
 
     /// <summary>
-    /// 승인된 금액 편성 진행상황을 가져온다.
-    /// 단, process-result-view 의 Claim 만 소유한 경우 로그인한 사용자의 부서가 일치하는
-    /// 정보만 나와야한다. 
+    /// Get Approved Analysis for Below Amount
+    /// ! If an authenticated user has only 'process-result-view' permissions, they can only view results they own.
     /// </summary>
     /// <returns></returns>
-    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAmountSummaryAsync()
+    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedBelowAmountSummaryAsync()
     {
         ResponseData<ResponseProcessApprovedSummary> response;
         
         try
         {
-            response = await _repository.GetApprovedAmountSummaryAsync();
+            response = await _repository.GetApprovedBelowAmountSummaryAsync();
+        }
+        catch (Exception e)
+        {
+            response = new ResponseData<ResponseProcessApprovedSummary>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
+            e.LogError(_logger);
+        }
+
+        return response;
+    }
+
+    /// <summary>
+    /// Get Approved Analysis for Above Amount
+    /// ! If an authenticated user has only 'process-result-view' permissions, they can only view results they own.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAboveAmountSummaryAsync()
+    {
+        ResponseData<ResponseProcessApprovedSummary> response;
+        
+        try
+        {
+            response = await _repository.GetApprovedAboveAmountSummaryAsync();
         }
         catch (Exception e)
         {

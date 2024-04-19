@@ -1,23 +1,25 @@
+import {RequestQuery} from "../../models/requests/query/request-query";
+
 /**
- * Common Grid 모델 정의
+ * CommonGrid Model
  */
-export abstract class CommonGridModel<T> {
+export abstract class CommonGridModel {
   /**
-   * 표현할 그리드의 RowData 를 받는다.
-   */
-  items : Array<T>;
-  /**
-   * 컬럼정보
+   * ag-grid Column Definitions
    */
   columDefined : any [];
   /**
-   * Insert 그리드 사용여부
+   * Request Query Model
    */
-  isUseInsert : boolean;
-
-
+  requestQuery : RequestQuery;
   /**
-   * 넘버 포매터
+   * Delegate Total Calculate
+   */
+  calculateTotals : Function;
+  calculateFields : {};
+  /**
+   * Number Formatter.
+   * Uses in ag-grid Column Renderer
    * @param params
    */
   numberValueFormatter = (params) => {

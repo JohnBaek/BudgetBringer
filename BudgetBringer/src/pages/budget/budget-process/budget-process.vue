@@ -10,8 +10,12 @@
           <v-tab value="Bu">
             Business Unit
           </v-tab>
-          <v-tab value="Approved">
-            Below CHF500K Approved
+          <v-tab value="ApprovedBelow">
+            Below CHF500K Approved Below
+          </v-tab>
+
+          <v-tab value="ApprovedAbove">
+            Below CHF500K Approved Above
           </v-tab>
         </v-tabs>
 
@@ -44,17 +48,32 @@
             </v-row>
           </v-window-item>
 
-          <v-window-item value="Approved">
+          <v-window-item value="ApprovedBelow">
             <v-row>
               <v-col cols="12" md="12" >
-                <budget-process-grid-approved
+                <budget-process-grid-approved-below
                   :full-date="fullDate"
                   :year="year"
                   title="CAPEX below CHF500K"
-                  sub-title="500K 아래의 정보"
+                  sub-title="500K 아래"
                   :masterDetail="true"
                 >
-                </budget-process-grid-approved>
+                </budget-process-grid-approved-below>
+              </v-col>
+            </v-row>
+          </v-window-item>
+
+          <v-window-item value="ApprovedAbove">
+            <v-row>
+              <v-col cols="12" md="12" >
+                <budget-process-grid-approved-above
+                  :full-date="fullDate"
+                  :year="year"
+                  title="CAPEX above CHF500K"
+                  sub-title="500K 이상"
+                  :masterDetail="true"
+                >
+                </budget-process-grid-approved-above>
               </v-col>
             </v-row>
           </v-window-item>
@@ -70,8 +89,8 @@
 <script setup="ts">
 import BudgetProcessGridPlOwner from "./budget-process-grid-pl-owner.vue";
 import BudgetProcessGridBu from "./budget-process-grid-bu.vue";
-import BudgetProcessGridApproved from "./budget-process-grid-approved.vue";
-import BusinessUnit from "../../common-code/business-unit/business-unit.vue";
+import BudgetProcessGridApprovedBelow from "./budget-process-grid-approved-below.vue";
+import BudgetProcessGridApprovedAbove from "./budget-process-grid-approved-above.vue";
 
 
 /**

@@ -4,7 +4,7 @@ import {ResponseProcessApproved} from "../../../models/responses/process/process
 /**
  * 진생상황 BudgetProcessGridBusinessUnit 그리드 모델
  */
-export class BudgetProcessGridProcessApproved extends CommonGridModel<ResponseProcessApproved>{
+export class BudgetProcessGridProcessApproved extends CommonGridModel{
   /**
    * 표현할 그리드의 RowData 를 받는다.
    */

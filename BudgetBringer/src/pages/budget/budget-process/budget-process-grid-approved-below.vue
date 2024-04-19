@@ -93,7 +93,7 @@ const loadData = () => {
   communicationService.inCommunication();
 
   // 서버에서 대상하는 데이터를 조회한다.
-  HttpService.requestGet<ResponseData<ResponseProcessApprovedSummary>>(`${requestQuery.apiUri}/Approved`).subscribe({
+  HttpService.requestGet<ResponseData<ResponseProcessApprovedSummary>>(`${requestQuery.apiUri}/Approved/Below`).subscribe({
     async next(response) {
       // 요청에 실패한경우
       if (response.result !== EnumResponseResult.success) {

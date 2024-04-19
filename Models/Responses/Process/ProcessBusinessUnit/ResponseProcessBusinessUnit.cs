@@ -8,7 +8,7 @@ public class ResponseProcessBusinessUnit
     /// <summary>
     /// 비지니스 유닛 아이디 
     /// </summary>
-    public Guid BusinessUnitId { get; set; }
+    public Guid BusinessUnitId { get; set; } = Guid.NewGuid();
 
     /// <summary>
     /// 비지니스유닛 명

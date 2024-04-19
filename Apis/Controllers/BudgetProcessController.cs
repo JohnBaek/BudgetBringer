@@ -56,13 +56,24 @@ public class BudgetProcessController : Controller
     
     
     /// <summary>
-    /// 승인 정보를 가져온다.
+    /// Get Approved Analysis for Below 
     /// </summary>
     /// <returns></returns>
-    [HttpGet("Approved")]
+    [HttpGet("Approved/Below")]
     [ClaimRequirement("Permission","process-result,process-result-view")]
-    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAmountSummaryAsync()
+    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedBelowAmountSummaryAsync()
     {
-        return await _budgetProcessService.GetApprovedAmountSummaryAsync();
+        return await _budgetProcessService.GetApprovedBelowAmountSummaryAsync();
+    }
+    
+    /// <summary>
+    /// Get Approved Analysis for Above 
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("Approved/Above")]
+    [ClaimRequirement("Permission","process-result,process-result-view")]
+    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAboveAmountSummaryAsync()
+    {
+        return await _budgetProcessService.GetApprovedAboveAmountSummaryAsync();
     }
 }

@@ -1,44 +1,45 @@
 import {CommonGridModel} from "../../../shared/grids/common-grid-model";
+import {RequestQuery} from "../../../models/requests/query/request-query";
 
 /**
  * 진생상황 P&L Owner 그리드 모델
  */
-export class BudgetProcessGridPLOwner extends CommonGridModel<BudgetProcessGridPLOwnerDataModel>{
+export class BudgetProcessGridPLOwner extends CommonGridModel {
   /**
-   * 표현할 그리드의 RowData 를 받는다.
+   * Date
    */
-  items : Array<BudgetProcessGridPLOwnerDataModel>;
+  public date: string;
   /**
-   * 컬럼정보
+   * Year of Date
    */
-  columDefined : any [];
+  public year : number;
   /**
-   * Insert 그리드 사용여부
+   * Constructor
+   * @param date
+   * @param year
+   * @param requestQuery
    */
-  isUseInsert : boolean;
-
-  /**
-   * 생성자
-   * @param date 전체 날짜 정보
-   * @param year 년도 정보
-   */
-  constructor( date: string , year : number ) {
+  constructor( date: string , year : number , requestQuery: RequestQuery ) {
     super();
+    this.date = date;
+    this.year = year;
+    this.requestQuery = requestQuery;
+    // Compute calculated Totals
+    this.calculateTotals = ({ items }: { items: any  }) => {
+      return items.map(data => ({
+        countryBusinessManagerName : "합계",
+        budgetYear: data.items.reduce((sum, item) => sum + item['budgetYear'], 0),
+        budgetApprovedYearSum: data.items.reduce((sum, item) => sum + item['budgetApprovedYearSum'], 0),
+        budgetRemainingYear: data.items.reduce((sum, item) => sum + item['budgetRemainingYear'], 0),
+      }));
+    }
+
     this.columDefined = [
-      // 날짜
       {
         field: "countryBusinessManagerName",
         headerName: date,
         headerClass: 'ag-grids-custom-header',
       },
-      // // 예산
-      // {
-      //   field: "Currency",
-      //   headerName:`KRW` ,
-      //   headerClass: 'ag-grids-custom-header',
-      //   cellRendererFramework: CommonGridRendererSkeleton,
-      // },
-      // 예산
       {
         headerName:`${year.toString()}FY` ,
         headerClass: 'ag-grids-custom-header',
@@ -51,7 +52,6 @@ export class BudgetProcessGridPLOwner extends CommonGridModel<BudgetProcessGridP
           }
         ]
       },
-      // 승인 예산
       {
         headerName:`${year.toString()}&${(year-1).toString()} FY` ,
         headerClass: 'ag-grids-custom-header',
@@ -64,7 +64,6 @@ export class BudgetProcessGridPLOwner extends CommonGridModel<BudgetProcessGridP
           }
         ]
       },
-      // 남은 예산
       {
         headerName:`${year.toString()}FY` ,
         headerClass: 'ag-grids-custom-header',
@@ -78,42 +77,7 @@ export class BudgetProcessGridPLOwner extends CommonGridModel<BudgetProcessGridP
         ]
       },
     ]
-    this.isUseInsert = false;
-    this.items = [];
   }
 }
 
-/**
- * 예산 그리드 데이터 모델
- */
-export class BudgetProcessGridPLOwnerDataModel {
-  /**
-   * 승인일 ( 텍스트 형태도 가능 )
-   */
-  ApprovalDate: string;
-  /**
-   * 섹터코드
-   */
-  Sector:string;
-  /**
-   * 부서코드
-   */
-  Bu:string;
-  /**
-   * CC 코드
-   */
-  Cc:string;
-  /**
-   * Country Business Manager
-   */
-  Cbm:string;
-  /**
-   * 설명
-   */
-  Description: string;
-  /**
-   * 예산
-   */
-  FvBudget:number;
-}
 

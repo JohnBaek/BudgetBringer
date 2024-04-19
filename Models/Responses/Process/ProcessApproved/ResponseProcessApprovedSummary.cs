@@ -8,5 +8,6 @@ public class ResponseProcessApprovedSummary
     /// <summary>
     /// 오너정보
     /// </summary>
-    public List<ResponseProcessApprovedSummaryDetail> Items { get; set; } = new List<ResponseProcessApprovedSummaryDetail>();
+    // ReSharper disable once CollectionNeverQueried.Global
+    public List<ResponseProcessSummaryDetail<ResponseProcessApproved>> Items { get; set; } = [];
 }

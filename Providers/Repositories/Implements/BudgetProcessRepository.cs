@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.DataModels;
 using Models.Responses;
+using Models.Responses.Budgets;
+using Models.Responses.Process;
 using Models.Responses.Process.ProcessApproved;
 using Models.Responses.Process.ProcessBusinessUnit;
 using Models.Responses.Process.ProcessOwner;
@@ -70,7 +72,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
     /// <returns></returns>
     public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetSummaryAsync()
     {
-        ResponseData<ResponseProcessOwnerSummary> result = new ResponseData<ResponseProcessOwnerSummary>();
+        ResponseData<ResponseProcessOwnerSummary> result;
         try
         {
             // 로그인한 사용자의 정보를 가져온다.
@@ -131,14 +133,14 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             
             // 전체 Summary 정보
             // Below 500K 추가
-            ResponseProcessOwnerSummaryDetail detailBelow500K = new ResponseProcessOwnerSummaryDetail
+            ResponseProcessSummaryDetail<ResponseProcessOwner> detailBelow500K = new ResponseProcessSummaryDetail<ResponseProcessOwner> 
             {
                 Sequence = 1,
                 Title = "CAPEX below CHF500K",
                 Items = below500K
             };
             // Above 500K 추가
-            ResponseProcessOwnerSummaryDetail detailAbove500K = new ResponseProcessOwnerSummaryDetail
+            ResponseProcessSummaryDetail<ResponseProcessOwner> detailAbove500K = new ResponseProcessSummaryDetail<ResponseProcessOwner>
             {
                 Sequence = 2,
                 Title = "CAPEX above CHF500K",
@@ -146,7 +148,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             };
             // 전체 Sum
             List<ResponseProcessOwner> total = SumOwner(below500K,above500K);
-            ResponseProcessOwnerSummaryDetail detailTotal = new ResponseProcessOwnerSummaryDetail
+            ResponseProcessSummaryDetail<ResponseProcessOwner> detailTotal = new ResponseProcessSummaryDetail<ResponseProcessOwner>
             {
                 Sequence = 3,
                 Title = "Total",
@@ -174,7 +176,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
     /// <returns></returns>
     public async Task<ResponseData<ResponseProcessBusinessUnitSummary>> GetBusinessUnitBudgetSummaryAsync()
     {
-        ResponseData<ResponseProcessBusinessUnitSummary> result = new ResponseData<ResponseProcessBusinessUnitSummary>();
+        ResponseData<ResponseProcessBusinessUnitSummary> result;
         try
         {
             // 로그인한 사용자의 정보를 가져온다.
@@ -243,14 +245,14 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             
             // 전체 Summary 정보
             // Below 500K 추가
-            ResponseProcessBusinessUnitSummaryDetail detailBelow500K = new ResponseProcessBusinessUnitSummaryDetail
+            ResponseProcessSummaryDetail<ResponseProcessBusinessUnit> detailBelow500K = new ResponseProcessSummaryDetail<ResponseProcessBusinessUnit>
             {
                 Sequence = 1,
                 Title = "CAPEX below CHF500K",
                 Items = below500K
             };
             // Above 500K 추가
-            ResponseProcessBusinessUnitSummaryDetail detailAbove500K = new ResponseProcessBusinessUnitSummaryDetail
+            ResponseProcessSummaryDetail<ResponseProcessBusinessUnit> detailAbove500K = new ResponseProcessSummaryDetail<ResponseProcessBusinessUnit>
             {
                 Sequence = 2,
                 Title = "CAPEX above CHF500K",
@@ -258,7 +260,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             };
             // 전체 Sum
             List<ResponseProcessBusinessUnit> total = SumUnit(below500K,above500K);
-            ResponseProcessBusinessUnitSummaryDetail detailTotal = new ResponseProcessBusinessUnitSummaryDetail
+            ResponseProcessSummaryDetail<ResponseProcessBusinessUnit> detailTotal = new ResponseProcessSummaryDetail<ResponseProcessBusinessUnit>
             {
                 Sequence = 3,
                 Title = "Total",
@@ -281,12 +283,13 @@ public class BudgetProcessRepository : IBudgetProcessRepository
     }
 
     /// <summary>
-    /// 승인된 금액 편성 진행상황을 가져온다.
+    /// Get Approved Analysis for Below Amount
+    /// ! If an authenticated user has only 'process-result-view' permissions, they can only view results they own.
     /// </summary>
     /// <returns></returns>
-    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAmountSummaryAsync()
+    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedBelowAmountSummaryAsync()
     {
-        ResponseData<ResponseProcessApprovedSummary> result = new ResponseData<ResponseProcessApprovedSummary>();
+        ResponseData<ResponseProcessApprovedSummary> result;
         try
         {
             // 로그인한 사용자의 정보를 가져온다.
@@ -352,14 +355,14 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             
             // 전체 Summary 정보
             // 전년
-            ResponseProcessApprovedSummaryDetail beforeYearDetailBelow500K = new ResponseProcessApprovedSummaryDetail
+            ResponseProcessSummaryDetail<ResponseProcessApproved> beforeYearDetailBelow500K = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
             {
                 Sequence = 1,
                 Title = $"{beforeYear}FY",
                 Items = yearBeforeBelow500K
             };
             // 당해년
-            ResponseProcessApprovedSummaryDetail yearDetailAbove500K = new ResponseProcessApprovedSummaryDetail
+            ResponseProcessSummaryDetail<ResponseProcessApproved>  yearDetailAbove500K = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
             {
                 Sequence = 2,
                 Title = $"{year}FY",
@@ -367,7 +370,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             };
             // 전체 Sum
             List<ResponseProcessApproved> total = SumApproved(yearBeforeBelow500K,yearBelow500K);
-            ResponseProcessApprovedSummaryDetail detailTotal = new ResponseProcessApprovedSummaryDetail
+            ResponseProcessSummaryDetail<ResponseProcessApproved>  detailTotal = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
             {
                 Sequence = 3,
                 Title = $"{beforeYear}FY & {year}FY",
@@ -375,6 +378,115 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             };
             
             // 모든 리스트를 주입한다.
+            data.Items.Add(beforeYearDetailBelow500K);
+            data.Items.Add(yearDetailAbove500K);
+            data.Items.Add(detailTotal);
+            return new ResponseData<ResponseProcessApprovedSummary>(EnumResponseResult.Success, "", "", data);
+        }
+        catch (Exception e)
+        {
+            result = new ResponseData<ResponseProcessApprovedSummary>(EnumResponseResult.Error,"" ,"처리중 예외가 발생했습니다.", null);
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Get Approved Analysis for Above Amount
+    /// ! If an authenticated user has only 'process-result-view' permissions, they can only view results they own.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAboveAmountSummaryAsync()
+    {
+        ResponseData<ResponseProcessApprovedSummary> result;
+        try
+        {
+            // Get authenticated user 
+            DbModelUser? user = await _userRepository.GetAuthenticatedUser();
+
+            // Can't find authenticated user
+            if(user == null)
+                return new ResponseData<ResponseProcessApprovedSummary>(EnumResponseResult.Error,"ERROR_SESSION_TIMEOUT", "로그인 상태를 확인해주세요", null);
+            
+            // Get all authenticated user Roles 
+            ResponseList<ResponseUserRole> roleResponse = await _userService.GetRolesByUserAsync();
+            
+            // User does not have Permission
+            if(roleResponse.Items is {Count: 0} or null)
+                return new ResponseData<ResponseProcessApprovedSummary>(EnumResponseResult.Error,"NOT_ALLOWED", "권한이 없습니다.", null);
+            
+            // Get claims for user
+            List<string> foundClaims = FindClaims(roleResponse.Items);
+
+            // Is has complete view permission?
+            bool isPermitAll = foundClaims.Contains("process-result");
+
+            // Current date
+            DateTime today = DateTime.Now;
+            
+            // Get Current year 
+            string year = today.ToString("yyyy");
+            
+            // Get 1 year before  
+            string beforeYear = today.AddYears(-1).ToString("yyyy");
+            
+            // Get Budget Plans for Current year and 1 year before  
+            List<DbModelBudgetApproved> budgetApproveds = await _dbContext.BudgetApproved
+                .Where(i => new[] { year,beforeYear }.Contains(i.Year))
+                .AsNoTracking()
+                .ToListAsync();
+            
+            // Get all CountryBusiness Managers
+            IQueryable<DbModelCountryBusinessManager> managersQuery = _dbContext.CountryBusinessManagers
+                .AsNoTracking();
+            
+            // Has not permit all
+            if (!isPermitAll)
+                // Can only view he own
+                managersQuery = managersQuery.Where(i => i.Id == user.CountryBusinessManagerId);
+
+            // Get all managers include BusinessUnits
+            List<DbModelCountryBusinessManager> managers = await managersQuery
+                .Include(i => i.CountryBusinessManagerBusinessUnits)
+                    .ThenInclude(v => v.BusinessUnit)
+                .AsNoTracking()
+                .ToListAsync();
+            
+            // Get 500k above before year
+            List<ResponseProcessApproved> yearBeforeBelow500K = ComputeApproved(  budgetApproveds, managers, beforeYear , true );
+            
+            // Get 500k above current year
+            List<ResponseProcessApproved> yearBelow500K = ComputeApproved(  budgetApproveds, managers, year , true );
+
+            // Generate ResponseProcessApprovedSummary
+            ResponseProcessApprovedSummary data = new ResponseProcessApprovedSummary();
+            
+            // All Summary 
+            // Before year 
+            ResponseProcessSummaryDetail<ResponseProcessApproved>  beforeYearDetailBelow500K = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
+            {
+                Sequence = 1,
+                Title = $"{beforeYear}FY",
+                Items = yearBeforeBelow500K
+            };
+            // Current year
+            ResponseProcessSummaryDetail<ResponseProcessApproved>  yearDetailAbove500K = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
+            {
+                Sequence = 2,
+                Title = $"{year}FY",
+                Items = yearBelow500K
+            };
+            // Sum all
+            List<ResponseProcessApproved> total = SumApproved(yearBeforeBelow500K,yearBelow500K);
+            ResponseProcessSummaryDetail<ResponseProcessApproved>  detailTotal = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
+            {
+                Sequence = 3,
+                Title = $"{beforeYear}FY & {year}FY",
+                Items = total
+            };
+            
+            // Inject all informations
             data.Items.Add(beforeYearDetailBelow500K);
             data.Items.Add(yearDetailAbove500K);
             data.Items.Add(detailTotal);
