@@ -47,6 +47,21 @@ public class RequestQuery
     [JsonIgnore]
     public List<RequestQuerySearchMeta> SearchMetas { get; set; } = [];
     
+    
+    /// <summary>
+    /// Extra Header Names 
+    /// </summary>
+    public List<string> ExtraHeaders { get; set; } = new List<string>();
+
+    /// <summary>
+    /// Reset Meta Infos
+    /// </summary>
+    public void ResetMetas()
+    {
+        SearchMetas = [];
+        ExtraHeaders = [];
+    }
+    
     /// <summary>
     /// 메타 정보를 추가한다.
     /// </summary>

@@ -41,4 +41,5 @@ public class RequestQuerySearchMeta
     /// If value has EnumType this will be not null
     /// </summary>
     public Type? EnumType { get; init; } = null;
+
 }

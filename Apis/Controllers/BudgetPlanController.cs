@@ -168,7 +168,7 @@ public class BudgetPlanController : Controller
     /// <returns></returns>
     private static RequestQuery GetDefinedSearchMeta(RequestQuery requestQuery)
     {
-        requestQuery.SearchMetas = [];
+        requestQuery.ResetMetas();
         
         // 기본 Sort가 없을 경우 
         if (requestQuery.SortOrders is { Count: 0 })

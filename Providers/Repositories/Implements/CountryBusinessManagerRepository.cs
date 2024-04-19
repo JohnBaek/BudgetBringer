@@ -100,20 +100,6 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
         ResponseList<ResponseCountryBusinessManager> result = new ResponseList<ResponseCountryBusinessManager>();
         try
         {
-            // 기본 Sort가 없을 경우 
-            if (requestQuery.SortOrders is { Count: 0 })
-            {
-                requestQuery.SortOrders.Add("Asc");
-                requestQuery.SortFields?.Add(nameof(ResponseCountryBusinessManager.Name));
-            }
-            
-            // 검색 메타정보 추가
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCountryBusinessManager.Name));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegName));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegDate));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.RegDate));
-            requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModDate));
-            
             // 결과를 반환한다.
             result = await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
             
@@ -156,7 +142,9 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
                 // 비지니스 유닛을 추가한다.
                 foreach (DbModelCountryBusinessManagerBusinessUnit item in relation)
                 {
-                    manager.BusinessUnits.Add(new ResponseBusinessUnit(item.BusinessUnit.Id, item.BusinessUnit.Name));
+                    if (item.BusinessUnit != null)
+                        manager.BusinessUnits.Add(
+                            new ResponseBusinessUnit(item.BusinessUnit.Id, item.BusinessUnit.Name));
                 }
             }
         }
@@ -201,7 +189,8 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
             // 비지니스 유닛을 추가한다.
             foreach (DbModelCountryBusinessManagerBusinessUnit item in relations)
             {
-                before.BusinessUnits.Add(new ResponseBusinessUnit(item.BusinessUnit.Id, item.BusinessUnit.Name));
+                if (item.BusinessUnit != null)
+                    before.BusinessUnits.Add(new ResponseBusinessUnit(item.BusinessUnit.Id, item.BusinessUnit.Name));
             }
             
             // 데이터를 복사한다.

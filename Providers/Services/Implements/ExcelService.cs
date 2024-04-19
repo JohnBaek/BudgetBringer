@@ -73,9 +73,22 @@ public class ExcelService : IExcelService
                 // Set Cell Value
                 cell.Value = item.ExcelHeaderName;
             }
+            
+            // Create extra headers
+            foreach (string extraHeader in requestQuery.ExtraHeaders)
+            {
+                // Set Address A1 .. B1 ... C1
+                string cellAddress = $"{GetColumnName(columnIndex)}1";
+            
+                // Get Cell From Worksheet
+                IXLCell cell = worksheet.Cell(cellAddress);
+            
+                // Set Cell Value
+                cell.Value = extraHeader;
+            }
 
             // Store rowHeaderRanges
-            string rowCellRange = $"A1:{GetColumnName(columnIndex - 1)}1";
+            string rowCellRange = $"A1:{GetColumnName(columnIndex + requestQuery.ExtraHeaders.Count - 1)}1";
             
             // Set Header Style
             IXLRange headerRange = worksheet.Range(rowCellRange);
@@ -87,6 +100,7 @@ public class ExcelService : IExcelService
             headerRange.Style.Border.BottomBorder = XLBorderStyleValues.Medium;
             headerRange.Style.Border.LeftBorder = XLBorderStyleValues.Medium;
             headerRange.Style.Border.RightBorder = XLBorderStyleValues.Medium;
+            headerRange.SetAutoFilter();
             worksheet.Row(1).Height = 40;
             worksheet.SheetView.FreezeRows(1);
             
@@ -97,6 +111,7 @@ public class ExcelService : IExcelService
             foreach (T data in items)
             {
                 columnIndex = 1;
+                // For Iterate values
                 foreach (RequestQuerySearchMeta meta in targetHeaders)
                 {
                     // Find Property By Field Name
@@ -149,7 +164,7 @@ public class ExcelService : IExcelService
             
             // Default Row Defined Range
             string cellStart = "A2";
-            string cellEnd = $"{GetColumnName(columnIndex - 1)}{rowEndIndex}";
+            string cellEnd = $"{GetColumnName(columnIndex - 1 + requestQuery.ExtraHeaders.Count())}{rowEndIndex}";
             
             // Set Default Rows to Style
             IXLRange defaultRows = worksheet.Range($"{cellStart}:{cellEnd}");
@@ -157,6 +172,7 @@ public class ExcelService : IExcelService
             defaultRows.Style.Border.BottomBorder = XLBorderStyleValues.Thin;
             defaultRows.Style.Border.LeftBorder = XLBorderStyleValues.Thin;
             defaultRows.Style.Border.RightBorder = XLBorderStyleValues.Thin;
+            defaultRows.Style.Alignment.SetVertical(XLAlignmentVerticalValues.Center);
             
             // Not need to Sum bottom
             if (needToSumBottom == false)
@@ -179,7 +195,7 @@ public class ExcelService : IExcelService
                 worksheet.Cell(dataCell).Style.Alignment.SetVertical(XLAlignmentVerticalValues.Center);
                 
                 // Store rowHeaderRanges
-                rowCellRange = $"A{rowIndex}:{GetColumnName(columnIndex)}{rowIndex}";
+                rowCellRange = $"A{rowIndex}:{GetColumnName(columnIndex + requestQuery.ExtraHeaders.Count())}{rowIndex}";
             
                 // Set Header Style
                 IXLRange cellRange = worksheet.Range(rowCellRange);
@@ -200,6 +216,18 @@ public class ExcelService : IExcelService
                 }
 
                 columnIndex++;
+            }
+
+            // Iterate All Extra Headers
+            foreach (string extraHeader in requestQuery.ExtraHeaders)
+            {
+                string dataCell = $"{GetColumnName(columnIndex)}{rowIndex}";
+
+                // Set default value & Style for cell
+                worksheet.Cell(dataCell).Value = "-";
+                worksheet.Cell(dataCell).Style.Font.Bold = true;
+                worksheet.Cell(dataCell).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                worksheet.Cell(dataCell).Style.Alignment.SetVertical(XLAlignmentVerticalValues.Center);
             }
         
             // Set auto-resize for Column Width

@@ -13,13 +13,12 @@ using Providers.Services.Interfaces;
 namespace Providers.Services.Implements;
 
 /// <summary>
-/// 쿼리서비스 구현체
+/// Dynamic LINQ query manager Service implementation 
 /// </summary>
-/// <typeparam name="T"></typeparam>
 public class QueryService: IQueryService
 {
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<IQueryService> _logger;
     
@@ -29,9 +28,9 @@ public class QueryService: IQueryService
     private readonly AnalysisDbContext _dbContext;
 
     /// <summary>
-    /// 생성자
+    /// Constructor
     /// </summary>
-    /// <param name="logger">로거</param>
+    /// <param name="logger">Logger</param>
     /// <param name="dbContext">dbContext</param>
     public QueryService(ILogger<IQueryService> logger, AnalysisDbContext dbContext)
     {
@@ -207,9 +206,9 @@ public class QueryService: IQueryService
     /// <param name="querySearch"></param>
     /// <param name="property"></param>
     /// <returns></returns>
-    private ConstantExpression GetParseConstant(QuerySearch querySearch, Type property)
+    private static ConstantExpression GetParseConstant(QuerySearch querySearch, Type property)
     {
-        object value = null;
+        object? value = null;
 
         // Bool 처리
         if (property == typeof(bool) && bool.TryParse(querySearch.Keyword, out bool boolValue))
@@ -271,7 +270,7 @@ public class QueryService: IQueryService
         try
         {
             // 쿼리를 처리한다.
-            QueryContainer<T> container = await ToProductAsync<T>(requestQuery);
+            QueryContainer<T>? container = await ToProductAsync<T>(requestQuery);
             
             // 쿼리 반환에 실패한경우
             if (container == null)
@@ -339,16 +338,18 @@ public class QueryService: IQueryService
     /// <param name="queryable">IQueryable</param>
     /// <param name="mappingFunction">매핑 Delegate</param>
     /// <typeparam name="TV">결과</typeparam>
+    /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public async Task<List<TV>> ToListAsync<T,TV>(IQueryable<T>? queryable, Expression<Func<T, TV>> mappingFunction)
         where T : class
         where TV : class
     {
-        List<TV> result;
+        List<TV> result = [];
 
         try
         {
-            return await queryable.Select(mappingFunction).ToListAsync();
+            if (queryable != null) 
+                return await queryable.Select(mappingFunction).ToListAsync();
         }
         catch (Exception e)
         {

@@ -1,6 +1,8 @@
+using ClosedXML.Excel;
 using Features.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Models.Common.Enums;
 using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
@@ -18,17 +20,24 @@ namespace Apis.Controllers;
 public class CountryBusinessManagerController : Controller
 {
     /// <summary>
-    /// 비지니스 유닛 서비스 
+    /// CountryBusinessManagerService
     /// </summary>
     private readonly ICountryBusinessManagerService _countryBusinessManagerService;
+    
+    /// <summary>
+    /// ExcelService
+    /// </summary>
+    private readonly IExcelService _excelService;
 
     /// <summary>
-    /// 생성자 
+    /// Constructor 
     /// </summary>
-    /// <param name="costCenterService">컨트리비지니스매니저 서비스</param>
-    public CountryBusinessManagerController(ICountryBusinessManagerService costCenterService)
+    /// <param name="costCenterService">CountryBusinessManagerService</param>
+    /// <param name="excelService">ExcelService</param>
+    public CountryBusinessManagerController(ICountryBusinessManagerService costCenterService, IExcelService excelService)
     {
         _countryBusinessManagerService = costCenterService;
+        _excelService = excelService;
     }
     
     /// <summary>
@@ -40,7 +49,7 @@ public class CountryBusinessManagerController : Controller
     [ClaimRequirement("Permission","common-code")]
     public async Task<ResponseList<ResponseCountryBusinessManager>> GetListAsync([FromQuery] RequestQuery requestQuery)
     {
-        return await _countryBusinessManagerService.GetListAsync(requestQuery);
+        return await _countryBusinessManagerService.GetListAsync(GetDefinedSearchMeta(requestQuery));
     }
 
     /// <summary>
@@ -122,5 +131,93 @@ public class CountryBusinessManagerController : Controller
         )
     {
         return await _countryBusinessManagerService.DeleteUnitAsync(managerId,unitId);
+    }
+    
+    
+    /// <summary>
+    /// Return RequestQuery object to set Search Meta 
+    /// </summary>
+    /// <param name="requestQuery">request</param>
+    /// <returns></returns>
+    private static RequestQuery GetDefinedSearchMeta(RequestQuery requestQuery)
+    {
+        // Clear previous 
+        requestQuery.ResetMetas();
+        requestQuery.ExtraHeaders.Add("BUSINESS UNITS");
+        
+        // Is Default Sort not defined 
+        if (requestQuery.SortOrders is { Count: 0 })
+        {
+            requestQuery.SortOrders.Add("Asc");
+            requestQuery.SortFields?.Add(nameof(ResponseCountryBusinessManager.Name));
+        }
+            
+        // Add meta information
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCountryBusinessManager.Name), nameof(ResponseCountryBusinessManager.Name), true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegName),nameof(ResponseCommonWriter.RegName), true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegDate),nameof(ResponseCommonWriter.RegDate), true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.RegDate),nameof(ResponseCommonWriter.RegDate), true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModDate),nameof(ResponseCommonWriter.ModDate), true);
+        return requestQuery;      
+    }
+    
+    /// <summary>
+    /// Export Excel
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("Export/Excel")]
+    public async Task<IActionResult> ExportExcel([FromQuery] RequestQuery requestQuery)
+    {
+        // Define request 
+        requestQuery = GetDefinedSearchMeta(requestQuery);
+
+        // Get data
+        ResponseList<ResponseCountryBusinessManager> response = await GetListAsync(requestQuery);
+
+        // Response is failed
+        if (response.Error)
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response(EnumResponseResult.Error,"","처리중 예외가 발생했습니다."));
+        
+        // Create Instance
+        XLWorkbook workbook = new XLWorkbook();
+        string sheetName = "Country Business Manager";
+        
+        // Make data For worksheet 
+        workbook = _excelService.AddDataToWorkbook(sheetName: sheetName, workbook: workbook, requestQuery: requestQuery, items: response.Items!);
+
+        // Get sheet
+        IXLWorksheet? sheet = workbook.Worksheets.FirstOrDefault();
+        
+        // Exist sheet
+        if (sheet != null)
+        {
+            // Avoid Null Exceptions
+            response.Items ??= [];
+            
+            // Iterate All Business Units
+            for (int i = 0; i < response.Items.Count; i++)
+            {
+                // Get First Value Row ( Start with 2 )
+                IXLRow row = sheet.Row(i + 2);
+
+                // Try find header Cell index
+                int targetCellIndex = row.CellsUsed().Count() + 1;
+
+                // Get Business Unit in Country Business Manager
+                List<ResponseBusinessUnit> businessUnits = response.Items[i].BusinessUnits;
+
+                row.Cell(targetCellIndex).Value =
+                    businessUnits.Count == 0 ? "-" : string.Join("\n", businessUnits.Select(i => $"- {i.Name}"));
+            }
+        }
+
+        // Create Stream for generate file
+        MemoryStream stream = new MemoryStream();
+        
+        // Save workbook to memory stream
+        workbook.SaveAs(stream);
+        stream.Position = 0; 
+        
+        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "report.xlsx");
     }
 }

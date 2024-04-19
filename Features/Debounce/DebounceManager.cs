@@ -8,6 +8,7 @@ public class DebounceManager
     /// <summary>
     /// 소유한 디바운서 
     /// </summary>
+    // ReSharper disable once IdentifierTypo
     private readonly Dictionary<string, Debouncer> _debouncers = new();
     
     /// <summary>

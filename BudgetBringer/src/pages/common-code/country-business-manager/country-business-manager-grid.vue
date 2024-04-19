@@ -247,8 +247,8 @@ const requestUpdateData = () => {
 <template>
   <common-grid :is-use-insert="gridModel.isUseInsert"
                :input-colum-defined="gridModel.columDefined"
-               grid-title="CountryBusinessManager"
                :query-request="requestQuery"
+               grid-title="CountryBusinessManager"
                @onAdd="showAddDialog"
                @onRemove="showRemoveDialog"
                @onUpdate="showUpdateDialog"
