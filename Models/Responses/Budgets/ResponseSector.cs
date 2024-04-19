@@ -13,15 +13,5 @@ public class ResponseSector : ResponseCommonWriter
     /// <summary>
     /// 섹터 값
     /// </summary>
-    public string Value { get; init; }
-    
-    /// <summary>
-    /// 등록일 (필수)
-    /// </summary>
-    public DateTime RegDate { get; init; }
-    
-    /// <summary>
-    /// 수정일 (필수)
-    /// </summary>
-    public DateTime ModDate { get; init; }
+    public string Value { get; init; } = "";
 }

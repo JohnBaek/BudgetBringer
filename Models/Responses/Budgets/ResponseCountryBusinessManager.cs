@@ -16,17 +16,8 @@ public class ResponseCountryBusinessManager : ResponseCommonWriter
     public required string Name { get; init; } 
 
     /// <summary>
-    /// 등록일 (필수)
-    /// </summary>
-    public DateTime RegDate { get; init; }
-    
-    /// <summary>
-    /// 수정일 (필수)
-    /// </summary>
-    public DateTime ModDate { get; init; }
-
-    /// <summary>
     /// 비지니스 유닛
     /// </summary>
+    // ReSharper disable once CollectionNeverQueried.Global
     public List<ResponseBusinessUnit> BusinessUnits { get; set; } = new List<ResponseBusinessUnit>();
 }
