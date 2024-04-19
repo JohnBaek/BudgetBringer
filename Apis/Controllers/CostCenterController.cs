@@ -103,31 +103,6 @@ public class CostCenterController : Controller
     
     
     /// <summary>
-    /// Return RequestQuery object to set Search Meta 
-    /// </summary>
-    /// <param name="requestQuery">request</param>
-    /// <returns></returns>
-    private RequestQuery GetDefinedSearchMeta(RequestQuery requestQuery)
-    {
-        requestQuery.SearchMetas = [];
-        // 기본 Sort가 없을 경우 
-        if (requestQuery.SortOrders is { Count: 0 })
-        {
-            requestQuery.SortOrders.Add("Asc");
-            requestQuery.SortFields?.Add(nameof(ResponseCostCenter.Value));
-        }
-            
-        // 검색 메타정보 추가
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCostCenter.Value), "VALUE", true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegDate), "REGISTRATION DATE" , true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegName) , "REGISTER NAME" , true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModDate), "MODIFICATION DATE" );
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModName), "MODIFICATION NAME" );
-        return requestQuery;      
-    }
-    
-    
-    /// <summary>
     /// Export Excel
     /// </summary>
     /// <returns></returns>
@@ -159,5 +134,29 @@ public class CostCenterController : Controller
         stream.Position = 0; 
         
         return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "report.xlsx");
+    }
+    
+    /// <summary>
+    /// Return RequestQuery object to set Search Meta 
+    /// </summary>
+    /// <param name="requestQuery">request</param>
+    /// <returns></returns>
+    private static RequestQuery GetDefinedSearchMeta(RequestQuery requestQuery)
+    {
+        requestQuery.SearchMetas = [];
+        // 기본 Sort가 없을 경우 
+        if (requestQuery.SortOrders is { Count: 0 })
+        {
+            requestQuery.SortOrders.Add("Asc");
+            requestQuery.SortFields?.Add(nameof(ResponseCostCenter.Value));
+        }
+            
+        // 검색 메타정보 추가
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCostCenter.Value), "VALUE", true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegDate), "REGISTRATION DATE" , true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegName) , "REGISTER NAME" , true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModDate), "MODIFICATION DATE" );
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModName), "MODIFICATION NAME" );
+        return requestQuery;      
     }
 }

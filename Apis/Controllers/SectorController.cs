@@ -1,6 +1,8 @@
+using ClosedXML.Excel;
 using Features.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Models.Common.Enums;
 using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
@@ -21,14 +23,21 @@ public class SectorController : Controller
     /// 비지니스 유닛 서비스 
     /// </summary>
     private readonly ISectorService _sectorService;
+    
+    /// <summary>
+    /// Excel Provider
+    /// </summary>
+    private readonly IExcelService _excelService;
 
     /// <summary>
     /// 생성자 
     /// </summary>
     /// <param name="sectorService">섹터 서비스</param>
-    public SectorController(ISectorService sectorService)
+    /// <param name="excelService"></param>
+    public SectorController(ISectorService sectorService, IExcelService excelService)
     {
         _sectorService = sectorService;
+        _excelService = excelService;
     }
     
     /// <summary>
@@ -40,7 +49,7 @@ public class SectorController : Controller
     [ClaimRequirement("Permission","common-code")]
     public async Task<ResponseList<ResponseSector>> GetListAsync([FromQuery] RequestQuery requestQuery)
     {
-        return await _sectorService.GetListAsync(requestQuery);
+        return await _sectorService.GetListAsync(GetDefinedSearchMeta(requestQuery));
     }
 
     /// <summary>
@@ -90,5 +99,65 @@ public class SectorController : Controller
     [ClaimRequirement("Permission","common-code")]
     public async Task<Response> DeleteAsync(string id){
         return await _sectorService.DeleteAsync(id);
+    }
+    
+    /// <summary>
+    /// Return RequestQuery object to set Search Meta 
+    /// </summary>
+    /// <param name="requestQuery">request</param>
+    /// <returns></returns>
+    private static RequestQuery GetDefinedSearchMeta(RequestQuery requestQuery)
+    {
+        requestQuery.SearchMetas = [];
+        
+        // 기본 Sort가 없을 경우 
+        if (requestQuery.SortOrders is { Count: 0 })
+        {
+            requestQuery.SortOrders.Add("Asc");
+            requestQuery.SortFields?.Add(nameof(ResponseSector.Value));
+        }
+            
+        // 검색 메타정보 추가
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseSector.Value) , "VALUE", true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegDate), "REGISTRATION DATE" , true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseCommonWriter.RegName) , "REGISTER NAME" , true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModName), "MODIFICATION NAME" );
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseCommonWriter.ModDate), "MODIFICATION DATE" );
+        return requestQuery;
+    }
+    
+    
+    /// <summary>
+    /// Export Excel
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("Export/Excel")]
+    public async Task<IActionResult> ExportExcel([FromQuery] RequestQuery requestQuery)
+    {
+        // Define request 
+        requestQuery = GetDefinedSearchMeta(requestQuery);
+
+        // Get data
+        ResponseList<ResponseSector> response = await GetListAsync(requestQuery);
+
+        // Response is failed
+        if (response.Error)
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response(EnumResponseResult.Error,"","처리중 예외가 발생했습니다."));
+        
+        // Create Instance
+        XLWorkbook workbook = new XLWorkbook();
+        string sheetName = "Sectors";
+        
+        // Make data For worksheet 
+        workbook = _excelService.AddDataToWorkbook(sheetName: sheetName, workbook: workbook, requestQuery: requestQuery, items: response.Items!);
+
+        // Create Stream for generate file
+        MemoryStream stream = new MemoryStream();
+        
+        // Save workbook to memory stream
+        workbook.SaveAs(stream);
+        stream.Position = 0; 
+        
+        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "report.xlsx");
     }
 }

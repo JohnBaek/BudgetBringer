@@ -166,9 +166,17 @@ public class BudgetPlanController : Controller
     /// </summary>
     /// <param name="requestQuery">request</param>
     /// <returns></returns>
-    private RequestQuery GetDefinedSearchMeta(RequestQuery requestQuery)
+    private static RequestQuery GetDefinedSearchMeta(RequestQuery requestQuery)
     {
         requestQuery.SearchMetas = [];
+        
+        // 기본 Sort가 없을 경우 
+        if (requestQuery.SortOrders is { Count: 0 })
+        {
+            requestQuery.SortOrders.Add("Desc");
+            requestQuery.SortFields?.Add(nameof(ResponseBudgetApproved.RegDate));
+        }
+        
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetPlan.IsAbove500K));
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.ApprovalDate) , "APPROVAL DATE" , true);
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.ApproveDateValue));

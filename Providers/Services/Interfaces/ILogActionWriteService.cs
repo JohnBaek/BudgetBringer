@@ -16,10 +16,8 @@ public interface ILogActionWriteService
     /// <param name="user">사용자 정보</param>
     /// <param name="contents">로그 컨텐츠 정보</param>
     /// <param name="category">카테고리</param>
-    /// <typeparam name="T">모델 T</typeparam>
     /// <returns></returns>
-    Task<Response> WriteUpdate<T>(T before, T after, DbModelUser user, string contents, string category)
-        where T : class;
+    Task<Response> WriteUpdate(object before, object after, DbModelUser user, string contents, string category);
 
 
     /// <summary>
@@ -29,10 +27,8 @@ public interface ILogActionWriteService
     /// <param name="user">사용자 정보</param>
     /// <param name="contents">로그 컨텐츠 정보</param>
     /// <param name="category">카테고리</param>
-    /// <typeparam name="T">모델 T</typeparam>
     /// <returns></returns>
-    Task<Response> WriteAddition<T>(T? before, DbModelUser user, string contents, string category) 
-        where T : class;
+    Task<Response> WriteAddition(object before, DbModelUser user, string contents, string category);
 
 
     /// <summary>
@@ -42,8 +38,6 @@ public interface ILogActionWriteService
     /// <param name="user">사용자 정보</param>
     /// <param name="contents">로그 컨텐츠 정보</param>
     /// <param name="category">카테고리</param>
-    /// <typeparam name="T">모델 T</typeparam>
     /// <returns></returns>
-    Task<Response> WriteDeletion<T>(T before, DbModelUser user, string contents, string category) 
-        where T : class;
+    Task<Response> WriteDeletion(object before, DbModelUser user, string contents, string category);
 }

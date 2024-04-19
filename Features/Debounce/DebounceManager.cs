@@ -35,17 +35,13 @@ public class DebounceManager
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
+    // ReSharper disable once IdentifierTypo
     public Debouncer GetDebouncer(string key)
     {
         // 락이 되어있지 않다면 
         lock (_lock)
         {
-            if (_debouncers.TryGetValue(key, out var debouncer))
-            {
-                return debouncer;
-            }
-
-            return null;
+            return _debouncers.GetValueOrDefault(key)!;
         }
     }
 

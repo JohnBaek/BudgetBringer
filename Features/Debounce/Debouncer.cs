@@ -1,28 +1,31 @@
 namespace Features.Debounce;
 
 /// <summary>
-/// 공통 디바운서
+/// Common thread Debounce class
 /// </summary>
+// ReSharper disable once IdentifierTypo
 public class Debouncer
 {
     /// <summary>
     /// Thread 타이머 
     /// </summary>
-    private Timer _timer;
+    private Timer? _timer;
     
     /// <summary>
     /// 실행 대리자
     /// </summary>
-    private Action _action;
+    private readonly Action _action;
 
     /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="action"></param>
+    // ReSharper disable once IdentifierTypo
     public Debouncer(Action action)
     {
         _action = action;
     }
+
 
     /// <summary>
     /// 디바운서를 실행한다.

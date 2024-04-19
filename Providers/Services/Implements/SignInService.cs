@@ -87,8 +87,6 @@ public class SignInService : ISignInService<DbModelUser>
     /// <returns></returns>
     public async Task<Response> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
     {
-        Response response;
-
         // 로그인을 시도한다.
         SignInResult loginResult = await _signInManager.PasswordSignInAsync(userName, password, isPersistent, lockoutOnFailure);
 

@@ -46,9 +46,8 @@ public class LogActionWriteService : ILogActionWriteService
     /// <param name="user">사용자 정보</param>
     /// <param name="contents">로그 컨텐츠 정보</param>
     /// <param name="category">카테고</param>
-    /// <typeparam name="T">모델 T</typeparam>
     /// <returns></returns>
-    public async Task<Response> WriteUpdate<T>(T before, T after, DbModelUser user, string contents , string category) where T : class 
+    public async Task<Response> WriteUpdate(object before, object after, DbModelUser user, string contents, string category) 
     {
         Response result;
         StringBuilder stringBuilder = new StringBuilder();
@@ -86,9 +85,8 @@ public class LogActionWriteService : ILogActionWriteService
     /// <param name="user">사용자 정보</param>
     /// <param name="contents">로그 컨텐츠 정보</param>
     /// <param name="category">카테고리</param>
-    /// <typeparam name="T">모델 T</typeparam>
     /// <returns></returns>
-    public async Task<Response> WriteAddition<T>(T before, DbModelUser user, string contents , string category) where T : class
+    public async Task<Response> WriteAddition(object before, DbModelUser user, string contents, string category)
     {
         Response result;
         StringBuilder stringBuilder = new StringBuilder();
@@ -115,19 +113,6 @@ public class LogActionWriteService : ILogActionWriteService
         return result;
     }
 
-    /// <summary>
-    /// 특정 프러퍼티 값을 null 로 변경한다.
-    /// </summary>
-    /// <param name="before"></param>
-    /// <param name="propertyName"></param>
-    public static void SetNullIfPropertyExists(object obj, string propertyName)
-    {
-        PropertyInfo? propertyInfo = obj.GetType().GetProperty(propertyName);
-        if (propertyInfo != null && propertyInfo.CanWrite)
-        {
-            propertyInfo.SetValue(obj, null);
-        }
-    }
 
     /// <summary>
     /// 삭제 로그를 기록한다.
@@ -136,9 +121,8 @@ public class LogActionWriteService : ILogActionWriteService
     /// <param name="user">사용자 정보</param>
     /// <param name="contents">로그 컨텐츠 정보</param>
     /// <param name="category">카테고리</param>
-    /// <typeparam name="T">모델 T</typeparam>
     /// <returns></returns>
-    public async Task<Response> WriteDeletion<T>(T before, DbModelUser user, string contents , string category) where T : class
+    public async Task<Response> WriteDeletion(object before, DbModelUser user, string contents, string category)
     {
         Response result;
         StringBuilder stringBuilder = new StringBuilder();

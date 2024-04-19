@@ -129,13 +129,6 @@ public class BudgetPlanRepository : IBudgetPlanRepository
         ResponseList<ResponseBudgetPlan> result = new ResponseList<ResponseBudgetPlan>();
         try
         {
-            // 기본 Sort가 없을 경우 
-            if (requestQuery.SortOrders is { Count: 0 })
-            {
-                requestQuery.SortOrders.Add("Desc");
-                requestQuery.SortFields?.Add(nameof(ResponseBudgetApproved.RegDate));
-            }
-            
             // 결과를 반환한다.
             return await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
         }

@@ -126,7 +126,7 @@ public class ExcelService : IExcelService
                     }
                         
                     // Need to Sum
-                    if (meta.isSum && double.TryParse(value?.ToString(), out double doubleValue))
+                    if (meta.IsSum && double.TryParse(value?.ToString(), out double doubleValue))
                     {
                         meta.Sum += doubleValue;
                         worksheet.Cell(dataCell).Style.NumberFormat.Format = "#,##0";
@@ -139,8 +139,8 @@ public class ExcelService : IExcelService
             }
 
 
-            // Has any isSum is true? should add Bottom
-            bool needToSumBottom = requestQuery.SearchMetas.Any(i => i.isSum);
+            // Has any IsSum is true? should add Bottom
+            bool needToSumBottom = requestQuery.SearchMetas.Any(i => i.IsSum);
             int rowEndIndex = rowIndex;
             
             // Not need to Sum bottom
@@ -192,7 +192,7 @@ public class ExcelService : IExcelService
                 worksheet.Row(rowIndex).Height = 40;
                 
                 // Is need to SUM COLUMN?
-                if (meta.isSum)
+                if (meta.IsSum)
                 {
                     worksheet.Cell(dataCell).FormulaA1 = $"SUM({GetColumnName(columnIndex)}2:{GetColumnName(columnIndex)}{rowIndex - 1})";
                     worksheet.Cell(dataCell).Style.NumberFormat.Format = "#,##0";

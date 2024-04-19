@@ -46,7 +46,7 @@ public class RequestQuery
     /// </summary>
     [JsonIgnore]
     public List<RequestQuerySearchMeta> SearchMetas { get; set; } = [];
-
+    
     /// <summary>
     /// 메타 정보를 추가한다.
     /// </summary>
@@ -78,7 +78,7 @@ public class RequestQuery
             Field = fieldName ,
             ExcelHeaderName = excelHeaderName ,
             IsIncludeExcelHeader = useAsExcelHeader ,
-            isSum = isSum ,
+            IsSum = isSum ,
             EnumType = enumType
         });
     }

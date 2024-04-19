@@ -154,7 +154,7 @@ public class BudgetApprovedController : Controller
     /// </summary>
     /// <param name="requestQuery">request</param>
     /// <returns></returns>
-    private RequestQuery GetDefinedSearchMeta(RequestQuery requestQuery)
+    private static RequestQuery GetDefinedSearchMeta(RequestQuery requestQuery)
     {
         requestQuery.SearchMetas = [];
         
