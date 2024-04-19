@@ -237,7 +237,7 @@ const requestUpdateData = () => {
 <template>
   <common-grid :is-use-insert="gridModel.isUseInsert"
                :input-colum-defined="gridModel.columDefined"
-
+               grid-title="CostCenter"
                :query-request="requestQuery"
                @onAdd="showAddDialog"
                @onRemove="showRemoveDialog"
