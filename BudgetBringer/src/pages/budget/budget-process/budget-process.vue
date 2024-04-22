@@ -4,23 +4,21 @@
     <div style="width: 100%; flex: 1 1 auto;">
       <v-sheet rounded class="pa-5">
         <v-tabs v-model="tab" class="mb-5">
-          <v-tab value="Owner">
+          <v-tab value="owner">
             P&L Owner
           </v-tab>
-          <v-tab value="Bu">
+          <v-tab value="bu">
             Business Unit
           </v-tab>
-          <v-tab value="ApprovedBelow">
+          <v-tab value="approvedbelow">
             Below CHF500K Approved Below
           </v-tab>
-
-          <v-tab value="ApprovedAbove">
+          <v-tab value="approvedabove">
             Below CHF500K Approved Above
           </v-tab>
         </v-tabs>
-
         <v-window v-model="tab">
-          <v-window-item value="Owner">
+          <v-window-item value="owner">
               <v-row>
                 <v-col cols="12" md="12" >
                   <budget-process-grid-pl-owner
@@ -34,7 +32,7 @@
               </v-row>
           </v-window-item>
 
-          <v-window-item value="Bu">
+          <v-window-item value="bu">
             <v-row>
               <v-col cols="12" md="12" >
                 <budget-process-grid-bu
@@ -48,7 +46,7 @@
             </v-row>
           </v-window-item>
 
-          <v-window-item value="ApprovedBelow">
+          <v-window-item value="approvedbelow">
             <v-row>
               <v-col cols="12" md="12" >
                 <budget-process-grid-approved-below
@@ -63,7 +61,7 @@
             </v-row>
           </v-window-item>
 
-          <v-window-item value="ApprovedAbove">
+          <v-window-item value="approvedabove">
             <v-row>
               <v-col cols="12" md="12" >
                 <budget-process-grid-approved-above
@@ -92,18 +90,38 @@ import BudgetProcessGridBu from "./budget-process-grid-bu.vue";
 import BudgetProcessGridApprovedBelow from "./budget-process-grid-approved-below.vue";
 import BudgetProcessGridApprovedAbove from "./budget-process-grid-approved-above.vue";
 
+const route = useRoute();
+const router = useRouter();
 
+onMounted(() => {
+  // tab.value = route.query.tab;
+  console.log('route.query.tab',route.query.tab);
+  console.log('tab.value',tab.value);
+
+  if(route.query.tab) {
+    const requestTab = route.query.tab.toString().toLowerCase();
+    if(requestTab){
+      console.log('tab.value',tab.value);
+      tab.value = requestTab;
+    }
+  }
+  else {
+    router.replace({ query: { ...route.query, tab: 'owner' } });
+  }
+})
 /**
  * 오늘 날짜
  * @type {Date}
  */
 const today = new Date();
-
 /**
  * 탭 데이터
  * @type {Ref<UnwrapRef<null>>}
  */
-const tab = ref(null);
+const tab = ref(route.query.tab || 'Owner');
+watch(tab,(changeTab) => {
+  router.replace({ query: { ...route.query, tab: changeTab } });
+});
 
 /**
  * yyyy-MM-dd 형식으로 날짜 정보를 가져온다.
@@ -114,20 +132,16 @@ const getFullDate = ()  =>  {
   const dd = String(today.getDate()).padStart(2, '0');
   return `${yyyy}-${mm}-${dd}`;
 }
-
 /**
  * yyyy 형식으로 날짜 정보를 가져온다.
  */
 const getYear = ()  =>  {
   return parseInt(today.getFullYear());
 }
-
-
 /**
  * 전체 날짜
  */
 const fullDate = getFullDate();
-
 /**
  * 년도
  */

@@ -8,6 +8,7 @@ import {ResponseList} from "../../models/responses/response-list";
 import {communicationService} from "../../services/communication-service";
 import CommonGridButtonGroup from "./common-grid-button-group.vue";
 import {CommonGridButtonGroupDefinesButtonEmits} from "./common-grid-button-group-defines";
+import {getDateFormatForFile} from "../../services/utils/date-util";
 /**
  * Prop 정의
  */
@@ -213,7 +214,7 @@ const maxBlocksInCache = 10;
  * 데이터 소스 정의
  */
 const dataSource = {
-  getRows: ({params}: { params: any }) => {
+  getRows: (params) => {
     // 커뮤니케이션 시작
     communicationService.inCommunication();
 
@@ -381,7 +382,7 @@ const exportExcel = () => {
 
       // Simulate Click
       link.href = url;
-      link.setAttribute('download', `${getFormattedDate()}_${props.gridTitle}.xlsx`);
+      link.setAttribute('download', `${getDateFormatForFile()}_${props.gridTitle}.xlsx`);
       document.body.appendChild(link);
       link.click();
 

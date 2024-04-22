@@ -11,10 +11,6 @@ import {
   ResponseProcessApprovedSummary
 } from "../../../models/responses/process/process-approved/response-process-approved-summary";
 import {BudgetProcessGridProcessApproved} from "./budget-process-grid-approved-data";
-import {ResponseProcessApproved} from "../../../models/responses/process/process-approved/response-process-approved";
-import {
-  ResponseProcessBusinessUnitSummaryDetail
-} from "../../../models/responses/process/process-business-unit/response-process-business-unit-summary-detail";
 
 /**
  * Prop 정의

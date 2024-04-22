@@ -50,14 +50,12 @@ onBeforeMount(() => {
     currentLink.value = routingStore.getCurrentRoute();
   }
 
-
   // 실패한 경우
   if(!result) {
     // 페이지 없음으로 이동
     router.push('/no-page');
     console.log('페이지 없음으로 이동');
   }
-
 });
 
 

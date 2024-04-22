@@ -3,10 +3,7 @@ import CommonMessageTemplate from "./shared/common-message-template.vue";
 import CommonLogo from "./shared/common-logo.vue";
 import {onMounted, onUnmounted, ref} from "vue";
 import LoginLogo from "./pages/login/login-logo.vue";
-import {AuthenticationStore} from "./services/stores/authentication-store";
-import {communicationService, CommunicationService} from "./services/communication-service";
-import {Subscription} from "rxjs";
-import {unsubscribe} from "node:diagnostics_channel";
+import {communicationService} from "./services/communication-service";
 
 /**
  * 스플래쉬 진행중 여부
@@ -17,11 +14,13 @@ let onSplash  = ref<boolean>(true);
 /**
  * 스플래쉬 타이머
  */
-const splashTimer = () => {
-  const countdownInterval = setTimeout(() => {
-    onSplash.value = false;
-  }, 1000 * 3);
-};
+const splashTimer = () =>
+  {
+    setTimeout(() => {
+      onSplash.value = false;
+    }, 1000 * 3);
+  }
+;
 
 /**
  * 타이머 캐시 보관용

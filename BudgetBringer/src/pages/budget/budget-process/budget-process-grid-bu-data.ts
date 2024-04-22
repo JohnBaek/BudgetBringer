@@ -1,32 +1,33 @@
 import {CommonGridModel} from "../../../shared/grids/common-grid-model";
-import {
-  ResponseProcessBusinessUnit
-} from "../../../models/responses/process/process-business-unit/response-process-business-unit";
+import {RequestQuery} from "../../../models/requests/query/request-query";
 
 /**
  * 진생상황 BudgetProcessGridBusinessUnit 그리드 모델
  */
-export class BudgetProcessGridBusinessUnit extends CommonGridModel<ResponseProcessBusinessUnit>{
-  /**
-   * 표현할 그리드의 RowData 를 받는다.
-   */
-  items : Array<ResponseProcessBusinessUnit>;
+export class BudgetProcessGridBusinessUnit extends CommonGridModel{
   /**
    * 컬럼정보
    */
   columDefined : any [];
   /**
-   * Insert 그리드 사용여부
+   * Date
    */
-  isUseInsert : boolean;
-
+  public date: string;
+  /**
+   * Year of Date
+   */
+  public year : number;
   /**
    * 생성자
    * @param date 전체 날짜 정보
    * @param year 년도 정보
+   * @param requestQuery 요청정보
    */
-  constructor( date: string , year : number ) {
+  constructor( date: string , year : number ,  requestQuery: RequestQuery  ) {
     super();
+    this.date = date;
+    this.year = year;
+    this.requestQuery = requestQuery;
     this.columDefined = [
       // 비지니스유닛 명
       {
@@ -34,14 +35,6 @@ export class BudgetProcessGridBusinessUnit extends CommonGridModel<ResponseProce
         headerName: date,
         headerClass: 'ag-grids-custom-header',
       },
-      // // 예산
-      // {
-      //   field: "Currency",
-      //   headerName:`KRW` ,
-      //   headerClass: 'ag-grids-custom-header',
-      //   cellRendererFramework: CommonGridRendererSkeleton,
-      // },
-      // 예산
       {
         headerName:`${year.toString()}FY` ,
         headerClass: 'ag-grids-custom-header',
@@ -81,8 +74,6 @@ export class BudgetProcessGridBusinessUnit extends CommonGridModel<ResponseProce
         ]
       },
     ]
-    this.isUseInsert = false;
-    this.items = [];
   }
 }
 

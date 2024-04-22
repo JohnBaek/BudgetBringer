@@ -13,11 +13,6 @@ export abstract class CommonGridModel {
    */
   requestQuery : RequestQuery;
   /**
-   * Delegate Total Calculate
-   */
-  calculateTotals : Function;
-  calculateFields : {};
-  /**
    * Number Formatter.
    * Uses in ag-grid Column Renderer
    * @param params

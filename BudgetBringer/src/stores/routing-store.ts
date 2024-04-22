@@ -44,7 +44,7 @@ export const RoutingStore = defineStore('routingStore', {
 
       // 모든 draw 정보에서 찾는다.
       for (const drawLink of this.drawerRouting) {
-        if(drawLink.route === target) {
+        if(target.includes(drawLink.route)) {
           finds = [drawLink];
         }
         for (const child of drawLink.childMenus) {
@@ -54,6 +54,9 @@ export const RoutingStore = defineStore('routingStore', {
           }
         }
       }
+
+      if(!finds)
+        return false;
 
       // 찾지 못한경우
       if(finds.length === 0)

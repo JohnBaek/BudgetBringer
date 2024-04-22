@@ -24,16 +24,6 @@ export class BudgetProcessGridPLOwner extends CommonGridModel {
     this.date = date;
     this.year = year;
     this.requestQuery = requestQuery;
-    // // Compute calculated Totals
-    // this.calculateTotals = ({ items }: { items: any  }) => {
-    //   return items.map(data => ({
-    //     countryBusinessManagerName : "합계",
-    //     budgetYear: data.items.reduce((sum, item) => sum + item['budgetYear'], 0),
-    //     budgetApprovedYearSum: data.items.reduce((sum, item) => sum + item['budgetApprovedYearSum'], 0),
-    //     budgetRemainingYear: data.items.reduce((sum, item) => sum + item['budgetRemainingYear'], 0),
-    //   }));
-    // }
-
     this.columDefined = [
       {
         field: "countryBusinessManagerName",

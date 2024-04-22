@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import {ref} from "vue";
 import {BudgetProcessGridPLOwner} from "./budget-process-grid-pl-owner-data";
 import {RequestQuery} from "../../../models/requests/query/request-query";
 import BudgetProcessGrid from "./budget-process-grid.vue";
@@ -25,18 +24,10 @@ const gridModel = new BudgetProcessGridPLOwner(
   props.year as number ,
   new RequestQuery('/api/v1/BudgetProcess/ProcessOwner',0, 100000)
 );
-/**
- * Grid items
- */
-const items = ref([]);
 </script>
 
 <template>
-  <budget-process-grid
-    :items="items"
-    :grid-model="gridModel"
-  >
-  </budget-process-grid>
+  <budget-process-grid excel-title="PL_Owner" :grid-model="gridModel" />
 </template>
 
 <style scoped lang="css">

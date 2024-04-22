@@ -7,16 +7,30 @@ import {HttpService} from "../../../services/api-services/http-service";
 import {ResponseData} from "../../../models/responses/response-data";
 import {messageService} from "../../../services/message-service";
 import {AgGridVue} from "ag-grid-vue3";
+import CommonGridButtonGroup from "../../../shared/grids/common-grid-button-group.vue";
+import {CommonGridButtonGroupDefinesButtonEmits} from "../../../shared/grids/common-grid-button-group-defines";
+import {getDateFormatForFile} from "../../../services/utils/date-util";
 
 /**
  * From the parent.
  */
-const props = defineProps({
-  // Options
-  gridOptions: { Type: {} ,required: false, default : null } ,
+interface Props {
+  // Options for grid
+  gridOptions?: Record<string, any>;
   // Grid Model
-  gridModel: { Type: CommonGridModel , required: true } ,
-});
+  gridModel: CommonGridModel;
+  // Excel Title
+  excelTitle: string;
+}
+const props = defineProps<Props>();
+/**
+ * Current selected rows list.
+ */
+const selectedRows = ref([]);
+/**
+ * Defines dispatches.
+ */
+const emits = defineEmits<CommonGridButtonGroupDefinesButtonEmits>();
 /**
  * Grid items ( Response items from server )
  */
@@ -34,6 +48,53 @@ const gridColumnApi = ref(null);
  */
 const gridParams = ref(null);
 /**
+ * 새로고침 명령
+ */
+const refresh = () => {
+  emits('onRefresh');
+  items.value = [];
+  loadData();
+}
+
+/**
+ * Request to server for excel
+ */
+const exportExcel = () => {
+  console.log('exportExcel');
+  communicationService.inCommunication();
+
+  // Request to Server
+  HttpService.requestGetFile(`${props.gridModel.requestQuery.apiUri}/export/excel` , props.gridModel.requestQuery).subscribe({
+    next(response) {
+      if(response == null)
+        return;
+
+      // Create URL dummy link
+      const url = window.URL.createObjectURL(response);
+
+      // Create Anchor dummy
+      const link = document.createElement('a');
+
+      // Simulate Click
+      link.href = url;
+      link.setAttribute('download', `${getDateFormatForFile()}_${props.excelTitle}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+
+      // Remove Dummy
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    },
+    error(err) {
+      console.error('Error loading data', err);
+    },
+    complete() {
+      // 커뮤니케이션 시작
+      communicationService.offCommunication();
+    },
+  });
+}
+/**
  * gridReady 이벤트 핸들러
  * @param params 파라미터
  */
@@ -43,6 +104,7 @@ const onGridReady = (params) => {
   gridParams.value = params;
   calculateSums();
 };
+
 /**
  * 마운트 핸들링
  */
@@ -65,6 +127,10 @@ const calculateSums = () => {
   const columnStates = gridApi.value.getColumnState();
   const sums = [];
 
+  // Is not ready
+  if(!columnStates)
+    return;
+
   // Process all columns
   for (let i=0; i<columnStates.length; i++) {
     // Get Column
@@ -82,8 +148,7 @@ const calculateSums = () => {
       return acc + (typeof value === 'number' ? value : 0);
     }, 0);
   }
-
-  gridApi.value.setPinnedBottomRowData([sums]);
+  gridApi.value.setGridOption('pinnedBottomRowData', [sums])
 }
 /**
  * 데이터를 로드한다.
@@ -92,8 +157,7 @@ const loadData = () => {
   communicationService.inCommunication();
   // Request to Server
   HttpService.requestGet<ResponseData<ResponseProcessSummaryDetail<any>>>(
-                (props.gridModel as CommonGridModel).requestQuery.apiUri)
-                      .subscribe({
+      props.gridModel.requestQuery.apiUri).subscribe({
     async next(response) {
       // Failed Request
       if (response.error) {
@@ -105,7 +169,7 @@ const loadData = () => {
       items.value = response.data.items;
 
       // Compute sums
-      calculateSums();
+      setTimeout(() => {calculateSums();},100);
     } ,
     error(err) {
       messageService.showError('Error loading data'+err);
@@ -118,6 +182,20 @@ const loadData = () => {
 </script>
 
 <template>
+  <v-row class="mt-1 mb-1">
+    <v-col>
+      <div class="mt-2">
+        <!-- Action Buttons -->
+        <common-grid-button-group
+          :selected-rows="selectedRows"
+          :showButtons="['refresh', 'excel']"
+          @on-refresh="refresh()"
+          @on-export-excel="exportExcel()"
+        />
+      </div>
+    </v-col>
+  </v-row>
+
   <div v-for="item in items" :key="item.sequence" class="mb-5">
     <h3>{{item.title}}</h3>
     <v-spacer></v-spacer>
