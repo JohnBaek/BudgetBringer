@@ -213,7 +213,7 @@ const maxBlocksInCache = 10;
  * 데이터 소스 정의
  */
 const dataSource = {
-  getRows: (params) => {
+  getRows: ({params}: { params: any }) => {
     // 커뮤니케이션 시작
     communicationService.inCommunication();
 
@@ -222,7 +222,6 @@ const dataSource = {
       next(response) {
         if(response == null)
           return;
-
 
         if(response.result === EnumResponseResult.success) {
           // 마지막 행
@@ -255,6 +254,8 @@ const dataSource = {
     });
   }
 };
+
+
 
 
 /**
