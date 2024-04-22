@@ -46,6 +46,7 @@ export const RoutingStore = defineStore('routingStore', {
       for (const drawLink of this.drawerRouting) {
         if(target.includes(drawLink.route)) {
           finds = [drawLink];
+          break;
         }
         for (const child of drawLink.childMenus) {
           if(child.route === target) {
