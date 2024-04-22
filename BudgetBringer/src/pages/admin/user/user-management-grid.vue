@@ -109,7 +109,7 @@ const requestUpdateData = () => {
   <common-grid :is-use-insert="gridModel.isUseInsert"
                :input-colum-defined="gridModel.columDefined"
                :query-request="requestQuery"
-               :showButtons="['update','refresh']"
+               :showButtons="['update','refresh','excel']"
                @onUpdate="showUpdateDialog"
                grid-title="UserManagements"
                ref="gridReference"

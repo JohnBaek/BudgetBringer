@@ -32,10 +32,16 @@ public static class EnumExtensions
     /// </summary>
     /// <param name="enumValue"></param>
     /// <returns></returns>
-    public static string GetColor(this Enum enumValue)
+    public static string? GetColor(this Enum enumValue)
     {
         FieldInfo? fieldInfo = enumValue.GetType().GetField(enumValue.ToString());
-        var attribute = (EnumColorAttribute)fieldInfo?.GetCustomAttributes(typeof(EnumColorAttribute), false).FirstOrDefault()!;
-        return attribute.ColorCode; // Default to white if no color is defined
+        if (fieldInfo == null)
+            return "";
+
+        if(fieldInfo.GetCustomAttributes(typeof(EnumColorAttribute), false).Length == 0)
+            return "";
+        
+        EnumColorAttribute attribute = (EnumColorAttribute)fieldInfo.GetCustomAttributes(typeof(EnumColorAttribute), false).FirstOrDefault()!;
+        return attribute.ColorCode; 
     }
 }
