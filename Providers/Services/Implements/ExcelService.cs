@@ -133,13 +133,23 @@ public class ExcelService : IExcelService
                         // Parse the enum, cast it, and get the description
                         Enum enumValue = (Enum)Enum.Parse(meta.EnumType, value?.ToString() ?? "");
                         worksheet.Cell(dataCell).Value = enumValue.GetDescription();
+
+                        // Try get color 
+                        string color = enumValue.GetColor();
                         
-                        // Get index of enum
-                        int index = Convert.ToInt32(value);
-                        XLColor color = GetColorFromIndex(index);
-                        
-                        // Set Color
-                        worksheet.Cell(dataCell).Style.Fill.BackgroundColor = color;
+                        // Does not have defined Color
+                        if (color.IsEmpty())
+                        {
+                            // Get index of enum
+                            int index = Convert.ToInt32(value);
+                            XLColor xlColor = GetColorFromIndex(index);
+                            worksheet.Cell(dataCell).Style.Fill.BackgroundColor = xlColor;
+                        }
+                        // Does have defined Color
+                        else
+                        {
+                            worksheet.Cell(dataCell).Style.Fill.BackgroundColor = XLColor.FromHtml(color);
+                        }
                     }
                         
                     // Need to Sum
@@ -354,13 +364,23 @@ public class ExcelService : IExcelService
                         // Parse the enum, cast it, and get the description
                         Enum enumValue = (Enum)Enum.Parse(meta.EnumType, value?.ToString() ?? "");
                         worksheet.Cell(dataCell).Value = enumValue.GetDescription();
+
+                        // Try get color 
+                        string color = enumValue.GetColor();
                         
-                        // Get index of enum
-                        int index = Convert.ToInt32(value);
-                        XLColor color = GetColorFromIndex(index);
-                        
-                        // Set Color
-                        worksheet.Cell(dataCell).Style.Fill.BackgroundColor = color;
+                        // Does not have defined Color
+                        if (color.IsEmpty())
+                        {
+                            // Get index of enum
+                            int index = Convert.ToInt32(value);
+                            XLColor xlColor = GetColorFromIndex(index);
+                            worksheet.Cell(dataCell).Style.Fill.BackgroundColor = xlColor;
+                        }
+                        // Does have defined Color
+                        else
+                        {
+                            worksheet.Cell(dataCell).Style.Fill.BackgroundColor = XLColor.FromHtml(color);
+                        }
                     }
                         
                     // Need to Sum

@@ -95,6 +95,7 @@ public class BudgetProcessController : Controller
     /// </summary>
     /// <returns></returns>
     [HttpGet("ProcessOwner/Export/Excel")]
+    [ClaimRequirement("Permission","process-result,process-result-view")]
     public async Task<IActionResult> ProcessOwnerExportExcel([FromQuery] RequestQuery requestQuery)
     {
         DateTime today = DateTime.Now;
@@ -148,6 +149,7 @@ public class BudgetProcessController : Controller
     /// </summary>
     /// <returns></returns>
     [HttpGet("BusinessUnit/Export/Excel")]
+    [ClaimRequirement("Permission","process-result,process-result-view")]
     public async Task<IActionResult> BusinessUnitExportExcel([FromQuery] RequestQuery requestQuery)
     {
         DateTime today = DateTime.Now;
@@ -202,6 +204,7 @@ public class BudgetProcessController : Controller
     /// </summary>
     /// <returns></returns>
     [HttpGet("Approved/Below/Export/Excel")]
+    [ClaimRequirement("Permission","process-result,process-result-view")]
     public async Task<IActionResult> ApprovedBelowAmountSummaryExportAsync([FromQuery] RequestQuery requestQuery)
     {
         DateTime today = DateTime.Now;
@@ -216,6 +219,60 @@ public class BudgetProcessController : Controller
 
         // Get data
         ResponseData<ResponseProcessApprovedSummary> response = await GetApprovedBelowAmountSummaryAsync();
+
+        // Response is failed
+        if (response.Error)
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response(EnumResponseResult.Error,"","처리중 예외가 발생했습니다."));
+        
+        // Create Instance
+        XLWorkbook workbook = new XLWorkbook();
+        
+        if (response.Data == null)
+            response.Data = new ResponseProcessApprovedSummary();
+
+        // Process all 
+        foreach (ResponseProcessSummaryDetail<ResponseProcessApproved> item in response.Data.Items.OrderBy(i => i.Sequence))
+        {
+            // Make data For worksheet 
+            workbook = _excelService.AddApprovedDataToWorkbook(
+                  sheetName: item.Title
+                , workbook: workbook
+                , requestQuery: requestQuery
+                , items: item.Items
+            );    
+        }
+
+        // Create Stream for generate file
+        MemoryStream stream = new MemoryStream();
+        
+        // Save workbook to memory stream
+        workbook.SaveAs(stream);
+        stream.Position = 0; 
+        
+        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "report.xlsx");
+    }
+    
+    
+    /// <summary>
+    /// Export Excel
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("Approved/Above/Export/Excel")]
+    [ClaimRequirement("Permission","process-result,process-result-view")]
+    public async Task<IActionResult> ApprovedAboveAmountSummaryExportAsync([FromQuery] RequestQuery requestQuery)
+    {
+        DateTime today = DateTime.Now;
+        string thisYearDate = today.ToString("yyyy-MM-dd");
+        
+        // Define request 
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessApproved.CountryBusinessManagerName) ,thisYearDate,true );
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessApproved.PoIssueAmountSpending) ,$"SPENDING & PO ISSUE AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessApproved.PoIssueAmount) ,$"PO ISSUE AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessApproved.NotPoIssueAmount) ,$"NOT PO ISSUE AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessApproved.ApprovedAmount) ,$"APPROVED AMOUNT",true ,true);
+
+        // Get data
+        ResponseData<ResponseProcessApprovedSummary> response = await GetApprovedAboveAmountSummaryAsync();
 
         // Response is failed
         if (response.Error)

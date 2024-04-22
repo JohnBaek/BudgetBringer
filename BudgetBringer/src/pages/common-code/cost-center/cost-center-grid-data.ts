@@ -4,7 +4,7 @@ import {ResponseCostCenter} from "../../../models/responses/budgets/response-cos
 /**
  * 예산 그리드 모델
  */
-export class CostCenterGridData extends CommonGridModel<ResponseCostCenter>{
+export class CostCenterGridData extends CommonGridModel{
   /**
    * 표현할 그리드의 RowData 를 받는다.
    */

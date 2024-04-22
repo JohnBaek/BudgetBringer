@@ -33,4 +33,8 @@
       <Folder Include="DataModels\Migrations\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Features\Features.csproj" />
+    </ItemGroup>
+
 </Project>

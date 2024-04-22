@@ -27,7 +27,7 @@ const props = defineProps({
    */
   isUseInsert : {
     Type: Boolean ,
-    required: true ,
+    required: false ,
     default: false
   },
 
@@ -40,7 +40,7 @@ const props = defineProps({
   /**
    * 사용할 버튼
    */
-  useButtons: {
+  showButtons: {
     Type: Array<string> ,
     default: ['add','update','delete','refresh', 'excel']
   },
@@ -478,6 +478,7 @@ onMounted(() => {
         <!-- Action Buttons -->
         <common-grid-button-group
           :selected-rows="selectedRows"
+          :show-buttons="showButtons"
           @on-add="add()"
           @on-remove="remove()"
           @on-update="update()"

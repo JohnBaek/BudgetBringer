@@ -232,7 +232,7 @@ const requestUpdateData = () => {
 </script>
 
 <template>
-  <common-grid :is-use-insert="gridModel.isUseInsert"
+  <common-grid
                :input-colum-defined="gridModel.columDefined"
                :query-request="requestQuery"
                grid-title="BusinessUnits"

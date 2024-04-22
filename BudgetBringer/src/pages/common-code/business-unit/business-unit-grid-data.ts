@@ -4,7 +4,7 @@ import {ResponseBusinessUnit} from "../../../models/responses/budgets/response-b
 /**
  * 예산 그리드 모델
  */
-export class BusinessUnitGridData extends CommonGridModel<ResponseBusinessUnit>{
+export class BusinessUnitGridData extends CommonGridModel{
   /**
    * 표현할 그리드의 RowData 를 받는다.
    */

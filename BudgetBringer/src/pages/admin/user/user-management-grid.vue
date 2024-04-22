@@ -56,8 +56,6 @@ const isValidModel = () => {
   ) {
     return false;
   }
-
-
 }
 /**
  * 데이터 수정 팝업을 요청한다.
@@ -110,10 +108,10 @@ const requestUpdateData = () => {
 <template>
   <common-grid :is-use-insert="gridModel.isUseInsert"
                :input-colum-defined="gridModel.columDefined"
-
                :query-request="requestQuery"
+               :showButtons="['update','refresh']"
                @onUpdate="showUpdateDialog"
-               :useButtons="['update','refresh']"
+               grid-title="UserManagements"
                ref="gridReference"
   />
   <!--데이터 수정 다이얼로그-->

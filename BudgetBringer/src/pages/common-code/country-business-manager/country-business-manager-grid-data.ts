@@ -4,7 +4,7 @@ import {ResponseCountryBusinessManager} from "../../../models/responses/budgets/
 /**
  * 예산 그리드 모델
  */
-export class CountryBusinessManagerGridData extends CommonGridModel<ResponseCountryBusinessManager>{
+export class CountryBusinessManagerGridData extends CommonGridModel{
   /**
    * 표현할 그리드의 RowData 를 받는다.
    */

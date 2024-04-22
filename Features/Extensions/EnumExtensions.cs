@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Reflection;
+using Features.Attributes;
 
 namespace Features.Extensions;
 
@@ -24,5 +25,17 @@ public static class EnumExtensions
         // Get Description Attributes
         DescriptionAttribute? attribute = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
         return attribute == null ? value.ToString() : attribute.Description;
+    }
+
+    /// <summary>
+    /// To Returns Colors Attribute value of Enum
+    /// </summary>
+    /// <param name="enumValue"></param>
+    /// <returns></returns>
+    public static string GetColor(this Enum enumValue)
+    {
+        FieldInfo? fieldInfo = enumValue.GetType().GetField(enumValue.ToString());
+        var attribute = (EnumColorAttribute)fieldInfo?.GetCustomAttributes(typeof(EnumColorAttribute), false).FirstOrDefault()!;
+        return attribute.ColorCode; // Default to white if no color is defined
     }
 }
