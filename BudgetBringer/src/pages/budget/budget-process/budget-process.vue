@@ -85,10 +85,10 @@
 </style>
 
 <script setup="ts">
-import BudgetProcessGridPlOwner from "./budget-process-grid-pl-owner.vue";
-import BudgetProcessGridBu from "./budget-process-grid-bu.vue";
-import BudgetProcessGridApprovedBelow from "./budget-process-grid-approved-below.vue";
-import BudgetProcessGridApprovedAbove from "./budget-process-grid-approved-above.vue";
+import BudgetProcessGridPlOwner from "./budget-process-owner/budget-process-grid-pl-owner.vue";
+import BudgetProcessGridBu from "./budget-process-business-unit/budget-process-grid-bu.vue";
+import BudgetProcessGridApprovedBelow from "./budget-process-approved/budget-process-grid-approved-below.vue";
+import BudgetProcessGridApprovedAbove from "./budget-process-approved/budget-process-grid-approved-above.vue";
 
 const route = useRoute();
 const router = useRouter();

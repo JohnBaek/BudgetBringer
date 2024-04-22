@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import {BudgetProcessGridPLOwner} from "./budget-process-grid-pl-owner-data";
-import {RequestQuery} from "../../../models/requests/query/request-query";
-import BudgetProcessGrid from "./budget-process-grid.vue";
+import {RequestQuery} from "../../../../models/requests/query/request-query";
+import {BudgetProcessGridProcessApproved} from "./budget-process-grid-approved-data";
+import BudgetProcessApprovedGrid from "../budget-process-approved-grid.vue";
 
 /**
  * From the parent.
@@ -19,15 +19,16 @@ const props = defineProps({
 /**
  * Defines GridModel .
  */
-const gridModel = new BudgetProcessGridPLOwner(
+const gridModel = new BudgetProcessGridProcessApproved(
   props.fullDate as string ,
   props.year as number ,
-  new RequestQuery('/api/v1/BudgetProcess/ProcessOwner',0, 100000)
+
+  new RequestQuery('/api/v1/BudgetProcess/Approved/Below',0, 100000)
 );
 </script>
 
 <template>
-  <budget-process-grid excel-title="PL_Owner" :grid-model="gridModel" />
+  <budget-process-approved-grid excel-title="ApprovedBelow" :grid-model="gridModel" />
 </template>
 
 <style scoped lang="css">

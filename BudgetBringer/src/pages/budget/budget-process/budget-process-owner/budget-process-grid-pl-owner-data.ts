@@ -1,5 +1,5 @@
-import {CommonGridModel} from "../../../shared/grids/common-grid-model";
-import {RequestQuery} from "../../../models/requests/query/request-query";
+import {CommonGridModel} from "../../../../shared/grids/common-grid-model";
+import {RequestQuery} from "../../../../models/requests/query/request-query";
 
 /**
  * 진생상황 P&L Owner 그리드 모델

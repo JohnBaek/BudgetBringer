@@ -1,4 +1,5 @@
-import {CommonGridModel} from "../../../shared/grids/common-grid-model";
+import {CommonGridModel} from "../../../../shared/grids/common-grid-model";
+import {RequestQuery} from "../../../../models/requests/query/request-query";
 
 /**
  * 진생상황 BudgetProcessGridBusinessUnit 그리드 모델
@@ -19,9 +20,14 @@ export class BudgetProcessGridProcessApproved extends CommonGridModel{
   /**
    * 생성자
    * @param date 전체 날짜 정보
+   * @param year
+   * @param requestQuery
    */
-  constructor( date: string) {
+  constructor( date: string , year : number ,  requestQuery: RequestQuery  ) {
     super();
+    this.date = date;
+    this.year = year;
+    this.requestQuery = requestQuery;
     this.columDefined = [
       // 비지니스유닛 명
       {

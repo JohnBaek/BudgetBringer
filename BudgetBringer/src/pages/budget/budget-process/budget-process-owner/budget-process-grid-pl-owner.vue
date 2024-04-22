@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import {RequestQuery} from "../../../models/requests/query/request-query";
-import {BudgetProcessGridBusinessUnit} from "./budget-process-grid-bu-data";
-import BudgetProcessGrid from "./budget-process-grid.vue";
+import {BudgetProcessGridPLOwner} from "./budget-process-grid-pl-owner-data";
+import {RequestQuery} from "../../../../models/requests/query/request-query";
+import BudgetProcessGrid from "../budget-process-grid.vue";
 
 /**
  * From the parent.
@@ -19,15 +19,15 @@ const props = defineProps({
 /**
  * Defines GridModel .
  */
-const gridModel = new BudgetProcessGridBusinessUnit(
+const gridModel = new BudgetProcessGridPLOwner(
   props.fullDate as string ,
   props.year as number ,
-
-  new RequestQuery('/api/v1/BudgetProcess/BusinessUnit',0, 100000)
+  new RequestQuery('/api/v1/BudgetProcess/ProcessOwner',0, 100000)
 );
 </script>
+
 <template>
-  <budget-process-grid excel-title="By+BusinessUnit" :grid-model="gridModel" />
+  <budget-process-grid excel-title="PL_Owner" :grid-model="gridModel" />
 </template>
 
 <style scoped lang="css">
