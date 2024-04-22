@@ -1,14 +1,9 @@
 import {CommonGridModel} from "../../../shared/grids/common-grid-model";
-import {ResponseBudgetPlan} from "../../../models/responses/budgets/response-budget-plan";
 
 /**
  * 예산 그리드 모델
  */
-export class BudgetPlanGridData extends CommonGridModel<ResponseBudgetPlan>{
-  /**
-   * 표현할 그리드의 RowData 를 받는다.
-   */
-  items : ResponseBudgetPlan[];
+export class BudgetPlanGridData extends CommonGridModel{
   /**
    * 컬럼정보
    */
@@ -17,7 +12,6 @@ export class BudgetPlanGridData extends CommonGridModel<ResponseBudgetPlan>{
    * Insert 그리드 사용여부
    */
   isUseInsert : boolean;
-
   /**
    * 생성자
    */
@@ -116,7 +110,6 @@ export class BudgetPlanGridData extends CommonGridModel<ResponseBudgetPlan>{
       },
     ]
     this.isUseInsert = false;
-    this.items = [];
   }
 }
 

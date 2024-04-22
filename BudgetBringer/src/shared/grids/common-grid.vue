@@ -113,6 +113,7 @@ const gridColumnApi = ref(null);
  * 그리드 파라미터
  */
 const gridParams = ref(null);
+
 /**
  * gridReady 이벤트 핸들러
  * @param params 파라미터
@@ -123,7 +124,20 @@ const onGridReady = (params) => {
   gridParams.value = params;
 
   // 데이터 소스를 바인딩한다.
-  gridApi.value.setGridOption('datasource', dataSource)
+  // gridApi.value.setGridOption('datasource', {
+  //   getRows: (params) => {
+  //     if (params.startRow === 0) { // 첫 번째 데이터 요청시
+  //       params.successCallback(createSkeletonData(), 20);
+  //     }
+  //     fetchDataFromServer().then(data => {
+  //       params.successCallback(data, data.length);
+  //     }).catch(error => {
+  //       params.failCallback();
+  //     });
+  //   }
+  // });
+
+  gridApi.value.setGridOption('datasource',dataSource);
 
   // 필터 이벤트를 핸들링한다.
   gridApi.value.addEventListener('filterChanged', () => {
@@ -210,12 +224,23 @@ const maxConcurrentDatasourceRequests = 1;
 const infiniteInitialRowCount = 100;
 const maxBlocksInCache = 10;
 
+const createSkeletonData = (columnDefinitions, numberOfRows) => {
+  console.log('columnDefinitions',columnDefinitions);
+
+  return Array.from({length: numberOfRows}, () => {
+    const row = {};
+    columnDefinitions.forEach(col => {
+      row[col.field] = 'loading...'; // 각 필드에 'loading...' 값을 할당
+    });
+    return row;
+  });
+};
+
 /**
  * 데이터 소스 정의
  */
 const dataSource = {
   getRows: (params) => {
-    // 커뮤니케이션 시작
     communicationService.inCommunication();
 
     // 서버로부터 데이터를 요청하는 URL 구성
@@ -243,6 +268,7 @@ const dataSource = {
           // 실패 처리
           params.successCallback([], 0);
         }
+
       },
       error(err) {
         console.error('Error loading data', err);
@@ -358,7 +384,6 @@ const update = () => {
  * Request to server for excel
  */
 const exportExcel = () => {
-  console.log('exportExcel');
   communicationService.inCommunication();
 
   // Copy Reference
