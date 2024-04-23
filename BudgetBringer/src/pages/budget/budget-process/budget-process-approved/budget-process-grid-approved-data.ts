@@ -69,6 +69,60 @@ export class BudgetProcessGridProcessApproved extends CommonGridModel{
     this.columDefinedSkeleton.forEach(item => {
       item.cellRenderer = CommonGridSkeletonRenderer
     });
+    this.chartDefined = [
+      {   type: 'bar'
+        , xKey: 'countryBusinessManagerName'
+        , yKey: 'poIssueAmountSpending'
+        , yName: 'Spending & PO issue Amount'
+        , tooltip: {
+          renderer: function ({ datum, xKey, yKey }) {
+            return {
+              content: Intl.NumberFormat('en-US', { style: 'decimal', maximumFractionDigits: 0 }).format(datum[yKey]) ,
+              title: datum[xKey]
+            };
+          },
+        },
+      },
+      {   type: 'bar'
+        , xKey: 'countryBusinessManagerName'
+        , yKey: 'poIssueAmount'
+        , yName: 'PO issue Amount'
+        , tooltip: {
+          renderer: function ({ datum, xKey, yKey }) {
+            return {
+              content: Intl.NumberFormat('en-US', { style: 'decimal', maximumFractionDigits: 0 }).format(datum[yKey]) ,
+              title: datum[xKey]
+            };
+          },
+        },
+      },
+      {   type: 'bar'
+        , xKey: 'countryBusinessManagerName'
+        , yKey: 'notPoIssueAmount'
+        , yName: 'Not PO issue Amount'
+        , tooltip: {
+          renderer: function ({ datum, xKey, yKey }) {
+            return {
+              content: Intl.NumberFormat('en-US', { style: 'decimal', maximumFractionDigits: 0 }).format(datum[yKey]) ,
+              title: datum[xKey]
+            };
+          },
+        },
+      },
+      {   type: 'bar'
+        , xKey: 'countryBusinessManagerName'
+        , yKey: 'approvedAmount'
+        , yName: 'ApprovedAmount'
+        , tooltip: {
+          renderer: function ({ datum, xKey, yKey }) {
+            return {
+              content: Intl.NumberFormat('en-US', { style: 'decimal', maximumFractionDigits: 0 }).format(datum[yKey]) ,
+              title: datum[xKey]
+            };
+          },
+        },
+      },
+    ];
   }
 }
 

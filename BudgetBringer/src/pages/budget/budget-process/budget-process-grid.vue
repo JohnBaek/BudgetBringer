@@ -11,7 +11,6 @@ import { AgChartsVue } from 'ag-charts-vue3';
 import CommonGridButtonGroup from "../../../shared/grids/common-grid-button-group.vue";
 import {CommonGridButtonGroupDefinesButtonEmits} from "../../../shared/grids/common-grid-button-group-defines";
 import {getDateFormatForFile} from "../../../services/utils/date-util";
-import {isNullOrUndefined} from "node:util";
 
 /**
  * From the parent.
@@ -231,11 +230,6 @@ const toChart = () =>{
  */
 const toGrid = () => {
   showGrid.value = true;
-  communicationService.inCommunication();
-
-  setTimeout(() => {
-    communicationService.offCommunication();
-  },1000);
 }
 const options = ref([]);
 const inCommunication = ref(true);
