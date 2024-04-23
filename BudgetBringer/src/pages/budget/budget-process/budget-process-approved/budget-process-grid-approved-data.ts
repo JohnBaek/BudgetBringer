@@ -1,14 +1,11 @@
 import {CommonGridModel} from "../../../../shared/grids/common-grid-model";
 import {RequestQuery} from "../../../../models/requests/query/request-query";
+import CommonGridSkeletonRenderer from "../../../../shared/grids/common-grid-skeleton-renderer.vue";
 
 /**
  * 진생상황 BudgetProcessGridBusinessUnit 그리드 모델
  */
 export class BudgetProcessGridProcessApproved extends CommonGridModel{
-  /**
-   * 컬럼정보
-   */
-  public columDefined : any [];
   /**
    * Date
    */
@@ -29,12 +26,11 @@ export class BudgetProcessGridProcessApproved extends CommonGridModel{
     this.year = year;
     this.requestQuery = requestQuery;
     this.columDefined = [
-      // 비지니스유닛 명
       {
         field: "countryBusinessManagerName",
         headerName: date,
         headerClass: 'ag-grids-custom-header',
-        sortable: false
+        sortable: false,
       },
       {
         headerName:'Spending & PO issue Amount',
@@ -42,7 +38,7 @@ export class BudgetProcessGridProcessApproved extends CommonGridModel{
         headerClass: 'ag-grids-custom-header',
         valueFormatter: this.numberValueFormatter,
         width:250 ,
-        sortable: false
+        sortable: false,
       },
       {
         headerName:'PO issue Amount',
@@ -69,6 +65,10 @@ export class BudgetProcessGridProcessApproved extends CommonGridModel{
         sortable: false
       },
     ]
+    this.columDefinedSkeleton = JSON.parse(JSON.stringify(this.columDefined));
+    this.columDefinedSkeleton.forEach(item => {
+      item.cellRenderer = CommonGridSkeletonRenderer
+    });
   }
 }
 

@@ -7,7 +7,12 @@ export abstract class CommonGridModel {
   /**
    * ag-grid Column Definitions
    */
-  columDefined : any [];
+  public columDefined : any [];
+  public columDefinedSkeleton : any [];
+  /**
+   *
+   */
+  public chartDefined: any [];
   /**
    * Request Query Model
    */

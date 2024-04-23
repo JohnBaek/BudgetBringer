@@ -1,5 +1,6 @@
 import {CommonGridModel} from "../../../../shared/grids/common-grid-model";
 import {RequestQuery} from "../../../../models/requests/query/request-query";
+import CommonGridSkeletonRenderer from "../../../../shared/grids/common-grid-skeleton-renderer.vue";
 
 /**
  * 진생상황 BudgetProcessGridBusinessUnit 그리드 모델
@@ -72,6 +73,54 @@ export class BudgetProcessGridBusinessUnit extends CommonGridModel{
             valueFormatter: this.numberValueFormatter,
           }
         ]
+      },
+    ];
+    this.columDefinedSkeleton = JSON.parse(JSON.stringify(this.columDefined));
+    this.columDefinedSkeleton.forEach(item => {
+      item.cellRenderer = CommonGridSkeletonRenderer;
+      item.children?.forEach(child => {
+        child.cellRenderer = CommonGridSkeletonRenderer;
+      })
+    });
+    this.chartDefined = [
+      {   type: 'bar'
+        , xKey: 'businessUnitName'
+        , yKey: 'budgetYear'
+        , yName: 'BudgetYear'
+        , tooltip: {
+          renderer: function ({ datum, xKey, yKey }) {
+            return {
+              content: Intl.NumberFormat('en-US', { style: 'decimal', maximumFractionDigits: 0 }).format(datum[yKey]) ,
+              title: datum[xKey]
+            };
+          },
+        },
+      },
+      {   type: 'bar'
+        , xKey: 'businessUnitName'
+        , yKey: 'budgetApprovedYearSum'
+        , yName: 'ApprovedAmount'
+        , tooltip: {
+          renderer: function ({ datum, xKey, yKey }) {
+            return {
+              content: Intl.NumberFormat('en-US', { style: 'decimal', maximumFractionDigits: 0 }).format(datum[yKey]) ,
+              title: datum[xKey]
+            };
+          },
+        },
+      },
+      {   type: 'bar'
+        , xKey: 'businessUnitName'
+        , yKey: 'budgetRemainingYear'
+        , yName: 'RemainingYear'
+        , tooltip: {
+          renderer: function ({ datum, xKey, yKey }) {
+            return {
+              content: Intl.NumberFormat('en-US', { style: 'decimal', maximumFractionDigits: 0 }).format(datum[yKey]) ,
+              title: datum[xKey]
+            };
+          },
+        },
       },
     ]
   }

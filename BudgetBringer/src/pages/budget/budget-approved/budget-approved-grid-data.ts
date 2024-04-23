@@ -5,7 +5,7 @@ import {EnumApprovalStatus} from "../../../models/enums/enum-approval-status";
 /**
  * 예산 그리드 모델
  */
-export class BudgetApprovedGridData extends CommonGridModel<ResponseBudgetApproved>{
+export class BudgetApprovedGridData extends CommonGridModel{
   /**
    * 표현할 그리드의 RowData 를 받는다.
    */
@@ -52,17 +52,25 @@ export class BudgetApprovedGridData extends CommonGridModel<ResponseBudgetApprov
         cellStyle: (params) => {
           switch (params.value) {
             case EnumApprovalStatus.None:
-              return { backgroundColor: 'gray', color: 'white' };
+              return { backgroundColor: '#33CC3344', color: 'light-black' };
             case EnumApprovalStatus.PoNotYetPublished:
-              return { backgroundColor: 'yellow', color: 'black' };
+              return { backgroundColor: '#ccc42244', color: 'light-black' };
             case EnumApprovalStatus.PoPublished:
-              return { backgroundColor: 'green', color: 'white' };
+              return { backgroundColor: '#33CC3344', color: 'light-black' };
             case EnumApprovalStatus.InVoicePublished:
-              return { backgroundColor: 'blue', color: 'white' };
+              return { backgroundColor: '#2244CC44', color: 'light-black' };
             default:
-              return { backgroundColor: 'red', color: 'white' }; // 값이 열거형에 없는 경우
+              return { backgroundColor: '#CC222244', color: 'light-black' }; // 값이 열거형에 없는 경우
           }
-        }
+        },
+        //
+        // cellClassRules: {
+        //   "rag-green": "value === EnumApprovalStatus.None || value === EnumApprovalStatus.PoPublished",
+        //   "rag-yellow": "value === EnumApprovalStatus.PoNotYetPublished",
+        //   "rag-blue": "value === EnumApprovalStatus.InVoicePublished",
+        //   "rag-red": "value !== EnumApprovalStatus.None && value !== EnumApprovalStatus.PoNotYetPublished && value !== EnumApprovalStatus.PoPublished && value !== EnumApprovalStatus.InVoicePublished"
+        // }
+
       },
       // 설명
       {

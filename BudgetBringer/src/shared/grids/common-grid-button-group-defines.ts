@@ -9,4 +9,7 @@ export type CommonGridButtonGroupDefinesButtonEmits = {
   (e: 'onRefresh'): void,
   (e: 'onCellClicked', params: any): void,
   (e: 'onExportExcel'): void,
+  (e: 'exportPdf'): void,
+  (e: 'chart'): void,
+  (e: 'grid'): void,
 };

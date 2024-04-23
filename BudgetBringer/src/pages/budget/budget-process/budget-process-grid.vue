@@ -7,9 +7,11 @@ import {HttpService} from "../../../services/api-services/http-service";
 import {ResponseData} from "../../../models/responses/response-data";
 import {messageService} from "../../../services/message-service";
 import {AgGridVue} from "ag-grid-vue3";
+import { AgChartsVue } from 'ag-charts-vue3';
 import CommonGridButtonGroup from "../../../shared/grids/common-grid-button-group.vue";
 import {CommonGridButtonGroupDefinesButtonEmits} from "../../../shared/grids/common-grid-button-group-defines";
 import {getDateFormatForFile} from "../../../services/utils/date-util";
+import {isNullOrUndefined} from "node:util";
 
 /**
  * From the parent.
@@ -60,9 +62,7 @@ const refresh = () => {
  * Request to server for excel
  */
 const exportExcel = () => {
-  console.log('exportExcel');
   communicationService.inCommunication();
-
   // Request to Server
   HttpService.requestGetFile(`${props.gridModel.requestQuery.apiUri}/export/excel` , props.gridModel.requestQuery).subscribe({
     next(response) {
@@ -166,10 +166,9 @@ const loadData = () => {
       }
 
       // Update list
-      items.value = response.data.items;
-
+      items.value = response.data.items.slice();
       // Compute sums
-      setTimeout(() => {calculateSums();},100);
+      setTimeout(() => { calculateSums(); },100);
     } ,
     error(err) {
       messageService.showError('Error loading data'+err);
@@ -179,6 +178,71 @@ const loadData = () => {
     },
   });
 }
+/**
+ * Change to Chart
+ */
+const toChart = () =>{
+  showGrid.value = false;
+  options.value = [];
+
+  // Process all items
+  for (let item of items.value){
+    options.value.push({
+      data: item.items,
+      title:  { text: item.title },
+      series: props.gridModel.chartDefined,
+      height: 600 ,
+      axes : [
+        {
+          type: "category",
+          position: "bottom",
+          gridLine: {
+            style: [
+              {
+                stroke: "rgba(219, 219, 219, 1)",
+                lineDash: [4, 2],
+              },
+            ],
+          },
+        },
+        {
+          type: "number",
+          position: "left",
+          label: {
+            formatter: function(params) {
+              return Intl.NumberFormat('en-US', { style: 'decimal', maximumFractionDigits: 0 }).format(params.value);
+            }
+          },
+          gridLine: {
+            style: [
+              {
+                stroke: "rgba(219, 219, 219, 1)",
+                lineDash: [4, 2],
+              },
+            ],
+          },
+        },
+      ]
+    });
+  }
+}
+/**
+ * Change to Grid
+ */
+const toGrid = () => {
+  showGrid.value = true;
+  communicationService.inCommunication();
+
+  setTimeout(() => {
+    communicationService.offCommunication();
+  },1000);
+}
+const options = ref([]);
+const inCommunication = ref(true);
+communicationService.subscribeCommunication().subscribe((communication) =>{
+  inCommunication.value = communication;
+});
+const showGrid = ref(true);
 </script>
 
 <template>
@@ -188,27 +252,54 @@ const loadData = () => {
         <!-- Action Buttons -->
         <common-grid-button-group
           :selected-rows="selectedRows"
-          :showButtons="['refresh', 'excel']"
+          :showButtons="['refresh', 'excel' , 'pdf', 'chart']"
           @on-refresh="refresh()"
           @on-export-excel="exportExcel()"
+          @chart="toChart()"
+          @grid="toGrid()"
         />
       </div>
     </v-col>
   </v-row>
+  <!--GridMode-->
+  <div v-show="showGrid">
+    <div v-show="inCommunication">
+      <div v-for="item in [1,2,3]" :key="item" class="mb-5" >
+        <h3> <SkeletonLoader  :width="70" :height="30" /></h3>
+        <v-spacer></v-spacer>
+        <ag-grid-vue
+          style="width: 100%; height: 600px;"
+          :columnDefs="(props.gridModel as CommonGridModel).columDefinedSkeleton"
+          :rowData="[1,2,3,5,6,7,8]"
+          class="ag-theme-alpine"
+        >
+        </ag-grid-vue>
+      </div>
+    </div>
 
-  <div v-for="item in items" :key="item.sequence" class="mb-5">
-    <h3>{{item.title}}</h3>
-    <v-spacer></v-spacer>
-    <ag-grid-vue
-      style="width: 100%; height: 600px;"
-      @grid-ready="onGridReady"
-      :grid-options="props.gridOptions"
-      :columnDefs="(props.gridModel as CommonGridModel).columDefined"
-      :rowData="item.items"
-      :pinnedBottomRowData="item.total"
-      class="ag-theme-alpine"
-    >
-    </ag-grid-vue>
+    <div v-show="!inCommunication">
+      <div v-for="item in items" :key="item.sequence" class="mb-5">
+        <h3>{{item.title}}</h3>
+        <v-spacer></v-spacer>
+        <ag-grid-vue
+          style="width: 100%; height: 600px;"
+          @grid-ready="onGridReady"
+          :grid-options="props.gridOptions"
+          :columnDefs="(props.gridModel as CommonGridModel).columDefined"
+          :rowData="item.items"
+          :pinnedBottomRowData="item.total"
+          class="ag-theme-alpine"
+        >
+        </ag-grid-vue>
+      </div>
+    </div>
+  </div>
+
+  <!--ChartMode-->
+  <div v-show="!showGrid">
+    <div v-for="item in options" :key="item.sequence" class="mb-5" style="border:1px solid black;">
+      <ag-charts-vue :options="item" />
+    </div>
   </div>
 </template>
 

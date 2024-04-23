@@ -10,6 +10,7 @@ import {AgGridVue} from "ag-grid-vue3";
 import {CommonGridButtonGroupDefinesButtonEmits} from "../../../shared/grids/common-grid-button-group-defines";
 import {getDateFormatForFile} from "../../../services/utils/date-util";
 import CommonGridButtonGroup from "../../../shared/grids/common-grid-button-group.vue";
+import CommonGridCellRendererSkeleton from "../../../shared/grids/common-grid-renderer-skeleton.vue";
 
 /**
  * From the parent.
@@ -113,10 +114,18 @@ const onGridReady = (params) => {
   calculateSums();
 };
 
+let skeletonColumnDefined = ref([]);
+
 /**
  * 마운트 핸들링
  */
 onMounted(() => {
+  // // Clone
+  // skeletonColumnDefined.value = props.gridModel.columDefined.slice();
+  // skeletonColumnDefined.value.forEach(i => i.cellRenderer = "CommonGridCellRendererSkeleton");
+
+  console.log('skeletonColumnDefined',skeletonColumnDefined);
+
   loadData();
 });
 /**
@@ -161,6 +170,11 @@ const calculateSums = () => {
   }
   gridApi.value.setGridOption('pinnedBottomRowData', [sums])
 }
+const inCommunication = ref(true);
+communicationService.subscribeCommunication().subscribe((communication) =>{
+  inCommunication.value = communication;
+});
+
 /**
  * 데이터를 로드한다.
  */
@@ -207,19 +221,37 @@ const loadData = () => {
     </v-col>
   </v-row>
 
-  <div v-for="item in items" :key="item.sequence" class="mb-5">
-    <h3>{{item.title}}</h3>
-    <v-spacer></v-spacer>
-    <ag-grid-vue
-      style="width: 100%; height: 600px;"
-      @grid-ready="onGridReady"
-      :grid-options="gridOptions"
-      :columnDefs="(props.gridModel as CommonGridModel).columDefined"
-      :rowData="item.items"
-      :pinnedBottomRowData="item.total"
-      class="ag-theme-alpine"
-    >
-    </ag-grid-vue>
+  <!--Skeleton-->
+  <div v-show="inCommunication">
+    <div v-for="item in [1,2,3]" :key="item" class="mb-5" >
+      <SkeletonLoader  :width="70" :height="30" />
+      <v-spacer></v-spacer>
+      <ag-grid-vue
+        style="width: 100%; height: 600px;"
+        :columnDefs="(props.gridModel as CommonGridModel).columDefinedSkeleton"
+        :rowData="[1,2,3,5,6,7,8,9,10,11,12,13,14,15,16]"
+        class="ag-theme-alpine"
+      >
+      </ag-grid-vue>
+    </div>
+  </div>
+
+
+  <div v-show="!inCommunication">
+    <div v-for="item in items" :key="item.sequence" class="mb-5">
+      <h3>{{item.title}}</h3>
+      <v-spacer></v-spacer>
+      <ag-grid-vue
+        style="width: 100%; height: 600px;"
+        @grid-ready="onGridReady"
+        :grid-options="gridOptions"
+        :columnDefs="(props.gridModel as CommonGridModel).columDefined"
+        :rowData="item.items"
+        :pinnedBottomRowData="item.total"
+        class="ag-theme-alpine"
+      >
+      </ag-grid-vue>
+    </div>
   </div>
 </template>
 
