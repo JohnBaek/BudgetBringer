@@ -21,6 +21,11 @@ public class ResponseBudgetPlan : ResponseCommonWriter
     public string ApprovalDate { get; init; } = "";
     
     /// <summary>
+    /// Is included in statistics
+    /// </summary>
+    public bool IsIncludeInStatistics { get; set; }
+    
+    /// <summary>
     /// 기안일 정상 포맷 (yyyy-MM-dd) 이라면 DateOnly 로 파싱된 값 
     /// </summary>
     public DateOnly? ApproveDateValue { get; set; } 

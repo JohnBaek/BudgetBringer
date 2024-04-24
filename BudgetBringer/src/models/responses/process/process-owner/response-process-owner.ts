@@ -13,7 +13,7 @@ export class ResponseProcessOwner {
   /**
    * 올년도 Budget ( ex: 2024FY )
    */
-  budgetYear: number;
+  budgetAmount: number;
   /**
    * 작년 Budget 확정된 것 ( ex: 2023FY ) 승인된 전 년도 전체 예산
    */

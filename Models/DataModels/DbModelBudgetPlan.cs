@@ -49,6 +49,12 @@ public partial class DbModelBudgetPlan : DbModelDefault
     public bool IsAbove500K { get; set; }
 
     /// <summary>
+    /// Is included in statistics
+    /// </summary>
+    public bool IsIncludeInStatistics { get; set; }
+    
+
+    /// <summary>
     /// 기안일 ( 날짜가아닌 일반 스트링데이터도 포함 될 수 있다. )
     /// </summary>
     [Required]

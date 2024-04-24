@@ -151,6 +151,16 @@ public class ExcelService : IExcelService
                             worksheet.Cell(dataCell).Style.Fill.BackgroundColor = XLColor.FromHtml(color);
                         }
                     }
+                    
+                    // Has BoolKeyword
+                    if (meta.BoolKeywords?.Count > 0)
+                    {
+                        Boolean.TryParse(value?.ToString(), out bool boolValue);
+
+                        worksheet.Cell(dataCell).Value = boolValue ? meta.BoolKeywords[0] : meta.BoolKeywords[1];
+                        XLColor xlColor = GetColorFromIndex(boolValue ? 0 : 1);
+                        worksheet.Cell(dataCell).Style.Fill.BackgroundColor = xlColor;
+                    }
                         
                     // Need to Sum
                     if (meta.IsSum && double.TryParse(value?.ToString(), out double doubleValue))

@@ -8,7 +8,7 @@
       <v-icon size="x-large">mdi-checkbox-marked-circle</v-icon>
     </li>
     <li>
-      <h2>Budget Bringer</h2>
+      <h2>Capex Budget 관리</h2>
     </li>
     <li class="text-md-subtitle-1 text-grey">
       예산 관리 솔루션

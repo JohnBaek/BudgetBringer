@@ -182,7 +182,7 @@ const calculateSums = () => {
       return acc + (typeof value === 'number' ? value : 0);
     }, 0);
   }
-  gridApi.value.setGridOption('pinnedBottomRowData', [sums])
+  gridApi.value.setGridOption('pinnedTopRowData', [sums])
 }
 /**
  * 데이터를 로드한다.
@@ -319,7 +319,7 @@ const showGrid = ref(true);
             :grid-options="props.gridOptions"
             :columnDefs="(props.gridModel as CommonGridModel).columDefined"
             :rowData="item.items"
-            :pinnedBottomRowData="item.total"
+            :pinnedTopRowData="item.total"
             class="ag-theme-alpine"
           >
           </ag-grid-vue>

@@ -107,6 +107,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             
             // 현재년도와 지난년도에 해당하는 예산 계획을 가져온다.
             List<DbModelBudgetPlan> budgetPlans = await _dbContext.BudgetPlans
+                .Where(i => i.IsIncludeInStatistics)
                 .AsNoTracking()
                 .ToListAsync();
             
@@ -135,7 +136,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             // Below 500K 추가
             ResponseProcessSummaryDetail<ResponseProcessOwner> detailBelow500K = new ResponseProcessSummaryDetail<ResponseProcessOwner> 
             {
-                Sequence = 1,
+                Sequence = 3,
                 Title = "CAPEX below CHF500K",
                 Items = below500K
             };
@@ -150,15 +151,15 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             List<ResponseProcessOwner> total = SumOwner(below500K,above500K);
             ResponseProcessSummaryDetail<ResponseProcessOwner> detailTotal = new ResponseProcessSummaryDetail<ResponseProcessOwner>
             {
-                Sequence = 3,
+                Sequence = 1,
                 Title = "Total",
                 Items = total
             };
             
             // 모든 리스트를 주입한다.
-            data.Items.Add(detailBelow500K);
-            data.Items.Add(detailAbove500K);
             data.Items.Add(detailTotal);
+            data.Items.Add(detailAbove500K);
+            data.Items.Add(detailBelow500K);
             return new ResponseData<ResponseProcessOwnerSummary>(EnumResponseResult.Success, "", "", data);
         }
         catch (Exception e)
@@ -210,6 +211,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             
             // 현재년도와 지난년도에 해당하는 예산 계획을 가져온다.
             List<DbModelBudgetPlan> budgetPlans = await _dbContext.BudgetPlans
+                .Where(i => i.IsIncludeInStatistics)
                 .AsNoTracking()
                 .ToListAsync();
             
@@ -247,7 +249,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             // Below 500K 추가
             ResponseProcessSummaryDetail<ResponseProcessBusinessUnit> detailBelow500K = new ResponseProcessSummaryDetail<ResponseProcessBusinessUnit>
             {
-                Sequence = 1,
+                Sequence = 3,
                 Title = "CAPEX below CHF500K",
                 Items = below500K
             };
@@ -262,15 +264,15 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             List<ResponseProcessBusinessUnit> total = SumUnit(below500K,above500K);
             ResponseProcessSummaryDetail<ResponseProcessBusinessUnit> detailTotal = new ResponseProcessSummaryDetail<ResponseProcessBusinessUnit>
             {
-                Sequence = 3,
+                Sequence = 1,
                 Title = "Total",
                 Items = total
             };
             
             // 모든 리스트를 주입한다.
-            data.Items.Add(detailBelow500K);
-            data.Items.Add(detailAbove500K);
             data.Items.Add(detailTotal);
+            data.Items.Add(detailAbove500K);
+            data.Items.Add(detailBelow500K);
             return new ResponseData<ResponseProcessBusinessUnitSummary>(EnumResponseResult.Success, "", "", data);
         }
         catch (Exception e)

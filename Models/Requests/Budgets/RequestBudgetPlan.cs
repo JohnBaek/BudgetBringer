@@ -18,6 +18,12 @@ public class RequestBudgetPlan : RequestBase
     /// </summary>
     [Required(ErrorMessage = "기안일을 입력해주세요")]
     public string ApprovalDate { get; init; } = "";
+    
+    /// <summary>
+    /// 통계에 포함시킬지 여부 ( false 일경우 통계에 잡히지 않음 )
+    /// </summary>
+    [Required(ErrorMessage = "통계 포함 여부를 입력해주세요")]
+    public bool IsIncludeInStatistics { get; set; }
 
     /// <summary>
     /// 설명 

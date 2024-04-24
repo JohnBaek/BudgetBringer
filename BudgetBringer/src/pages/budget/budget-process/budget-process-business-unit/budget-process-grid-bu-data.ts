@@ -41,7 +41,7 @@ export class BudgetProcessGridBusinessUnit extends CommonGridModel{
         headerClass: 'ag-grids-custom-header',
         children: [
           {
-            headerName:'BudgetYear',
+            headerName:'Budget Amount ' ,
             field: "budgetYear",
             headerClass: 'ag-grids-custom-header',
             valueFormatter: this.numberValueFormatter,
@@ -50,13 +50,14 @@ export class BudgetProcessGridBusinessUnit extends CommonGridModel{
       },
       // 승인 예산
       {
-        headerName:`${year.toString()}&${(year-1).toString()} FY` ,
+        // headerName:`${year.toString()}&${(year-1).toString()} FY` ,
+        headerName:`${year.toString()}FY` ,
         headerClass: 'ag-grids-custom-header',
         children: [
           {
             field: "budgetApprovedYearSum",
             headerClass: 'ag-grids-custom-header',
-            headerName:'ApprovedAmount',
+            headerName:'Approved Amount ' ,
             valueFormatter: this.numberValueFormatter,
           }
         ]
@@ -69,7 +70,7 @@ export class BudgetProcessGridBusinessUnit extends CommonGridModel{
           {
             field: "budgetRemainingYear",
             headerClass: 'ag-grids-custom-header',
-            headerName:'RemainingYear',
+            headerName:'Remaining Amount',
             valueFormatter: this.numberValueFormatter,
           }
         ]
@@ -86,7 +87,7 @@ export class BudgetProcessGridBusinessUnit extends CommonGridModel{
       {   type: 'bar'
         , xKey: 'businessUnitName'
         , yKey: 'budgetYear'
-        , yName: 'BudgetYear'
+        , yName: 'Budget Amount '
         , tooltip: {
           renderer: function ({ datum, xKey, yKey }) {
             return {
@@ -99,7 +100,7 @@ export class BudgetProcessGridBusinessUnit extends CommonGridModel{
       {   type: 'bar'
         , xKey: 'businessUnitName'
         , yKey: 'budgetApprovedYearSum'
-        , yName: 'ApprovedAmount'
+        , yName: 'Approved Amount'
         , tooltip: {
           renderer: function ({ datum, xKey, yKey }) {
             return {
@@ -112,7 +113,7 @@ export class BudgetProcessGridBusinessUnit extends CommonGridModel{
       {   type: 'bar'
         , xKey: 'businessUnitName'
         , yKey: 'budgetRemainingYear'
-        , yName: 'RemainingYear'
+        , yName: 'Remaining Amount'
         , tooltip: {
           renderer: function ({ datum, xKey, yKey }) {
             return {

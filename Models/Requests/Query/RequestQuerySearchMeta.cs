@@ -42,4 +42,8 @@ public class RequestQuerySearchMeta
     /// </summary>
     public Type? EnumType { get; init; } = null;
 
+    /// <summary>
+    /// If is not null , Used as bool parser boolKeywords[0] if true keyword , boolKeywords[2] if false kewword
+    /// </summary>
+    public List<String>? BoolKeywords = null;
 }

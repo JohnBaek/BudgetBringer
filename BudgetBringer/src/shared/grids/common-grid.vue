@@ -453,9 +453,7 @@ const toPascalCase = (str) => {
  * 셀 더블 클릭시
  */
 const onCellDoubleClicked = (event) => {
-  console.log();
-  detailData.value = event.data;
-  detailDialogReference.value = true;
+  emits('onDoubleClicked', event.data);
 }
 
 /**
@@ -463,7 +461,6 @@ const onCellDoubleClicked = (event) => {
  * @param event
  */
 const onCellClicked = (event) => {
-  console.log('onCellClicked',event)
   emits('onCellClicked', event.data);
 }
 

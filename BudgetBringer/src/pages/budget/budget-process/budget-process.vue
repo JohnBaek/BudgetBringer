@@ -11,10 +11,10 @@
             Business Unit
           </v-tab>
           <v-tab value="approvedbelow">
-            Below CHF500K Approved Below
+            Status of Purchase Below
           </v-tab>
           <v-tab value="approvedabove">
-            Below CHF500K Approved Above
+            Status of Purchase Above
           </v-tab>
         </v-tabs>
         <v-window v-model="tab">

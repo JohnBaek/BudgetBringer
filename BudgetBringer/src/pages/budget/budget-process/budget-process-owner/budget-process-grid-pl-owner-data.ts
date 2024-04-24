@@ -36,21 +36,22 @@ export class BudgetProcessGridPLOwner extends CommonGridModel {
         headerClass: 'ag-grids-custom-header',
         children: [
           {
-            headerName:'BudgetYear',
-            field: "budgetYear",
+            headerName:'Budget Amount ' ,
+            field: "budgetAmount",
             headerClass: 'ag-grids-custom-header',
             valueFormatter: this.numberValueFormatter,
           }
         ]
       },
       {
-        headerName:`${year.toString()}&${(year-1).toString()} FY` ,
+        // headerName:`${year.toString()}&${(year-1).toString()} FY` ,
+        headerName:`${year.toString()}FY` ,
         headerClass: 'ag-grids-custom-header',
         children: [
           {
             field: "budgetApprovedYearSum",
             headerClass: 'ag-grids-custom-header',
-            headerName:'ApprovedAmount',
+            headerName:' Approved Amount',
             valueFormatter: this.numberValueFormatter,
           }
         ]
@@ -62,7 +63,7 @@ export class BudgetProcessGridPLOwner extends CommonGridModel {
           {
             field: "budgetRemainingYear",
             headerClass: 'ag-grids-custom-header',
-            headerName:'RemainingYear',
+            headerName:'Remaining Amount ' ,
             valueFormatter: this.numberValueFormatter,
           }
         ]
@@ -78,8 +79,8 @@ export class BudgetProcessGridPLOwner extends CommonGridModel {
     this.chartDefined = [
       {   type: 'bar'
         , xKey: 'countryBusinessManagerName'
-        , yKey: 'budgetYear'
-        , yName: 'BudgetYear'
+        , yKey: 'budgetAmount'
+        , yName: 'Budget Amount '
         , tooltip: {
           renderer: function ({ datum, xKey, yKey }) {
             return {
@@ -92,7 +93,7 @@ export class BudgetProcessGridPLOwner extends CommonGridModel {
       {   type: 'bar'
         , xKey: 'countryBusinessManagerName'
         , yKey: 'budgetApprovedYearSum'
-        , yName: 'ApprovedAmount'
+        , yName: 'Approved Amount '
         , tooltip: {
           renderer: function ({ datum, xKey, yKey }) {
             return {
@@ -105,7 +106,7 @@ export class BudgetProcessGridPLOwner extends CommonGridModel {
       {   type: 'bar'
         , xKey: 'countryBusinessManagerName'
         , yKey: 'budgetRemainingYear'
-        , yName: 'RemainingYear'
+        , yName: 'Remaining Amount '
         , tooltip: {
           renderer: function ({ datum, xKey, yKey }) {
             return {

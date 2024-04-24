@@ -85,7 +85,8 @@ public class RequestQuery
     /// <param name="useAsExcelHeader"></param>
     /// <param name="isSum"></param>
     /// <param name="enumType"></param>
-    public void AddSearchAndSortDefine(EnumQuerySearchType searchType, string fieldName, string excelHeaderName , bool useAsExcelHeader = false, bool isSum = false ,Type enumType = null)
+    /// <param name="boolKeyword"></param>
+    public void AddSearchAndSortDefine(EnumQuerySearchType searchType, string fieldName, string excelHeaderName , bool useAsExcelHeader = false, bool isSum = false ,Type enumType = null, List<string> boolKeyword = null)
     {
         SearchMetas.Add(new RequestQuerySearchMeta
         {
@@ -94,7 +95,8 @@ public class RequestQuery
             ExcelHeaderName = excelHeaderName ,
             IsIncludeExcelHeader = useAsExcelHeader ,
             IsSum = isSum ,
-            EnumType = enumType
+            EnumType = enumType ,
+            BoolKeywords = boolKeyword
         });
     }
 }

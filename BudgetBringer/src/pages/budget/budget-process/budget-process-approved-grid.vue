@@ -170,7 +170,7 @@ const calculateSums = () => {
       return acc + (typeof value === 'number' ? value : 0);
     }, 0);
   }
-  gridApi.value.setGridOption('pinnedBottomRowData', [sums])
+  gridApi.value.setGridOption('pinnedTopRowData', [sums])
 }
 const inCommunication = ref(true);
 communicationService.subscribeCommunication().subscribe((communication) =>{
@@ -358,7 +358,7 @@ const print = () => {
             :grid-options="gridOptions"
             :columnDefs="(props.gridModel as CommonGridModel).columDefined"
             :rowData="item.items"
-            :pinnedBottomRowData="item.total"
+            :pinnedTopRowData="item.total"
             class="ag-theme-alpine"
           >
           </ag-grid-vue>

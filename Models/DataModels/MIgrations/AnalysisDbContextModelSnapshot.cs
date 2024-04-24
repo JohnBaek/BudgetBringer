@@ -255,6 +255,9 @@ namespace Models.DataModels.Migrations
                     b.Property<bool>("IsApprovalDateValid")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<bool>("IsIncludeInStatistics")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<DateTime>("ModDate")
                         .HasColumnType("datetime(6)");
 
@@ -333,7 +336,7 @@ namespace Models.DataModels.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("DisplayName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
@@ -353,7 +356,7 @@ namespace Models.DataModels.Migrations
 
                     b.HasIndex("ModId");
 
-                    b.HasIndex("DisplayName")
+                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.HasIndex("RegId");
@@ -423,7 +426,7 @@ namespace Models.DataModels.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("DisplayName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
@@ -443,7 +446,7 @@ namespace Models.DataModels.Migrations
 
                     b.HasIndex("ModId");
 
-                    b.HasIndex("DisplayName")
+                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.HasIndex("RegId");
@@ -511,7 +514,7 @@ namespace Models.DataModels.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("DisplayName")
+                    b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
@@ -756,13 +759,13 @@ namespace Models.DataModels.Migrations
                     b.Property<string>("LoginProvider")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("DisplayName")
+                    b.Property<string>("Name")
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("Value")
                         .HasColumnType("longtext");
 
-                    b.HasKey("UserId", "LoginProvider", "DisplayName");
+                    b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("UserTokens", (string)null);
                 });

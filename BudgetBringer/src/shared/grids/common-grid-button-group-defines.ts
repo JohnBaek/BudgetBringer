@@ -13,4 +13,5 @@ export type CommonGridButtonGroupDefinesButtonEmits = {
   (e: 'chart'): void,
   (e: 'grid'): void,
   (e: 'print'): void,
+  (e: 'onDoubleClicked', params: any): void,
 };

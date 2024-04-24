@@ -68,7 +68,7 @@ const gridReference = ref(null);
 /**
  * 데이터 추가 원본 요청 데이터
  */
-const modelReference = ref<RequestBudgetPlan>(new RequestBudgetPlan());
+const model = ref<RequestBudgetPlan>(new RequestBudgetPlan());
 /**
  * 컨트리 비지니스 매니저 리스트
  */
@@ -103,7 +103,7 @@ const onChangeCountryBusinessManager = (countryBusinessManagerId: any) => {
   console.log('onChangeCountryBusinessManager',countryBusinessManagerId);
 
   // 선택된 값 초기화
-  modelReference.value.businessUnitId = "";
+  model.value.businessUnitId = "";
 
   // 대상 CBM 을 찾는다.
   const _countryBusinessManagers = countryBusinessManagers.filter(i => i.id === countryBusinessManagerId);
@@ -139,7 +139,7 @@ const requestAddData = () => {
   communicationService.inCommunication();
 
   // 데이터를 입력한다.
-  HttpService.requestPost<ResponseData<ResponseBudgetPlan>>(requestQuery.apiUri , modelReference.value).subscribe({
+  HttpService.requestPost<ResponseData<ResponseBudgetPlan>>(requestQuery.apiUri , model.value).subscribe({
     next(response) {
 
       // 요청에 실패한경우
@@ -170,11 +170,11 @@ const requestAddData = () => {
  * 유효성 여부를 검증한다.
  */
 const isValidModel = () => {
-  if(modelReference.value.approvalDate === ''
-  || modelReference.value.sectorId === ''
-  || modelReference.value.businessUnitId === ''
-  || modelReference.value.costCenterId === ''
-  || modelReference.value.countryBusinessManagerId === '') {
+  if(model.value.approvalDate === ''
+  || model.value.sectorId === ''
+  || model.value.businessUnitId === ''
+  || model.value.costCenterId === ''
+  || model.value.countryBusinessManagerId === '') {
     return false;
   }
 }
@@ -195,8 +195,8 @@ const showRemoveDialog = (items : Array<ResponseBudgetPlan>) => {
  */
 const showAddDialog = () => {
   addDialogReference.value = true;
-  modelReference.value = new RequestBudgetPlan();
-  modelReference.value.isAbove500K = (props.isAbove500k as String).toLowerCase() == "true";
+  model.value = new RequestBudgetPlan();
+  model.value.isAbove500K = (props.isAbove500k as String).toLowerCase() == "true";
 }
 
 /**
@@ -223,9 +223,7 @@ const showUpdateDialog = (item: ResponseBudgetPlan) => {
 
       // 비지니스 유닛을 업데이트
       businessUnitsReference.value = _responseCountryBusinessManager.data.businessUnits;
-
-      // 데이터를 업데이트한다.
-      modelReference.value = Object.assign(modelReference.value, item);
+      model.value = Object.assign(model.value, response.data);
 
       // 팝업을 연다.
       updateDialogReference.value = true;
@@ -276,10 +274,8 @@ const requestUpdateData = () => {
     messageService.showWarning("입력하지 않은 데이터가 있습니다");
     return;
   }
-
-
   communicationService.inCommunication();
-  HttpService.requestPut<ResponseData<any>>(`${requestQuery.apiUri}/${updateItem.id}`, modelReference.value).subscribe({
+  HttpService.requestPut<ResponseData<any>>(`${requestQuery.apiUri}/${updateItem.id}`, model.value).subscribe({
     next(response) {
       // 요청에 실패한경우
       if(response.result !== EnumResponseResult.success) {
@@ -299,6 +295,17 @@ const requestUpdateData = () => {
     },
   });
 }
+/**
+ * When user double clicked the grid cell
+ * @param $event
+ */
+const onDoubleClicked = ($event) => {
+  const data = $event as ResponseBudgetPlan;
+
+  console.log('data',data)
+  showUpdateDialog(data);
+}
+
 </script>
 
 <template>
@@ -309,6 +316,7 @@ const requestUpdateData = () => {
                @onAdd="showAddDialog"
                @onRemove="showRemoveDialog"
                @onUpdate="showUpdateDialog"
+               @onDoubleClicked="onDoubleClicked($event)"
                ref="gridReference"
   />
   <!--데이터 추가 다이얼로그-->
@@ -319,15 +327,21 @@ const requestUpdateData = () => {
       <v-card-subtitle class="">예산을 추가합니다 생성된 코드명은 변경할 수 없습니다. 엔터키를 누르면 등록됩니다.<br>취소를 원하시는 경우 ESC 키를 눌러주세요</v-card-subtitle>
       <v-row dense>
         <v-col cols="12" md="12" class="mt-5">
-          <common-select required v-model="modelReference.countryBusinessManagerId" @onChange="onChangeCountryBusinessManager" @onDataUpdated="onDataUpdatedCBM" title="name" value="id" label="Country Business Manager" requestApiUri="/api/v1/CountryBusinessManager" />
-          <v-select required v-model="modelReference.businessUnitId" label="Business Unit" item-title="name" item-value="id" :items="businessUnitsReference" :disabled="businessUnitsReference.length === 0"></v-select>
-          <common-select required v-model="modelReference.costCenterId" title="value" value="id" label="Cost Center" requestApiUri="/api/v1/CostCenter" />
-          <common-select required v-model="modelReference.sectorId" title="value" value="id" label="Sector" requestApiUri="/api/v1/Sector" />
-          <v-text-field required v-model="modelReference.approvalDate" label="Approval Date" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
-          <v-text-field v-model="modelReference.description" label="Description" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
-          <v-text-field v-model="modelReference.budgetTotal" label="BudgetTotal" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
-          <v-text-field v-model="modelReference.ocProjectName" label="OcProjectName" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
-          <v-text-field v-model="modelReference.bossLineDescription" label="BossLine Description" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
+          <v-switch
+            v-model="model.isIncludeInStatistics"
+            color="primary"
+            label="통계에 포함여부"
+            required
+          ></v-switch>
+          <common-select required v-model="model.countryBusinessManagerId" @onChange="onChangeCountryBusinessManager" @onDataUpdated="onDataUpdatedCBM" title="name" value="id" label="Country Business Manager" requestApiUri="/api/v1/CountryBusinessManager" />
+          <v-select required v-model="model.businessUnitId" label="Business Unit" item-title="name" item-value="id" :items="businessUnitsReference" :disabled="businessUnitsReference.length === 0"></v-select>
+          <common-select required v-model="model.costCenterId" title="value" value="id" label="Cost Center" requestApiUri="/api/v1/CostCenter" />
+          <common-select required v-model="model.sectorId" title="value" value="id" label="Sector" requestApiUri="/api/v1/Sector" />
+          <v-text-field required v-model="model.approvalDate" label="Approval Date" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
+          <v-text-field v-model="model.description" label="Description" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
+          <v-text-field v-model="model.budgetTotal" label="BudgetTotal" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
+          <v-text-field v-model="model.ocProjectName" label="OcProjectName" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
+          <v-text-field v-model="model.bossLineDescription" label="BossLine Description" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
           <v-btn variant="outlined" @click="requestAddData()" class="mr-2" color="info" >추가</v-btn>
           <v-btn variant="outlined" @click="addDialogReference = false" class="mr-2" color="error">취소</v-btn>
         </v-col>
@@ -343,15 +357,20 @@ const requestUpdateData = () => {
       <v-card-subtitle class="">예산을 추가합니다 생성된 코드명은 변경할 수 없습니다. 엔터키를 누르면 등록됩니다.<br>취소를 원하시는 경우 ESC 키를 눌러주세요</v-card-subtitle>
       <v-row dense>
         <v-col cols="12" md="12" class="mt-5">
-          <common-select required v-model="modelReference.countryBusinessManagerId" @onChange="onChangeCountryBusinessManager" @onDataUpdated="onDataUpdatedCBM" title="name" value="id" label="Country Business Manager" requestApiUri="/api/v1/CountryBusinessManager" />
-          <v-select required v-model="modelReference.businessUnitId" label="Business Unit" item-title="name" item-value="id" :items="businessUnitsReference" :disabled="businessUnitsReference.length === 0"></v-select>
-          <common-select required v-model="modelReference.costCenterId" title="value" value="id" label="Cost Center" requestApiUri="/api/v1/CostCenter" />
-          <common-select required v-model="modelReference.sectorId" title="value" value="id" label="Sector" requestApiUri="/api/v1/Sector" />
-          <v-text-field required v-model="modelReference.approvalDate" label="Approval Date" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
-          <v-text-field v-model="modelReference.description" label="Description" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
-          <v-text-field v-model="modelReference.budgetTotal" label="BudgetTotal" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
-          <v-text-field v-model="modelReference.ocProjectName" label="OcProjectName" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
-          <v-text-field v-model="modelReference.bossLineDescription" label="BossLine Description" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
+          <v-switch
+            v-model="model.isIncludeInStatistics"
+            color="primary"
+            label="통계에 포함여부"
+          ></v-switch>
+          <common-select required v-model="model.countryBusinessManagerId" @onChange="onChangeCountryBusinessManager" @onDataUpdated="onDataUpdatedCBM" title="name" value="id" label="Country Business Manager" requestApiUri="/api/v1/CountryBusinessManager" />
+          <v-select required v-model="model.businessUnitId" label="Business Unit" item-title="name" item-value="id" :items="businessUnitsReference" :disabled="businessUnitsReference.length === 0"></v-select>
+          <common-select required v-model="model.costCenterId" title="value" value="id" label="Cost Center" requestApiUri="/api/v1/CostCenter" />
+          <common-select required v-model="model.sectorId" title="value" value="id" label="Sector" requestApiUri="/api/v1/Sector" />
+          <v-text-field required v-model="model.approvalDate" label="Approval Date" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
+          <v-text-field v-model="model.description" label="Description" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
+          <v-text-field v-model="model.budgetTotal" label="BudgetTotal" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
+          <v-text-field v-model="model.ocProjectName" label="OcProjectName" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
+          <v-text-field v-model="model.bossLineDescription" label="BossLine Description" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
           <v-btn variant="outlined" @click="requestUpdateData()" class="mr-2" color="info" >수정</v-btn>
           <v-btn variant="outlined" @click="updateDialogReference = false" class="mr-2" color="error">취소</v-btn>
         </v-col>

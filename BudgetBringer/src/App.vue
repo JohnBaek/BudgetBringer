@@ -141,4 +141,8 @@ onUnmounted(() => {
     height: 100vh;
     width: 100vw;
   }
+
+  .ag-floating-top-container {
+    font-weight: bold; /* 글자를 굵게 */
+  }
 </style>

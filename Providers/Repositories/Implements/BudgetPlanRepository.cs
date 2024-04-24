@@ -113,6 +113,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             BudgetTotal = item.BudgetTotal ,
             OcProjectName = item.OcProjectName ,
             BossLineDescription = item.BossLineDescription ,
+            IsIncludeInStatistics = item.IsIncludeInStatistics,
             RegName = item.RegName ,
             ModName = item.ModName ,
             RegDate = item.RegDate ,
@@ -436,6 +437,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             model.BudgetTotal = request.BudgetTotal;
             model.OcProjectName = request.OcProjectName;
             model.BossLineDescription = request.BossLineDescription;
+            model.IsIncludeInStatistics = request.IsIncludeInStatistics;
             model.RegName = user.DisplayName; 
             model.ModName = user.DisplayName; 
             model.RegDate = DateTime.Now; 

@@ -11,7 +11,7 @@ defineComponent({
   <div v-bind="$attrs">
     <v-icon size="small" color="#ff9e22">mdi-checkbox-marked-circle</v-icon>
     <span class="ml-1">
-      <b>Budget Bringer</b>
+      <b>Capex Budget 관리</b>
     </span>
   </div>
 </template>

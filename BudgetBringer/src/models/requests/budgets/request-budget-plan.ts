@@ -16,7 +16,10 @@ export class RequestBudgetPlan {
    * 설명
    */
   description: string | null = "";
-
+  /**
+   * Whether to include in statistics
+   */
+  isIncludeInStatistics:boolean = false;
   /**
    * 섹터 아이디
    */
