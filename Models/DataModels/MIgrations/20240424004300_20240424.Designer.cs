@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Models.DataModels;
 
@@ -11,9 +12,11 @@ using Models.DataModels;
 namespace Models.DataModels.Migrations
 {
     [DbContext(typeof(AnalysisDbContext))]
-    partial class AnalysisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240424004300_20240424")]
+    partial class _20240424
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -606,56 +609,6 @@ namespace Models.DataModels.Migrations
                     b.ToTable("Sectors", (string)null);
                 });
 
-            modelBuilder.Entity("Models.DataModels.DbModelSystemConfig", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(3000)
-                        .HasColumnType("varchar(3000)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SystemConfigs");
-                });
-
-            modelBuilder.Entity("Models.DataModels.DbModelSystemConfigDetail", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("ConfigId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(3000)
-                        .HasColumnType("varchar(3000)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("varchar(1024)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ConfigId");
-
-                    b.ToTable("SystemConfigDetails");
-                });
-
             modelBuilder.Entity("Models.DataModels.DbModelUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1056,17 +1009,6 @@ namespace Models.DataModels.Migrations
                     b.Navigation("RegUser");
                 });
 
-            modelBuilder.Entity("Models.DataModels.DbModelSystemConfigDetail", b =>
-                {
-                    b.HasOne("Models.DataModels.DbModelSystemConfig", "SystemConfig")
-                        .WithMany("Details")
-                        .HasForeignKey("ConfigId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SystemConfig");
-                });
-
             modelBuilder.Entity("Models.DataModels.DbModelUserClaim", b =>
                 {
                     b.HasOne("Models.DataModels.DbModelUser", "DbModelUser")
@@ -1134,11 +1076,6 @@ namespace Models.DataModels.Migrations
                     b.Navigation("RoleClaims");
 
                     b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("Models.DataModels.DbModelSystemConfig", b =>
-                {
-                    b.Navigation("Details");
                 });
 
             modelBuilder.Entity("Models.DataModels.DbModelUser", b =>

@@ -5,6 +5,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{11701C03-039E-4D52-89A0-0D6C65D5A42C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{27CA4EC8-A393-4247-979B-53D803758528}"
+	ProjectSection(SolutionItems) = preProject
+		Resources\initialize.sql = Resources\initialize.sql
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataBase", "DataBase", "{2963F25C-6AF0-4C95-9C8B-C78F121BE007}"
 	ProjectSection(SolutionItems) = preProject

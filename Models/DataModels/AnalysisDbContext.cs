@@ -54,6 +54,17 @@ public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelR
     public required DbSet<DbModelBudgetAnalysisCache>  BudgetAnalysisCache { get; set; }
     
     /// <summary>
+    /// System Common Config 
+    /// </summary>
+    public required DbSet<DbModelSystemConfig> SystemConfigs { get; set; }
+    
+    /// <summary>
+    /// Detail of Configs
+    /// </summary>
+    public required DbSet<DbModelSystemConfigDetail> SystemConfigDetail { get; set; }
+    
+    
+    /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="options"></param>
@@ -160,5 +171,8 @@ public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelR
             entity.Property(i => i.JsonRaw)
                 .HasColumnType("LONGTEXT");
         });
+
+        modelBuilder.Entity<DbModelSystemConfig>();
+        modelBuilder.Entity<DbModelSystemConfigDetail>();
     }
 }

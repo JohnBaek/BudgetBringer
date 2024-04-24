@@ -176,7 +176,7 @@ public static class Program
         services.AddScoped<IBudgetProcessRepository,BudgetProcessRepository>();
         services.AddScoped<IBudgetAnalysisCacheRepository,BudgetAnalysisCacheRepository>();
         
-        // 서비스 레이어 추가
+        // Add Service Layers
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ISignInService<DbModelUser>, SignInService>();
@@ -192,6 +192,7 @@ public static class Program
         services.AddScoped<IBudgetProcessService,BudgetProcessService>();
         services.AddScoped<IBudgetAnalysisCacheService,BudgetAnalysisCacheService>();
         services.AddScoped<IExcelService,ExcelService>();
+        services.AddScoped<ISystemConfigService,SystemConfigService>();
         
         services.AddSingleton<DebounceManager>();
         services.AddTransient<IQueryService, QueryService>();
