@@ -22,6 +22,7 @@ const props = defineProps({
     default: [] ,
     width : 50 ,
   },
+
   /**
    * Insert 그리드 사용여부
    */
@@ -68,6 +69,14 @@ const props = defineProps({
     required: true ,
   }
 });
+/**
+ * incoming calls from parent
+ */
+defineExpose({
+  doRefresh() {
+    refresh();
+  } ,
+});
 let items = [];
 /**
  * 쿼리 요청을 복사한다.
@@ -113,6 +122,7 @@ const gridColumnApi = ref(null);
  * 그리드 파라미터
  */
 const gridParams = ref(null);
+
 
 /**
  * gridReady 이벤트 핸들러
@@ -281,17 +291,12 @@ const dataSource = {
     });
   }
 };
-
-
-
-
 /**
  * pined 된 행의 스타일 정보
  * @param node
  */
 const getRowStyle = ({ node }) =>
   node.rowPinned ? {  fontStyle: 'italic' , fontWeight: 'bold', color:'gray' } : {};
-
 /**
  * 빈 탑 핀 컬럼 셀
  * @param params
@@ -305,7 +310,6 @@ const isEmptyPinnedCell = (params) => {
     (params.node.isRowPinned() && params.value === '')
   );
 }
-
 /**
  * 빈 핀 컬럼의 컬럼명을 조정한다.
  * @param colDefined
@@ -313,7 +317,6 @@ const isEmptyPinnedCell = (params) => {
 const createPinnedCellPlaceholder = (colDefined : any) => {
   return colDefined.colDef.headerName + ' 입력..';
 }
-
 /**
  * 기본 그리드 컬럼 설정
  * * Insert 그리드 사용시만 초기화 *
@@ -324,30 +327,6 @@ const defaultColDefined = isUseInsert ? {
     isEmptyPinnedCell(params) ?
       createPinnedCellPlaceholder(params) : undefined,
 } : {};
-//
-// /**
-//  * Cell 이 열렸다 닫혔을때
-//  * @param params Cell 파라미터
-//  */
-// const onCellEditingStopped = (params) => {
-//   // 인서트 그리드를 사용하지 않는경우 제외한다.
-//   if(!isUseInsert)
-//     return;
-//
-//   // 데이터 입력이 완료된경우
-//   if (isUseInsert && isPinnedRowDataCompleted(params)) {
-//
-//     // 최상단에 추가된 데이터를 추가한다.
-//     items.value = [inputRow,...items.value];
-//
-//     // 부모 컴포넌트에게 전달
-//     emits('onNewRowAdded' , inputRow);
-//     inputRow = {};
-//     // 최상단 Row 를 초기화한다.
-//     params.api.setPinnedTopRowData([inputRow]);
-//   }
-// }
-
 /**
  * 그리드의 셀렉트가 변경되었을때
  */
@@ -355,7 +334,6 @@ const onSelectionChanged = () => {
   // 선택된 Row 를 업데이트한다.
   selectedRows.value = gridApi.value.getSelectedRows();
 };
-
 /**
  * dispatch add
  */

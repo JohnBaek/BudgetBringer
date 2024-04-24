@@ -1,4 +1,5 @@
 import {CommonGridModel} from "../../../shared/grids/common-grid-model";
+import {EnumApprovalStatus} from "../../../models/enums/enum-approval-status";
 
 /**
  * 예산 그리드 모델
@@ -27,6 +28,25 @@ export class BudgetPlanGridData extends CommonGridModel{
         filter: 'agTextColumnFilter',
         floatingFilter: true,
         width:130,
+      },
+      // 승인일
+      {
+        field: "isIncludeInStatistics",
+        headerClass: 'ag-grids-custom-header',
+        headerName:"통계포함여부" ,
+        width:130,
+        cellRenderer: (params) => {
+          if(params.value)
+            return '포함';
+          else
+            return '미포함';
+        },
+        cellStyle: (params) => {
+          if(params.value)
+            return { backgroundColor: '#33CC3344', color: 'light-black' };
+          else
+            return { backgroundColor: '#CC222244', color: 'light-black' };
+        },
       },
       // 섹터
       {

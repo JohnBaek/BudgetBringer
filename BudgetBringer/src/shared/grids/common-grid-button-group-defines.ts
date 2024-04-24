@@ -12,4 +12,5 @@ export type CommonGridButtonGroupDefinesButtonEmits = {
   (e: 'exportPdf'): void,
   (e: 'chart'): void,
   (e: 'grid'): void,
+  (e: 'print'): void,
 };

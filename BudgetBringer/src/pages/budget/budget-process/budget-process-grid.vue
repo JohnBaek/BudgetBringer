@@ -11,6 +11,9 @@ import { AgChartsVue } from 'ag-charts-vue3';
 import CommonGridButtonGroup from "../../../shared/grids/common-grid-button-group.vue";
 import {CommonGridButtonGroupDefinesButtonEmits} from "../../../shared/grids/common-grid-button-group-defines";
 import {getDateFormatForFile} from "../../../services/utils/date-util";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
+
 
 /**
  * From the parent.
@@ -61,7 +64,7 @@ const refresh = () => {
  * Request to server for excel
  */
 const exportExcel = () => {
-  communicationService.inCommunication();
+  communicationService.inTransmission();
   // Request to Server
   HttpService.requestGetFile(`${props.gridModel.requestQuery.apiUri}/export/excel` , props.gridModel.requestQuery).subscribe({
     next(response) {
@@ -89,10 +92,42 @@ const exportExcel = () => {
     },
     complete() {
       // 커뮤니케이션 시작
-      communicationService.offCommunication();
+      communicationService.offTransmission();
     },
   });
 }
+const exportPdf = async () => {
+  communicationService.inTransmission();
+
+  // Get Native Html elements
+  const element = document.getElementById('capture-area') as HTMLElement;
+
+  // Transform to canvas
+  const canvas = await html2canvas(element, {
+    onclone: function (clonedDoc) {
+      clonedDoc.getElementById('capture-area').style.padding = '20px';
+    }
+  });
+
+  const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+
+  // PDF 문서의 크기를 캔버스 크기에 맞춤
+  const pdfWidth = canvas.width;
+  const pdfHeight = canvas.height;
+
+  // PDF 문서 생성 (단위를 'px'로 설정하여 픽셀 기반의 정확한 크기 조절 가능)
+  const pdf = new jsPDF({
+    orientation: 'p',
+    unit: 'px',
+    format: [pdfWidth, pdfHeight]
+  });
+
+  // 이미지를 PDF에 추가
+  pdf.addImage(image, 'PNG', 0, 0, pdfWidth, pdfHeight);
+  pdf.save(`${getDateFormatForFile()}_${props.excelTitle}.pdf`);
+  communicationService.offTransmission();
+}
+
 /**
  * gridReady 이벤트 핸들러
  * @param params 파라미터
@@ -236,6 +271,7 @@ const inCommunication = ref(true);
 communicationService.subscribeCommunication().subscribe((communication) =>{
   inCommunication.value = communication;
 });
+
 const showGrid = ref(true);
 </script>
 
@@ -249,50 +285,53 @@ const showGrid = ref(true);
           :showButtons="['refresh', 'excel' , 'pdf', 'chart']"
           @on-refresh="refresh()"
           @on-export-excel="exportExcel()"
+          @exportPdf="exportPdf()"
           @chart="toChart()"
           @grid="toGrid()"
         />
       </div>
     </v-col>
   </v-row>
-  <!--GridMode-->
-  <div v-show="showGrid">
-    <div v-show="inCommunication">
-      <div v-for="item in [1,2,3]" :key="item" class="mb-5" >
-        <h3> <SkeletonLoader  :width="70" :height="30" /></h3>
-        <v-spacer></v-spacer>
-        <ag-grid-vue
-          style="width: 100%; height: 600px;"
-          :columnDefs="(props.gridModel as CommonGridModel).columDefinedSkeleton"
-          :rowData="[1,2,3,5,6,7,8]"
-          class="ag-theme-alpine"
-        >
-        </ag-grid-vue>
+  <div id="capture-area" >
+    <!--GridMode-->
+    <div v-show="showGrid">
+      <div v-show="inCommunication">
+        <div v-for="item in [1,2,3]" :key="item" class="mb-5" >
+          <h3> <SkeletonLoader  :width="70" :height="30" /></h3>
+          <v-spacer></v-spacer>
+          <ag-grid-vue
+            style="width: 100%; height: 600px;"
+            :columnDefs="(props.gridModel as CommonGridModel).columDefinedSkeleton"
+            :rowData="[1,2,3,5,6,7,8]"
+            class="ag-theme-alpine"
+          >
+          </ag-grid-vue>
+        </div>
+      </div>
+
+      <div v-show="!inCommunication">
+        <div v-for="item in items" :key="item.sequence" class="mb-5">
+          <h3>{{item.title}}</h3>
+          <v-spacer></v-spacer>
+          <ag-grid-vue
+            style="width: 100%; height: 600px;"
+            @grid-ready="onGridReady"
+            :grid-options="props.gridOptions"
+            :columnDefs="(props.gridModel as CommonGridModel).columDefined"
+            :rowData="item.items"
+            :pinnedBottomRowData="item.total"
+            class="ag-theme-alpine"
+          >
+          </ag-grid-vue>
+        </div>
       </div>
     </div>
 
-    <div v-show="!inCommunication">
-      <div v-for="item in items" :key="item.sequence" class="mb-5">
-        <h3>{{item.title}}</h3>
-        <v-spacer></v-spacer>
-        <ag-grid-vue
-          style="width: 100%; height: 600px;"
-          @grid-ready="onGridReady"
-          :grid-options="props.gridOptions"
-          :columnDefs="(props.gridModel as CommonGridModel).columDefined"
-          :rowData="item.items"
-          :pinnedBottomRowData="item.total"
-          class="ag-theme-alpine"
-        >
-        </ag-grid-vue>
+    <!--ChartMode-->
+    <div v-show="!showGrid">
+      <div v-for="item in options" :key="item.sequence" class="mb-5" style="border:1px solid black;">
+        <ag-charts-vue :options="item" />
       </div>
-    </div>
-  </div>
-
-  <!--ChartMode-->
-  <div v-show="!showGrid">
-    <div v-for="item in options" :key="item.sequence" class="mb-5" style="border:1px solid black;">
-      <ag-charts-vue :options="item" />
     </div>
   </div>
 </template>

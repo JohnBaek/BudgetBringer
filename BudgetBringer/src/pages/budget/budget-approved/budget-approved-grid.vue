@@ -14,7 +14,6 @@ import {RequestBudgetApproved} from "../../../models/requests/budgets/request-bu
 import {firstValueFrom} from "rxjs";
 import CommonSelect from "../../../shared/common-select.vue";
 import {ApprovalStatusDescriptions} from "../../../models/enums/enum-approval-status";
-
 /**
  * 그리드 모델
  */
@@ -291,7 +290,6 @@ const requestUpdateData = () => {
     return;
   }
 
-
   communicationService.inCommunication();
   HttpService.requestPut<ResponseData<any>>(`${requestQuery.apiUri}/${updateItem.id}`, modelReference.value).subscribe({
     next(response) {
@@ -316,7 +314,7 @@ const requestUpdateData = () => {
 </script>
 
 <template>
-  <common-grid :is-use-insert="gridModel.isUseInsert"
+  <common-grid
                :input-colum-defined="gridModel.columDefined"
                :query-request="requestQuery"
                :grid-title="((props.isAbove500k as String).toLowerCase() == 'true') ? '예산승인_Above_500K_Budget' : '예산승인_Below_500K_Budget'"

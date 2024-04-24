@@ -10,8 +10,10 @@ import {AgGridVue} from "ag-grid-vue3";
 import {CommonGridButtonGroupDefinesButtonEmits} from "../../../shared/grids/common-grid-button-group-defines";
 import {getDateFormatForFile} from "../../../services/utils/date-util";
 import CommonGridButtonGroup from "../../../shared/grids/common-grid-button-group.vue";
-import CommonGridCellRendererSkeleton from "../../../shared/grids/common-grid-renderer-skeleton.vue";
-import { AgChartsVue } from 'ag-charts-vue3';
+import {AgChartsVue} from 'ag-charts-vue3';
+import {jsPDF} from "jspdf";
+import html2canvas from "html2canvas";
+
 /**
  * From the parent.
  */
@@ -69,7 +71,7 @@ const gridOptions = {
  * Request to server for excel
  */
 const exportExcel = () => {
-  communicationService.inCommunication();
+  communicationService.inTransmission();
 
   // Request to Server
   HttpService.requestGetFile(`${props.gridModel.requestQuery.apiUri}/export/excel` , props.gridModel.requestQuery).subscribe({
@@ -98,7 +100,7 @@ const exportExcel = () => {
     },
     complete() {
       setTimeout(() => {
-        communicationService.offCommunication();
+        communicationService.offTransmission();
       },2000)
     },
   });
@@ -253,6 +255,37 @@ const toChart = () =>{
   }
   console.log('options',options);
 }
+const exportPdf = async () => {
+  communicationService.inTransmission();
+
+  // Get Native Html elements
+  const element = document.getElementById('capture-area') as HTMLElement;
+
+  // Transform to canvas
+  const canvas = await html2canvas(element, {
+    onclone: function (clonedDoc) {
+      clonedDoc.getElementById('capture-area').style.padding = '20px';
+    }
+  });
+
+  const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+
+  // PDF 문서의 크기를 캔버스 크기에 맞춤
+  const pdfWidth = canvas.width;
+  const pdfHeight = canvas.height;
+
+  // PDF 문서 생성 (단위를 'px'로 설정하여 픽셀 기반의 정확한 크기 조절 가능)
+  const pdf = new jsPDF({
+    orientation: 'p',
+    unit: 'px',
+    format: [pdfWidth, pdfHeight]
+  });
+
+  // 이미지를 PDF에 추가
+  pdf.addImage(image, 'PNG', 0, 0, pdfWidth, pdfHeight);
+  pdf.save(`${getDateFormatForFile()}_${props.excelTitle}.pdf`);
+  communicationService.offTransmission();
+}
 /**
  * Change to Grid
  */
@@ -261,6 +294,21 @@ const toGrid = () => {
 }
 const showGrid = ref(true);
 const options = ref([]);
+const print = () => {
+  console.log(1)
+
+  const element = document.getElementById('capture-area');
+  html2canvas(element).then(canvas => {
+    // 이미지 데이터 URL로 변환
+    const imageDataUrl = canvas.toDataURL('image/png');
+
+    // 새 창을 열고 이미지를 로드하여 인쇄
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    printWindow.document.write('<html><head><title>Print</title></head>');
+    printWindow.document.write('<body><img src="' + imageDataUrl + '" onload="window.print();window.close()"/></body></html>');
+    printWindow.document.close();
+  });
+}
 </script>
 
 <template>
@@ -273,51 +321,56 @@ const options = ref([]);
           :showButtons="['refresh', 'excel' , 'pdf', 'chart']"
           @on-refresh="refresh()"
           @on-export-excel="exportExcel()"
+          @exportPdf="exportPdf()"
           @chart="toChart()"
-          @grid="toGrid()" >
+          @grid="toGrid()"
+          @print="print()"
+        >
         </common-grid-button-group>
       </div>
     </v-col>
   </v-row>
 
-  <!--Skeleton-->
-  <div v-show="showGrid">
-    <div v-show="inCommunication">
-      <div v-for="item in [1,2,3]" :key="item" class="mb-5" >
-        <SkeletonLoader  :width="70" :height="30" />
-        <v-spacer></v-spacer>
-        <ag-grid-vue
-          style="width: 100%; height: 600px;"
-          :columnDefs="(props.gridModel as CommonGridModel).columDefinedSkeleton"
-          :rowData="[1,2,3,5,6,7,8,9,10,11,12,13,14,15,16]"
-          class="ag-theme-alpine"
-        >
-        </ag-grid-vue>
+  <div id="capture-area">
+    <!--Skeleton-->
+    <div v-show="showGrid">
+      <div v-show="inCommunication">
+        <div v-for="item in [1,2,3]" :key="item" class="mb-5" >
+          <SkeletonLoader  :width="70" :height="30" />
+          <v-spacer></v-spacer>
+          <ag-grid-vue
+            style="width: 100%; height: 600px;"
+            :columnDefs="(props.gridModel as CommonGridModel).columDefinedSkeleton"
+            :rowData="[1,2,3,5,6,7,8,9,10,11,12,13,14,15,16]"
+            class="ag-theme-alpine"
+          >
+          </ag-grid-vue>
+        </div>
+      </div>
+
+      <div v-show="!inCommunication">
+        <div v-for="item in items" :key="item.sequence" class="mb-5">
+          <h3>{{item.title}}</h3>
+          <v-spacer></v-spacer>
+          <ag-grid-vue
+            style="width: 100%; height: 600px;"
+            @grid-ready="onGridReady"
+            :grid-options="gridOptions"
+            :columnDefs="(props.gridModel as CommonGridModel).columDefined"
+            :rowData="item.items"
+            :pinnedBottomRowData="item.total"
+            class="ag-theme-alpine"
+          >
+          </ag-grid-vue>
+        </div>
       </div>
     </div>
 
-    <div v-show="!inCommunication">
-      <div v-for="item in items" :key="item.sequence" class="mb-5">
-        <h3>{{item.title}}</h3>
-        <v-spacer></v-spacer>
-        <ag-grid-vue
-          style="width: 100%; height: 600px;"
-          @grid-ready="onGridReady"
-          :grid-options="gridOptions"
-          :columnDefs="(props.gridModel as CommonGridModel).columDefined"
-          :rowData="item.items"
-          :pinnedBottomRowData="item.total"
-          class="ag-theme-alpine"
-        >
-        </ag-grid-vue>
+    <!--ChartMode-->
+    <div v-show="!showGrid">
+      <div v-for="item in options" :key="item.sequence" class="mb-5" style="border:1px solid black;">
+        <ag-charts-vue :options="item" />
       </div>
-    </div>
-  </div>
-
-  <!--ChartMode-->
-  <div v-show="!showGrid">
-    <div v-for="item in options" :key="item.sequence" class="mb-5" style="border:1px solid black;">
-      <ag-charts-vue :options="item" />
     </div>
   </div>
 </template>

@@ -7,7 +7,7 @@ import {ref} from "vue";
  */
 const props = defineProps({
   // Only listed in this array will be shown.
-  showButtons: { Type: Array<string> , default: ['add','update','delete','refresh', 'excel' , 'chart' ] , required: false},
+  showButtons: { Type: Array<string> , default: ['add','update','delete','refresh', 'excel' , 'chart' ,'print'] , required: false},
   // Items in grid
   selectedRows: { Type: Array<any> , default: [] , required: false},
 });
@@ -62,6 +62,9 @@ const toGrid = () => {
   emits('grid');
   onChart.value = true;
 }
+const print = () => {
+  emits('print');
+}
 </script>
 
 <template>
@@ -73,6 +76,7 @@ const toGrid = () => {
   <v-icon v-if="props.showButtons.includes('pdf')" @click="exportPdf()" class="ml-3" size="x-large" color="red" style="cursor: pointer;">mdi-file-pdf-box</v-icon>
   <v-icon v-if="props.showButtons.includes('chart') && onChart" @click="toChart()" class="ml-3" size="x-large" color="blue" style="cursor: pointer;">mdi-chart-bar</v-icon>
   <v-icon v-if="props.showButtons.includes('chart') && !onChart" @click="toGrid()" class="ml-3" size="x-large" color="grey" style="cursor: pointer;">mdi-view-list</v-icon>
+  <v-icon v-if="props.showButtons.includes('print')" @click="print()" class="ml-3" size="x-large" style="cursor: pointer;">mdi-printer-outline</v-icon>
   <v-spacer v-if="props.showButtons.length > 0" class="mt-1"></v-spacer>
   <span class="text-grey" v-if="props.showButtons.includes('delete')">shift 버튼을 누른채로 클릭하면 여러 행을 선택할수 있습니다.</span>
 </template>

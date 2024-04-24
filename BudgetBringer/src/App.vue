@@ -33,6 +33,11 @@ let splashTimerCache : any;
 let inCommunication = ref(false);
 
 /**
+ * 통신중 여부
+ */
+let inTransmission = ref(false);
+
+/**
  * 구독중인 정보
  */
 let subscribes = [];
@@ -53,6 +58,13 @@ onMounted(() => {
         return;
 
       inCommunication.value = communication;
+    }),
+    communicationService.transmissionSubject.subscribe(transmission => {
+      // 유효한 데이터가 아닌경우
+      if(transmission == null)
+        return;
+
+      inTransmission.value = transmission;
     })
   );
 });
@@ -102,6 +114,15 @@ onUnmounted(() => {
     persistent>
     <div class="center-container">
       <common-logo />
+    </div>
+  </v-overlay>
+
+  <!--오버레이 2 - 통신중 플래그를 우회해서 하기위함-->
+  <v-overlay
+    v-model="inTransmission"
+    persistent>
+    <div class="center-container">
+      <v-progress-circular indeterminate></v-progress-circular>
     </div>
   </v-overlay>
 </template>
