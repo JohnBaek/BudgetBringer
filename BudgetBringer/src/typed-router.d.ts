@@ -23,6 +23,7 @@ declare module 'vue-router/auto-routes' {
     '/budget/budget-approved/budget-approved': RouteRecordInfo<'/budget/budget-approved/budget-approved', '/budget/budget-approved/budget-approved', Record<never, never>, Record<never, never>>,
     '/budget/budget-approved/budget-approved-grid': RouteRecordInfo<'/budget/budget-approved/budget-approved-grid', '/budget/budget-approved/budget-approved-grid', Record<never, never>, Record<never, never>>,
     '/budget/budget-plan/budget-plan': RouteRecordInfo<'/budget/budget-plan/budget-plan', '/budget/budget-plan/budget-plan', Record<never, never>, Record<never, never>>,
+    '/budget/budget-plan/budget-plan-data-form': RouteRecordInfo<'/budget/budget-plan/budget-plan-data-form', '/budget/budget-plan/budget-plan-data-form', Record<never, never>, Record<never, never>>,
     '/budget/budget-plan/budget-plan-grid': RouteRecordInfo<'/budget/budget-plan/budget-plan-grid', '/budget/budget-plan/budget-plan-grid', Record<never, never>, Record<never, never>>,
     '/budget/budget-process/budget-process': RouteRecordInfo<'/budget/budget-process/budget-process', '/budget/budget-process/budget-process', Record<never, never>, Record<never, never>>,
     '/budget/budget-process/budget-process-approved/budget-process-grid-approved-above': RouteRecordInfo<'/budget/budget-process/budget-process-approved/budget-process-grid-approved-above', '/budget/budget-process/budget-process-approved/budget-process-grid-approved-above', Record<never, never>, Record<never, never>>,

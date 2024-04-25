@@ -1,40 +1,97 @@
 <script setup lang="ts">
 import {ref} from "vue";
+import {communicationService} from "../services/communication-service";
 
 /**
- * emit 정의
+ * outgoing
  */
 const emits = defineEmits<{
-  // 확인 버튼 클릭시
-  (e: 'confirm' ): boolean
+  (e: 'cancel') : any,
+  (e: 'submit') : any,
 }>();
-
 /**
- * 확인 버튼 클릭
+ * Subscribe
  */
-const confirm = () => {
-  emits('confirm');
-}
+const inCommunication = ref(false);
+communicationService.subscribeCommunication().subscribe((communication) =>{
+  inCommunication.value = communication;
+});
 
-/**
- * 다이얼로그
- */
-const dialog = ref(false);
 </script>
 
 <!--공통 컨펌 다이얼로그-->
 <template>
-  <v-dialog v-model="dialog">
-    <v-container>
-      <slot></slot>
-      <v-spacer></v-spacer>
-      <div>
-        <v-btn variant="outlined" @click="confirm()" class="mr-2" color="info">확인</v-btn>
-        <v-btn variant="outlined" @click="dialog = false" class="mr-2" color="error">취소</v-btn>
-      </div>
-    </v-container>
+  <v-dialog width="600" class="responsive-dialog">
+    <v-card elevation="1" rounded>
+      <!-- Header Area -->
+      <v-card-title class="mt-5">
+          <slot name="header-area">
+          </slot>
+      </v-card-title>
+
+      <v-divider class="mt-5"></v-divider>
+      <v-container class="pa-10">
+        <!-- Contents Area -->
+        <slot name="contents-area"></slot>
+      </v-container>
+      <v-divider ></v-divider>
+
+      <!--Default Buttons-->
+      <v-container >
+        <v-row>
+          <v-col class="right-align">
+            <!--Cancel-->
+            <v-btn width="100" elevation="1" class="mr-2" @click="emits('cancel')">
+              <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
+              <template v-if="!inCommunication">
+                <pre class="text-grey"><b> 취소 </b></pre>
+              </template>
+            </v-btn>
+
+            <!--Submit-->
+            <v-btn :disabled="inCommunication" width="100" elevation="1" color="primary" @click="emits('submit')">
+              <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
+              <template v-if="!inCommunication">
+                <v-icon>mdi-checkbox-marked-circle</v-icon>
+                <pre><b> 확인 </b></pre>
+              </template>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+
+    </v-card>
   </v-dialog>
 </template>
 
 <style scoped lang="css">
+/* 기본 스타일 */
+.responsive-dialog .v-dialog {
+  width: 90%; /* 모바일 기기에 적합한 기본 너비 */
+}
+
+/* 태블릿과 데스크톱에 적용될 미디어 쿼리 */
+@media (min-width: 600px) {
+  .responsive-dialog .v-dialog {
+    width: 75%; /* 태블릿 크기에 맞는 너비 */
+  }
+}
+
+@media (min-width: 900px) {
+  .responsive-dialog .v-dialog {
+    width: 50%; /* 데스크톱 크기에 맞는 너비 */
+  }
+}
+
+@media (min-width: 1200px) {
+  .responsive-dialog .v-dialog {
+    width: 30%; /* 큰 데스크톱 화면에 맞는 너비 */
+  }
+}
+.right-align {
+  display: flex;
+  justify-content: flex-end;
+}
+
+
 </style>

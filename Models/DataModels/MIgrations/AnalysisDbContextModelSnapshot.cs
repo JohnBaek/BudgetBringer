@@ -623,7 +623,7 @@ namespace Models.DataModels.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SystemConfigs");
+                    b.ToTable("SystemConfigs", (string)null);
                 });
 
             modelBuilder.Entity("Models.DataModels.DbModelSystemConfigDetail", b =>
@@ -653,7 +653,7 @@ namespace Models.DataModels.Migrations
 
                     b.HasIndex("ConfigId");
 
-                    b.ToTable("SystemConfigDetails");
+                    b.ToTable("SystemConfigDetails", (string)null);
                 });
 
             modelBuilder.Entity("Models.DataModels.DbModelUser", b =>

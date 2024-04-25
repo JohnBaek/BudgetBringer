@@ -1,59 +1,31 @@
 <script setup lang="ts">
-import {onMounted, onUnmounted, ref,watch} from "vue";
+import { ref } from "vue";
 const props = defineProps({
-  files: Array
+  files: Array,
+  title: String,
 });
 
 /**
  * Contains files
  */
-const files = ref([...props.files]);
-/**
- * Remove file of Contains
- * @param index
- */
-const remove = (index) => {
-    files.value.splice(index, 1);
-};
-/**
- * Changed file Contains
- */
-const inputChanged = () => {
-  console.log(files);
-}
-const emits = defineEmits(['update-files']);
-watch(files, (newFiles) => {
-  emits('update-files', newFiles);
-});
-defineExpose({
-  getFiles() {
-    return files.value;
-  }
-});
+// eslint-disable-next-line vue/no-dupe-keys
+const files = ref([]);
 </script>
 
 <template>
-  <v-file-input
-    v-model="files"
-    small-chips
-    show-size
-    multiple
-    clearable
-    @change="inputChanged"
-  >
-    <template v-slot:selection="{ text, index, file }">
-      <v-chip
-        small
-        text-color="white"
-        color="#295671"
-        close
-        @click:close="remove(index)"
-      >
-        {{ text }}
-      </v-chip>
-    </template>
-  </v-file-input>
+<!--  <v-card v-if="fileInfos.length > 0" class="mx-auto">-->
+<!--    <v-card-subtitle>Attached Files</v-card-subtitle>-->
+<!--    <v-list>-->
+<!--      -->
+<!--      <v-subheader>List of Files</v-subheader>-->
+<!--      <v-list-item-group color="primary">-->
+<!--        <v-list-item v-for="(file, index) in fileInfos" :key="index">-->
+<!--          <a :href="file.url">{{ file.name }}</a>-->
+<!--        </v-list-item>-->
+<!--      </v-list-item-group>-->
+<!--    </v-list>-->
+<!--  </v-card>-->
 </template>
 
-<style scoped lang="css">
+<style scoped>
 </style>

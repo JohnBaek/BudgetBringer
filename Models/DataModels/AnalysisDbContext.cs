@@ -63,6 +63,11 @@ public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelR
     /// </summary>
     public required DbSet<DbModelSystemConfigDetail> SystemConfigDetail { get; set; }
     
+    /// <summary>
+    /// Detail of FileInfos
+    /// </summary>
+    public required DbSet<DbModelFileInfo> FileInfos { get; set; }
+
     
     /// <summary>
     /// 생성자
@@ -174,5 +179,6 @@ public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelR
 
         modelBuilder.Entity<DbModelSystemConfig>();
         modelBuilder.Entity<DbModelSystemConfigDetail>();
+        modelBuilder.Entity<DbModelFileInfo>();
     }
 }

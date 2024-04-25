@@ -3,7 +3,6 @@ import {RequestQuery} from "../../../../models/requests/query/request-query";
 import {BudgetProcessGridBusinessUnit} from "./budget-process-grid-bu-data";
 import BudgetProcessGrid from "../budget-process-grid.vue";
 
-
 /**
  * From the parent.
  */

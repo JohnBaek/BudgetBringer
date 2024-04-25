@@ -5,35 +5,16 @@ import {HttpService} from "../services/api-services/http-service";
 import {ResponseList} from "../models/responses/response-list";
 import {EnumResponseResult} from "../models/enums/enum-response-result";
 import {messageService} from "../services/message-service";
-
 /**
- * Prop 정의
+ * Props
  */
 const props = defineProps({
-  // 쿼리 정보
-  requestApiUri: {
-    type: String ,
-    required: true ,
-  } ,
-  // 라벨 정보
-  label: {
-    type: String ,
-    required: true
-  } ,
-  // 타이틀
-  title: {
-    type: String ,
-    required: true
-  } ,
-  // 값
-  value: {
-    type: String ,
-    required: true
-  }
+  requestApiUri: { type: String , required: true ,} ,
+  title: {type: String , required: true} ,
+  value: {type: String ,required: true}
 });
-
 /**
- * emit 정의
+ * Emits
  */
 const emits = defineEmits<{
   // 신규 데이터가 추가되었을때
@@ -41,12 +22,10 @@ const emits = defineEmits<{
   // 셀렉터의 선택이 변경되었을때
   (e: 'onChange', params): any,
 }>();
-
 /**
  * 쿼리 요청 정보
  */
 let queryRequest: RequestQuery = new RequestQuery();
-
 /**
  * 온마운트 핸들링
  */
@@ -57,17 +36,15 @@ onMounted(() => {
   queryRequest.apiUri = props.requestApiUri;
   loadData();
 });
-
 /**
  * 통신중 여부
  */
 const inCommunication = ref(false);
-
 /**
  * 통신중 여부
  */
 const items = ref([]);
-
+const data = ref(null);
 /**
  * 선택이 변경되었을때
  * @param key
@@ -76,7 +53,6 @@ const onModelChange = (key : any) => {
   // 업데이트된 데이터를 Notify 한다.
   emits('onChange' , key);
 }
-
 /**
  * 데이터를 로드한다.
  */
@@ -100,22 +76,52 @@ const loadData = () => {
       console.error('Error loading data', err);
     },
     complete() {
-      inCommunication.value = false;
+      setTimeout(() => {
+        inCommunication.value = false;
+      },1000);
     },
   });
 }
 </script>
 
 <template>
-  <v-select
-    :label="props.label"
-    :item-title="props.title"
-    :item-value="props.value"
-    :items="items"
-    @update:modelValue="onModelChange"
-  ></v-select>
+  <div class="relative-position" style="position: relative; width: 100%;">
+    <v-select
+      :items="items"
+      :item-title="props.title"
+      :item-value="props.value"
+      :disabled="inCommunication"
+      @update:modelValue="onModelChange"
+      placeholder="값을 선택해주세요"
+      class="select-with-loader"
+      density="compact"
+      variant="outlined"
+    ></v-select>
+    <v-progress-circular
+      v-if="inCommunication"
+      indeterminate
+      color="grey"
+      size="30"
+      width="5"
+      class="center-loader"
+    ></v-progress-circular>
+  </div>
 </template>
 
-<style scoped lang="css">
+<style scoped>
+.relative-position {
+  width: 100%; /* Ensure the parent container takes up full width */
+}
 
+.center-loader {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, -50%); /* Center the loader */
+}
+
+.select-with-loader {
+  position: relative;
+  width: 100%;
+}
 </style>
