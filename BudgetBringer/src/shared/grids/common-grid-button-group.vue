@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {CommonGridButtonGroupDefinesButtonEmits} from "./common-grid-button-group-defines";
 import {ref} from "vue";
+import {communicationService} from "../../services/communication-service";
 
 /**
  * From the parent.
@@ -65,12 +66,40 @@ const toGrid = () => {
 const print = () => {
   emits('print');
 }
+const inCommunication = ref(false);
+communicationService.subscribeCommunication().subscribe((communication) =>{
+  inCommunication.value = communication;
+});
 </script>
 
 <template>
-  <v-btn v-if="props.showButtons.includes('add')" variant="outlined" @click="add()" class="mr-2" color="info">추가</v-btn>
-  <v-btn v-if="props.showButtons.includes('delete')" variant="outlined" @click="remove()" class="mr-2" color="error" :disabled="selectedRows.length == 0">삭제</v-btn>
-  <v-btn v-if="props.showButtons.includes('update')" variant="outlined" @click="update()" :disabled="selectedRows.length != 1" color="warning">수정</v-btn>
+  <v-btn v-if="props.showButtons.includes('add')" class="mr-2"  :disabled="inCommunication" width="100" elevation="1" color="info" @click="add()">
+    <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
+    <template v-if="!inCommunication">
+      <v-icon>mdi-checkbox-marked-circle</v-icon>
+      <pre><b> 추가 </b></pre>
+    </template>
+  </v-btn>
+
+  <v-btn v-if="props.showButtons.includes('delete')" class="mr-2"  :disabled="inCommunication" width="100" elevation="1" color="error" @click="remove()">
+    <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
+    <template v-if="!inCommunication">
+      <v-icon>mdi-delete-circle</v-icon>
+      <pre><b> 삭제 </b></pre>
+    </template>
+  </v-btn>
+
+  <v-btn v-if="props.showButtons.includes('update')" class="mr-2"  :disabled="inCommunication" width="100" elevation="1" color="warning" @click="update()">
+    <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
+    <template v-if="!inCommunication">
+      <v-icon>mdi-checkbox-multiple-marked-circle</v-icon>
+      <pre><b> 수정 </b></pre>
+    </template>
+  </v-btn>
+
+<!--  <v-btn v-if="props.showButtons.includes('add')" variant="outlined" @click="add()" class="mr-2" color="info">추가</v-btn>-->
+<!--  <v-btn v-if="props.showButtons.includes('delete')" variant="outlined" @click="remove()" class="mr-2" color="error" :disabled="selectedRows.length == 0">삭제</v-btn>-->
+<!--  <v-btn v-if="props.showButtons.includes('update')" variant="outlined" @click="update()" :disabled="selectedRows.length != 1" color="warning">수정</v-btn>-->
   <v-icon v-if="props.showButtons.includes('refresh')" @click="refresh()" class="ml-3" size="x-large" color="blue" style="cursor: pointer;">mdi-refresh-circle</v-icon>
   <v-icon v-if="props.showButtons.includes('excel')" @click="exportExcel()" class="ml-3" size="x-large" color="green" style="cursor: pointer;">mdi-file-excel-outline</v-icon>
   <v-icon v-if="props.showButtons.includes('pdf')" @click="exportPdf()" class="ml-3" size="x-large" color="red" style="cursor: pointer;">mdi-file-pdf-box</v-icon>

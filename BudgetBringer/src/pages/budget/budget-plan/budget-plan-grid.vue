@@ -364,40 +364,9 @@ const updateDialog = ref(false);
     </template>
   </common-dialog>
 
-
-
-<!--  &lt;!&ndash;데이터 수정 다이얼로그&ndash;&gt;-->
-<!--  <v-dialog v-model="updateDialogReference" width="auto">-->
-<!--    <v-card elevation="1" rounded class="mb-10 pa-5">-->
-<!--      <v-card-title class=" mt-5"><h4>{{ props.title }} 예산수정</h4>-->
-<!--      </v-card-title>-->
-<!--      <v-card-subtitle class="">예산을 추가합니다 생성된 코드명은 변경할 수 없습니다. 엔터키를 누르면 등록됩니다.<br>취소를 원하시는 경우 ESC 키를 눌러주세요</v-card-subtitle>-->
-<!--      <v-row dense>-->
-<!--        <v-col cols="12" md="12"  class="mt-5">-->
-<!--          <v-switch-->
-<!--            v-model="requestModel.isIncludeInStatistics"-->
-<!--            color="primary"-->
-<!--            label="통계에 포함여부"-->
-<!--          ></v-switch>-->
-<!--          <common-select required v-model="requestModel.countryBusinessManagerId" @onChange="onChangeCountryBusinessManager" @onDataUpdated="onDataUpdatedCBM" title="name" value="id" label="Country Business Manager" requestApiUri="/api/v1/CountryBusinessManager" />-->
-<!--          <v-select required v-model="requestModel.businessUnitId" label="Business Unit" item-title="name" item-value="id" :items="businessUnitsReference" :disabled="businessUnitsReference.length === 0"></v-select>-->
-<!--          <common-select required v-model="requestModel.costCenterId" title="value" value="id" label="Cost Center" requestApiUri="/api/v1/CostCenter" />-->
-<!--          <common-select required v-model="requestModel.sectorId" title="value" value="id" label="Sector" requestApiUri="/api/v1/Sector" />-->
-<!--          <v-text-field required v-model="requestModel.approvalDate" label="Approval Date" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>-->
-<!--          <v-text-field v-model="requestModel.description" label="Description" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>-->
-<!--          <v-text-field v-model="requestModel.budgetTotal" label="BudgetTotal" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>-->
-<!--          <v-text-field v-model="requestModel.ocProjectName" label="OcProjectName" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>-->
-<!--          <v-text-field v-model="requestModel.bossLineDescription" label="BossLine Description" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>-->
-<!--          <v-btn variant="outlined" @click="requestUpdateData()" class="mr-2" color="info" >수정</v-btn>-->
-<!--          <v-btn variant="outlined" @click="updateDialogReference = false" class="mr-2" color="error">취소</v-btn>-->
-<!--        </v-col>-->
-<!--      </v-row>-->
-<!--    </v-card>-->
-<!--  </v-dialog>-->
-
   <!--삭제 다이얼로그-->
   <v-dialog v-model="removeDialogReference" width="auto">
-    <v-card min-width="250" title="코드 삭제" text="삭제하시겠습니까?">
+    <v-card min-width="250" title="삭제" text="삭제하시겠습니까?">
       <template v-slot:actions>
         <v-btn class="ms-auto" text="확인" @click="requestRemoveData"
         ></v-btn>
