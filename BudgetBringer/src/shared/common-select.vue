@@ -9,10 +9,13 @@ import {messageService} from "../services/message-service";
  * Props
  */
 const props = defineProps({
+  modelValue : {} ,
   requestApiUri: { type: String , required: true ,} ,
   title: {type: String , required: true} ,
-  value: {type: String ,required: true}
+  value: {type: String ,required: true} ,
+  label: {type: String , required: true}
 });
+const selectedValue = ref(null);
 /**
  * Emits
  */
@@ -21,19 +24,16 @@ const emits = defineEmits<{
   (e: 'onDataUpdated', params): any,
   // 셀렉터의 선택이 변경되었을때
   (e: 'onChange', params): any,
+  (e: 'update:modelValue', params): any,
 }>();
 /**
  * 쿼리 요청 정보
  */
-let queryRequest: RequestQuery = new RequestQuery();
+let queryRequest: RequestQuery = new RequestQuery(props.requestApiUri,0,10000);
 /**
  * 온마운트 핸들링
  */
 onMounted(() => {
-  // 최초 상태의 조회 조건을 복원한다.
-  queryRequest.skip = 0;
-  queryRequest.pageCount = 10000;
-  queryRequest.apiUri = props.requestApiUri;
   loadData();
 });
 /**
@@ -44,7 +44,6 @@ const inCommunication = ref(false);
  * 통신중 여부
  */
 const items = ref([]);
-const data = ref(null);
 /**
  * 선택이 변경되었을때
  * @param key
@@ -52,6 +51,7 @@ const data = ref(null);
 const onModelChange = (key : any) => {
   // 업데이트된 데이터를 Notify 한다.
   emits('onChange' , key);
+  emits('update:modelValue', key);
 }
 /**
  * 데이터를 로드한다.
@@ -68,6 +68,7 @@ const loadData = () => {
 
       // 성공한경우
       items.value = response.items;
+      selectedValue.value = props.modelValue;
 
       // 업데이트된 데이터를 Notify 한다.
       emits('onDataUpdated' , items.value.slice());
@@ -82,6 +83,9 @@ const loadData = () => {
     },
   });
 }
+watch(selectedValue, (newValue) => {
+  emits('update:modelValue', newValue); // 선택된 값이 변경되면 부모 컴포넌트에 알림
+});
 </script>
 
 <template>
@@ -91,11 +95,13 @@ const loadData = () => {
       :item-title="props.title"
       :item-value="props.value"
       :disabled="inCommunication"
+      v-model="selectedValue"
       @update:modelValue="onModelChange"
-      placeholder="값을 선택해주세요"
+      :placeholder="inCommunication ? '' : '값을 선택해주세요'"
       class="select-with-loader"
       density="compact"
       variant="outlined"
+      :label="props.label"
     ></v-select>
     <v-progress-circular
       v-if="inCommunication"

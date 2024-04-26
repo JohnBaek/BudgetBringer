@@ -28,7 +28,7 @@ export class RequestBudgetPlan {
   /**
    * DbModelBusinessUnit 아이디
    */
-  businessUnitId: string = "";
+  businessUnitId: string = null;
 
   /**
    * DbModelCostCenter 아이디

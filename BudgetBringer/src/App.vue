@@ -141,7 +141,9 @@ onUnmounted(() => {
     height: 100vh;
     width: 100vw;
   }
-
+  .v-tab__slider {
+    height:4px;
+  }
   .ag-floating-top-container {
     font-weight: bold; /* 글자를 굵게 */
   }

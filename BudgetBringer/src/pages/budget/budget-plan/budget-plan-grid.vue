@@ -157,7 +157,7 @@ const requestAddData = () => {
     } ,
     complete() {
       // 다이얼로그를 닫는다.
-      addDialogReference.value = false;
+      addDialog.value = false
 
       // 데이터를 다시 로드한다.
       gridReference.value.doRefresh();
@@ -241,8 +241,10 @@ const showUpdateDialog = (item: ResponseBudgetPlan) => {
       businessUnitsReference.value = _responseCountryBusinessManager.data.businessUnits;
       requestModel.value = Object.assign(requestModel.value, response.data);
 
+      console.log('requestModel.value',requestModel.value);
+
       // 팝업을 연다.
-      updateDialogReference.value = true;
+      updateDialog.value = true;
     } ,
     error(err) {
       messageService.showError('Error loading data'+err);
@@ -301,12 +303,12 @@ const requestUpdateData = () => {
       messageService.showSuccess(`데이터가 수정 되었습니다.`);
     } ,
     error() {
-      updateDialogReference.value = false;
+      updateDialog.value = false;
       communicationService.offCommunication();
     } ,
     complete() {
+      updateDialog.value = false;
       gridReference.value.doRefresh();
-      updateDialogReference.value = false;
       communicationService.offCommunication();
     },
   });
@@ -317,8 +319,6 @@ const requestUpdateData = () => {
  */
 const onDoubleClicked = ($event) => {
   const data = $event as ResponseBudgetPlan;
-
-  console.log('data',data)
   showUpdateDialog(data);
 }
 /**
@@ -327,23 +327,9 @@ const onDoubleClicked = ($event) => {
  */
 const updateRequestModel = ($event: RequestBudgetPlan) => {
   requestModel.value = $event;
-  console.log('requestModel.value',requestModel.value);
 }
-
-/**
- * User upload files
- */
-const uploadFiles = ref([]);
-
 const addDialog = ref(false);
-
-/**
- * Budget Submit
- */
-const onSubmitAdd = () => {
-  console.log('onSubmitAdd', requestModel);
-}
-
+const updateDialog = ref(false);
 </script>
 
 <template>
@@ -359,90 +345,55 @@ const onSubmitAdd = () => {
   />
 
   <!-- Add Dialog -->
-  <common-dialog v-model="addDialog" @cancel="addDialog = false" @submit="onSubmitAdd()">
+  <common-dialog v-model="addDialog" @cancel="addDialog = false" @submit="requestAddData()">
     <template v-slot:header-area>
       <h3><pre>💰 예산추가</pre></h3>
     </template>
     <template v-slot:contents-area>
-      <budget-plan-data-form v-model="requestModel" @update:data="updateRequestModel($event)" @submit="onSubmitAdd()" />
+      <budget-plan-data-form v-model="requestModel" @update:data="updateRequestModel($event)" @submit="requestAddData()" />
+    </template>
+  </common-dialog>
+
+  <!-- Update Dialog -->
+  <common-dialog v-model="updateDialog" @cancel="updateDialog = false" @submit="requestUpdateData()">
+    <template v-slot:header-area>
+      <h3><pre>💰 예산수정</pre></h3>
+    </template>
+    <template v-slot:contents-area>
+      <budget-plan-data-form v-model="requestModel" @update:data="updateRequestModel($event)" @submit="requestUpdateData()" />
     </template>
   </common-dialog>
 
 
-<!--  <v-dialog v-model="addDialogReference" width="900">-->
-<!--    <v-card elevation="1" rounded >-->
-<!--      <v-card-title class="mt-5"><h3><pre>💰 예산추가</pre></h3></v-card-title>-->
-<!--      <v-divider class="mt-5"></v-divider>-->
 
-<!--      <v-container>-->
-<!--        <v-row no-gutters class="pa-5" >-->
-<!--          <v-col>-->
-<!--            <v-label>Country Business Manager</v-label>-->
-<!--          </v-col>-->
-<!--          <v-col>-->
-<!--            <common-select required-->
-<!--                           v-model="model.countryBusinessManagerId"-->
-<!--                           @onChange="onChangeCountryBusinessManager"-->
-<!--                           @onDataUpdated="onDataUpdatedCBM"-->
-<!--                           title="name" value="id"-->
-<!--                           requestApiUri="/api/v1/CountryBusinessManager" />-->
-<!--          </v-col>-->
-<!--        </v-row>-->
-<!--      </v-container>-->
-<!--      <div class="mt-5"></div>-->
-<!--&lt;!&ndash;      <v-row dense>&ndash;&gt;-->
-<!--&lt;!&ndash;        <v-col cols="12" md="12" class="mt-5">&ndash;&gt;-->
-<!--&lt;!&ndash;          <v-switch&ndash;&gt;-->
-<!--&lt;!&ndash;            v-model="model.isIncludeInStatistics"&ndash;&gt;-->
-<!--&lt;!&ndash;            color="primary"&ndash;&gt;-->
-<!--&lt;!&ndash;            label="통계에 포함여부"&ndash;&gt;-->
-<!--&lt;!&ndash;            required&ndash;&gt;-->
-<!--&lt;!&ndash;          ></v-switch>&ndash;&gt;-->
-<!--&lt;!&ndash;          <common-file-upload :files="uploadFiles" title="히스토리파일 업로드"></common-file-upload>&ndash;&gt;-->
-<!--&lt;!&ndash;          <common-select required v-model="model.countryBusinessManagerId" @onChange="onChangeCountryBusinessManager" @onDataUpdated="onDataUpdatedCBM" title="name" value="id" label="Country Business Manager" requestApiUri="/api/v1/CountryBusinessManager" />&ndash;&gt;-->
-<!--&lt;!&ndash;          <v-select outlined required v-model="model.businessUnitId" label="Business Unit" item-title="name" item-value="id" :items="businessUnitsReference" :disabled="businessUnitsReference.length === 0"></v-select>&ndash;&gt;-->
-<!--&lt;!&ndash;          <common-select required v-model="model.costCenterId" title="value" value="id" label="Cost Center" requestApiUri="/api/v1/CostCenter" />&ndash;&gt;-->
-<!--&lt;!&ndash;          <common-select required v-model="model.sectorId" title="value" value="id" label="Sector" requestApiUri="/api/v1/Sector" />&ndash;&gt;-->
-<!--&lt;!&ndash;          <v-text-field required v-model="model.approvalDate" label="Approval Date" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>&ndash;&gt;-->
-<!--&lt;!&ndash;          <v-text-field v-model="model.description" label="Description" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>&ndash;&gt;-->
-<!--&lt;!&ndash;          <v-text-field v-model="model.budgetTotal" label="BudgetTotal" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>&ndash;&gt;-->
-<!--&lt;!&ndash;          <v-text-field v-model="model.ocProjectName" label="OcProjectName" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>&ndash;&gt;-->
-<!--&lt;!&ndash;          <v-text-field v-model="model.bossLineDescription" label="BossLine Description" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>&ndash;&gt;-->
-<!--&lt;!&ndash;          <v-btn variant="outlined" @click="requestAddData()" class="mr-2" color="info" >추가</v-btn>&ndash;&gt;-->
-<!--&lt;!&ndash;          <v-btn variant="outlined" @click="addDialogReference = false" class="mr-2" color="error">취소</v-btn>&ndash;&gt;-->
-<!--&lt;!&ndash;        </v-col>&ndash;&gt;-->
-<!--&lt;!&ndash;      </v-row>&ndash;&gt;-->
+<!--  &lt;!&ndash;데이터 수정 다이얼로그&ndash;&gt;-->
+<!--  <v-dialog v-model="updateDialogReference" width="auto">-->
+<!--    <v-card elevation="1" rounded class="mb-10 pa-5">-->
+<!--      <v-card-title class=" mt-5"><h4>{{ props.title }} 예산수정</h4>-->
+<!--      </v-card-title>-->
+<!--      <v-card-subtitle class="">예산을 추가합니다 생성된 코드명은 변경할 수 없습니다. 엔터키를 누르면 등록됩니다.<br>취소를 원하시는 경우 ESC 키를 눌러주세요</v-card-subtitle>-->
+<!--      <v-row dense>-->
+<!--        <v-col cols="12" md="12"  class="mt-5">-->
+<!--          <v-switch-->
+<!--            v-model="requestModel.isIncludeInStatistics"-->
+<!--            color="primary"-->
+<!--            label="통계에 포함여부"-->
+<!--          ></v-switch>-->
+<!--          <common-select required v-model="requestModel.countryBusinessManagerId" @onChange="onChangeCountryBusinessManager" @onDataUpdated="onDataUpdatedCBM" title="name" value="id" label="Country Business Manager" requestApiUri="/api/v1/CountryBusinessManager" />-->
+<!--          <v-select required v-model="requestModel.businessUnitId" label="Business Unit" item-title="name" item-value="id" :items="businessUnitsReference" :disabled="businessUnitsReference.length === 0"></v-select>-->
+<!--          <common-select required v-model="requestModel.costCenterId" title="value" value="id" label="Cost Center" requestApiUri="/api/v1/CostCenter" />-->
+<!--          <common-select required v-model="requestModel.sectorId" title="value" value="id" label="Sector" requestApiUri="/api/v1/Sector" />-->
+<!--          <v-text-field required v-model="requestModel.approvalDate" label="Approval Date" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>-->
+<!--          <v-text-field v-model="requestModel.description" label="Description" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>-->
+<!--          <v-text-field v-model="requestModel.budgetTotal" label="BudgetTotal" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>-->
+<!--          <v-text-field v-model="requestModel.ocProjectName" label="OcProjectName" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>-->
+<!--          <v-text-field v-model="requestModel.bossLineDescription" label="BossLine Description" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>-->
+<!--          <v-btn variant="outlined" @click="requestUpdateData()" class="mr-2" color="info" >수정</v-btn>-->
+<!--          <v-btn variant="outlined" @click="updateDialogReference = false" class="mr-2" color="error">취소</v-btn>-->
+<!--        </v-col>-->
+<!--      </v-row>-->
 <!--    </v-card>-->
 <!--  </v-dialog>-->
-
-  <!--데이터 수정 다이얼로그-->
-  <v-dialog v-model="updateDialogReference" width="auto">
-    <v-card elevation="1" rounded class="mb-10 pa-5">
-      <v-card-title class=" mt-5"><h4>{{ props.title }} 예산수정</h4>
-      </v-card-title>
-      <v-card-subtitle class="">예산을 추가합니다 생성된 코드명은 변경할 수 없습니다. 엔터키를 누르면 등록됩니다.<br>취소를 원하시는 경우 ESC 키를 눌러주세요</v-card-subtitle>
-      <v-row dense>
-        <v-col cols="12" md="12"  class="mt-5">
-          <v-switch
-            v-model="requestModel.isIncludeInStatistics"
-            color="primary"
-            label="통계에 포함여부"
-          ></v-switch>
-          <common-select required v-model="requestModel.countryBusinessManagerId" @onChange="onChangeCountryBusinessManager" @onDataUpdated="onDataUpdatedCBM" title="name" value="id" label="Country Business Manager" requestApiUri="/api/v1/CountryBusinessManager" />
-          <v-select required v-model="requestModel.businessUnitId" label="Business Unit" item-title="name" item-value="id" :items="businessUnitsReference" :disabled="businessUnitsReference.length === 0"></v-select>
-          <common-select required v-model="requestModel.costCenterId" title="value" value="id" label="Cost Center" requestApiUri="/api/v1/CostCenter" />
-          <common-select required v-model="requestModel.sectorId" title="value" value="id" label="Sector" requestApiUri="/api/v1/Sector" />
-          <v-text-field required v-model="requestModel.approvalDate" label="Approval Date" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
-          <v-text-field v-model="requestModel.description" label="Description" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
-          <v-text-field v-model="requestModel.budgetTotal" label="BudgetTotal" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
-          <v-text-field v-model="requestModel.ocProjectName" label="OcProjectName" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
-          <v-text-field v-model="requestModel.bossLineDescription" label="BossLine Description" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
-          <v-btn variant="outlined" @click="requestUpdateData()" class="mr-2" color="info" >수정</v-btn>
-          <v-btn variant="outlined" @click="updateDialogReference = false" class="mr-2" color="error">취소</v-btn>
-        </v-col>
-      </v-row>
-    </v-card>
-  </v-dialog>
 
   <!--삭제 다이얼로그-->
   <v-dialog v-model="removeDialogReference" width="auto">
