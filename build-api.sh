@@ -2,9 +2,6 @@ cp ./Apis/Dockerfile ./
 
 backup_tag=$(date +"%Y%m%d%H%M%S")
 
-# "sgs/budget-bringer-api:latest"를 제외한 모든 "sgs/budget-bringer-api" 이미지를 삭제
-sudo docker images | grep 'sgs/budget-bringer-api' | grep -v 'latest' | awk '{print $3}' | xargs -r docker rmi
-
 # 실행 중인 "sgs/budget-bringer-api" 컨테이너를 찾아 정지하고 삭제
 container_id=$(docker ps | grep 'sgs/budget-bringer-api' | awk '{print $1}')
 if [ ! -z "$container_id" ]; then
@@ -13,6 +10,9 @@ if [ ! -z "$container_id" ]; then
 
     sudo docker tag sgs/budget-bringer-api:latest sgs/budget-bringer-api:$backup_tag
 fi
+
+# "sgs/budget-bringer-api:latest"를 제외한 모든 "sgs/budget-bringer-api" 이미지를 삭제
+sudo docker images | grep 'sgs/budget-bringer-api' | grep -v 'latest' | awk '{print $3}' | xargs -r docker rmi
 
 # 기존 최신 이미지 삭제
 sudo docker rmi sgs/budget-bringer-api:latest
