@@ -9,7 +9,7 @@ if [ ! -z "$container_id" ]; then
 fi
 
 # Step 2: "sgs/budget-bringer-api:latest"를 제외한 모든 태그가 달린 이미지를 삭제
-sudo docker images | grep 'sgs/budget-bringer-api' | grep -v 'latest' | awk '{print $3}' | xargs -r sudo docker rmi
+sudo docker images | grep 'sgs/budget-bringer-api' | grep -v 'latest' | awk '{print $1 ":" $2}' | xargs -r sudo docker rmi
 
 # Step 3: "sgs/budget-bringer-api:latest" 이미지에 오늘의 날짜와 시간으로 태그 달기
 backup_tag=$(date +"%Y%m%d%H%M%S")
