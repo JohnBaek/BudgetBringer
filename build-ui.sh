@@ -1,44 +1,28 @@
 #!/bin/bash
 
-# 현재 시간을 기반으로 백업 태그 생성
-backup_tag=$(date +"%Y%m%d%H%M%S")
-
-# "sgs/budget-bringer-api:latest" 이미지를 백업 태그로 저장
-sudo docker tag sgs/budget-bringer-api:latest sgs/budget-bringer-api:$backup_tag
-
-# 실행 중인 "sgs/budget-bringer-api" 컨테이너를 찾아 정지하고 삭제
+# Step 1: 실행 중인 "sgs/budget-bringer-api" 컨테이너를 찾아 정지하고 삭제
 container_id=$(docker ps -q -f name=budget-bringer-api)
 if [ ! -z "$container_id" ]; then
+    echo "Stopping and removing container: $container_id"
     sudo docker stop $container_id
     sudo docker rm $container_id
 fi
 
-# Docker 이미지 새로 빌드
-sudo docker build -t sgs/budget-bringer-api .
+# Step 2: "sgs/budget-bringer-api:latest"를 제외한 모든 태그가 달린 이미지를 삭제
+docker images | grep 'sgs/budget-bringer-api' | grep -v 'latest' | awk '{print $3}' | xargs -r sudo docker rmi
 
-# 이미지의 모든 태그 목록 조회 및 latest 태그 제외한 나머지 삭제
-sudo docker images --format '{{.Repository}}:{{.Tag}}' | grep 'sgs/budget-bringer-api' | grep -v 'latest' | xargs -r sudo docker rmi
+# Step 3: "sgs/budget-bringer-api:latest" 이미지에 오늘의 날짜와 시간으로 태그 달기
+backup_tag=$(date +"%Y%m%d%H%M%S")
+sudo docker tag sgs/budget-bringer-api:latest sgs/budget-bringer-api:$backup_tag
+echo "Tagged image with backup tag: $backup_tag"
 
-# 필요한 경우 강제로 이미지 삭제
-# docker rmi -f $(docker images -q sgs/budget-bringer-api)
+# Step 4: "latest" 태그가 달린 이미지 삭제하여 태그 달린 이미지만 남기기
+sudo docker rmi sgs/budget-bringer-api:latest
+echo "Removed the 'latest' tag from the image, backup retained as $backup_tag"
 
-# builds 폴더가 없으면 생성
-if [ ! -d "builds" ]; then
-    echo "Creating builds directory..."
-    mkdir builds
-fi
+# Step 5: Docker 이미지를 새로 빌드하고 "latest"로 태그 달기
+docker build -t sgs/budget-bringer-api .
 
-# builds 폴더 내의 기존 budget-bringer-api-*.tar 파일 삭제
-echo "Removing existing budget-bringer-api-*.tar files..."
-rm -f builds/budget-bringer-api-*.tar
-
-# 현재 날짜와 시간을 포함하는 새 파일 이름을 생성
-FILENAME="budget-bringer-api-$backup_tag.tar"
-echo "Creating new file: $FILENAME"
-
-# Docker 이미지를 '.tar' 파일로 저장
-sudo docker save sgs/budget-bringer-api:latest -o "builds/$FILENAME"
-echo "File saved to builds/$FILENAME"
-
-# 컨테이너 재생성
-sudo docker run --name budget-bringer-api -e TZ=Asia/Seoul --restart=unless-stopped -v ./mysql:/var/lib/mysql --network=sgs-net --ip=172.28.0.11 -d sgs/budget-bringer-api:latest
+# Step 6: 컨테이너를 올리기
+docker run --name budget-bringer-api -e TZ=Asia/Seoul --restart=unless-stopped -v ./mysql:/var/lib/mysql --network=sgs-net --ip=172.28.0.11 -d sgs/budget-bringer-api:latest
+echo "Container 'budget-bringer-api' is up and running."
