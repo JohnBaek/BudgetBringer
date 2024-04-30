@@ -364,7 +364,7 @@ const updateDialog = ref(false);
     </template>
   </common-dialog>
 
-  <!--삭제 다이얼로그-->
+  <!-- Delete Dialog-->
   <v-dialog v-model="removeDialogReference" width="auto">
     <v-card min-width="250" title="삭제" text="삭제하시겠습니까?">
       <template v-slot:actions>

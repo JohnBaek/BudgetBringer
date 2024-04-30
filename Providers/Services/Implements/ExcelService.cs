@@ -1,6 +1,5 @@
 using System.Reflection;
 using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Wordprocessing;
 using Features.Extensions;
 using Microsoft.Extensions.Logging;
 using Models.Requests.Query;

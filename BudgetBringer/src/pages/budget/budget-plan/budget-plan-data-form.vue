@@ -4,6 +4,7 @@ import {RequestBudgetPlan} from "../../../models/requests/budgets/request-budget
 import {ResponseCountryBusinessManager} from "../../../models/responses/budgets/response-country-business-manager";
 import {ResponseBusinessUnit} from "../../../models/responses/budgets/response-business-unit";
 import CommonSelect from "../../../shared/common-select.vue";
+import CommonFileUpload from "../../../shared/common-file-upload.vue";
 
 /**
  * props
@@ -109,8 +110,9 @@ const onChangeCountryBusinessManager = (countryBusinessManagerId: any) => {
                 type="number"
                 label="Budget Total"
                 v-model="model.budgetTotal" variant="outlined" @keyup.enter="dispatchSubmit()"></v-text-field>
-    <v-text-field density="compact" label="OC PROJECT Name" placeholder="값을 입력해주세요" v-model="model.ocProjectName"  variant="outlined" @keyup.enter="dispatchSubmit()"></v-text-field>
-    <v-text-field density="compact" label='Boss Line Description' placeholder="값을 입력해주세요" v-model="model.bossLineDescription"  variant="outlined" @keyup.enter="dispatchSubmit()"></v-text-field>
+  <v-text-field density="compact" label="OC PROJECT Name" placeholder="값을 입력해주세요" v-model="model.ocProjectName"  variant="outlined" @keyup.enter="dispatchSubmit()"></v-text-field>
+  <v-text-field density="compact" label='Boss Line Description' placeholder="값을 입력해주세요" v-model="model.bossLineDescription"  variant="outlined" @keyup.enter="dispatchSubmit()"></v-text-field>
+  <common-file-upload></common-file-upload>
 </template>
 
 <style scoped lang="css">

@@ -37,7 +37,7 @@ export class BudgetProcessGridPLOwner extends CommonGridModel {
         children: [
           {
             headerName:'Budget Amount ' ,
-            field: "budgetAmount",
+            field: "budgetYear",
             headerClass: 'ag-grids-custom-header',
             valueFormatter: this.numberValueFormatter,
           }
@@ -79,7 +79,7 @@ export class BudgetProcessGridPLOwner extends CommonGridModel {
     this.chartDefined = [
       {   type: 'bar'
         , xKey: 'countryBusinessManagerName'
-        , yKey: 'budgetAmount'
+        , yKey: 'budgetYear'
         , yName: 'Budget Amount '
         , tooltip: {
           renderer: function ({ datum, xKey, yKey }) {

@@ -1,4 +1,3 @@
-using Features.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Models.DataModels;
