@@ -5,6 +5,7 @@ using Features.Filters;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using Models.DataModels;
 using Providers.Repositories.Implements;
@@ -65,14 +66,16 @@ public static class Program
                 
         // 웹 어플리케이션을 빌드한다.
         WebApplication app = builder.Build();
-
+        
+        // Path of Static files
+        string StaticfilePath = "";
+        
         // 디버그 환경일 경우 
         if (app.Environment.IsDevelopment())
         {
             // 스웨거 사용 
             app.UseSwagger();
             app.UseSwaggerUI();
-            
             // 개발자 모드 예외처리 페이지 추가
             app.UseDeveloperExceptionPage();
         }
@@ -84,8 +87,21 @@ public static class Program
             app.UseForwardedHeaders();
             // app.UseHsts();
         }
+
+        // File RealPath
+        string staticFileDirectory = "/Users/john/Library/Caches/Budget/Persist";
         
-        app.UseStaticFiles();
+        // Is not Development 
+        if (!app.Environment.IsDevelopment())
+            staticFileDirectory = "";
+        
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(staticFileDirectory),
+            // URL root path , should configured in nginx
+            RequestPath = "/Files" 
+        });
+        
         app.UseAuthentication();
         app.UseHandleUnauthorized();
         app.UseAuthorization();
@@ -193,6 +209,7 @@ public static class Program
         services.AddScoped<IBudgetAnalysisCacheService,BudgetAnalysisCacheService>();
         services.AddScoped<IExcelService,ExcelService>();
         services.AddScoped<ISystemConfigService,SystemConfigService>();
+        services.AddScoped<IFileService,FileService>();
         
         services.AddSingleton<DebounceManager>();
         services.AddTransient<IQueryService, QueryService>();

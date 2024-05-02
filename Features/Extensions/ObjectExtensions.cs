@@ -6,7 +6,7 @@ namespace Features.Extensions;
 /// <summary>
 /// Object 확장
 /// </summary>
-public static class ObjectExtension
+public static class ObjectExtensions
 {
     /// <summary>
     /// T 데이터를 T로 클로닝 한다.
