@@ -13,6 +13,7 @@ using Models.Requests.Query;
 using Models.Responses;
 using Models.Responses.Budgets;
 using Providers.Repositories.Interfaces;
+using Providers.Services.Implements;
 using Providers.Services.Interfaces;
 
 namespace Providers.Repositories.Implements;
@@ -63,6 +64,11 @@ public class BudgetPlanRepository : IBudgetPlanRepository
     private readonly DebounceManager _debounceManager;
 
     /// <summary>
+    /// File Service
+    /// </summary>
+    private readonly IFileService _fileService;
+
+    /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="logger">로거</param>
@@ -72,6 +78,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
     /// <param name="logActionWriteService">액션 로그 기록 서비스</param>
     /// <param name="dispatchService">디스패처 서비스</param>
     /// <param name="debounceManager"></param>
+    /// <param name="fileService"></param>
     public BudgetPlanRepository(
         ILogger<BudgetPlanRepository> logger
         , AnalysisDbContext dbContext
@@ -79,7 +86,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
         , IUserRepository userRepository
         , ILogActionWriteService logActionWriteService
         , IDispatchService dispatchService
-        , DebounceManager debounceManager)
+        , DebounceManager debounceManager, IFileService fileService)
     {
         _logger = logger;
         _dbContext = dbContext;
@@ -88,6 +95,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
         _logActionWriteService = logActionWriteService;
         _dispatchService = dispatchService;
         _debounceManager = debounceManager;
+        _fileService = fileService;
     }
 
     
@@ -118,6 +126,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             ModName = item.ModName ,
             RegDate = item.RegDate ,
             ModDate = item.ModDate ,
+            FileGroupId = item.FileGroupId ,
         };
     
     /// <summary>
@@ -160,6 +169,12 @@ public class BudgetPlanRepository : IBudgetPlanRepository
                 .Where(i => i.Id == id.ToGuid())
                 .Select(MapDataToResponse) // MapDataToResponse 셀렉터를 적용
                 .FirstOrDefaultAsync();
+            
+            // If Has files
+            if (data != null && !data.FileGroupId.ToString().IsEmpty())
+            {
+                
+            }
             
             // 조회된 데이터가 없다면
             if(data == null)

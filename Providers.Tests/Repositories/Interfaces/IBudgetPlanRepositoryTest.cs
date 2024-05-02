@@ -40,7 +40,8 @@ public class IBudgetPlanRepositoryTest
             Mock.Of<IUserRepository>(),
             Mock.Of<ILogActionWriteService>(),
             Mock.Of<IDispatchService>(),
-            new DebounceManager()
+        new DebounceManager(),
+            Mock.Of<IFileService>()
         );
     }
     

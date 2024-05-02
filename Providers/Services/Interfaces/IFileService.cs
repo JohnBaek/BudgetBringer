@@ -24,4 +24,18 @@ public interface IFileService
     /// <param name="tempUploadedFiles"></param>
     /// <returns></returns>
     Task<ResponseList<ResponseFileUpload>> PersistFiles(string category, List<RequestUploadFile> tempUploadedFiles);
+
+    /// <summary>
+    /// Get Files
+    /// </summary>
+    /// <param name="fileIds"></param>
+    /// <returns></returns>
+    Task<ResponseList<ResponseFileUpload>> GetFiles(List<Guid> fileIds);
+
+    /// <summary>
+    /// Remove files
+    /// </summary>
+    /// <param name="fileIds"></param>
+    /// <returns></returns>
+    Task<Response> RemoveFiles(List<Guid> fileIds);
 }

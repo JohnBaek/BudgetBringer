@@ -1,7 +1,9 @@
+using System.Linq.Expressions;
 using Features.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -221,7 +223,7 @@ public class FileService : IFileService
                 
                 // Get MimeType
                 string mimeType = "";
-                var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+                var provider = new FileExtensionContentTypeProvider();
                 if (provider.TryGetContentType(fileInfo.FullName, out var contentType)) {
                     mimeType = contentType;
                 } else {
@@ -242,7 +244,7 @@ public class FileService : IFileService
                     ModName = user.DisplayName,
                     RegDate = DateTime.Now,
                     ModDate = DateTime.Now,
-                    InternalFilePath = publicPath ,
+                    InternalFilePath = diskStaticPath ,
                     Extension = fileInfo.Extension ,
                     MediaType = mimeType ,
                     PublicFileUri = $"files/{publicPath}" ,
@@ -290,7 +292,89 @@ public class FileService : IFileService
         return result;
     }
 
-    
+    /// <summary>
+    /// Get files by stored data in Database 
+    /// </summary>
+    /// <param name="fileIds"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public async Task<ResponseList<ResponseFileUpload>> GetFiles(List<Guid> fileIds)
+    {
+        ResponseList<ResponseFileUpload> result;
+        try
+        {
+            // Get files from file Id List
+            List<ResponseFileUpload> files = await _dbContext.FileInfos.AsNoTracking()
+                .Where(i => fileIds.Contains(i.Id))
+                .Select(v => new ResponseFileUpload()
+                    {
+                        Id = v.Id,
+                        Name = v.DisplayFileName,
+                        OriginalFileName = v.OriginFileName,
+                        Url = v.PublicFileUri
+                    }
+                ).ToListAsync();
+
+            return new ResponseList<ResponseFileUpload>(EnumResponseResult.Success, "", "", files);
+        }
+        catch (Exception e)
+        {
+            result = new ResponseList<ResponseFileUpload>(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.",null);
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Remove Files
+    /// </summary>
+    /// <param name="fileIds"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public async Task<Response> RemoveFiles(List<Guid> fileIds)
+    {
+        Response result;
+        
+        try
+        {
+            // Get files by Ids
+            List<DbModelFileInfo> willRemoves = await _dbContext.FileInfos.Where(i => fileIds.Contains(i.Id)).ToListAsync();
+            
+            // Does not have 
+            if(willRemoves.Count == 0)
+                return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "대상이 존재하지 않습니다."};
+            
+            await using IDbContextTransaction transaction = await _dbContext.Database.BeginTransactionAsync();
+
+            // Process all
+            foreach (DbModelFileInfo remove in willRemoves)
+            {
+                // Get Path
+                FileInfo fileInfo = new FileInfo(remove.InternalFilePath);
+                
+                // Is Exist file
+                if(fileInfo.Exists)
+                    fileInfo.Delete();
+
+                // Remove in table 
+                _dbContext.FileInfos.Remove(remove);
+            }
+
+            await _dbContext.SaveChangesAsync();
+            await transaction.CommitAsync();
+            result = new Response(EnumResponseResult.Success,"","");
+        }
+        catch (Exception e)
+        {
+            result = new ResponseData<ResponseBudgetPlan>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+
+
     /// <summary>
     /// Generate File Paths 
     /// </summary>

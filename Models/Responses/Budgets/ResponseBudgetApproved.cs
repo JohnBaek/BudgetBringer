@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Models.Common.Enums;
+using Models.Responses.Files;
 
 namespace Models.Responses.Budgets;
 
@@ -103,4 +104,14 @@ public class ResponseBudgetApproved : ResponseCommonWriter
     /// BossLineDescription
     /// </summary>
     public string? BossLineDescription { get; init; }
+    
+    /// <summary>
+    /// Attached files
+    /// </summary>
+    public List<ResponseFileUpload> AttachedFiles { get; set; } = new List<ResponseFileUpload>();
+    
+    /// <summary>
+    /// File group ID
+    /// </summary>
+    public Guid? FileGroupId { get; set; } 
 }

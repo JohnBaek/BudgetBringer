@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models.Requests.Files;
 using Models.Responses;
 using Models.Responses.Files;
 using Providers.Services.Interfaces;
@@ -38,15 +37,5 @@ public class FileController : Controller
     public async Task<ResponseData<ResponseFileUpload>> UploadFile(IFormFile formFile)
     {
          return await _fileService.UploadFileToTempPath(formFile);
-    }
-    
-    /// <summary>
-    /// Try Upload file
-    /// </summary>
-    /// <returns></returns>
-    [HttpPost("Persist-test")]
-    public async Task<ResponseList<ResponseFileUpload>> UploadFile(List<RequestUploadFile> request)
-    {
-        return await _fileService.PersistFiles("test",request);
     }
 }

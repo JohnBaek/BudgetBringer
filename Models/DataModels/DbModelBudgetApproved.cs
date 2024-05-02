@@ -26,6 +26,11 @@ public class DbModelBudgetApproved : DbModelDefault
     public Guid Id { get; set; }
     
     /// <summary>
+    /// Id of Group It could be null 
+    /// </summary>
+    public Guid? FileGroupId { get; set; }
+    
+    /// <summary>
     /// 승인일 ( 날짜가아닌 일반 스트링데이터도 포함 될 수 있다. )
     /// </summary>
     [MaxLength(255)]

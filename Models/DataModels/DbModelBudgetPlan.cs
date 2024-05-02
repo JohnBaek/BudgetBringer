@@ -17,12 +17,16 @@ public partial class DbModelBudgetPlan : DbModelDefault
     {
     }
 
-
     /// <summary>
     /// 예산 모델 아이디 
     /// </summary>
     [Key]
     public Guid Id { get; set; }
+    
+    /// <summary>
+    /// Id of Group It could be null 
+    /// </summary>
+    public Guid? FileGroupId { get; set; }
 
     /// <summary>
     /// 년도 정보 : yyyy
