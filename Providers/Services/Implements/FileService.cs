@@ -74,7 +74,7 @@ public class FileService : IFileService
     /// </summary>
     /// <param name="request">Form tempUploadedFiles</param>
     /// <returns></returns>
-    public async Task<ResponseData<ResponseFileUpload>> UploadFileToTempPath(IFormFile request)
+    public async Task<ResponseData<ResponseFileUpload>> UploadFileToTempPathAsync(IFormFile request)
     {
         ResponseData<ResponseFileUpload> result;
 
@@ -161,7 +161,7 @@ public class FileService : IFileService
     /// <param name="category"></param>
     /// <param name="tempUploadedFiles"></param>
     /// <returns></returns>
-    public async Task<ResponseList<ResponseFileUpload>> PersistFiles( string category , List<RequestUploadFile> tempUploadedFiles)
+    public async Task<ResponseList<ResponseFileUpload>> PersistFilesAsync( string category , List<RequestUploadFile> tempUploadedFiles)
     {
         ResponseList<ResponseFileUpload> result;
 
@@ -293,19 +293,18 @@ public class FileService : IFileService
     }
 
     /// <summary>
-    /// Get files by stored data in Database 
+    /// Get Files
     /// </summary>
-    /// <param name="fileIds"></param>
+    /// <param name="fileGroupId"></param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public async Task<ResponseList<ResponseFileUpload>> GetFiles(List<Guid> fileIds)
+    public async Task<ResponseList<ResponseFileUpload>> GetFilesAsync(Guid fileGroupId)
     {
         ResponseList<ResponseFileUpload> result;
         try
         {
             // Get files from file Id List
             List<ResponseFileUpload> files = await _dbContext.FileInfos.AsNoTracking()
-                .Where(i => fileIds.Contains(i.Id))
+                .Where(i => i.GroupId == fileGroupId)
                 .Select(v => new ResponseFileUpload()
                     {
                         Id = v.Id,
@@ -332,7 +331,7 @@ public class FileService : IFileService
     /// <param name="fileIds"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public async Task<Response> RemoveFiles(List<Guid> fileIds)
+    public async Task<Response> RemoveFilesAsync(List<Guid> fileIds)
     {
         Response result;
         

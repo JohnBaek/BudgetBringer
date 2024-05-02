@@ -12,6 +12,7 @@ using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
 using Models.Responses.Budgets;
+using Models.Responses.Files;
 using Providers.Repositories.Interfaces;
 using Providers.Services.Implements;
 using Providers.Services.Interfaces;
@@ -171,8 +172,10 @@ public class BudgetPlanRepository : IBudgetPlanRepository
                 .FirstOrDefaultAsync();
             
             // If Has files
-            if (data != null && !data.FileGroupId.ToString().IsEmpty())
+            if (data is { FileGroupId: not null })
             {
+                Guid fileGroupId = data.FileGroupId.Value; 
+                ResponseList<ResponseFileUpload> responseFiles = await _fileService.GetFilesAsync(fileGroupId);
                 
             }
             
@@ -469,7 +472,6 @@ public class BudgetPlanRepository : IBudgetPlanRepository
 
         return result;
     }
-    
     
     /// <summary>
     /// 데이터를 마이그리에션 한다.

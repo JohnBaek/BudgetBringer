@@ -36,6 +36,6 @@ public class FileController : Controller
     [HttpPost("Upload")]
     public async Task<ResponseData<ResponseFileUpload>> UploadFile(IFormFile formFile)
     {
-         return await _fileService.UploadFileToTempPath(formFile);
+         return await _fileService.UploadFileToTempPathAsync(formFile);
     }
 }

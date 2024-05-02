@@ -15,7 +15,7 @@ public interface IFileService
     /// </summary>
     /// <param name="request">Form tempUploadedFiles</param>
     /// <returns></returns>
-    Task<ResponseData<ResponseFileUpload>> UploadFileToTempPath(IFormFile request);
+    Task<ResponseData<ResponseFileUpload>> UploadFileToTempPathAsync(IFormFile request);
     
     /// <summary>
     /// Try persist files from temp path
@@ -23,19 +23,19 @@ public interface IFileService
     /// <param name="category"></param>
     /// <param name="tempUploadedFiles"></param>
     /// <returns></returns>
-    Task<ResponseList<ResponseFileUpload>> PersistFiles(string category, List<RequestUploadFile> tempUploadedFiles);
+    Task<ResponseList<ResponseFileUpload>> PersistFilesAsync(string category, List<RequestUploadFile> tempUploadedFiles);
 
     /// <summary>
     /// Get Files
     /// </summary>
-    /// <param name="fileIds"></param>
+    /// <param name="fileGroupId"></param>
     /// <returns></returns>
-    Task<ResponseList<ResponseFileUpload>> GetFiles(List<Guid> fileIds);
+    Task<ResponseList<ResponseFileUpload>> GetFilesAsync(Guid fileGroupId);
 
     /// <summary>
     /// Remove files
     /// </summary>
     /// <param name="fileIds"></param>
     /// <returns></returns>
-    Task<Response> RemoveFiles(List<Guid> fileIds);
+    Task<Response> RemoveFilesAsync(List<Guid> fileIds);
 }
