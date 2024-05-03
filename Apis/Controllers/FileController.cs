@@ -33,9 +33,22 @@ public class FileController : Controller
     /// </summary>
     /// <param name="formFile"></param>
     /// <returns></returns>
-    [HttpPost("Upload")]
+    [HttpPost("")]
     public async Task<ResponseData<ResponseFileUpload>> UploadFile(IFormFile formFile)
     {
          return await _fileService.UploadFileToTempPathAsync(formFile);
     }
+
+
+    /// <summary>
+    /// Delete Files
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpDelete("{id}")]
+    public async Task<Response> RemoveFilesAsync([FromRoute] Guid id)
+    {
+        return await _fileService.RemoveFilesAsync([id]);
+    }
+    
 }

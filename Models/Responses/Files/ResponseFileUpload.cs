@@ -24,4 +24,9 @@ public class ResponseFileUpload
     /// Url
     /// </summary>
     public string Url { get; set; } = "";
+    
+    /// <summary>
+    /// File size in bytes
+    /// </summary>
+    public long Size { get; set; }
 }

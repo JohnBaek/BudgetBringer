@@ -132,21 +132,6 @@ const onGridReady = (params) => {
   gridApi.value = params.api;
   gridColumnApi.value = params.columnApi;
   gridParams.value = params;
-
-  // 데이터 소스를 바인딩한다.
-  // gridApi.value.setGridOption('datasource', {
-  //   getRows: (params) => {
-  //     if (params.startRow === 0) { // 첫 번째 데이터 요청시
-  //       params.successCallback(createSkeletonData(), 20);
-  //     }
-  //     fetchDataFromServer().then(data => {
-  //       params.successCallback(data, data.length);
-  //     }).catch(error => {
-  //       params.failCallback();
-  //     });
-  //   }
-  // });
-
   gridApi.value.setGridOption('datasource',dataSource);
 
   // 필터 이벤트를 핸들링한다.
@@ -251,7 +236,7 @@ const createSkeletonData = (columnDefinitions, numberOfRows) => {
  */
 const dataSource = {
   getRows: (params) => {
-    communicationService.inCommunication();
+    communicationService.notifyInCommunication();
 
     // 서버로부터 데이터를 요청하는 URL 구성
     HttpService.requestGet<ResponseList<any>>(queryRequest.apiUri , queryRequest).subscribe({
@@ -286,7 +271,7 @@ const dataSource = {
       },
       complete() {
         // 커뮤니케이션 시작
-        communicationService.offCommunication();
+        communicationService.notifyOffCommunication();
       },
     });
   }
@@ -362,7 +347,7 @@ const update = () => {
  * Request to server for excel
  */
 const exportExcel = () => {
-  communicationService.inCommunication();
+  communicationService.notifyInCommunication();
 
   // Copy Reference
   const _queryRequest = Object.assign({}, queryRequest);
@@ -398,23 +383,10 @@ const exportExcel = () => {
     },
     complete() {
       // 커뮤니케이션 시작
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     },
   });
 }
-
-const getFormattedDate = () => {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
-  const seconds = date.getSeconds().toString().padStart(2, '0');
-
-  return `${year}${month}${day}_${hours}${minutes}${seconds}_`;
-}
-
 /**
  * 새로고침 명령
  */

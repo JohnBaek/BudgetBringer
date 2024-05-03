@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted,ref} from "vue";
+import {onMounted, ref} from "vue";
 import CommonGrid from "../../../shared/grids/common-grid.vue";
 import {CostCenterGridData} from "./cost-center-grid-data";
 import {RequestQuery} from "../../../models/requests/query/request-query";
@@ -7,10 +7,7 @@ import {messageService} from "../../../services/message-service";
 import {communicationService} from "../../../services/communication-service";
 import {ResponseData} from "../../../models/responses/response-data";
 import {HttpService} from "../../../services/api-services/http-service";
-import {ResponseCountryBusinessManager} from "../../../models/responses/budgets/response-country-business-manager";
 import {EnumResponseResult} from "../../../models/enums/enum-response-result";
-import {firstValueFrom} from "rxjs";
-import CommonSelect from "../../../shared/common-select.vue";
 import {ResponseCostCenter} from "../../../models/responses/budgets/response-cost-center";
 import {RequestCostCenter} from "../../../models/requests/budgets/request-cost-center";
 
@@ -83,7 +80,7 @@ const requestAddData = () => {
   }
 
   // 커뮤니케이션 시작
-  communicationService.inCommunication();
+  communicationService.notifyInCommunication();
 
   // 데이터를 입력한다.
   HttpService.requestPost<ResponseData<ResponseCostCenter>>(requestQuery.apiUri , modelReference.value).subscribe({
@@ -98,7 +95,7 @@ const requestAddData = () => {
     } ,
     error(err) {
       messageService.showError('Error loading data'+err);
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     } ,
     complete() {
       // 다이얼로그를 닫는다.
@@ -108,7 +105,7 @@ const requestAddData = () => {
       gridReference.value.doRefresh();
 
       // 커뮤니케이션을 종료한다.
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     },
   });
 }
@@ -147,7 +144,7 @@ const showAddDialog = () => {
  * @param item 수정할 데이터
  */
 const showUpdateDialog = (item: ResponseCostCenter) => {
-  communicationService.inCommunication();
+  communicationService.notifyInCommunication();
   updateItem = item;
 
   // 서버에서 대상하는 데이터를 조회한다.
@@ -169,7 +166,7 @@ const showUpdateDialog = (item: ResponseCostCenter) => {
       messageService.showError('Error loading data'+err);
     } ,
     complete() {
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     },
   });
 }
@@ -180,7 +177,7 @@ const showUpdateDialog = (item: ResponseCostCenter) => {
 const requestRemoveData = () => {
   // 모든 데이터에 대해 처리
   for (const data of removeItems) {
-    communicationService.inCommunication();
+    communicationService.notifyInCommunication();
     HttpService.requestDelete<ResponseData<any>>(`${requestQuery.apiUri}/${data.id}`).subscribe({
       next(response) {
         // 요청에 실패한경우
@@ -196,7 +193,7 @@ const requestRemoveData = () => {
       complete() {
         removeDialogReference.value = false;
         gridReference.value.doRefresh();
-        communicationService.offCommunication();
+        communicationService.notifyOffCommunication();
       },
     });
   }
@@ -211,7 +208,7 @@ const requestUpdateData = () => {
     messageService.showWarning("입력하지 않은 데이터가 있습니다");
     return;
   }
-  communicationService.inCommunication();
+  communicationService.notifyInCommunication();
   HttpService.requestPut<ResponseData<any>>(`${requestQuery.apiUri}/${updateItem.id}`, modelReference.value).subscribe({
     next(response) {
       // 요청에 실패한경우
@@ -223,12 +220,12 @@ const requestUpdateData = () => {
     } ,
     error() {
       updateDialogReference.value = false;
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     } ,
     complete() {
       gridReference.value.doRefresh();
       updateDialogReference.value = false;
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     },
   });
 }

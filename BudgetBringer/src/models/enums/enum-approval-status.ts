@@ -24,8 +24,8 @@ export enum EnumApprovalStatus {
  * key : value
  */
 export const ApprovalStatusDescriptions: Record<EnumApprovalStatus, string> = {
-  [EnumApprovalStatus.None]: "상태 없음",
-  [EnumApprovalStatus.PoNotYetPublished]: "세금계산서 발행 전",
-  [EnumApprovalStatus.PoPublished]: "세금계산서 발행",
-  [EnumApprovalStatus.InVoicePublished]: "인보이스 발행"
+  [EnumApprovalStatus.None]: "None",
+  [EnumApprovalStatus.PoNotYetPublished]: "Po Not Yet Published",
+  [EnumApprovalStatus.PoPublished]: "Po Published",
+  [EnumApprovalStatus.InVoicePublished]: "Invoice Published"
 };

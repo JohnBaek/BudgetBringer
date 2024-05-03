@@ -4,7 +4,6 @@ import {BudgetPlanGridData} from "./budget-plan-grid-data";
 import CommonGrid from "../../../shared/grids/common-grid.vue";
 import {RequestQuery} from "../../../models/requests/query/request-query";
 import {RequestBudgetPlan} from "../../../models/requests/budgets/request-budget-plan";
-import CommonSelect from "../../../shared/common-select.vue";
 import {messageService} from "../../../services/message-service";
 import {ResponseCountryBusinessManager} from "../../../models/responses/budgets/response-country-business-manager";
 import {communicationService} from "../../../services/communication-service";
@@ -16,13 +15,10 @@ import {firstValueFrom} from "rxjs";
 import CommonDialog from "../../../shared/common-dialog.vue";
 import BudgetPlanDataForm from "./budget-plan-data-form.vue";
 
-/**
- * 그리드 모델
- */
+// 그리드 모델
 const gridModel = new BudgetPlanGridData();
-/**
- * 쿼리 정보
- */
+
+// 쿼리 정보
 let requestQuery :RequestQuery = {
   apiUri : '/api/v1/BudgetPlan' ,
   pageCount: 100 ,
@@ -32,100 +28,47 @@ let requestQuery :RequestQuery = {
   sortFields: [ 'regDate' ],
   sortOrders: [ 'desc' ],
 }
-/**
- * props 정의
- */
+
+// props 정의
 const props = defineProps({
-  /**
-   * isAbove500k 정보
-   */
+  // isAbove500k 정보
   isAbove500k: {
     Type: String,
     required: true,
   },
-  /**
-   * title 정보
-   */
+  // title 정보
   title: {
     Type: String,
     required: true,
   },
 });
-/**
- * 데이터 추가 다이얼로그
- */
-const addDialogReference = ref({});
-/**
- * 삭제 다이얼로그
- */
+
+// 삭제 다이얼로그
 const removeDialogReference = ref(false);
-/**
- *
- */
-const updateDialogReference = ref(false);
-/**
- * 그리드 래퍼런스
- */
+
+// 그리드 래퍼런스
 const gridReference = ref(null);
-/**
- * 데이터 추가 원본 요청 데이터
- */
+
+// 데이터 추가 원본 요청 데이터
 const requestModel = ref<RequestBudgetPlan>(new RequestBudgetPlan());
-/**
- * 컨트리 비지니스 매니저 리스트
- */
+
+// 컨트리 비지니스 매니저 리스트
 let countryBusinessManagers : ResponseCountryBusinessManager [] = [];
-/**
- * 비지니스 유닛 리스트
- */
+
+// 비지니스 유닛 리스트
 let businessUnitsReference = ref([]);
-/**
- * 삭제할 데이터
- */
+
+// 삭제할 데이터
 let removeItems : Array<ResponseBudgetPlan> = [];
-/**
- * 수정할 데이터
- */
+
+// 수정할 데이터
 let updateItem: ResponseBudgetPlan;
 
-/**
- * 마운트핸들링
- */
+// 마운트핸들링
 onMounted(() => {
   requestQuery.searchKeywords.push(props.isAbove500k.toString());
   requestQuery.searchFields.push("isAbove500k");
 });
-
-/**
- * countryBusinessManager 가 변경 되었을때
- * @param countryBusinessManagerId
- */
-const onChangeCountryBusinessManager = (countryBusinessManagerId: any) => {
-
-  console.log('onChangeCountryBusinessManager',countryBusinessManagerId);
-
-  // 선택된 값 초기화
-  requestModel.value.businessUnitId = "";
-
-  // 대상 CBM 을 찾는다.
-  const _countryBusinessManagers = countryBusinessManagers.filter(i => i.id === countryBusinessManagerId);
-
-  // 비지니스 유닛을 초기화한다.
-  businessUnitsReference.value = [];
-
-  // 하나이상의 CBM 을 찾은경우
-  if(_countryBusinessManagers.length > 0)
-    // 비지니스 유닛을 업데이트한다.
-    businessUnitsReference.value = _countryBusinessManagers[0].businessUnits;
-}
-
-/**
- * CBM 데이터가 업데이트 되었을때
- * @param items 이벤트 객체
- */
-const onDataUpdatedCBM = (items: any) => {
-  countryBusinessManagers = items;
-}
 
 /**
  * 데이터를 추가한다.
@@ -138,7 +81,7 @@ const requestAddData = () => {
   }
 
   // 커뮤니케이션 시작
-  communicationService.inCommunication();
+  communicationService.notifyInCommunication();
 
   // 데이터를 입력한다.
   HttpService.requestPost<ResponseData<ResponseBudgetPlan>>(requestQuery.apiUri , requestModel.value).subscribe({
@@ -153,7 +96,7 @@ const requestAddData = () => {
     } ,
     error(err) {
       messageService.showError('Error loading data'+err);
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     } ,
     complete() {
       // 다이얼로그를 닫는다.
@@ -163,7 +106,7 @@ const requestAddData = () => {
       gridReference.value.doRefresh();
 
       // 커뮤니케이션을 종료한다.
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     },
   });
 }
@@ -197,30 +140,17 @@ const showRemoveDialog = (items : Array<ResponseBudgetPlan>) => {
  */
 const showAddDialog = () => {
   console.log('showAddDialog')
-  // addDialogReference.value = true;
   addDialog.value = true;
   requestModel.value = new RequestBudgetPlan();
   requestModel.value.isAbove500K = (props.isAbove500k as String).toLowerCase() == "true";
 }
 
 /**
- * AddDialog based on Common Dialog event
- * @param newState
- */
-const handleAddDialog = (newState) => {
-  console.log('showAddDialog')
-  addDialogReference.value = newState;
-  requestModel.value = new RequestBudgetPlan();
-  requestModel.value.isAbove500K = (props.isAbove500k as String).toLowerCase() == "true";
-}
-
-
-/**
  * 데이터 수정 팝업을 요청한다.
  * @param item 수정할 데이터
  */
 const showUpdateDialog = (item: ResponseBudgetPlan) => {
-  communicationService.inCommunication();
+  communicationService.notifyInCommunication();
   updateItem = item;
 
   // 서버에서 대상하는 데이터를 조회한다.
@@ -241,8 +171,6 @@ const showUpdateDialog = (item: ResponseBudgetPlan) => {
       businessUnitsReference.value = _responseCountryBusinessManager.data.businessUnits;
       requestModel.value = Object.assign(requestModel.value, response.data);
 
-      console.log('requestModel.value',requestModel.value);
-
       // 팝업을 연다.
       updateDialog.value = true;
     } ,
@@ -250,7 +178,7 @@ const showUpdateDialog = (item: ResponseBudgetPlan) => {
       messageService.showError('Error loading data'+err);
     } ,
     complete() {
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     },
   });
 }
@@ -261,7 +189,7 @@ const showUpdateDialog = (item: ResponseBudgetPlan) => {
 const requestRemoveData = () => {
   // 모든 데이터에 대해 처리
   for (const data of removeItems) {
-    communicationService.inCommunication();
+    communicationService.notifyInCommunication();
     HttpService.requestDelete<ResponseData<any>>(`${requestQuery.apiUri}/${data.id}`).subscribe({
       next(response) {
         // 요청에 실패한경우
@@ -277,7 +205,7 @@ const requestRemoveData = () => {
       complete() {
         removeDialogReference.value = false;
         gridReference.value.doRefresh();
-        communicationService.offCommunication();
+        communicationService.notifyOffCommunication();
       },
     });
   }
@@ -292,7 +220,8 @@ const requestUpdateData = () => {
     messageService.showWarning("입력하지 않은 데이터가 있습니다");
     return;
   }
-  communicationService.inCommunication();
+
+  communicationService.notifyInCommunication();
   HttpService.requestPut<ResponseData<any>>(`${requestQuery.apiUri}/${updateItem.id}`, requestModel.value).subscribe({
     next(response) {
       // 요청에 실패한경우
@@ -304,12 +233,12 @@ const requestUpdateData = () => {
     } ,
     error() {
       updateDialog.value = false;
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     } ,
     complete() {
       updateDialog.value = false;
       gridReference.value.doRefresh();
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     },
   });
 }
@@ -375,5 +304,6 @@ const updateDialog = ref(false);
   </v-dialog>
 </template>
 
-<style scoped lang="css">
+<style  lang="css">
+
 </style>

@@ -82,7 +82,7 @@ const requestUpdateData = () => {
     return;
   }
 
-  communicationService.inCommunication();
+  communicationService.notifyInCommunication();
   HttpService.requestPut<ResponseData<any>>(`${requestQuery.apiUri}`, modelReference.value).subscribe({
     next(response) {
       // 요청에 실패한경우
@@ -94,12 +94,12 @@ const requestUpdateData = () => {
     } ,
     error() {
       updateDialogReference.value = false;
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     } ,
     complete() {
       gridReference.value.doRefresh();
       updateDialogReference.value = false;
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     },
   });
 }

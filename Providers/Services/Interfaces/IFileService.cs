@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Models.DataModels;
 using Models.Requests.Files;
 using Models.Responses;
 using Models.Responses.Files;
@@ -24,6 +25,15 @@ public interface IFileService
     /// <param name="tempUploadedFiles"></param>
     /// <returns></returns>
     Task<ResponseList<ResponseFileUpload>> PersistFilesAsync(string category, List<RequestUploadFile> tempUploadedFiles);
+    
+    /// <summary>
+    /// Try persist files from temp path
+    /// </summary>
+    /// <param name="category"></param>
+    /// <param name="tempUploadedFiles"></param>
+    /// <param name="groupId"></param>
+    /// <returns></returns>
+    Task<Guid?> PersistFilesAsync(AnalysisDbContext dbContext, string category, List<RequestUploadFile> tempUploadedFiles, Guid? groupId );
 
     /// <summary>
     /// Get Files

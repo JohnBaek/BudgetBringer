@@ -21,7 +21,7 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
 
 <!--공통 컨펌 다이얼로그-->
 <template>
-  <v-dialog width="600" class="responsive-dialog">
+  <v-dialog width="900" class="responsive-dialog">
     <v-card elevation="1" rounded>
       <!-- Header Area -->
       <v-card-title class="mt-5">

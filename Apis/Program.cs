@@ -143,7 +143,7 @@ public static class Program
         // 세션 유지 설정
         services.ConfigureApplicationCookie(options =>
         {
-            options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(60*2);
         });
         
         // 구성 빌더 설정
@@ -168,9 +168,7 @@ public static class Program
         // 커스텀 Identity 설정 주입
         services.AddLogging();
         // 컨트롤러 설정
-        services.AddControllers(config =>
-        {
-        });
+        services.AddControllers();
         
         // 인증서비스 DI
         services.AddAuthentication();

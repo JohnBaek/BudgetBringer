@@ -80,7 +80,7 @@ const requestAddData = () => {
   }
 
   // 커뮤니케이션 시작
-  communicationService.inCommunication();
+  communicationService.notifyInCommunication();
 
   // 데이터를 입력한다.
   HttpService.requestPost<ResponseData<ResponseCountryBusinessManager>>(requestQuery.apiUri , modelReference.value).subscribe({
@@ -95,7 +95,7 @@ const requestAddData = () => {
     } ,
     error(err) {
       messageService.showError('Error loading data'+err);
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     } ,
     complete() {
       // 다이얼로그를 닫는다.
@@ -105,7 +105,7 @@ const requestAddData = () => {
       gridReference.value.doRefresh();
 
       // 커뮤니케이션을 종료한다.
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     },
   });
 }
@@ -114,10 +114,8 @@ const requestAddData = () => {
  * 유효성 여부를 검증한다.
  */
 const isValidModel = () => {
-  if(modelReference.value.name === ''){
-    return false;
-  }
-  return true;
+  return modelReference.value.name !== '';
+
 }
 
 /**
@@ -144,7 +142,7 @@ const showAddDialog = () => {
  * @param item 수정할 데이터
  */
 const showUpdateDialog = (item: ResponseCountryBusinessManager) => {
-  communicationService.inCommunication();
+  communicationService.notifyInCommunication();
   updateItem = item;
 
   // 서버에서 대상하는 데이터를 조회한다.
@@ -166,7 +164,7 @@ const showUpdateDialog = (item: ResponseCountryBusinessManager) => {
       messageService.showError('Error loading data'+err);
     } ,
     complete() {
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     },
   });
 }
@@ -186,7 +184,7 @@ const emits = defineEmits<{
 const requestRemoveData = () => {
   // 모든 데이터에 대해 처리
   for (const data of removeItems) {
-    communicationService.inCommunication();
+    communicationService.notifyInCommunication();
     HttpService.requestDelete<ResponseData<any>>(`${requestQuery.apiUri}/${data.id}`).subscribe({
       next(response) {
         // 요청에 실패한경우
@@ -202,7 +200,7 @@ const requestRemoveData = () => {
       complete() {
         removeDialogReference.value = false;
         gridReference.value.doRefresh();
-        communicationService.offCommunication();
+        communicationService.notifyOffCommunication();
       },
     });
   }
@@ -221,7 +219,7 @@ const requestUpdateData = () => {
     messageService.showWarning("입력하지 않은 데이터가 있습니다");
     return;
   }
-  communicationService.inCommunication();
+  communicationService.notifyInCommunication();
   HttpService.requestPut<ResponseData<any>>(`${requestQuery.apiUri}/${updateItem.id}`, modelReference.value).subscribe({
     next(response) {
       // 요청에 실패한경우
@@ -233,12 +231,12 @@ const requestUpdateData = () => {
     } ,
     error() {
       updateDialogReference.value = false;
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     } ,
     complete() {
       gridReference.value.doRefresh();
       updateDialogReference.value = false;
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     },
   });
 }

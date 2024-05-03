@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.DataModels;
 using Models.Requests.Budgets;
+using Models.Requests.Files;
 using Models.Requests.Query;
 using Models.Responses;
 using Models.Responses.Budgets;
@@ -140,8 +141,24 @@ public class BudgetPlanRepository : IBudgetPlanRepository
         ResponseList<ResponseBudgetPlan> result = new ResponseList<ResponseBudgetPlan>();
         try
         {
-            // 결과를 반환한다.
-            return await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
+            result = await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
+            
+            // Avoid Null
+            if (result.Items == null)
+                result.Items = new List<ResponseBudgetPlan>();
+            
+            // Process all attached files
+            foreach (ResponseBudgetPlan item in result.Items)
+            {
+                // Does not have attached files
+                if(item.FileGroupId == null)
+                    continue;
+                
+                // Avoid Null
+                var attachedFiles = await _fileService.GetFilesAsync(item.FileGroupId.Value);
+                if(attachedFiles.Items != null)
+                    item.AttachedFiles = attachedFiles.Items;
+            }
         }
         catch (Exception e)
         {
@@ -176,7 +193,8 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             {
                 Guid fileGroupId = data.FileGroupId.Value; 
                 ResponseList<ResponseFileUpload> responseFiles = await _fileService.GetFilesAsync(fileGroupId);
-                
+                if (responseFiles.Success)
+                    data.AttachedFiles = responseFiles.Items!;
             }
             
             // 조회된 데이터가 없다면
@@ -237,6 +255,12 @@ public class BudgetPlanRepository : IBudgetPlanRepository
 
             if (bidingResult.Result != EnumResponseResult.Success)
                 return bidingResult;
+            
+            // Has List of persist files
+            if (request.AttachedFiles.Count > 0)
+            {
+                await _fileService.PersistFilesAsync(_dbContext, LogCategory, request.AttachedFiles, update.FileGroupId);
+            }
             
             // 데이터베이스에 업데이트처리 
             _dbContext.BudgetPlans.Update(update);
@@ -302,6 +326,14 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             if (bidingResult.Result != EnumResponseResult.Success)
                 return new ResponseData<ResponseBudgetPlan>{ Code = bidingResult.Code, Message = bidingResult.Message };
             
+            // Has List of persist files
+            if (request.AttachedFiles.Count > 0)
+            {
+                Guid? fileGroupId = await _fileService.PersistFilesAsync(_dbContext, LogCategory, request.AttachedFiles, null);
+                if (fileGroupId != null)
+                    add.FileGroupId = fileGroupId;
+            }
+
             // 데이터베이스에 데이터 추가 
             await _dbContext.BudgetPlans.AddAsync(add);
             await _dbContext.SaveChangesAsync();
@@ -313,6 +345,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             ResponseData<ResponseBudgetPlan> added = await GetAsync(add.Id.ToString());
             result = new ResponseData<ResponseBudgetPlan>{ Result = EnumResponseResult.Success , Data = added.Data };
             
+    
             // 로그 기록
             await _logActionWriteService.WriteAddition(add.FromCopyValue<ResponseBudgetPlan>(), user , "",LogCategory);
         }

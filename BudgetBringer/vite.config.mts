@@ -76,6 +76,11 @@ export default defineConfig({
         target: 'http://localhost:5048/api', // API 서버 주소
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      '/files': {
+        target: 'http://localhost:5048/', // API 서버 주소
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   },

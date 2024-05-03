@@ -73,7 +73,12 @@ export class HttpService {
    * @returns Observable로 요청 응답을 반환한다.
    */
   static requestPost<T>(url: string, body: any, headers?: Record<string, string>): Observable<T> {
-    return ajax.post(url, body, { 'Content-Type': 'application/json', ...headers })
+    // FormData인 경우 Content-Type 헤더를 자동으로 설정하도록 함
+    const effectiveHeaders = body instanceof FormData ? headers : { 'Content-Type': 'application/json', ...headers };
+
+    console.log('body',body)
+
+    return ajax.post(url, body, effectiveHeaders)
     .pipe(
       map(response => response.response as T)
     );

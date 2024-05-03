@@ -181,7 +181,7 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
  * 데이터를 로드한다.
  */
 const loadData = () => {
-  communicationService.inCommunication();
+  communicationService.notifyInCommunication();
   // Request to Server
   HttpService.requestGet<ResponseData<ResponseProcessSummaryDetail<any>>>(
       props.gridModel.requestQuery.apiUri).subscribe({
@@ -202,7 +202,7 @@ const loadData = () => {
       messageService.showError('Error loading data'+err);
     } ,
     complete() {
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     },
   });
 }

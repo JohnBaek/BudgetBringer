@@ -22,7 +22,7 @@ export class CommunicationService {
   /**
    * 통신중 상태변경
    */
-  inCommunication() {
+  notifyInCommunication() {
     this.communication = true;
     this.communicationSubject.next(true);
   }
@@ -30,7 +30,7 @@ export class CommunicationService {
   /**
    * 통신중 상태변경
    */
-  offCommunication() {
+  notifyOffCommunication() {
     this.communication = false;
     this.communicationSubject.next(false);
   }

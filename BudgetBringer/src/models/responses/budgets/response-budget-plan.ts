@@ -1,4 +1,5 @@
 import {ResponseCommonWriter} from "../response-common-writer";
+import {ResponseFileUpload} from "../files/response-upload-file";
 
 /**
  * 예산정보 응답 클래스
@@ -64,5 +65,13 @@ export interface ResponseBudgetPlan extends ResponseCommonWriter {
    * DbModelBusinessUnit 명
    */
   bossLineDescription: string | null;
+  /**
+   * File group Id
+   */
+  fileGroupId: string | null;
+  /**
+   * attached Files
+   */
+  attachedFiles: Array<ResponseFileUpload> | null;
 }
 

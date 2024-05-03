@@ -147,4 +147,25 @@ onUnmounted(() => {
   .ag-floating-top-container {
     font-weight: bold; /* 글자를 굵게 */
   }
+
+  .custom-tooltip .tooltip-content {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+  }
+
+  .custom-tooltip {
+    max-width: 200px;
+    word-wrap: break-word;
+    white-space: pre-line;
+  }
 </style>

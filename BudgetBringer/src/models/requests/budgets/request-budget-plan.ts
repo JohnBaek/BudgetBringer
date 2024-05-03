@@ -1,3 +1,5 @@
+import {ResponseFileUpload} from "../../responses/files/response-upload-file";
+
 /**
  * 예산정보 요청 클래스
  */
@@ -54,4 +56,9 @@ export class RequestBudgetPlan {
    * BossLineDescription
    */
   bossLineDescription: string | null = "";
+  /**
+   * attached Files
+   */
+  attachedFiles: Array<ResponseFileUpload> | null;
+
 }

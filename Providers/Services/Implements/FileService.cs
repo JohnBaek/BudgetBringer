@@ -219,7 +219,7 @@ public class FileService : IFileService
                 string path = Path.Combine(tempFileUploadPath, file.Name);
                 FileInfo fileInfo = new FileInfo(path);
                 
-                GetSeperatedFileUploadPath(category, persistFileUploadPath, fileInfo.Name, out string diskStaticPath, out string publicPath);
+                GetSeperatedFileUploadPath(category.Replace("[","").Replace("]",""), persistFileUploadPath, fileInfo.Name, out string diskStaticPath, out string publicPath);
                 
                 // Get MimeType
                 string mimeType = "";
@@ -293,6 +293,152 @@ public class FileService : IFileService
     }
 
     /// <summary>
+    /// Try persist files from temp path
+    /// </summary>
+    /// <param name="dbContext"></param>
+    /// <param name="category"></param>
+    /// <param name="tempUploadedFiles"></param>
+    /// <param name="groupId"></param>
+    /// <returns></returns>
+    public async Task<Guid?> PersistFilesAsync(AnalysisDbContext dbContext, string category, List<RequestUploadFile> tempUploadedFiles, Guid? groupId)
+    {
+        Guid? result = null;
+
+        try
+        {
+            // 로그인한 사용자 정보를 가져온다.
+            DbModelUser? user = await _userRepository.GetAuthenticatedUser();
+
+            // 사용자 정보가 없는경우 
+            if(user == null)
+                return null;
+            
+            // Get Temp tempUploadedFiles upload path
+            string tempFileUploadPath;
+            string persistFileUploadPath;
+            
+            // In Development
+            if (_hostEnvironment.IsDevelopment())
+            {
+                tempFileUploadPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library", "Caches", "Budget");
+                persistFileUploadPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library", "Caches", "Budget","Persist");
+            }
+            // Another 
+            else
+            {
+                tempFileUploadPath = await _systemConfigService.GetValueAsync<string>("UPLOAD", "TEMP_PATH") ?? "";
+                persistFileUploadPath = await _systemConfigService.GetValueAsync<string>("UPLOAD", "FILE_PATH") ?? "";
+            }
+            
+            // Does not have Path
+            if (tempFileUploadPath.IsEmpty())
+                return null;
+
+            // Check all files 
+            foreach (RequestUploadFile file in tempUploadedFiles)
+            {
+                // Combine path 
+                string path = Path.Combine(tempFileUploadPath, file.Name);
+                
+                // If Not
+                if (!File.Exists(path))
+                    return null;
+            }
+
+            // Store files
+            List<DbModelFileInfo> willStoreDatabase = new List<DbModelFileInfo>();
+            
+            // Create Group GUID
+            Guid fileGroupId = Guid.NewGuid();
+            if (groupId != null)
+                fileGroupId = groupId.Value;
+
+            result = fileGroupId;
+
+            // Process all files
+            foreach (RequestUploadFile file in tempUploadedFiles)
+            {
+                // Get File Info 
+                string path = Path.Combine(tempFileUploadPath, file.Name);
+                FileInfo fileInfo = new FileInfo(path);
+
+                // Find Has Same Checksum files in persists
+                DbModelFileInfo? duplicatedFile = await _dbContext.FileInfos.Where(i => i.Checksum == fileInfo.CalculateChecksum()).FirstOrDefaultAsync();
+                
+                // Is Duplicated
+                if (duplicatedFile != null)
+                {
+                    fileInfo.Delete();
+                    willStoreDatabase.Add(new DbModelFileInfo
+                    {
+                        Id = Guid.NewGuid(),
+                        GroupId = fileGroupId,
+                        OriginFileName = duplicatedFile.OriginFileName ,
+                        DisplayFileName = duplicatedFile.DisplayFileName,         
+                        RegId = user.Id ,
+                        ModId = user.Id ,
+                        RegName = user.DisplayName,
+                        ModName = user.DisplayName,
+                        RegDate = DateTime.Now,
+                        ModDate = DateTime.Now,
+                        InternalFilePath = duplicatedFile.InternalFilePath ,
+                        Extension = duplicatedFile.Extension ,
+                        MediaType = duplicatedFile.MediaType ,
+                        PublicFileUri = duplicatedFile.PublicFileUri ,
+                        Size = duplicatedFile.Size,
+                        Tags = category ,
+                        Checksum = duplicatedFile.Checksum
+                    });
+                    continue;
+                }
+                
+                GetSeperatedFileUploadPath(category.Replace("[","").Replace("]",""), persistFileUploadPath, fileInfo.Name, out string diskStaticPath, out string publicPath);
+                
+                // Get MimeType
+                string mimeType = "";
+                var provider = new FileExtensionContentTypeProvider();
+                if (provider.TryGetContentType(fileInfo.FullName, out var contentType)) {
+                    mimeType = contentType;
+                } else {
+                    mimeType = "application/octet-stream"; // 기본 MIME 타입
+                }
+                
+                // Move file
+                fileInfo.MoveTo(diskStaticPath);
+                willStoreDatabase.Add(new DbModelFileInfo
+                {
+                    Id = Guid.NewGuid(),
+                    GroupId = fileGroupId,
+                    OriginFileName = fileInfo.Name ,
+                    DisplayFileName = file.OriginalFileName,         
+                    RegId = user.Id ,
+                    ModId = user.Id ,
+                    RegName = user.DisplayName,
+                    ModName = user.DisplayName,
+                    RegDate = DateTime.Now,
+                    ModDate = DateTime.Now,
+                    InternalFilePath = diskStaticPath ,
+                    Extension = fileInfo.Extension ,
+                    MediaType = mimeType ,
+                    PublicFileUri = $"files/{publicPath}" ,
+                    Size = fileInfo.Length,
+                    Tags = category ,
+                    Checksum = fileInfo.CalculateChecksum()
+                });
+            }
+
+            await dbContext.FileInfos.AddRangeAsync(willStoreDatabase);
+            await dbContext.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+    
+    /// <summary>
     /// Get Files
     /// </summary>
     /// <param name="fileGroupId"></param>
@@ -310,7 +456,8 @@ public class FileService : IFileService
                         Id = v.Id,
                         Name = v.DisplayFileName,
                         OriginalFileName = v.OriginFileName,
-                        Url = v.PublicFileUri
+                        Url = v.PublicFileUri ,
+                        Size = v.Size ,
                     }
                 ).ToListAsync();
 
@@ -343,25 +490,35 @@ public class FileService : IFileService
             // Does not have 
             if(willRemoves.Count == 0)
                 return new Response{ Code = "ERROR_TARGET_DOES_NOT_FOUND", Message = "대상이 존재하지 않습니다."};
+
+            // Store remove files for physically
+            List<FileInfo> willRemovePhysicals = [];           
             
             await using IDbContextTransaction transaction = await _dbContext.Database.BeginTransactionAsync();
 
-            // Process all
-            foreach (DbModelFileInfo remove in willRemoves)
+            // Process all 
+            foreach (DbModelFileInfo willRemove in willRemoves)
             {
-                // Get Path
-                FileInfo fileInfo = new FileInfo(remove.InternalFilePath);
+                // Retrieve Count of same checksum files
+                int count = await _dbContext.FileInfos.CountAsync(i => i.Checksum == willRemove.Checksum);
                 
-                // Is Exist file
-                if(fileInfo.Exists)
-                    fileInfo.Delete();
+                // Store remove files for physically
+                if(count == 1)
+                    willRemovePhysicals.Add(new FileInfo(willRemove.InternalFilePath));
 
-                // Remove in table 
-                _dbContext.FileInfos.Remove(remove);
+                _dbContext.Remove(willRemove);
+                await _dbContext.SaveChangesAsync();
             }
-
+            
             await _dbContext.SaveChangesAsync();
             await transaction.CommitAsync();
+   
+            // Process all remove files physically 
+            foreach (FileInfo willRemovePhysical in willRemovePhysicals)
+            {
+                if(willRemovePhysical.Exists)
+                    willRemovePhysical.Delete();
+            }
             result = new Response(EnumResponseResult.Success,"","");
         }
         catch (Exception e)
@@ -393,6 +550,10 @@ public class FileService : IFileService
         
         // Create Real Path
         realPath = Path.Combine(realFileRootPath, publicPath);
+
+        DirectoryInfo directoryInfo = new DirectoryInfo(Path.Combine(realFileRootPath,hierarchy));
+        if(!directoryInfo.Exists)
+            directoryInfo.Create();
     }
 }
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref ,watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {RequestQuery} from "../../../models/requests/query/request-query";
 import {HttpService} from "../../../services/api-services/http-service";
 import {EnumResponseResult} from "../../../models/enums/enum-response-result";
@@ -7,9 +7,6 @@ import {messageService} from "../../../services/message-service";
 import {AgGridVue} from "ag-grid-vue3";
 import {ResponseData} from "../../../models/responses/response-data";
 import {communicationService} from "../../../services/communication-service";
-import {
-  ResponseProcessBusinessUnitSummary
-} from "../../../models/responses/process/process-business-unit/response-process-business-unit-summary";
 import {BusinessUnitGridData} from "../business-unit/business-unit-grid-data";
 import {ResponseBusinessUnit} from "../../../models/responses/budgets/response-business-unit";
 import {RequestBusinessUnit} from "../../../models/requests/budgets/request-business-unit";
@@ -112,7 +109,7 @@ const loadData = () => {
     sortFields: [ 'regDate' ],
     sortOrders: [ 'desc' ],
   }
-  communicationService.inCommunication();
+  communicationService.notifyInCommunication();
 
   // 데이터를 입력한다.
   HttpService.requestGet<ResponseList<ResponseBusinessUnit>>(requestQuery.apiUri).subscribe({
@@ -128,11 +125,11 @@ const loadData = () => {
     } ,
     error(err) {
       messageService.showError('Error loading data'+err);
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     } ,
     complete() {
       // 커뮤니케이션을 종료한다.
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     },
   });
 }
@@ -216,7 +213,7 @@ const requestAddData = () => {
   // 커뮤니케이션 시작
   // communicationService.inCommunication();
   const requestUri = `/api/v1/CountryBusinessManager/${countryBusinessManagerRef.value.id}/BusinessUnit/${selectedBusinessUnit.value}`;
-  communicationService.inCommunication();
+  communicationService.notifyInCommunication();
   // 데이터를 입력한다.
   HttpService.requestPost<ResponseData<ResponseBusinessUnit>>(requestUri,{}).subscribe({
     next(response) {
@@ -231,13 +228,13 @@ const requestAddData = () => {
     } ,
     error(err) {
       messageService.showError('Error loading data'+err);
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     } ,
     complete() {
       // 다이얼로그를 닫는다.
       addDialogReference.value = false;
       // 커뮤니케이션을 종료한다.
-      communicationService.offCommunication();
+      communicationService.notifyOffCommunication();
     },
   });
 }
@@ -257,7 +254,7 @@ const requestRemoveData = () => {
   // 모든 삭제할 데이터에 대해 처리한다.
   selectedRows.value.forEach(i => {
     // 커뮤니케이션 시작
-    communicationService.inCommunication();
+    communicationService.notifyInCommunication();
 
     const requestUri = `/api/v1/CountryBusinessManager/${countryBusinessManagerRef.value.id}/BusinessUnit/${i.id}`;
     HttpService.requestDelete<ResponseData<ResponseData<any>>>(requestUri,{}).subscribe({
@@ -273,13 +270,13 @@ const requestRemoveData = () => {
       } ,
       error(err) {
         messageService.showError('Error loading data'+err);
-        communicationService.offCommunication();
+        communicationService.notifyOffCommunication();
       } ,
       complete() {
         // 다이얼로그를 닫는다.
         removeDialogReference.value = false;
         // 커뮤니케이션을 종료한다.
-        communicationService.offCommunication();
+        communicationService.notifyOffCommunication();
       },
     });
   });
