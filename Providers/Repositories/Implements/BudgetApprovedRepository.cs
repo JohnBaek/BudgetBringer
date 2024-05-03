@@ -9,6 +9,7 @@ using Models.Requests.Budgets;
 using Models.Requests.Query;
 using Models.Responses;
 using Models.Responses.Budgets;
+using Models.Responses.Files;
 using Providers.Repositories.Interfaces;
 using Providers.Services.Interfaces;
 
@@ -53,6 +54,11 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
     /// 디스패처 서비스
     /// </summary>
     private readonly IDispatchService _dispatchService;
+    
+    /// <summary>
+    /// File Service
+    /// </summary>
+    private readonly IFileService _fileService;
 
     /// <summary>
     /// 생성자
@@ -63,13 +69,14 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
     /// <param name="userRepository">유저 리파지토리</param>
     /// <param name="logActionWriteService">액션 로그 기록 서비스</param>
     /// <param name="dispatchService">디스패처 서비스</param>
+    /// <param name="fileService"></param>
     public BudgetApprovedRepository(
         ILogger<BudgetApprovedRepository> logger
         , AnalysisDbContext dbContext
         , IQueryService queryService
         , IUserRepository userRepository
         , ILogActionWriteService logActionWriteService
-        , IDispatchService dispatchService)
+        , IDispatchService dispatchService, IFileService fileService)
     {
         _logger = logger;
         _dbContext = dbContext;
@@ -77,6 +84,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         _userRepository = userRepository;
         _logActionWriteService = logActionWriteService;
         _dispatchService = dispatchService;
+        _fileService = fileService;
     }
 
     /// <summary>
@@ -107,6 +115,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         ModName = item.ModName ,
         RegDate = item.RegDate ,
         ModDate = item.ModDate ,
+        FileGroupId = item.FileGroupId ,
     };
    
     /// <summary>
@@ -119,8 +128,24 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         ResponseList<ResponseBudgetApproved> result;
         try
         {
-            // 결과를 반환한다.
-            return await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
+            result = await _queryService.ToResponseListAsync(requestQuery, MapDataToResponse);
+            
+            // Avoid Null
+            if (result.Items == null)
+                result.Items = new List<ResponseBudgetApproved>();
+            
+            // Process all attached files
+            foreach (ResponseBudgetApproved item in result.Items)
+            {
+                // Does not have attached files
+                if(item.FileGroupId == null)
+                    continue;
+                
+                // Avoid Null
+                var attachedFiles = await _fileService.GetFilesAsync(item.FileGroupId.Value);
+                if(attachedFiles.Items != null)
+                    item.AttachedFiles = attachedFiles.Items;
+            }
         }
         catch (Exception e)
         {
@@ -149,6 +174,15 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             ResponseBudgetApproved? data =
                 await _dbContext.BudgetApproved.Where(i => i.Id == id.ToGuid())
                     .Select(MapDataToResponse).FirstOrDefaultAsync();
+                  
+            // If Has files
+            if (data is { FileGroupId: not null })
+            {
+                Guid fileGroupId = data.FileGroupId.Value; 
+                ResponseList<ResponseFileUpload> responseFiles = await _fileService.GetFilesAsync(fileGroupId);
+                if (responseFiles.Success)
+                    data.AttachedFiles = responseFiles.Items!;
+            }
             
             // 조회된 데이터가 없다면
             if(data == null)
@@ -207,6 +241,14 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             
             if (bidingResult.Result != EnumResponseResult.Success)
                 return bidingResult;
+            
+            // Has List of persist files
+            if (request.AttachedFiles.Count > 0)
+            {
+                Guid? fileGroupId = await _fileService.PersistFilesAsync(_dbContext, LogCategory, request.AttachedFiles, update.FileGroupId);
+                if (fileGroupId != null)
+                    update.FileGroupId = fileGroupId;
+            }
             
             // 데이터베이스에 업데이트처리 
             _dbContext.BudgetApproved.Update(update);
@@ -268,6 +310,14 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             // 바인딩에 실패한 경우
             if (bidingResult.Result != EnumResponseResult.Success)
                 return new ResponseData<ResponseBudgetApproved>{ Code = bidingResult.Code, Message = bidingResult.Message };
+            
+            // Has List of persist files
+            if (request.AttachedFiles.Count > 0)
+            {
+                Guid? fileGroupId = await _fileService.PersistFilesAsync(_dbContext, LogCategory, request.AttachedFiles, null);
+                if (fileGroupId != null)
+                    add.FileGroupId = fileGroupId;
+            }
             
             // 데이터베이스에 데이터 추가 
             await _dbContext.BudgetApproved.AddAsync(add);

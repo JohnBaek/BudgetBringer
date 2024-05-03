@@ -259,7 +259,9 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             // Has List of persist files
             if (request.AttachedFiles.Count > 0)
             {
-                await _fileService.PersistFilesAsync(_dbContext, LogCategory, request.AttachedFiles, update.FileGroupId);
+                Guid? fileGroupId = await _fileService.PersistFilesAsync(_dbContext, LogCategory, request.AttachedFiles, update.FileGroupId);
+                if (fileGroupId != null)
+                    update.FileGroupId = fileGroupId;
             }
             
             // 데이터베이스에 업데이트처리 

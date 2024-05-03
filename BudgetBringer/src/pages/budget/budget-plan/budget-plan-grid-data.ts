@@ -26,7 +26,7 @@ export class BudgetPlanGridData extends CommonGridModel{
         showDisabledCheckboxes: true,
         filter: 'agTextColumnFilter',
         floatingFilter: true,
-        width:130,
+        width:160,
       },
       // 승인일
       {
@@ -50,13 +50,20 @@ export class BudgetPlanGridData extends CommonGridModel{
       {
         field: "attachedFiles",
         headerClass: '',
-        headerName:"첨부파일 📁",
+        headerName:"📁 첨부파일",
         floatingFilter: false,
         width:120,
         filter: 'agTextColumnFilter',
         cellRenderer: function(params) {
           const eCell = document.createElement('span');
-          eCell.textContent = params.value ? `${params.value.length} 파일` : '-';
+
+          if(params.value?.length > 0) {
+            eCell.textContent = params.value ? `${params.value.length} 파일` : '-';
+          }
+          else {
+            eCell.textContent = params.value ? `-` : '-';
+          }
+
           eCell.classList.add('file-link');
 
           let tooltip = null; // 툴팁을 저장할 변수
@@ -72,13 +79,13 @@ export class BudgetPlanGridData extends CommonGridModel{
                     position: absolute;
                     left: ${event.clientX - 30}px;
                     top: ${event.clientY }px;
-                    background-color: black;
+                    background-color: white;
                     border:1px solid black;
-                    color: black;
-                    border-radius: 5px;
+                    color: grey;
+                    border-radius: 10px;
                     z-index: 100;
                     padding:20px;
-                    max-width: 300px; // 최대 너비 설정
+                    max-width: 500px; // 최대 너비 설정
                 `;
               // 파일 목록을 링크로 생성
               const fileList = document.createElement('ul');
@@ -89,9 +96,10 @@ export class BudgetPlanGridData extends CommonGridModel{
                 const fileItem = document.createElement('li');
                 const fileLink = document.createElement('a');
                 fileLink.textContent = file.name;
-                fileLink.style.color = 'white';
+                fileLink.style.color = 'grey';
                 fileLink.style.textDecoration = 'none';
                 fileLink.style.display = 'block';
+                fileLink.style.cursor = 'pointer';
                 fileLink.style.padding = '5px';
                 fileLink.style.overflow = 'hidden';
                 fileLink.style.textOverflow = 'ellipsis';

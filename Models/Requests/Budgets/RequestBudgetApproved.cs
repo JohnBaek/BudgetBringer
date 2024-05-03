@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Models.Common.Enums;
+using Models.Requests.Files;
 
 namespace Models.Requests.Budgets;
 
@@ -83,4 +84,14 @@ public class RequestBudgetApproved : RequestBase
     /// </summary>
     [MaxLength(3000, ErrorMessage = "BossLineDescription은 3000자 이하로 입력해주세요")]
     public string? BossLineDescription { get; init; }
+    
+    /// <summary>
+    /// 업로드된 파일을 영속화 시킬 리스트
+    /// </summary>
+    public List<RequestUploadFile> AttachedFiles { get; init; } = new List<RequestUploadFile>();
+    
+    /// <summary>
+    /// FileGroupId
+    /// </summary>
+    public Guid? FileGroupId { get; set; }
 }

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import {BudgetPlanGridData} from "./budget-plan-grid-data";
-import CommonGrid from "../../../shared/grids/common-grid.vue";
 import {RequestQuery} from "../../../models/requests/query/request-query";
 import {RequestBudgetPlan} from "../../../models/requests/budgets/request-budget-plan";
 import {messageService} from "../../../services/message-service";
@@ -14,6 +13,7 @@ import {ResponseBudgetPlan} from "../../../models/responses/budgets/response-bud
 import {firstValueFrom} from "rxjs";
 import CommonDialog from "../../../shared/common-dialog.vue";
 import BudgetPlanDataForm from "./budget-plan-data-form.vue";
+import CommonGrid from "../../../shared/grids/common-grid.vue";
 
 // 그리드 모델
 const gridModel = new BudgetPlanGridData();
@@ -51,9 +51,6 @@ const gridReference = ref(null);
 
 // 데이터 추가 원본 요청 데이터
 const requestModel = ref<RequestBudgetPlan>(new RequestBudgetPlan());
-
-// 컨트리 비지니스 매니저 리스트
-let countryBusinessManagers : ResponseCountryBusinessManager [] = [];
 
 // 비지니스 유닛 리스트
 let businessUnitsReference = ref([]);
@@ -139,7 +136,6 @@ const showRemoveDialog = (items : Array<ResponseBudgetPlan>) => {
  * 추가 팝업을 요청한다.
  */
 const showAddDialog = () => {
-  console.log('showAddDialog')
   addDialog.value = true;
   requestModel.value = new RequestBudgetPlan();
   requestModel.value.isAbove500K = (props.isAbove500k as String).toLowerCase() == "true";
@@ -276,7 +272,8 @@ const updateDialog = ref(false);
   <!-- Add Dialog -->
   <common-dialog v-model="addDialog" @cancel="addDialog = false" @submit="requestAddData()">
     <template v-slot:header-area>
-      <h3><pre>💰 예산추가</pre></h3>
+      <div v-if="requestModel.isAbove500K"><b> 💵 예산계획추가 </b><div><b class="text-red">500K 이상</b></div></div>
+      <div v-if="!requestModel.isAbove500K"><b> 💵 예산계획추가 </b><div><b class="text-blue">500K 이하</b></div></div>
     </template>
     <template v-slot:contents-area>
       <budget-plan-data-form v-model="requestModel" @update:data="updateRequestModel($event)" @submit="requestAddData()" />
@@ -286,7 +283,8 @@ const updateDialog = ref(false);
   <!-- Update Dialog -->
   <common-dialog v-model="updateDialog" @cancel="updateDialog = false" @submit="requestUpdateData()">
     <template v-slot:header-area>
-      <h3><pre>💰 예산수정</pre></h3>
+      <div v-if="requestModel.isAbove500K"><b> 💵 예산계획수정 </b><div><b class="text-red">500K 이상</b></div></div>
+      <div v-if="!requestModel.isAbove500K"><b> 💵 예산계획수정 </b><div><b class="text-blue">500K 이하</b></div></div>
     </template>
     <template v-slot:contents-area>
       <budget-plan-data-form v-model="requestModel" @update:data="updateRequestModel($event)" @submit="requestUpdateData()" />

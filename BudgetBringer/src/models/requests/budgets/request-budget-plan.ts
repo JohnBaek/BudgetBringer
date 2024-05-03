@@ -59,6 +59,6 @@ export class RequestBudgetPlan {
   /**
    * attached Files
    */
-  attachedFiles: Array<ResponseFileUpload> | null;
+  attachedFiles: Array<ResponseFileUpload> = [];
 
 }

@@ -31,6 +31,100 @@ export class BudgetApprovedGridData extends CommonGridModel{
         width:145,
       },
       {
+        field: "attachedFiles",
+        headerClass: '',
+        headerName:"📁 첨부파일",
+        floatingFilter: false,
+        width:120,
+        filter: 'agTextColumnFilter',
+        cellRenderer: function(params) {
+          const eCell = document.createElement('span');
+
+          if(params.value?.length > 0) {
+            eCell.textContent = params.value ? `${params.value.length} 파일` : '-';
+          }
+          else {
+            eCell.textContent = params.value ? `-` : '-';
+          }
+
+          eCell.classList.add('file-link');
+
+          let tooltip = null; // 툴팁을 저장할 변수
+
+          eCell.onclick = (event) => {
+            if(params.value === null || params.value.length === 0)
+              return;
+
+            if (tooltip === null) { // 툴팁이 이미 존재하지 않는 경우에만 생성
+              tooltip = document.createElement('div');
+              tooltip.classList.add('custom-tooltip');
+              tooltip.style.cssText = `
+                    position: absolute;
+                    left: ${event.clientX - 30}px;
+                    top: ${event.clientY }px;
+                    background-color: white;
+                    border:1px solid black;
+                    color: grey;
+                    border-radius: 10px;
+                    z-index: 100;
+                    padding:20px;
+                    max-width: 500px; // 최대 너비 설정
+                `;
+              // 파일 목록을 링크로 생성
+              const fileList = document.createElement('ul');
+              fileList.style.listStyleType = 'none';
+              fileList.style.padding = '0';
+              fileList.style.margin = '0';
+              params.value.forEach(file => {
+                const fileItem = document.createElement('li');
+                const fileLink = document.createElement('a');
+                fileLink.textContent = file.name;
+                fileLink.style.color = 'grey';
+                fileLink.style.textDecoration = 'none';
+                fileLink.style.display = 'block';
+                fileLink.style.cursor = 'pointer';
+                fileLink.style.padding = '5px';
+                fileLink.style.overflow = 'hidden';
+                fileLink.style.textOverflow = 'ellipsis';
+                fileLink.style.whiteSpace = 'nowrap'; // 공백 무시
+                fileLink.style.width = '100%'; // 링크 너비를 최대로 설정
+                fileLink.onclick = function(event) {
+                  event.preventDefault(); // 기본 링크 동작 방지
+                  window.open('/'+file.url, '_blank'); // 새 탭에서 파일 다운로드
+                };
+
+                fileItem.appendChild(fileLink);
+                fileList.appendChild(fileItem);
+              });
+
+              tooltip.appendChild(fileList);
+              document.body.appendChild(tooltip);
+
+              // 다른 요소를 클릭했을 때 툴팁을 제거하는 이벤트 리스너 추가
+              document.addEventListener('click', function onClickOutside(event) {
+                const target = event.target;
+
+                if (!tooltip.contains(target) && !eCell.contains(target as HTMLTableCellElement)) {
+                  removeTooltip();
+                  document.removeEventListener('click', onClickOutside);
+                }
+              });
+            }
+          };
+
+          // 툴팁을 제거하는 함수
+          function removeTooltip() {
+            if (tooltip) {
+              document.body.removeChild(tooltip);
+              tooltip = null;
+            }
+          }
+
+          return eCell;
+        },
+        cellClass: 'files-cell'
+      },
+      {
         field: "approvalStatus",
         headerClass: 'ag-grids-custom-header',
         headerName:"ApprovalStatus"  ,
@@ -63,14 +157,6 @@ export class BudgetApprovedGridData extends CommonGridModel{
               return { backgroundColor: '#CC222244', color: 'light-black' }; // 값이 열거형에 없는 경우
           }
         },
-        //
-        // cellClassRules: {
-        //   "rag-green": "value === EnumApprovalStatus.None || value === EnumApprovalStatus.PoPublished",
-        //   "rag-yellow": "value === EnumApprovalStatus.PoNotYetPublished",
-        //   "rag-blue": "value === EnumApprovalStatus.InVoicePublished",
-        //   "rag-red": "value !== EnumApprovalStatus.None && value !== EnumApprovalStatus.PoNotYetPublished && value !== EnumApprovalStatus.PoPublished && value !== EnumApprovalStatus.InVoicePublished"
-        // }
-
       },
       // 설명
       {

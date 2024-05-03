@@ -21,6 +21,7 @@ declare module 'vue-router/auto-routes' {
     '/admin/user/user-management': RouteRecordInfo<'/admin/user/user-management', '/admin/user/user-management', Record<never, never>, Record<never, never>>,
     '/admin/user/user-management-grid': RouteRecordInfo<'/admin/user/user-management-grid', '/admin/user/user-management-grid', Record<never, never>, Record<never, never>>,
     '/budget/budget-approved/budget-approved': RouteRecordInfo<'/budget/budget-approved/budget-approved', '/budget/budget-approved/budget-approved', Record<never, never>, Record<never, never>>,
+    '/budget/budget-approved/budget-approved-data-form': RouteRecordInfo<'/budget/budget-approved/budget-approved-data-form', '/budget/budget-approved/budget-approved-data-form', Record<never, never>, Record<never, never>>,
     '/budget/budget-approved/budget-approved-grid': RouteRecordInfo<'/budget/budget-approved/budget-approved-grid', '/budget/budget-approved/budget-approved-grid', Record<never, never>, Record<never, never>>,
     '/budget/budget-plan/budget-plan': RouteRecordInfo<'/budget/budget-plan/budget-plan', '/budget/budget-plan/budget-plan', Record<never, never>, Record<never, never>>,
     '/budget/budget-plan/budget-plan-data-form': RouteRecordInfo<'/budget/budget-plan/budget-plan-data-form', '/budget/budget-plan/budget-plan-data-form', Record<never, never>, Record<never, never>>,

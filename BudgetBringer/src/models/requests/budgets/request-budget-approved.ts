@@ -1,4 +1,5 @@
 import {EnumApprovalStatus} from "../../enums/enum-approval-status";
+import {ResponseFileUpload} from "../../responses/files/response-upload-file";
 
 /**
  * 예산정보 승인 정보 요청 클래스
@@ -64,4 +65,8 @@ export class RequestBudgetApproved {
    * BossLineDescription
    */
   bossLineDescription: string | null = '';
+  /**
+   * attached Files
+   */
+  attachedFiles: Array<ResponseFileUpload> = [];
 }
