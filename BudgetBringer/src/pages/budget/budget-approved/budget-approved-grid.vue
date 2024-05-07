@@ -12,11 +12,10 @@ import {ResponseCountryBusinessManager} from "../../../models/responses/budgets/
 import {EnumResponseResult} from "../../../models/enums/enum-response-result";
 import {RequestBudgetApproved} from "../../../models/requests/budgets/request-budget-approved";
 import {firstValueFrom} from "rxjs";
-import CommonSelect from "../../../shared/common-select.vue";
 import {ApprovalStatusDescriptions} from "../../../models/enums/enum-approval-status";
 import CommonDialog from "../../../shared/common-dialog.vue";
-import BudgetPlanDataForm from "../budget-plan/budget-plan-data-form.vue";
 import BudgetApprovedDataForm from "./budget-approved-data-form.vue";
+
 /**
  * 그리드 모델
  */
@@ -76,10 +75,6 @@ const gridReference = ref(null);
  * 데이터 추가 원본 요청 데이터
  */
 const requestModel = ref<RequestBudgetApproved>(new RequestBudgetApproved());
-/**
- * 컨트리 비지니스 매니저 리스트
- */
-let countryBusinessManagers : ResponseCountryBusinessManager [] = [];
 /**
  * 비지니스 유닛 리스트
  */
@@ -150,17 +145,12 @@ const requestAddData = () => {
  * 유효성 여부를 검증한다.
  */
 const isValidModel = () => {
-  if(requestModel.value.approvalDate === ''
+  return !(requestModel.value.approvalDate === ''
     || requestModel.value.sectorId === ''
     || requestModel.value.businessUnitId === ''
     || requestModel.value.costCenterId === ''
-    || requestModel.value.countryBusinessManagerId === '') {
-    return false;
-  }
+    || requestModel.value.countryBusinessManagerId === '');
 
-  console.log(requestModel.value);
-
-  return true;
 }
 
 /**

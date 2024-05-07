@@ -132,15 +132,15 @@ export class BudgetApprovedGridData extends CommonGridModel{
         cellRenderer: (params) => {
           switch (params.value) {
             case EnumApprovalStatus.None:
-              return "상태없음";
+              return "None";
             case EnumApprovalStatus.PoNotYetPublished:
-              return "세금계산서 발행 전";
+              return "Po Not Yet Published";
             case EnumApprovalStatus.PoPublished:
-              return "세금계산서 발행";
+              return "Po Published";
             case EnumApprovalStatus.InVoicePublished:
-              return "인보이스 발행";
+              return "In Voice Published";
             default:
-              return "알 수 없는 상태"; // 값이 열거형에 없는 경우
+              return "Error"; // 값이 열거형에 없는 경우
           }
         },
         cellStyle: (params) => {

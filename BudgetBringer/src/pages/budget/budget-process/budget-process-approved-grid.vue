@@ -260,34 +260,41 @@ const toChart = () =>{
 }
 const exportPdf = async () => {
   communicationService.inTransmission();
+  const storeState = showGridDetail.value;
+  showGridDetail.value = true;
+  gridDetailStyle();
 
-  // Get Native Html elements
-  const element = document.getElementById('capture-area') as HTMLElement;
+  setTimeout(async () => {
+    // Get Native Html elements
+    const element = document.getElementById('capture-area') as HTMLElement;
 
-  // Transform to canvas
-  const canvas = await html2canvas(element, {
-    onclone: function (clonedDoc) {
-      clonedDoc.getElementById('capture-area').style.padding = '20px';
-    }
-  });
+    // Transform to canvas
+    const canvas = await html2canvas(element, {
+      onclone: function (clonedDoc) {
+        clonedDoc.getElementById('capture-area').style.padding = '20px';
+      }
+    });
 
-  const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+    const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
 
-  // PDF 문서의 크기를 캔버스 크기에 맞춤
-  const pdfWidth = canvas.width;
-  const pdfHeight = canvas.height;
+    // PDF 문서의 크기를 캔버스 크기에 맞춤
+    const pdfWidth = canvas.width;
+    const pdfHeight = canvas.height;
 
-  // PDF 문서 생성 (단위를 'px'로 설정하여 픽셀 기반의 정확한 크기 조절 가능)
-  const pdf = new jsPDF({
-    orientation: 'p',
-    unit: 'px',
-    format: [pdfWidth, pdfHeight]
-  });
+    // PDF 문서 생성 (단위를 'px'로 설정하여 픽셀 기반의 정확한 크기 조절 가능)
+    const pdf = new jsPDF({
+      orientation: 'p',
+      unit: 'px',
+      format: [pdfWidth, pdfHeight]
+    });
 
-  // 이미지를 PDF에 추가
-  pdf.addImage(image, 'PNG', 0, 0, pdfWidth, pdfHeight);
-  pdf.save(`${getDateFormatForFile()}_${props.excelTitle}.pdf`);
-  communicationService.offTransmission();
+    // 이미지를 PDF에 추가
+    pdf.addImage(image, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`${getDateFormatForFile()}_${props.excelTitle}.pdf`);
+    communicationService.offTransmission();
+    showGridDetail.value = storeState;
+    gridDetailStyle();
+  },100);
 }
 /**
  * Change to Grid
@@ -298,8 +305,6 @@ const toGrid = () => {
 const showGrid = ref(true);
 const options = ref([]);
 const print = () => {
-  console.log(1)
-
   const element = document.getElementById('capture-area');
   html2canvas(element).then(canvas => {
     // 이미지 데이터 URL로 변환
@@ -312,6 +317,19 @@ const print = () => {
     printWindow.document.close();
   });
 }
+const gridStyle = ref('width: 100%; height: 90px;');
+const showGridDetail = ref(false);
+const toggleDetail = () => {
+  showGridDetail.value = !showGridDetail.value
+  gridDetailStyle();
+};
+const gridDetailStyle = () => {
+  if(showGridDetail.value)
+    gridStyle.value = 'width: 100%; height: 600px;';
+  else
+    gridStyle.value = 'width: 100%; height: 90px;';
+}
+
 </script>
 
 <template>
@@ -334,6 +352,7 @@ const print = () => {
     </v-col>
   </v-row>
 
+  <v-label style="cursor: pointer;" @click="toggleDetail" :class="showGridDetail ? 'text-grey' : 'text-blue'"><b>{{ showGridDetail ? '합계 정보 보기' : '상세 정보 보기'}}</b></v-label>
   <div id="capture-area">
     <!--Skeleton-->
     <div v-show="showGrid">
@@ -342,7 +361,7 @@ const print = () => {
           <SkeletonLoader  :width="70" :height="30" />
           <v-spacer></v-spacer>
           <ag-grid-vue
-            style="width: 100%; height: 600px;"
+            :style="gridStyle"
             :columnDefs="(props.gridModel as CommonGridModel).columDefinedSkeleton"
             :rowData="[1,2,3,5,6,7,8,9,10,11,12,13,14,15,16]"
             class="ag-theme-alpine"
@@ -356,7 +375,7 @@ const print = () => {
           <h3>{{item.title}}</h3>
           <v-spacer></v-spacer>
           <ag-grid-vue
-            style="width: 100%; height: 600px;"
+            :style="gridStyle"
             @grid-ready="onGridReady"
             :grid-options="gridOptions"
             :columnDefs="(props.gridModel as CommonGridModel).columDefined"

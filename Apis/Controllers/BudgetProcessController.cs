@@ -1,5 +1,6 @@
 using ClosedXML.Excel;
 using Features.Attributes;
+using Features.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Common.Enums;
@@ -46,23 +47,28 @@ public class BudgetProcessController : Controller
     /// <summary>
     /// ProcessOwner 별 Budget 프로세스 정보를 가져온다.
     /// </summary>
+    /// <param name="year">년도 정보</param>
     /// <returns></returns>
     [HttpGet("ProcessOwner")]
     [ClaimRequirement("Permission","process-result,process-result-view")]
-    public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetAsync()
+    public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetAsync(string year = "")
     {
-        return await _budgetProcessService.GetOwnerBudgetSummaryAsync();
+        return await _budgetProcessService.GetOwnerBudgetSummaryAsync(year);
     }
     
     /// <summary>
     /// BusinessUnit 별 Budget 프로세스 정보를 가져온다.
     /// </summary>
+    /// <param name="year">년도 정보</param>
     /// <returns></returns>
     [HttpGet("BusinessUnit")]
     [ClaimRequirement("Permission","process-result,process-result-view")]
-    public async Task<ResponseData<ResponseProcessBusinessUnitSummary>> GetBusinessUnitBudgetAsync()
+    public async Task<ResponseData<ResponseProcessBusinessUnitSummary>> GetBusinessUnitBudgetAsync(string year = "")
     {
-        return await _budgetProcessService.GetBusinessUnitBudgetSummaryAsync();
+        if (year.IsEmpty())
+            year = DateTime.Now.ToString("yyyy");
+        
+        return await _budgetProcessService.GetBusinessUnitBudgetSummaryAsync(year);
     }
     
     
@@ -93,23 +99,23 @@ public class BudgetProcessController : Controller
     /// Export Excel
     /// </summary>
     /// <returns></returns>
-    [HttpGet("ProcessOwner/Export/Excel")]
+    [HttpGet("ProcessOwner/Export/Excel/{year}")]
     [ClaimRequirement("Permission","process-result,process-result-view")]
-    public async Task<IActionResult> ProcessOwnerExportExcel([FromQuery] RequestQuery requestQuery)
+    public async Task<IActionResult> ProcessOwnerExportExcel([FromQuery] RequestQuery requestQuery, [FromRoute] string year)
     {
         DateTime today = DateTime.Now;
-        string thisYear = today.ToString("yyyy");
-        string beforeYear = today.AddYears(-1).ToString("yyyy");
+        // string thisYear = today.ToString("yyyy");
+        // string beforeYear = today.AddYears(-1).ToString("yyyy");
         string thisYearDate = today.ToString("yyyy-MM-dd");
         
         // Define request 
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessOwner.CountryBusinessManagerName) ,thisYearDate,true );
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessOwner.BudgetYear) ,$"{thisYear}FY\nBUDGET YEAR",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessOwner.BudgetApprovedYearSum) ,$"{thisYear}&{beforeYear}FY\nAPPROVED AMOUNT",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessOwner.BudgetRemainingYear) ,"REMAINING YEAR",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetYear) ,$"BUDGET AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.ApprovedYear) ,$"APPROVED AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.RemainingYear) ,$"REMAINING YEAR",true ,true);
 
         // Get data
-        ResponseData<ResponseProcessOwnerSummary> response = await GetOwnerBudgetAsync();
+        ResponseData<ResponseProcessOwnerSummary> response = await GetOwnerBudgetAsync(year);
 
         // Response is failed
         if (response.Error)
@@ -147,23 +153,26 @@ public class BudgetProcessController : Controller
     /// Export Excel
     /// </summary>
     /// <returns></returns>
-    [HttpGet("BusinessUnit/Export/Excel")]
+    [HttpGet("BusinessUnit/Export/Excel/{year}")]
     [ClaimRequirement("Permission","process-result,process-result-view")]
-    public async Task<IActionResult> BusinessUnitExportExcel([FromQuery] RequestQuery requestQuery)
+    public async Task<IActionResult> BusinessUnitExportExcel([FromQuery] RequestQuery requestQuery, [FromRoute] string year)
     {
         DateTime today = DateTime.Now;
-        string thisYear = today.ToString("yyyy");
-        string beforeYear = today.AddYears(-1).ToString("yyyy");
+        // string thisYear = today.ToString("yyyy");
+        // string beforeYear = today.AddYears(-1).ToString("yyyy");
         string thisYearDate = today.ToString("yyyy-MM-dd");
         
         // Define request 
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BusinessUnitName) ,thisYearDate,true );
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetYear) ,$"{thisYear}FY\nBUDGET YEAR",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetApprovedYearSum) ,$"{thisYear}&{beforeYear}FY\nAPPROVED AMOUNT",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetRemainingYear) ,"REMAINING YEAR",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetYear) ,$"BUDGET AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.ApprovedYear) ,$"APPROVED AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.RemainingYear) ,$"REMAINING YEAR",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.Ratio) ,$"Ratio(%)",true ,true);
+        // requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetApprovedYearSum) ,$"{thisYear}&{beforeYear}FY\nAPPROVED AMOUNT",true ,true);
+        // requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetRemainingYear) ,"REMAINING YEAR",true ,true);
 
         // Get data
-        ResponseData<ResponseProcessBusinessUnitSummary> response = await GetBusinessUnitBudgetAsync();
+        ResponseData<ResponseProcessBusinessUnitSummary> response = await GetBusinessUnitBudgetAsync(year);
 
         // Response is failed
         if (response.Error)

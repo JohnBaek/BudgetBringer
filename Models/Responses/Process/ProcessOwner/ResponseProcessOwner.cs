@@ -21,23 +21,37 @@ public class ResponseProcessOwner
     /// </summary>
     public double BudgetYear { get; set; }
     
-    /// <summary>
-    /// 작년 Budget 확정된 것 ( ex: 2023FY ) 승인된 전 년도 전체 예산
-    /// </summary>
-    public double BudgetApprovedYearBefore { get; set; }
+    // /// <summary>
+    // /// 작년 Budget 확정된 것 ( ex: 2023FY ) 승인된 전 년도 전체 예산
+    // /// </summary>
+    // public double BudgetApprovedYearBefore { get; set; }
     
     /// <summary>
     /// 올해 Budget 확정된 것 ( ex: 2024FY ) 승인된 이번년도 전체 예산
     /// </summary>
-    public double BudgetApprovedYear { get; set; }
+    public double ApprovedYear { get; set; }
     
-    /// <summary>
-    /// 올해  작년 Budget 확정된 것 ( ex: 2023FY 2024FY ) 승인된 작년 + 이번년도 전체 예산
-    /// </summary>
-    public double BudgetApprovedYearSum { get; set; }
-    
+    // /// <summary>
+    // /// 올해  작년 Budget 확정된 것 ( ex: 2023FY 2024FY ) 승인된 작년 + 이번년도 전체 예산
+    // /// </summary>
+    // public double BudgetApprovedYearSum { get; set; }
+    //
     /// <summary>
     /// 올해 남은 예산 ( BudgetYear - BudgetApprovedYearSum ) 2024 년 남은 Budget [올해 Budget] - [승인된 작년 + 이번년도 전체 예산]
     /// </summary>
-    public double BudgetRemainingYear { get; set; }
+    public double RemainingYear { get; set; }
+
+    /// <summary>
+    /// RemainingYear divide ApprovedYear
+    /// </summary>
+    public double Ratio
+    {
+        get
+        {
+            if (RemainingYear == 0 || ApprovedYear == 0)
+                return 0.0;
+            
+            return RemainingYear / ApprovedYear;
+        }
+    }
 }

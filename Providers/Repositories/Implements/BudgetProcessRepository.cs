@@ -68,14 +68,14 @@ public class BudgetProcessRepository : IBudgetProcessRepository
     /// 단, process-result-view 의 Claim 만 소유한 경우 로그인한 사용자의 CountryManagerId 가 일치하는
     /// 정보만 나와야한다. 
     /// </summary>
+    /// <param name="year">년도 정보</param>
     /// <returns></returns>
-    public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetSummaryAsync()
+    public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetSummaryAsync(string year)
     {
         ResponseData<ResponseProcessOwnerSummary> result;
         try
         {
             // 로그인한 사용자의 정보를 가져온다.
-            // 로그인한 사용자 정보를 가져온다.
             DbModelUser? user = await _userRepository.GetAuthenticatedUser();
 
             // 사용자 정보가 없는경우 
@@ -95,31 +95,34 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             // 전체 권한을 가지고 있는지 여부 
             bool isPermitAll = foundClaims.Contains("process-result");
 
-            // 현재 날짜 
-            DateTime today = DateTime.Now;
-            
-            // 현재 년도를 가져온다.
-            string year = today.ToString("yyyy");
-            
             // 지난 년도를 가져온다.
-            string beforeYear = today.AddYears(-1).ToString("yyyy");
+            // string beforeYear = (int.Parse(year) - 1).ToString();
             
             // 현재년도와 지난년도에 해당하는 예산 계획을 가져온다.
-            List<DbModelBudgetPlan> budgetPlans = await _dbContext.BudgetPlans
-                .Where(i => i.IsIncludeInStatistics)
-                .AsNoTracking()
-                .ToListAsync();
+            IQueryable<DbModelBudgetPlan> budgetPlansQuery = _dbContext.BudgetPlans.AsNoTracking()
+                .Where(i => i.IsIncludeInStatistics);
             
+            // 현재년도와 지난년도에 해당하는 예산 계획을 가져온다.
+            IQueryable<DbModelBudgetApproved> budgetApprovedQuery = _dbContext.BudgetApproved.AsNoTracking()
+                .Where(i => i.ApprovalStatus != EnumApprovalStatus.None);
+            
+            // Is Target all year?
+            bool isAll = year == "all";
+            
+            // Is Target specified
+            if (!isAll)
+            {
+                budgetPlansQuery = budgetPlansQuery.Where(i => i.Year == year);
+                budgetApprovedQuery = budgetApprovedQuery.Where(i => i.Year == year);
+            }
+
+            List<DbModelBudgetPlan> budgetPlans = await budgetPlansQuery.ToListAsync();
+            List<DbModelBudgetApproved> budgetApproved = await budgetApprovedQuery.ToListAsync();
+
             // 모든 CBM 을 조회한다. 
             IQueryable<DbModelCountryBusinessManager> managersQuery = _dbContext.CountryBusinessManagers
+                .OrderBy(i => i.Sequence)
                 .AsNoTracking();
-            
-            // 현재년도와 지난년도에 해당하는 예산 계획을 가져온다.
-            List<DbModelBudgetApproved> budgetApproveds = await _dbContext.BudgetApproved
-                // .Where(i => new[] { year,beforeYear }.Contains(i.Year))
-                .Where(i => i.ApprovalStatus != EnumApprovalStatus.None)
-                .AsNoTracking()
-                .ToListAsync();
             
             // 전체 Permit 이 아닌경우 
             if (!isPermitAll)
@@ -130,10 +133,10 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             List<DbModelCountryBusinessManager> managers = await managersQuery.ToListAsync();
             
             // 조회된 정보로 CHK 500K 이하 정보를 찾는다.
-            List<ResponseProcessOwner> below500K = ComputeOwner(  budgetPlans, budgetApproveds,managers, year, beforeYear , false );
+            List<ResponseProcessOwner> below500K = ComputeOwner(  budgetPlans, budgetApproved, managers, year, "" , false );
             
             // 조회된 정보로 CHK 500K 이상 정보를 찾는다.
-            List<ResponseProcessOwner> above500K = ComputeOwner(  budgetPlans, budgetApproveds,managers, year, beforeYear , true );
+            List<ResponseProcessOwner> above500K = ComputeOwner(  budgetPlans, budgetApproved, managers, year, "" , true );
 
             // 객체를 생성한다.
             ResponseProcessOwnerSummary data = new ResponseProcessOwnerSummary();
@@ -180,8 +183,9 @@ public class BudgetProcessRepository : IBudgetProcessRepository
     /// <summary>
     /// 비지니스 유닛별 프로세스 정보를 가져온다.
     /// </summary>
+    /// <param name="year">년도 정보</param>
     /// <returns></returns>
-    public async Task<ResponseData<ResponseProcessBusinessUnitSummary>> GetBusinessUnitBudgetSummaryAsync()
+    public async Task<ResponseData<ResponseProcessBusinessUnitSummary>> GetBusinessUnitBudgetSummaryAsync(string year)
     {
         ResponseData<ResponseProcessBusinessUnitSummary> result;
         try
@@ -206,24 +210,53 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             // 전체 권한을 가지고 있는지 여부 
             bool isPermitAll = foundClaims.Contains("process-result");
 
-            // 현재 날짜 
-            DateTime today = DateTime.Now;
-            
-            // 현재 년도를 가져온다.
-            string year = today.ToString("yyyy");
-            
-            // 지난 년도를 가져온다.
-            string beforeYear = today.AddYears(-1).ToString("yyyy");
+            // // 현재 날짜 
+            // DateTime today = DateTime.Now;
+            //
+            // // 지난 년도를 가져온다.
+            // string beforeYear = today.AddYears(-1).ToString("yyyy");
+            //
+            // // 현재년도와 지난년도에 해당하는 예산 계획을 가져온다.
+            // List<DbModelBudgetPlan> budgetPlans = await _dbContext.BudgetPlans
+            //     .Where(
+            //         i => i.IsIncludeInStatistics &&
+            //         new[] { year }.Contains(i.Year)
+            //         )
+            //     .AsNoTracking()
+            //     .ToListAsync();
             
             // 현재년도와 지난년도에 해당하는 예산 계획을 가져온다.
-            List<DbModelBudgetPlan> budgetPlans = await _dbContext.BudgetPlans
-                .Where(i => i.IsIncludeInStatistics)
-                .AsNoTracking()
-                .ToListAsync();
+            IQueryable<DbModelBudgetPlan> budgetPlansQuery = _dbContext.BudgetPlans.AsNoTracking()
+                .Where(i => i.IsIncludeInStatistics);
+            
+            // 현재년도와 지난년도에 해당하는 예산 계획을 가져온다.
+            IQueryable<DbModelBudgetApproved> budgetApprovedQuery = _dbContext.BudgetApproved.AsNoTracking()
+                .Where(i => i.ApprovalStatus != EnumApprovalStatus.None);
+            
+            // Is Target all year?
+            bool isAll = year == "all";
+            
+            // Is Target specified
+            if (!isAll)
+            {
+                budgetPlansQuery = budgetPlansQuery.Where(i => i.Year == year);
+                budgetApprovedQuery = budgetApprovedQuery.Where(i => i.Year == year);
+            }
+
+            List<DbModelBudgetPlan> budgetPlans = await budgetPlansQuery.ToListAsync();
+            List<DbModelBudgetApproved> budgetApproved = await budgetApprovedQuery.ToListAsync();
             
             // 모든 BusinessUnit 을 조회한다. 
             IQueryable<DbModelBusinessUnit> managersQuery = _dbContext.BusinessUnits
                 .AsNoTracking();
+            
+            // // 현재년도와 지난년도에 해당하는 예산 계획을 가져온다.
+            // List<DbModelBudgetApproved> budgetApproveds = await _dbContext.BudgetApproved
+            //     // .Where(i => new[] { year,beforeYear }.Contains(i.Year))
+            //     .Where(i => i.ApprovalStatus != EnumApprovalStatus.None &&
+            //                 new[] { year }.Contains(i.Year))
+            //     .AsNoTracking()
+            //     .ToListAsync();
 
             // 전체 Permit 이 아닌경우 
             if (!isPermitAll)
@@ -243,10 +276,10 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             List<DbModelBusinessUnit> managers = await managersQuery.ToListAsync();
             
             // 조회된 정보로 CHK 500K 이하 정보를 찾는다.
-            List<ResponseProcessBusinessUnit> below500K = ComputeBusinessUnit(  budgetPlans, managers, year, beforeYear , false );
+            List<ResponseProcessBusinessUnit> below500K = ComputeBusinessUnit(  budgetPlans, budgetApproved , managers, year, "" , false );
             
             // 조회된 정보로 CHK 500K 이상 정보를 찾는다.
-            List<ResponseProcessBusinessUnit> above500K = ComputeBusinessUnit(  budgetPlans, managers, year, beforeYear , true );
+            List<ResponseProcessBusinessUnit> above500K = ComputeBusinessUnit(  budgetPlans, budgetApproved , managers, year, "" , true );
 
             // 객체를 생성한다.
             ResponseProcessBusinessUnitSummary data = new ResponseProcessBusinessUnitSummary();
@@ -525,13 +558,13 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             return
             below500K.Zip(above500K, (below, above) => new ResponseProcessOwner
             {
-                CountryBusinessManagerId = below.CountryBusinessManagerId, // 둘은 동일한 ID를 가정
-                CountryBusinessManagerName = below.CountryBusinessManagerName, // 이름도 동일하다고 가정
+                CountryBusinessManagerId = below.CountryBusinessManagerId, 
+                CountryBusinessManagerName = below.CountryBusinessManagerName, 
                 BudgetYear = below.BudgetYear + above.BudgetYear,
-                BudgetApprovedYearBefore = below.BudgetApprovedYearBefore + above.BudgetApprovedYearBefore,
-                BudgetApprovedYear = below.BudgetApprovedYear + above.BudgetApprovedYear,
-                BudgetApprovedYearSum = below.BudgetApprovedYearSum + above.BudgetApprovedYearSum,
-                BudgetRemainingYear = below.BudgetRemainingYear + above.BudgetRemainingYear
+                ApprovedYear = below.ApprovedYear + above.ApprovedYear,
+                RemainingYear = below.RemainingYear + above.RemainingYear
+                // BudgetApprovedYearBefore = below.BudgetApprovedYearBefore + above.BudgetApprovedYearBefore,
+                // BudgetApprovedYearSum = below.BudgetApprovedYearSum + above.BudgetApprovedYearSum,
             }).ToList();
         }
         catch (Exception e)
@@ -562,10 +595,12 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                     BusinessUnitId = below.BusinessUnitId, // 둘은 동일한 ID를 가정
                     BusinessUnitName = below.BusinessUnitName, // 이름도 동일하다고 가정
                     BudgetYear = below.BudgetYear + above.BudgetYear,
-                    BudgetApprovedYearBefore = below.BudgetApprovedYearBefore + above.BudgetApprovedYearBefore,
-                    BudgetApprovedYear = below.BudgetApprovedYear + above.BudgetApprovedYear,
-                    BudgetApprovedYearSum = below.BudgetApprovedYearSum + above.BudgetApprovedYearSum,
-                    BudgetRemainingYear = below.BudgetRemainingYear + above.BudgetRemainingYear
+                    ApprovedYear = below.ApprovedYear + above.ApprovedYear,
+                    RemainingYear = below.RemainingYear + above.RemainingYear,
+                    // BudgetApprovedYearBefore = below.BudgetApprovedYearBefore + above.BudgetApprovedYearBefore,
+                    // BudgetApprovedYear = below.BudgetApprovedYear + above.BudgetApprovedYear,
+                    // BudgetApprovedYearSum = below.BudgetApprovedYearSum + above.BudgetApprovedYearSum,
+                    // BudgetRemainingYear = below.BudgetRemainingYear + above.BudgetRemainingYear
                 }).ToList();
         }
         catch (Exception e)
@@ -670,48 +705,37 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             // 모든 매니저에 대해 처리
             foreach (DbModelCountryBusinessManager manager in managers)
             {
-                // 쿼리 베이스
+                // Query Base of Budget
                 IEnumerable<DbModelBudgetPlan> query = budgetPlans.Where(i =>
                     i.CountryBusinessManagerId == manager.Id &&
                     i.IsAbove500K == isAbove500K 
                 ).ToList();
                 
-                // 당해년도 승인된/승인안됨 포함 전체 예산
+                // This year Budget
                 double budgetYear = query.Sum(i => i.BudgetTotal);
                 
-                // 승인된 예산 전체
+                // Query Base of Amount
                 IEnumerable<DbModelBudgetApproved> queryApproved = budgetApproveds.Where(i =>
                     i.CountryBusinessManagerId == manager.Id &&
                     i.IsAbove500K == isAbove500K 
                 ).ToList();
                 
-                // 승인된 전 년도 전체 예산
-                double budgetApprovedYearBefore = 0;
-                
-                // 승인된 이번년도 전체 예산
-                double budgetApprovedYear = queryApproved.Where(i =>
-                    i.IsApprovalDateValid
+                // This year Approved Amount
+                double approvedYear = queryApproved.Where(i =>
+                    i.IsApprovalDateValid 
                 ).Sum(i => i.ApprovalAmount);
-                
-                // 승인된 작년 + 이번년도 전체 예산 의 합
-                double budgetApprovedYearBeforeSum = queryApproved.Where(i =>
-                    i.IsApprovalDateValid
-                ).Sum(i => i.ApprovalAmount);
-                
-                // 2024 년 남은 Budget
-                // [올해 Budget] - [승인된 작년 + 이번년도 전체 예산]
-                double budgetRemainingYear = budgetYear - budgetApprovedYearBeforeSum;
+       
+                // [Amount of this year Budget] - [Amount of this Year Approved]
+                double remainingYear = budgetYear - approvedYear;
 
-                // 데이터를 만든다.
+                // Bind Results
                 ResponseProcessOwner add = new ResponseProcessOwner
                 {
                     CountryBusinessManagerId = manager.Id ,
                     CountryBusinessManagerName = manager.Name ,
                     BudgetYear = budgetYear,
-                    BudgetApprovedYearBefore = budgetApprovedYearBefore,
-                    BudgetApprovedYear = budgetApprovedYear,
-                    BudgetApprovedYearSum = budgetApprovedYearBeforeSum,
-                    BudgetRemainingYear = budgetRemainingYear
+                    ApprovedYear = approvedYear,
+                    RemainingYear = remainingYear
                 };
                 
                 result.Add(add);
@@ -737,6 +761,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
     /// <returns></returns>
     private List<ResponseProcessBusinessUnit> ComputeBusinessUnit( 
         List<DbModelBudgetPlan> budgetPlans ,
+        List<DbModelBudgetApproved> budgetApproveds,
         List<DbModelBusinessUnit> units ,
         string year, string beforeYear ,
         bool isAbove500K
@@ -749,47 +774,37 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             // 모든 매니저에 대해 처리
             foreach (DbModelBusinessUnit unit in units)
             {
-                // 쿼리 베이스
+                // Query Base of Budget
                 IEnumerable<DbModelBudgetPlan> query = budgetPlans.Where(i =>
                     i.BusinessUnitId == unit.Id &&
                     i.IsAbove500K == isAbove500K 
                 ).ToList();
                 
-                // 당해년도 승인된/승인안됨 포함 전체 예산
+                // This year Budget
                 double budgetYear = query.Sum(i => i.BudgetTotal);
                 
-                // 승인된 전 년도 전체 예산
-                double budgetApprovedYearBefore = query.Where(i =>
-                    i.Year == beforeYear &&
-                    i.IsApprovalDateValid
-                ).Sum(i => i.BudgetTotal);
+                // Query Base of Amount
+                IEnumerable<DbModelBudgetApproved> queryApproved = budgetApproveds.Where(i =>
+                    i.BusinessUnitId == unit.Id &&
+                    i.IsAbove500K == isAbove500K 
+                ).ToList();
                 
-                // 승인된 이번년도 전체 예산
-                double budgetApprovedYear = query.Where(i =>
-                    i.Year == year &&
-                    i.IsApprovalDateValid
-                ).Sum(i => i.BudgetTotal);
-                
-                // 승인된 작년 + 이번년도 전체 예산 의 합
-                double budgetApprovedYearBeforeSum = query.Where(i =>
-                    new []{ year, beforeYear }.Contains(i.Year) &&
-                    i.IsApprovalDateValid
-                ).Sum(i => i.BudgetTotal);
-                
-                // 2024 년 남은 Budget
-                // [올해 Budget] - [승인된 작년 + 이번년도 전체 예산]
-                double budgetRemainingYear = budgetYear - budgetApprovedYearBeforeSum;
+                // This year Approved Amount
+                double approvedYear = queryApproved.Where(i =>
+                    i.IsApprovalDateValid 
+                ).Sum(i => i.ApprovalAmount);
+       
+                // [Amount of this year Budget] - [Amount of this Year Approved]
+                double remainingYear = budgetYear - approvedYear;
 
-                // 데이터를 만든다.
+                // Bind Results
                 ResponseProcessBusinessUnit add = new ResponseProcessBusinessUnit
                 {
                     BusinessUnitId = unit.Id ,
                     BusinessUnitName = unit.Name ,
                     BudgetYear = budgetYear,
-                    BudgetApprovedYearBefore = budgetApprovedYearBefore,
-                    BudgetApprovedYear = budgetApprovedYear,
-                    BudgetApprovedYearSum = budgetApprovedYearBeforeSum,
-                    BudgetRemainingYear = budgetRemainingYear
+                    ApprovedYear = approvedYear,
+                    RemainingYear = remainingYear
                 };
                 
                 result.Add(add);
