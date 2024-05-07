@@ -20,6 +20,15 @@ export class CountryBusinessManagerGridData extends CommonGridModel{
     super();
     this.columDefined = [
       {
+        field: "sequence",
+        headerClass: 'ag-grids-custom-header',
+        headerName:"순서" ,
+        showDisabledCheckboxes: true,
+        filter: 'agTextColumnFilter',
+        floatingFilter: true,
+        width:100,
+      },
+      {
         field: "name",
         headerClass: 'ag-grids-custom-header',
         headerName:"Name" ,

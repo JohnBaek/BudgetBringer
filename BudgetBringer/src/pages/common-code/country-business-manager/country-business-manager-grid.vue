@@ -24,8 +24,8 @@ let requestQuery :RequestQuery = {
   skip: 0 ,
   searchFields: [] ,
   searchKeywords: [],
-  sortFields: [ 'regDate' ],
-  sortOrders: [ 'desc' ],
+  sortFields: [ 'sequence' ],
+  sortOrders: [ 'asc' ],
 }
 /**
  * props 정의
@@ -64,8 +64,6 @@ let updateItem: ResponseCountryBusinessManager;
  * 마운트핸들링
  */
 onMounted(() => {
-  requestQuery.sortOrders.push('desc');
-  requestQuery.sortFields.push("regDate");
 });
 
 
@@ -114,8 +112,7 @@ const requestAddData = () => {
  * 유효성 여부를 검증한다.
  */
 const isValidModel = () => {
-  return modelReference.value.name !== '';
-
+  return modelReference.value.name !== '' && modelReference.value.sequence !== null;
 }
 
 /**
@@ -243,7 +240,7 @@ const requestUpdateData = () => {
 </script>
 
 <template>
-  <common-grid :is-use-insert="gridModel.isUseInsert"
+  <common-grid
                :input-colum-defined="gridModel.columDefined"
                :query-request="requestQuery"
                grid-title="CountryBusinessManager"
@@ -262,6 +259,7 @@ const requestUpdateData = () => {
       <v-row dense>
         <v-col cols="12" md="12" class="mt-5">
           <v-text-field required v-model="modelReference.name" label="Value" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
+          <v-text-field required v-model="modelReference.sequence" label="Value" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
           <v-btn variant="outlined" @click="requestAddData()" class="mr-2" color="info" >추가</v-btn>
           <v-btn variant="outlined" @click="addDialogReference = false" class="mr-2" color="error">취소</v-btn>
         </v-col>
@@ -272,12 +270,13 @@ const requestUpdateData = () => {
   <!--데이터 수정 다이얼로그-->
   <v-dialog v-model="updateDialogReference" width="auto">
     <v-card elevation="1" rounded class="mb-10 pa-5">
-      <v-card-title class=" mt-5"><h4>{{title}} 예산수정</h4>
+      <v-card-title class=" mt-5"><h4>{{title}} 수정</h4>
       </v-card-title>
       <v-card-subtitle class="">{{title}}를 추가합니다 생성된 코드명은 변경할 수 없습니다. 엔터키를 누르면 등록됩니다.<br>취소를 원하시는 경우 ESC 키를 눌러주세요</v-card-subtitle>
       <v-row dense>
         <v-col cols="12" md="12" class="mt-5">
           <v-text-field required v-model="modelReference.name" label="Value" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
+          <v-text-field required v-model="modelReference.sequence" label="Value" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
           <v-btn variant="outlined" @click="requestUpdateData()" class="mr-2" color="info" >수정</v-btn>
           <v-btn variant="outlined" @click="updateDialogReference = false" class="mr-2" color="error">취소</v-btn>
         </v-col>

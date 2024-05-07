@@ -17,12 +17,12 @@ using Serilog;
 namespace Apis;
 
 /// <summary>
-/// 엔트리 프로그램
+/// Root Program
 /// </summary>
 public static class Program
 {
     /// <summary>
-    /// 메인 
+    /// Main 
     /// </summary>
     /// <param name="args">실행 변수</param>
     private static void Main(string[] args)

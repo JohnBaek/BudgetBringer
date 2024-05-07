@@ -3,7 +3,11 @@
  */
 export class RequestCountryBusinessManager  {
   /**
-   * 오너명
+   * Name of Country Business Manager
    */
   name: string;
+  /**
+   * Sequence
+   */
+  sequence: number;
 }
