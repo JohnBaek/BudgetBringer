@@ -15,8 +15,7 @@ public class RequestBase
     /// <summary>
     /// 유효성 여부
     /// </summary>
-    /// <param name="model">모델 클래스</param>
-    /// <returns>검사결과</returns>
+    /// <returns></returns>
     public bool IsInValid()
     {
         var validationContext = new ValidationContext(this);

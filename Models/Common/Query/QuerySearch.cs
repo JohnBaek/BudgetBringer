@@ -15,6 +15,10 @@ public class QuerySearch
     /// 키워드정보
     /// </summary>
     private readonly string? _keyword;
+    
+    /// <summary>
+    /// 키워드 정보 
+    /// </summary>
     public string? Keyword
     {
         get => _keyword!.Replace("\\b","").Replace("\b","");

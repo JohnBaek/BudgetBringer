@@ -83,6 +83,7 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
     {
         Id = item.Id,
         Name = item.Name,
+        Sequence = item.Sequence ,
         RegName = item.RegName ,
         ModName = item.ModName ,
         RegDate = item.RegDate ,
@@ -244,6 +245,7 @@ public class CountryBusinessManagerRepository : ICountryBusinessManagerRepositor
           
             // 데이터를 수정한다.
             update.Name = request.Name;
+            update.Sequence = request.Sequence;
             update.RegName = user.DisplayName; 
             update.ModName = user.DisplayName; 
             update.RegDate = DateTime.Now; 

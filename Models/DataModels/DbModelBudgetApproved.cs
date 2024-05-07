@@ -13,13 +13,6 @@ namespace Models.DataModels;
 public class DbModelBudgetApproved : DbModelDefault
 {
     /// <summary>
-    /// 기본 생성자
-    /// </summary>
-    public DbModelBudgetApproved()
-    {
-    }
-    
-    /// <summary>
     /// 예산 승인 모델 아이디 
     /// </summary>
     [Key]
@@ -29,13 +22,14 @@ public class DbModelBudgetApproved : DbModelDefault
     /// Id of Group It could be null 
     /// </summary>
     public Guid? FileGroupId { get; set; }
-    
+
     /// <summary>
     /// 승인일 ( 날짜가아닌 일반 스트링데이터도 포함 될 수 있다. )
     /// </summary>
     [MaxLength(255)]
+    [MinLength(4)]
     [Required]
-    public string ApprovalDate { get; set; } 
+    public string ApprovalDate { get; set; } = "";
     
     /// <summary>
     /// 기안일 정상 포맷 (yyyy-MM-dd) 이라면 DateOnly 로 파싱된 값 

@@ -48,7 +48,7 @@ public class SystemConfigService : ISystemConfigService
                 .AsNoTracking()
                 .Include(i => i.Details)
                 .Where(i => i.Name == configName)
-                .SelectMany(i => i.Details)
+                .SelectMany(i => i.Details!)
                 .FirstOrDefaultAsync(d => d.Name == detailConfig);
 
             if (config != null)

@@ -20,4 +20,9 @@ public class ResponseCountryBusinessManager : ResponseCommonWriter
     /// </summary>
     // ReSharper disable once CollectionNeverQueried.Global
     public List<ResponseBusinessUnit> BusinessUnits { get; set; } = new List<ResponseBusinessUnit>();
+    
+    /// <summary>
+    /// Sequence 
+    /// </summary>
+    public int Sequence { get; set; } = 0;
 }

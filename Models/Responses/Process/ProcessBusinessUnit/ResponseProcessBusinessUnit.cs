@@ -31,7 +31,7 @@ public class ResponseProcessBusinessUnit
     public double BudgetApprovedYear { get; set; }
     
     /// <summary>
-    /// 올해 & 작년 Budget 확정된 것 ( ex: 2023FY&2024FY ) 승인된 작년 + 이번년도 전체 예산
+    /// 올해 작년 Budget 확정된 것 ( ex: 2023FY 2024FY ) 승인된 작년 + 이번년도 전체 예산
     /// </summary>
     public double BudgetApprovedYearSum { get; set; }
     

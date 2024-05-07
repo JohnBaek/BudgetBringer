@@ -18,5 +18,5 @@ public class DbModelSector : DbModelDefault
     /// </summary>
     [Required]
     [MaxLength(255)]
-    public string Value { get; set; }
+    public string Value { get; set; } = "";
 }

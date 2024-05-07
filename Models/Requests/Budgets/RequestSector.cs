@@ -11,5 +11,7 @@ public class RequestSector : RequestBase
     /// 섹터 값
     /// </summary>
     [Required(ErrorMessage = "값을 입력해주세요")]
-    public string Value { get; init; }
+    [MinLength(1)]
+    [MaxLength(255)]
+    public string Value { get; set; } = "";
 }

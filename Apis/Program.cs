@@ -67,9 +67,6 @@ public static class Program
         // 웹 어플리케이션을 빌드한다.
         WebApplication app = builder.Build();
         
-        // Path of Static files
-        string StaticfilePath = "";
-        
         // 디버그 환경일 경우 
         if (app.Environment.IsDevelopment())
         {

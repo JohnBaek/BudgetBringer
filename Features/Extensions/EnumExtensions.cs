@@ -32,7 +32,7 @@ public static class EnumExtensions
     /// </summary>
     /// <param name="enumValue"></param>
     /// <returns></returns>
-    public static string? GetColor(this Enum enumValue)
+    public static string GetColor(this Enum enumValue)
     {
         FieldInfo? fieldInfo = enumValue.GetType().GetField(enumValue.ToString());
         if (fieldInfo == null)

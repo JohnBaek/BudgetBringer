@@ -29,6 +29,11 @@ public class DbModelCountryBusinessManager : DbModelDefault
     /// 관계 정보
     /// </summary>
     public virtual ICollection<DbModelCountryBusinessManagerBusinessUnit> CountryBusinessManagerBusinessUnits { get; set; } = new List<DbModelCountryBusinessManagerBusinessUnit>();
+    
+    /// <summary>
+    /// Sequence 
+    /// </summary>
+    public int Sequence { get; set; } = 0;
     //
     // /// <summary>
     // /// 관계 정보

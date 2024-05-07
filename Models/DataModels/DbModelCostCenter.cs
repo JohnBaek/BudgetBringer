@@ -16,11 +16,12 @@ public class DbModelCostCenter : DbModelDefault
     /// </summary>
     [Key]
     public Guid Id { get; init; }
-    
+
     /// <summary>
     /// DbModelCostCenter 값 (유니크)
     /// </summary>
     [Required]
     [MaxLength(255)]
-    public string Value { get; set; }
+    [MinLength(1)]
+    public string Value { get; set; } = "";
 }

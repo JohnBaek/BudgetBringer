@@ -1,3 +1,5 @@
+using Features.Extensions;
+
 namespace Models.Responses.Budgets;
 
 /// <summary>
@@ -6,12 +8,12 @@ namespace Models.Responses.Budgets;
 public class ResponseBusinessUnit : ResponseCommonWriter
 {
     /// <summary>
-    /// 생성자
+    /// Constructor
     /// </summary>
     public ResponseBusinessUnit()
     {
     }
-
+    
     /// <summary>
     /// 생성자
     /// </summary>
@@ -26,10 +28,10 @@ public class ResponseBusinessUnit : ResponseCommonWriter
     /// <summary>
     /// 아이디 
     /// </summary>
-    public Guid Id { get; init; }
-    
+    public Guid Id { get; set; } = "00000000-0000-0000-0000-000000000000".ToGuid();
+
     /// <summary>
     /// 유닛명 (유니크)
     /// </summary>
-    public string Name { get; init; }
+    public string Name { get; set; } = "";
 }
