@@ -1,33 +1,25 @@
 /**
- * 결과중 개별 ProcessOwner 별 통계 데이터
+ * Statistics by Owners
  */
 export class ResponseProcessOwner {
   /**
-   * 컨트리 비지니스매니저 아이디
+   * Id of Country Business Manager
    */
   countryBusinessManagerId: string;
   /**
-   * 컨트리 비지니스매니저 명
+   * Name of Country Business Manager
    */
   countryBusinessManagerName: string;
   /**
-   * 올년도 Budget ( ex: 2024FY )
+   * This year Budget
    */
-  budgetAmount: number;
+  budgetYear: number;
   /**
-   * 작년 Budget 확정된 것 ( ex: 2023FY ) 승인된 전 년도 전체 예산
+   * This year Approved
    */
-  budgetApprovedYearBefore: number;
+  approvedYear: number;
   /**
-   * 올해 Budget 확정된 것 ( ex: 2024FY ) 승인된 이번년도 전체 예산
+   * [budgetYear] - [approvedYear]
    */
-  budgetApprovedYear: number;
-  /**
-   * 올해 & 작년 Budget 확정된 것 ( ex: 2023FY&2024FY ) 승인된 작년 + 이번년도 전체 예산
-   */
-  budgetApprovedYearSum: number;
-  /**
-   * 올해 남은 예산 ( BudgetYear - BudgetApprovedYearSum ) 2024 년 남은 Budget [올해 Budget] - [승인된 작년 + 이번년도 전체 예산]
-   */
-  budgetRemainingYear: number;
+  remainingYear: number;
 }

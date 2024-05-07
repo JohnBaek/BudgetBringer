@@ -170,6 +170,9 @@ const calculateSums = () => {
       return acc + (typeof value === 'number' ? value : 0);
     }, 0);
   }
+
+
+
   gridApi.value.setGridOption('pinnedTopRowData', [sums])
 }
 const inCommunication = ref(true);

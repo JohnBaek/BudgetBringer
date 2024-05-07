@@ -24,6 +24,7 @@
                   <budget-process-grid-pl-owner
                     :full-date="fullDate"
                     :year="year"
+                    :yearList="yearList"
                     title="CAPEX below CHF500K"
                     sub-title="500K 아래의 정보"
                   >
@@ -38,6 +39,7 @@
                 <budget-process-grid-bu
                   :full-date="fullDate"
                   :year="year"
+                  :yearList="yearList"
                   title="CAPEX below CHF500K"
                   sub-title="500K 아래의 정보"
                 >
@@ -52,6 +54,7 @@
                 <budget-process-grid-approved-below
                   :full-date="fullDate"
                   :year="year"
+                  :yearList="yearList"
                   title="CAPEX below CHF500K"
                   sub-title="500K 아래"
                   :masterDetail="true"
@@ -146,4 +149,23 @@ const fullDate = getFullDate();
  * 년도
  */
 const year = getYear();
+/**
+ * Generate Year List
+ * @param currentYear
+ * @returns {[]}
+ */
+const createYearList = (currentYear) => {
+  const startYear = currentYear - 5; // 7년 전
+  const endYear = currentYear + 2;
+  let yearList = [];
+
+  for (let year = startYear; year <= endYear; year++) {
+    yearList.push(year.toString());
+  }
+
+  yearList.push('전체년도');
+
+  return yearList.reverse();
+}
+const yearList = createYearList(parseInt(year));
 </script>

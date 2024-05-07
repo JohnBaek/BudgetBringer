@@ -55,7 +55,7 @@ export class BudgetProcessGridBusinessUnit extends CommonGridModel{
         headerClass: 'ag-grids-custom-header',
         children: [
           {
-            field: "budgetApprovedYearSum",
+            field: "approvedYear",
             headerClass: 'ag-grids-custom-header',
             headerName:'Approved Amount ' ,
             valueFormatter: this.numberValueFormatter,
@@ -68,10 +68,25 @@ export class BudgetProcessGridBusinessUnit extends CommonGridModel{
         headerClass: 'ag-grids-custom-header',
         children: [
           {
-            field: "budgetRemainingYear",
+            field: "remainingYear",
             headerClass: 'ag-grids-custom-header',
             headerName:'Remaining Amount',
             valueFormatter: this.numberValueFormatter,
+          }
+        ]
+      },
+      {
+        headerName:`${year.toString()}FY` ,
+        headerClass: 'ag-grids-custom-header',
+        children: [
+          {
+            field: "ratio",
+            headerClass: 'ag-grids-custom-header',
+            headerName:'Ratio(%)' ,
+            valueFormatter: this.numberValueFormatter,
+            cellRenderer: function(params) {
+              return params.value.toFixed(3);
+            }
           }
         ]
       },
@@ -99,7 +114,7 @@ export class BudgetProcessGridBusinessUnit extends CommonGridModel{
       },
       {   type: 'bar'
         , xKey: 'businessUnitName'
-        , yKey: 'budgetApprovedYearSum'
+        , yKey: 'approvedYear'
         , yName: 'Approved Amount'
         , tooltip: {
           renderer: function ({ datum, xKey, yKey }) {
@@ -112,7 +127,7 @@ export class BudgetProcessGridBusinessUnit extends CommonGridModel{
       },
       {   type: 'bar'
         , xKey: 'businessUnitName'
-        , yKey: 'budgetRemainingYear'
+        , yKey: 'remainingYear'
         , yName: 'Remaining Amount'
         , tooltip: {
           renderer: function ({ datum, xKey, yKey }) {

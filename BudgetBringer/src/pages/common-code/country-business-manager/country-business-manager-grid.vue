@@ -276,7 +276,7 @@ const requestUpdateData = () => {
       <v-row dense>
         <v-col cols="12" md="12" class="mt-5">
           <v-text-field required v-model="modelReference.name" label="Value" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
-          <v-text-field required v-model="modelReference.sequence" label="Value" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
+          <v-text-field required v-model="modelReference.sequence" label="Value" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
           <v-btn variant="outlined" @click="requestUpdateData()" class="mr-2" color="info" >수정</v-btn>
           <v-btn variant="outlined" @click="updateDialogReference = false" class="mr-2" color="error">취소</v-btn>
         </v-col>

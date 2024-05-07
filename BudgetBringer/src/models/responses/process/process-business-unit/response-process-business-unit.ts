@@ -11,9 +11,17 @@ export class ResponseProcessBusinessUnit {
    */
   businessUnitName: string;
   /**
-   * 올년도 Budget ( ex: 2024FY ) 당해년도 전체 예산
+   * This year Budget
    */
   budgetYear: number;
+  /**
+   * This year Approved
+   */
+  approvedYear: number;
+  /**
+   * [budgetYear] - [approvedYear]
+   */
+  remainingYear: number;
   /**
    * 작년 Budget 확정된 것 ( ex: 2023FY ) 승인된 전 년도 전체 예산
    */

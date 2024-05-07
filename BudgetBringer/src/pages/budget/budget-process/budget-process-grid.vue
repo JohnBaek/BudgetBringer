@@ -25,8 +25,19 @@ interface Props {
   gridModel: CommonGridModel;
   // Excel Title
   excelTitle: string;
+  yearList : {Type: []}
+  year: string
 }
+
+
 const props = defineProps<Props>();
+const year = ref(props.year);
+const gridModel = ref(props.gridModel);
+
+console.log('gridModel', gridModel.value);
+
+let requestQuery = props.gridModel.requestQuery;
+
 /**
  * Current selected rows list.
  */
@@ -65,8 +76,11 @@ const refresh = () => {
  */
 const exportExcel = () => {
   communicationService.inTransmission();
+
+  const yearValue = (year.value == '전체년도') ? 'all' : year.value;
+
   // Request to Server
-  HttpService.requestGetFile(`${props.gridModel.requestQuery.apiUri}/export/excel` , props.gridModel.requestQuery).subscribe({
+  HttpService.requestGetFile(`${props.gridModel.requestQuery.apiUri}/export/excel/${yearValue}` , requestQuery).subscribe({
     next(response) {
       if(response == null)
         return;
@@ -182,16 +196,44 @@ const calculateSums = () => {
       return acc + (typeof value === 'number' ? value : 0);
     }, 0);
   }
+
+  if(sums['budgetYear'] && sums['remainingYear'])
+    sums['ratio'] = (sums['remainingYear'] / sums['budgetYear']);
+
   gridApi.value.setGridOption('pinnedTopRowData', [sums])
 }
 /**
  * 데이터를 로드한다.
  */
 const loadData = () => {
+  console.log(year.value);
+
+  let params = {
+    year: year.value ,
+  };
+
+  if(year.value == '전체년도') {
+    params.year = 'all';
+  }
+
+  gridModel.value.columDefined.forEach(i => {
+    if(i.headerName) {
+      if(i.headerName.indexOf('FY') > -1) {
+        i.headerName = `${year.value}FY`
+      }
+
+      if(i.headerName.indexOf('FY') > -1 && year.value == 'all') {
+        i.headerName = `전체 FY`
+      }
+    }
+  });
+
+  items.value = [];
+
   communicationService.notifyInCommunication();
   // Request to Server
   HttpService.requestGet<ResponseData<ResponseProcessSummaryDetail<any>>>(
-      props.gridModel.requestQuery.apiUri).subscribe({
+      props.gridModel.requestQuery.apiUri , params).subscribe({
     async next(response) {
       // Failed Request
       if (response.error) {
@@ -273,9 +315,11 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
 });
 
 const showGrid = ref(true);
+
 </script>
 
 <template>
+
   <v-row class="mt-1 mb-1">
     <v-col>
       <div class="mt-2">
@@ -291,7 +335,15 @@ const showGrid = ref(true);
         />
       </div>
     </v-col>
+
   </v-row>
+
+  <v-row>
+    <v-col sm="12" md="6" lg="4">
+      <v-select variant="outlined" :items="props.yearList" v-model="year" label="년도선택" @update:modelValue="loadData" >년도 선택</v-select>
+    </v-col>
+  </v-row>
+
   <div id="capture-area" >
     <!--GridMode-->
     <div v-show="showGrid">
@@ -317,7 +369,7 @@ const showGrid = ref(true);
             style="width: 100%; height: 600px;"
             @grid-ready="onGridReady"
             :grid-options="props.gridOptions"
-            :columnDefs="(props.gridModel as CommonGridModel).columDefined"
+            :columnDefs="gridModel.columDefined"
             :rowData="item.items"
             :pinnedTopRowData="item.total"
             class="ag-theme-alpine"

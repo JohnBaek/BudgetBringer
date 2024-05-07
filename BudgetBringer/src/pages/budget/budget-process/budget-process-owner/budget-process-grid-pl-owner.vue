@@ -15,6 +15,7 @@ const props = defineProps({
   title : {Type: String , required: false} ,
   // SubTitle of Grid
   subTitle : {Type: String , required: true} ,
+  yearList : {Type: []}
 });
 /**
  * Defines GridModel .
@@ -27,7 +28,7 @@ const gridModel = new BudgetProcessGridPLOwner(
 </script>
 
 <template>
-  <budget-process-grid excel-title="PL_Owner" :grid-model="gridModel" />
+  <budget-process-grid excel-title="PL_Owner" :grid-model="gridModel" :year-list="yearList" :year="year" />
 </template>
 
 <style scoped lang="css">
