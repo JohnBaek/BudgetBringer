@@ -5,6 +5,7 @@ import {ResponseCountryBusinessManager} from "../../../models/responses/budgets/
 import {ResponseBusinessUnit} from "../../../models/responses/budgets/response-business-unit";
 import CommonSelect from "../../../shared/common-select.vue";
 import CommonFileUpload from "../../../shared/common-file-upload.vue";
+import {getYearList} from "../../../services/utils/date-util";
 
 /**
  * props
@@ -102,10 +103,15 @@ const onChangeCountryBusinessManager = (countryBusinessManagerId: any) => {
   if(_countryBusinessManagers.length > 0)
     businessUnits.value = _countryBusinessManagers[0].businessUnits;
 }
+// Set Year List
+const years = ref(getYearList(true));
 </script>
 
 <template>
   <v-row>
+    <v-col cols="12" md="6">
+      <v-select v-model="model.baseYearForStatistics" :items="years" label="통계기준 년도" outlined></v-select>
+    </v-col>
     <v-col cols="12" md="6">
       <v-switch v-model="model.isIncludeInStatistics" color="primary" required :label="model.isIncludeInStatistics ? '통계에 포함': '통계에 미포함'"></v-switch>
     </v-col>

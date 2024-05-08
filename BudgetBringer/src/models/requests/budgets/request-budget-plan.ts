@@ -60,5 +60,8 @@ export class RequestBudgetPlan {
    * attached Files
    */
   attachedFiles: Array<ResponseFileUpload> = [];
-
+  /**
+   * Base Year for Statistics ex ) 2024 .. 2025
+   */
+  baseYearForStatistics: number = 0;
 }

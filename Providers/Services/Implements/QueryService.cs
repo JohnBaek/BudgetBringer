@@ -119,12 +119,25 @@ public class QueryService: IQueryService
                     
                     // Like 검색 인경우
                     case EnumQuerySearchType.Contains:
-                        if (property.Type != typeof(string)) 
+                        if (property.Type == typeof(string))
                         {
-                            throw new InvalidOperationException($"'Contains' search is only supported for string properties. Property '{findMeta.Field}' is of type '{property.Type}'.");
+                            MethodInfo method = typeof(string).GetMethod("Contains", new[] { typeof(string) })!;
+                            condition = Expression.Call(property, method, constant);
                         }
-                        MethodInfo method = typeof(string).GetMethod("Contains", new[] { typeof(string) })!;
-                        condition = Expression.Call(property, method, constant);
+                        else if (property.Type == typeof(int))
+                        {
+                            // int 값을 string으로 변환 후 Contains 적용
+                            MethodInfo toStringMethod = typeof(object).GetMethod("ToString", new Type[] {})!;
+                            MethodInfo containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) })!;
+                            MethodCallExpression toStringCall = Expression.Call(property, toStringMethod);
+                            ConstantExpression constantStr = Expression.Constant(search.Keyword?.ToString());
+                            condition = Expression.Call(toStringCall, containsMethod, constantStr);
+                        }
+                        else
+                        {
+                            // 다른 타입에 대한 처리 필요 시 추가
+                            continue;
+                        }
                         break;
                     default:
                         continue;

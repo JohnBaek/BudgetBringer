@@ -173,11 +173,12 @@ public class BudgetPlanController : Controller
         if (requestQuery.SortOrders is { Count: 0 })
         {
             requestQuery.SortOrders.Add("Desc");
-            requestQuery.SortFields?.Add(nameof(ResponseBudgetApproved.RegDate));
+            requestQuery.SortFields?.Add(nameof(ResponseBudgetApproved.BaseYearForStatistics));
         }
         
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetPlan.IsAbove500K));
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.ApprovalDate) , "APPROVAL DATE" , true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.BaseYearForStatistics) , "통계 기준년도" , true);
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetPlan.IsIncludeInStatistics), "통계포함", true,false,null,
             ["포함", "미포함"]);
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetPlan.ApproveDateValue));

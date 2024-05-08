@@ -73,4 +73,8 @@ export class ResponseBudgetApproved  {
    * DbModelBusinessUnit 명
    */
   bossLineDescription: string | null;
+  /**
+   * Base Year for Statistics ex ) 2024 .. 2025
+   */
+  baseYearForStatistics: number;
 }

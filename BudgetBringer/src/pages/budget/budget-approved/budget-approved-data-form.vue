@@ -7,6 +7,7 @@ import {ApprovalStatusDescriptions} from "../../../models/enums/enum-approval-st
 import {ResponseCountryBusinessManager} from "../../../models/responses/budgets/response-country-business-manager";
 import CommonFileUpload from "../../../shared/common-file-upload.vue";
 import {ResponseBusinessUnit} from "../../../models/responses/budgets/response-business-unit";
+import {getYearList} from "../../../services/utils/date-util";
 /**
  * props
  */
@@ -114,10 +115,16 @@ const onCountryBusinessManagerUpdated = (items: any) => {
     tempBusinessUnitId = '';
   }
 }
+
+// Set Year List
+const years = ref(getYearList(true));
 </script>
 
 <template>
   <v-row>
+    <v-col cols="12" md="6">
+      <v-select v-model="model.baseYearForStatistics" :items="years" label="통계기준 년도" outlined></v-select>
+    </v-col>
     <v-col cols="12" md="6">
       <common-select required label="Country Businesses Manager" v-model="model.countryBusinessManagerId" @onChange="onChangeCountryBusinessManager" @onDataUpdated="onCountryBusinessManagerUpdated" title="name" value="id" requestApiUri="/api/v1/CountryBusinessManager" />
     </v-col>

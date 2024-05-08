@@ -73,5 +73,9 @@ export interface ResponseBudgetPlan extends ResponseCommonWriter {
    * attached Files
    */
   attachedFiles: Array<ResponseFileUpload> | null;
+  /**
+   * Base Year for Statistics ex ) 2024 .. 2025
+   */
+  baseYearForStatistics: number;
 }
 

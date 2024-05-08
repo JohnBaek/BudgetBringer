@@ -162,7 +162,7 @@ public class BudgetApprovedController : Controller
         if (requestQuery.SortOrders is { Count: 0 })
         {
             requestQuery.SortOrders.Add("Desc");
-            requestQuery.SortFields?.Add(nameof(ResponseBudgetApproved.ApprovalDate));
+            requestQuery.SortFields?.Add(nameof(ResponseBudgetApproved.BaseYearForStatistics));
         }
         
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.IsAbove500K));

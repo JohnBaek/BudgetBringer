@@ -12,3 +12,28 @@ export const getDateFormatForFile = (): string => {
 
   return `${year}${month}${day}_${hours}${minutes}${seconds}_`;
 }
+
+/**
+ * Get Year List
+ */
+export const getYearList = (toDesc: boolean) => {
+  // Get Current year of date
+  const currentYear = new Date().getFullYear();
+
+  // Set Start Year
+  const startYear = 2000;
+
+  // Set End year + 3
+  const endYear = currentYear + 3;
+
+  let years = [];
+  for (let year = startYear; year <= endYear; year++) {
+    years.push(year);
+  }
+
+  // To Desc List
+  if(toDesc)
+    years = years.reverse();
+
+  return years;
+}
