@@ -13,6 +13,44 @@ export namespace CommonColumnDefinitions {
     width: 160
   });
 
+  export const getRegDateColumn = () => ({
+    field: "regDate",
+    headerClass: 'ag-grids-custom-header',
+    headerName:"등록일"  ,
+    filter: "agTextColumnFilter",
+    filterParams: {
+      filterOptions: ["포함하는"],
+      maxNumConditions: 1,
+    },
+    floatingFilter: true,
+    width:250,
+    valueFormatter: function(params) {
+      if (params.value) {
+        const date = new Date(params.value);
+        return date.toLocaleString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        }).replace(/(\. )|(\.,)/g, ' ');
+      }
+      return null;
+    }
+  })
+
+  export const getRegNameColumn = () => CommonColumnDefinitions.createColumnDefinitionForTextFilter(250, 'regName' , '등록자명');
+
+  export const getNameColumn = () => ({
+    field: 'name',
+    headerName: '이름',
+    headerClass: 'ag-grids-custom-header',
+    filter: 'agTextColumnFilter',
+    floatingFilter: true,
+    width: 250
+  });
+
   export const getIsIncludeInStatistics =() => ({
     field: "isIncludeInStatistics",
     headerClass: 'ag-grids-custom-header',
@@ -32,7 +70,7 @@ export namespace CommonColumnDefinitions {
     },
   });
 
-  export const getApprovalDate = () => CommonColumnDefinitions.CreateColumnDefinitionForTextFilter(145, "approvalDate", "Approval Date");
+  export const getApprovalDate = () => CommonColumnDefinitions.createColumnDefinitionForTextFilter(145, "approvalDate", "Approval Date");
 
   export const getAttachedFiles = () => ({
     field: "attachedFiles",
@@ -177,10 +215,10 @@ export namespace CommonColumnDefinitions {
     width:250,
   });
 
-  export const getSector = () => CommonColumnDefinitions.CreateColumnDefinitionForTextFilter(150, "sectorName", "Sector");
-  export const getBusinessUnit = () => CommonColumnDefinitions.CreateColumnDefinitionForTextFilter(150, "businessUnitName", "Business Unit");
-  export const getCostCenter = () => CommonColumnDefinitions.CreateColumnDefinitionForTextFilter(150, "costCenterName", "Cost Center");
-  export const getCountryBusinessManager = () => CommonColumnDefinitions.CreateColumnDefinitionForTextFilter(230, "countryBusinessManagerName", "Country Business Manager");
+  export const getSector = () => CommonColumnDefinitions.createColumnDefinitionForTextFilter(150, "sectorName", "Sector");
+  export const getBusinessUnit = () => CommonColumnDefinitions.createColumnDefinitionForTextFilter(150, "businessUnitName", "Business Unit");
+  export const getCostCenter = () => CommonColumnDefinitions.createColumnDefinitionForTextFilter(150, "costCenterName", "Cost Center");
+  export const getCountryBusinessManager = () => CommonColumnDefinitions.createColumnDefinitionForTextFilter(230, "countryBusinessManagerName", "Country Business Manager");
 
   /**
    * Generate Column Definitions
@@ -190,7 +228,7 @@ export namespace CommonColumnDefinitions {
    * @param valueFormatter
    * @constructor
    */
-  export const CreateColumnDefinitionForNumberFilter = (width: number , field: string , headerName: string, valueFormatter?: {}  ) => {
+  export const createColumnDefinitionForNumberFilter = (width: number , field: string , headerName: string, valueFormatter?: {}  ) => {
     return {
       field: field,
       headerClass: 'ag-grids-custom-header',
@@ -200,7 +238,7 @@ export namespace CommonColumnDefinitions {
     }
   }
 
-  export const CreateColumnDefinitionForTextFilter = (width: number , field: string , headerName: string, valueFormatter?: {}  ) => {
+  export const createColumnDefinitionForTextFilter = (width: number , field: string , headerName: string, valueFormatter?: {}  ) => {
     return {
       field: field,
       headerClass: 'ag-grids-custom-header',

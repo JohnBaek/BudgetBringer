@@ -1,74 +1,19 @@
 import {CommonGridModel} from "../../../shared/grids/common-grid-model";
-import {ResponseCostCenter} from "../../../models/responses/budgets/response-cost-center";
+import {CommonColumnDefinitions} from "../../../services/utils/common-grid-column-definitions";
 
 /**
- * 예산 그리드 모델
+ * CostCenter Grid Model
  */
 export class CostCenterGridData extends CommonGridModel{
   /**
-   * 표현할 그리드의 RowData 를 받는다.
-   */
-  items : Array<ResponseCostCenter>;
-  /**
-   * 컬럼정보
-   */
-  columDefined : any [];
-  /**
-   * 생성자
+   * Constructor
    */
   constructor() {
     super();
     this.columDefined = [
-      // 승인일
-      {
-        field: "value",
-        headerClass: 'ag-grids-custom-header',
-        headerName:"Value" ,
-        showDisabledCheckboxes: true,
-        filter: 'agTextColumnFilter',
-        floatingFilter: true,
-        width:250,
-      },
-      {
-        field: "regDate",
-        headerClass: 'ag-grids-custom-header',
-        headerName:"Registration Date"  ,
-        filter: "agTextColumnFilter",
-        filterParams: {
-          filterOptions: ["포함하는"],
-          maxNumConditions: 1,
-        },
-        floatingFilter: true,
-        width:250,
-        valueFormatter: function(params) {
-          if (params.value) {
-            const date = new Date(params.value);
-            return date.toLocaleString('ko-KR', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-            }).replace(/(\. )|(\.,)/g, ' ');
-          }
-          return null;
-        }
-      },
-      {
-        field: "regName",
-        headerClass: 'ag-grids-custom-header',
-        headerName:"Registration Name"  ,
-        filter: "agTextColumnFilter",
-        filterParams: {
-          filterOptions: ["포함하는"],
-          maxNumConditions: 1,
-        },
-        floatingFilter: true,
-        width:250,
-      },
+      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250, "value", "이름"),
+      CommonColumnDefinitions.getRegDateColumn() ,
+      CommonColumnDefinitions.getRegNameColumn() ,
     ]
-    this.items = [];
-
   }
 }

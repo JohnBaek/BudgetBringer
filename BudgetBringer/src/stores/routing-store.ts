@@ -25,10 +25,10 @@ export const RoutingStore = defineStore('routingStore', {
           new DrawerLink('예산진행현황', '예산 사용 진행 현황에 대해서 확인합니다.', '/budget/process', 'mdi-currency-usd', ['process-result','process-result-view'],false,[]),
           new DrawerLink('액션로그', '사용자 작업 로그에대해서 확인합니다.', '/logs/action', 'mdi-notebook-minus-outline', ['log-action','log-action-view'],false,[]),
           new DrawerLink('공통코드관리', '', '', 'mdi-code-tags', ['common-code'] , true,[
-            new DrawerLink('CostCenter', 'CostCenter 를 관리합니다.', '/common-code/cost-center', '', ['common-code'] , false,[]),
-            new DrawerLink('BusinessUnit', 'BusinessUnit 를 관리합니다.', '/common-code/business-unit', '', ['common-code'] , false,[]),
-            new DrawerLink('Sector', 'Sector 를 관리합니다.', '/common-code/sector', '', ['common-code'] , false,[]),
-            new DrawerLink('CBM', 'CountryBusinessManager 를 관리합니다.', '/common-code/country-business-manager', '', ['common-code'] , false,[]),
+            new DrawerLink('코스트센터', 'CostCenter 를 관리합니다.', '/common-code/cost-center', '', ['common-code'] , false,[]),
+            new DrawerLink('비지니스유닛', 'BusinessUnit 를 관리합니다.', '/common-code/business-unit', '', ['common-code'] , false,[]),
+            new DrawerLink('섹터', 'Sector 를 관리합니다.', '/common-code/sector', '', ['common-code'] , false,[]),
+            new DrawerLink('컨트리비지니스 매니저', 'CountryBusinessManager 를 관리합니다.', '/common-code/country-business-manager', '', ['common-code'] , false,[]),
           ]),
         ]
       }

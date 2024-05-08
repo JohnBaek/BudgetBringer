@@ -20,9 +20,9 @@ export class BudgetPlanGridData extends CommonGridModel{
       CommonColumnDefinitions.getBusinessUnit() ,
       CommonColumnDefinitions.getCountryBusinessManager() ,
       CommonColumnDefinitions.getCostCenter() ,
-      CommonColumnDefinitions.CreateColumnDefinitionForTextFilter(250, "ocProjectName", "Oc Project Name"),
-      CommonColumnDefinitions.CreateColumnDefinitionForTextFilter(250,"bossLineDescription", "BossLineDescription"),
-      CommonColumnDefinitions.CreateColumnDefinitionForNumberFilter(150, "budgetTotal", "FvBudget", this.numberValueFormatter),
+      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250, "ocProjectName", "Oc Project Name"),
+      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250,"bossLineDescription", "BossLineDescription"),
+      CommonColumnDefinitions.createColumnDefinitionForNumberFilter(150, "budgetTotal", "FvBudget", this.numberValueFormatter),
     ]
   }
 }
