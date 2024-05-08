@@ -24,6 +24,11 @@ public partial class DbModelBudgetPlan : DbModelDefault
     public Guid Id { get; set; }
     
     /// <summary>
+    /// Base Year for Statistics ex ) 2024 .. 2025
+    /// </summary>
+    public int BaseYearForStatistics { get; set; }
+    
+    /// <summary>
     /// Id of Group It could be null 
     /// </summary>
     public Guid? FileGroupId { get; set; }

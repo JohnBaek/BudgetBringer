@@ -16,6 +16,11 @@ public class ResponseBudgetPlan : ResponseCommonWriter
     /// 500K 이상 예산 여부
     /// </summary>
     public bool IsAbove500K { get; init; }
+    
+    /// <summary>
+    /// Base Year for Statistics ex ) 2024 .. 2025
+    /// </summary>
+    public int BaseYearForStatistics { get; set; }
 
     /// <summary>
     /// 기안일 ( 날짜가아닌 일반 스트링데이터도 포함 될 수 있다. )

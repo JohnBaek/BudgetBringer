@@ -87,9 +87,11 @@ public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelR
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<DbModelBudgetApproved>(entity =>{
             entity.ToTable("BudgetApproved");
+            entity.HasIndex(i => i.BaseYearForStatistics);
         });
         modelBuilder.Entity<DbModelBudgetPlan>(entity =>{
             entity.ToTable("BudgetPlans");
+            entity.HasIndex(i => i.BaseYearForStatistics);
         });
         modelBuilder.Entity<DbModelBusinessUnit>(entity =>{
             entity.ToTable("BusinessUnits");

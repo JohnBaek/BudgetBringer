@@ -94,6 +94,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
     {
         Id = item.Id,
         IsAbove500K = item.IsAbove500K,
+        BaseYearForStatistics = item.BaseYearForStatistics ,
         ApprovalDate = item.ApprovalDate ,
         Description = item.Description,
         SectorId = item.SectorId,
@@ -465,6 +466,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                         
             model.IsAbove500K = request.IsAbove500K;
             model.Description = request.Description;
+            model.BaseYearForStatistics = request.BaseYearForStatistics;
             model.SectorId = request.SectorId;
             model.BusinessUnitId = request.BusinessUnitId;
             model.CostCenterId = request.CostCenterId;

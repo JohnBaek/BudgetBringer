@@ -20,7 +20,12 @@ public class RequestBudgetApproved : RequestBase
     /// </summary>
     [Required(ErrorMessage = "기안일을 입력해주세요")]
     public string ApprovalDate { get; init; } = "";
-
+    
+    /// <summary>
+    /// Base Year for Statistics ex ) 2024 .. 2025
+    /// </summary>
+    [Range(typeof(int), "2013", "2050", ErrorMessage = "유효한 년도가 아닙니다.")]
+    public int BaseYearForStatistics { get; set; }
 
     /// <summary>
     /// 설명 

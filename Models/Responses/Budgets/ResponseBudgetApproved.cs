@@ -18,7 +18,12 @@ public class ResponseBudgetApproved : ResponseCommonWriter
     /// <summary>
     /// 승인일 ( 날짜가아닌 일반 스트링데이터도 포함 될 수 있다. )
     /// </summary>
-    public required string ApprovalDate { get; init; } 
+    public required string ApprovalDate { get; init; }
+    
+    /// <summary>
+    /// Base Year for Statistics ex ) 2024 .. 2025
+    /// </summary>
+    public int BaseYearForStatistics { get; set; }
 
     /// <summary>
     /// 승인일이 확인된경우 ( OC 승인 예정 등의 텍스트가 아니라 날짜 형태로 들어간 경우 ) 

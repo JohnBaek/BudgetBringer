@@ -21,6 +21,12 @@ public class RequestBudgetPlan : RequestBase
     public string ApprovalDate { get; init; } = "";
     
     /// <summary>
+    /// Base Year for Statistics ex ) 2024 .. 2025
+    /// </summary>
+    [Range(typeof(int), "2013", "2050", ErrorMessage = "유효한 년도가 아닙니다.")]
+    public int BaseYearForStatistics { get; set; }
+    
+    /// <summary>
     /// 통계에 포함시킬지 여부 ( false 일경우 통계에 잡히지 않음 )
     /// </summary>
     [Required(ErrorMessage = "통계 포함 여부를 입력해주세요")]

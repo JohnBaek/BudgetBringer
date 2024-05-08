@@ -32,6 +32,11 @@ public class DbModelBudgetApproved : DbModelDefault
     public string ApprovalDate { get; set; } = "";
     
     /// <summary>
+    /// Base Year for Statistics ex ) 2024 .. 2025
+    /// </summary>
+    public int BaseYearForStatistics { get; set; }
+    
+    /// <summary>
     /// 기안일 정상 포맷 (yyyy-MM-dd) 이라면 DateOnly 로 파싱된 값 
     /// </summary>
     public DateOnly? ApproveDateValue { get; set; } 

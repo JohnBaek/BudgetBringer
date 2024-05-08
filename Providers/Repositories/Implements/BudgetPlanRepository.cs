@@ -108,6 +108,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
         {
             Id = item.Id,
             IsAbove500K = item.IsAbove500K ,
+            BaseYearForStatistics = item.BaseYearForStatistics ,
             ApprovalDate = item.ApprovalDate ,
             ApproveDateValue = item.ApproveDateValue ,
             IsApprovalDateValid = item.IsApprovalDateValid ,
@@ -478,6 +479,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             
             model.IsAbove500K = request.IsAbove500K;
             model.ApprovalDate = request.ApprovalDate;
+            model.BaseYearForStatistics = request.BaseYearForStatistics;
             model.Description = request.Description;
             model.SectorId = request.SectorId;
             model.BusinessUnitId = request.BusinessUnitId;
@@ -720,7 +722,6 @@ public class BudgetPlanRepository : IBudgetPlanRepository
         }
         stringBuilder.AppendLine($"[승인정보 날짜 데이터 마이그레이션 종료]");
         #endregion
-        
         
         #region 승인정보 이름 데이터 마이그레이션
         // 명칭이 유효하지 않은 데이터 목록을 가져온다.
