@@ -23,5 +23,5 @@ echo "Removed the 'latest' tag from the image, backup retained as $backup_tag"
 docker build -t sgs/budget-bringer-api .
 
 # Step 6: 컨테이너를 올리기
-docker run --name budget-bringer-api -e TZ=Asia/Seoul --restart=unless-stopped --network=sgs-net --ip=172.28.0.11 -d sgs/budget-bringer-api:latest
+docker run --name budget-bringer-api -e TZ=Asia/Seoul -v /mnt/datadisk1/budget-files /data-files --restart=unless-stopped --network=sgs-net --ip=172.28.0.11 -d sgs/budget-bringer-api:latest
 echo "Container 'budget-bringer-api' is up and running."

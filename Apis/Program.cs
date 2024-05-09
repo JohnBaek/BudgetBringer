@@ -88,7 +88,7 @@ public static class Program
         // File RealPath
         string staticFileDirectory = app.Environment.IsDevelopment() ? 
             "/Users/john/Library/Caches/Budget/Persist" :
-            "/mnt/datadisk1/budget-files";
+            "/data-files";
         
         app.UseStaticFiles(new StaticFileOptions
         {
