@@ -96,7 +96,7 @@ public static class Program
         {
             FileProvider = new PhysicalFileProvider(staticFileDirectory),
             // URL root path , should configured in nginx
-            RequestPath = "/Files" 
+            RequestPath =  app.Environment.IsDevelopment() ? "/Files" : "/mnt/datadisk1/budget-files" 
         });
         
         app.UseAuthentication();
