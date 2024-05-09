@@ -86,17 +86,15 @@ public static class Program
         }
 
         // File RealPath
-        string staticFileDirectory = "/Users/john/Library/Caches/Budget/Persist";
-        
-        // Is not Development 
-        if (!app.Environment.IsDevelopment())
-            staticFileDirectory = "";
+        string staticFileDirectory = app.Environment.IsDevelopment() ? 
+            "/Users/john/Library/Caches/Budget/Persist" :
+            "/mnt/datadisk1/budget-files";
         
         app.UseStaticFiles(new StaticFileOptions
         {
             FileProvider = new PhysicalFileProvider(staticFileDirectory),
             // URL root path , should configured in nginx
-            RequestPath =  app.Environment.IsDevelopment() ? "/Files" : "/mnt/datadisk1/budget-files" 
+            RequestPath =  "/Files"  
         });
         
         app.UseAuthentication();
