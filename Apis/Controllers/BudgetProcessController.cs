@@ -103,16 +103,14 @@ public class BudgetProcessController : Controller
     [ClaimRequirement("Permission","process-result,process-result-view")]
     public async Task<IActionResult> ProcessOwnerExportExcel([FromQuery] RequestQuery requestQuery, [FromRoute] string year)
     {
-        DateTime today = DateTime.Now;
-        // string thisYear = today.ToString("yyyy");
-        // string beforeYear = today.AddYears(-1).ToString("yyyy");
-        string thisYearDate = today.ToString("yyyy-MM-dd");
+        string thisYearDate = DateTime.Now.ToString("yyyy-MM-dd");
         
         // Define request 
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessOwner.CountryBusinessManagerName) ,thisYearDate,true );
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetYear) ,$"BUDGET AMOUNT",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.ApprovedYear) ,$"APPROVED AMOUNT",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.RemainingYear) ,$"REMAINING YEAR",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetYear) ,$"{year}FY BUDGET AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.ApprovedYear) ,$"{year}FY APPROVED AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.RemainingYear) ,$"{year}FY REMAINING YEAR",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.Ratio) ,$"{year}FY RATIO(%)",true ,true);
 
         // Get data
         ResponseData<ResponseProcessOwnerSummary> response = await GetOwnerBudgetAsync(year);
@@ -136,7 +134,22 @@ public class BudgetProcessController : Controller
                 , workbook: workbook
                 , requestQuery: requestQuery
                 , items: item.Items
-            );    
+            );
+
+            var lastRow = workbook.Worksheets.Last().LastRowUsed().RowNumber();
+            for (int rowIndex = 1; rowIndex <= lastRow; rowIndex++)
+            {
+                // 숫자 형식 적용
+                workbook.Worksheets.Last().Cell(rowIndex, 5).Style.NumberFormat.Format = "0.000";
+
+                if (rowIndex == lastRow) 
+                {
+                    double budgetSum = double.Parse(workbook.Worksheets.Last().Cell(rowIndex, 2).Value.ToString());
+                    double remainingSum = double.Parse(workbook.Worksheets.Last().Cell(rowIndex, 4).Value.ToString());
+                    double ratio = remainingSum == 0 ? 0 : remainingSum / budgetSum; 
+                    workbook.Worksheets.Last().Cell(rowIndex, 5).Value = ratio;
+                }
+            }
         }
 
         // Create Stream for generate file
@@ -157,23 +170,20 @@ public class BudgetProcessController : Controller
     [ClaimRequirement("Permission","process-result,process-result-view")]
     public async Task<IActionResult> BusinessUnitExportExcel([FromQuery] RequestQuery requestQuery, [FromRoute] string year)
     {
-        DateTime today = DateTime.Now;
-        // string thisYear = today.ToString("yyyy");
-        // string beforeYear = today.AddYears(-1).ToString("yyyy");
-        string thisYearDate = today.ToString("yyyy-MM-dd");
+        string thisYearDate = DateTime.Now.ToString("yyyy-MM-dd");
         
         // Define request 
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BusinessUnitName) ,thisYearDate,true );
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetYear) ,$"BUDGET AMOUNT",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.ApprovedYear) ,$"APPROVED AMOUNT",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.RemainingYear) ,$"REMAINING YEAR",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.Ratio) ,$"Ratio(%)",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetYear) ,$"{year}FY BUDGET AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.ApprovedYear) ,$"{year}FY APPROVED AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.RemainingYear) ,$"{year}FY REMAINING YEAR",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.Ratio) ,$"{year}FY Ratio(%)",true ,true);
         // requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetApprovedYearSum) ,$"{thisYear}&{beforeYear}FY\nAPPROVED AMOUNT",true ,true);
         // requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetRemainingYear) ,"REMAINING YEAR",true ,true);
 
         // Get data
         ResponseData<ResponseProcessBusinessUnitSummary> response = await GetBusinessUnitBudgetAsync(year);
-
+        
         // Response is failed
         if (response.Error)
             return StatusCode(StatusCodes.Status500InternalServerError, new Response(EnumResponseResult.Error,"","처리중 예외가 발생했습니다."));
@@ -193,9 +203,24 @@ public class BudgetProcessController : Controller
                 , workbook: workbook
                 , requestQuery: requestQuery
                 , items: item.Items
-            );    
-        }
+            );
+            
+            var lastRow = workbook.Worksheets.Last().LastRowUsed().RowNumber();
+            for (int rowIndex = 1; rowIndex <= lastRow; rowIndex++)
+            {
+                // 숫자 형식 적용
+                workbook.Worksheets.Last().Cell(rowIndex, 5).Style.NumberFormat.Format = "0.000";
 
+                if (rowIndex == lastRow) 
+                {
+                    double budgetSum = double.Parse(workbook.Worksheets.Last().Cell(rowIndex, 2).Value.ToString());
+                    double remainingSum = double.Parse(workbook.Worksheets.Last().Cell(rowIndex, 4).Value.ToString());
+                    double ratio = remainingSum == 0 ? 0 : remainingSum / budgetSum; 
+                    workbook.Worksheets.Last().Cell(rowIndex, 5).Value = ratio;
+                }
+            }
+        }
+        
         // Create Stream for generate file
         MemoryStream stream = new MemoryStream();
         

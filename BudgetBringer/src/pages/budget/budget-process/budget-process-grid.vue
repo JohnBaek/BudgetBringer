@@ -121,7 +121,7 @@ const exportPDF =  () => {
       // Recover Previous Grid Detail
       showGridDetail.value = storeState;
       applyGridStyle();
-    }, 1000);
+    }, 2000);
   }catch (e) {
     console.error(e);
     communicationService.offTransmission();

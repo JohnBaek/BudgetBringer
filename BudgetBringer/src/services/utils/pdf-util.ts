@@ -17,7 +17,9 @@ export const exportPdfFile = async (domTarget: string, title: string) => {
     const canvas = await html2canvas(element, {
       onclone: function (clonedDoc) {
         clonedDoc.getElementById('capture-area').style.padding = '20px';
-      }
+      },
+      logging: true,
+      useCORS: true
     });
 
     // Get width and Height from canvas

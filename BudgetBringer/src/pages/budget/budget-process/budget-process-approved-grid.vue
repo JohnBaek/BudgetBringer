@@ -11,8 +11,8 @@ import {CommonGridButtonGroupDefinesButtonEmits} from "../../../shared/grids/com
 import {getDateFormatForFile} from "../../../services/utils/date-util";
 import CommonGridButtonGroup from "../../../shared/grids/common-grid-button-group.vue";
 import {AgChartsVue} from 'ag-charts-vue3';
-import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
+import {exportPdfFile} from "../../../services/utils/pdf-util";
 
 /**
  * From the parent.
@@ -258,43 +258,30 @@ const toChart = () =>{
   }
   console.log('options',options);
 }
-const exportPdf = async () => {
+/**
+ * Export PDF FILE
+ */
+const exportPDF =  () => {
   communicationService.inTransmission();
-  const storeState = showGridDetail.value;
-  showGridDetail.value = true;
-  gridDetailStyle();
+  try {
+    // Store Previous Style
+    const storeState = showGridDetail.value;
+    showGridDetail.value = true;
+    applyGridStyle();
 
-  setTimeout(async () => {
-    // Get Native Html elements
-    const element = document.getElementById('capture-area') as HTMLElement;
+    setTimeout(async () => {
+      // Export PDF
+      await exportPdfFile("capture-area", props.excelTitle);
+      communicationService.offTransmission();
 
-    // Transform to canvas
-    const canvas = await html2canvas(element, {
-      onclone: function (clonedDoc) {
-        clonedDoc.getElementById('capture-area').style.padding = '20px';
-      }
-    });
-
-    const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
-
-    // PDF 문서의 크기를 캔버스 크기에 맞춤
-    const pdfWidth = canvas.width;
-    const pdfHeight = canvas.height;
-
-    // PDF 문서 생성 (단위를 'px'로 설정하여 픽셀 기반의 정확한 크기 조절 가능)
-    const pdf = new jsPDF({
-      orientation: 'p',
-      unit: 'px',
-      format: [pdfWidth, pdfHeight]
-    });
-
-    // 이미지를 PDF에 추가
-    pdf.addImage(image, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`${getDateFormatForFile()}_${props.excelTitle}.pdf`);
+      // Recover Previous Grid Detail
+      showGridDetail.value = storeState;
+      applyGridStyle();
+    }, 2000);
+  }catch (e) {
+    console.error(e);
     communicationService.offTransmission();
-    showGridDetail.value = storeState;
-    gridDetailStyle();
-  },100);
+  }
 }
 /**
  * Change to Grid
@@ -321,9 +308,9 @@ const gridStyle = ref('width: 100%; height: 90px;');
 const showGridDetail = ref(false);
 const toggleDetail = () => {
   showGridDetail.value = !showGridDetail.value
-  gridDetailStyle();
+  applyGridStyle();
 };
-const gridDetailStyle = () => {
+const applyGridStyle = () => {
   if(showGridDetail.value)
     gridStyle.value = 'width: 100%; height: 600px;';
   else
@@ -342,7 +329,7 @@ const gridDetailStyle = () => {
           :showButtons="['refresh', 'excel' , 'pdf', 'chart']"
           @on-refresh="refresh()"
           @on-export-excel="exportExcel()"
-          @exportPdf="exportPdf()"
+          @exportPdf="exportPDF()"
           @chart="toChart()"
           @grid="toGrid()"
           @print="print()"
