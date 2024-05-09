@@ -79,6 +79,7 @@ public static class Program
         // 그 외 환경
         else
         {
+            app.UseSwagger();
             // 예외시 라우팅 추가 
             app.UseExceptionHandler("/Error");
             app.UseForwardedHeaders();
@@ -88,13 +89,13 @@ public static class Program
         // File RealPath
         string staticFileDirectory = app.Environment.IsDevelopment() ? 
             "/Users/john/Library/Caches/Budget/Persist" :
-            "/data-files";
+            "/budget-files/file-persist";
         
         app.UseStaticFiles(new StaticFileOptions
         {
             FileProvider = new PhysicalFileProvider(staticFileDirectory),
             // URL root path , should configured in nginx
-            RequestPath =  "/Files"  
+            RequestPath =  "/files"  
         });
         
         app.UseAuthentication();
