@@ -29,7 +29,7 @@ export class BudgetProcessGridPLOwner extends CommonGridModel {
       CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "countryBusinessManagerName", date , null,false, false) ,
       CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "budgetYear", `${year.toString()}FY BudgetYear`, this.numberValueFormatter,false) ,
       CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "approvedYear", `${year.toString()}FY Approved Amount`, this.numberValueFormatter,false) ,
-      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "remainingYear", `${year.toString()}FY Approved Amount`, this.numberValueFormatter,false) ,
+      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "remainingYear", `${year.toString()}FY Remaining Amount`, this.numberValueFormatter,false) ,
       CommonColumnDefinitions.createColumnDefinitionForNumberFilter(250 , "ratio", `${year.toString()}FY Ratio(%)`, null ,false, function(params) {
         return params.value.toFixed(3);
       }) ,

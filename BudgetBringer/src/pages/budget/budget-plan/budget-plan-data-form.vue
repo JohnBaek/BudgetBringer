@@ -110,7 +110,7 @@ const years = ref(getYearList(true));
 <template>
   <v-row>
     <v-col cols="12" md="6">
-      <v-select v-model="model.baseYearForStatistics" :items="years" label="통계기준 년도" outlined></v-select>
+      <v-select v-model="model.baseYearForStatistics" :items="years" label="통계기준 년도" outlined variant="outlined" density="compact"></v-select>
     </v-col>
     <v-col cols="12" md="6">
       <v-switch v-model="model.isIncludeInStatistics" color="primary" required :label="model.isIncludeInStatistics ? '통계에 포함': '통계에 미포함'"></v-switch>

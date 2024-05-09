@@ -123,7 +123,7 @@ const years = ref(getYearList(true));
 <template>
   <v-row>
     <v-col cols="12" md="6">
-      <v-select v-model="model.baseYearForStatistics" :items="years" label="통계기준 년도" outlined></v-select>
+      <v-select v-model="model.baseYearForStatistics" :items="years" label="통계기준 년도" outlined variant="outlined" density="compact"></v-select>
     </v-col>
     <v-col cols="12" md="6">
       <common-select required label="Country Businesses Manager" v-model="model.countryBusinessManagerId" @onChange="onChangeCountryBusinessManager" @onDataUpdated="onCountryBusinessManagerUpdated" title="name" value="id" requestApiUri="/api/v1/CountryBusinessManager" />

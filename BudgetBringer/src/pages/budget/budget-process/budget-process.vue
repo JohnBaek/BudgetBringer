@@ -92,6 +92,7 @@ import BudgetProcessGridPlOwner from "./budget-process-owner/budget-process-grid
 import BudgetProcessGridBu from "./budget-process-business-unit/budget-process-grid-bu.vue";
 import BudgetProcessGridApprovedBelow from "./budget-process-approved/budget-process-grid-approved-below.vue";
 import BudgetProcessGridApprovedAbove from "./budget-process-approved/budget-process-grid-approved-above.vue";
+import {getYearList} from "../../../services/utils/date-util";
 
 const route = useRoute();
 const router = useRouter();
@@ -149,23 +150,5 @@ const fullDate = getFullDate();
  * 년도
  */
 const year = getYear();
-/**
- * Generate Year List
- * @param currentYear
- * @returns {[]}
- */
-const createYearList = (currentYear) => {
-  const startYear = currentYear - 5; // 7년 전
-  const endYear = currentYear + 2;
-  let yearList = [];
-
-  for (let year = startYear; year <= endYear; year++) {
-    yearList.push(year.toString());
-  }
-
-  yearList.push('전체년도');
-
-  return yearList.reverse();
-}
-const yearList = createYearList(parseInt(year));
+const yearList = getYearList(true);
 </script>

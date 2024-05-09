@@ -10,7 +10,6 @@ import {messageService} from "../message-service";
  */
 export const exportPdfFile = async (domTarget: string, title: string) => {
   try {
-
     // Get Native Html elements
     const element = document.getElementById(domTarget) as HTMLElement;
 
