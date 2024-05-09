@@ -664,11 +664,12 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                 .SelectMany(
                     x => x.Budgets.DefaultIfEmpty(),
                     (x, budget) => new { x.Manager, Budget = budget })
-                .GroupBy(x => new { x.Manager.Id, x.Manager.Name })
+                .GroupBy(x => new { x.Manager.Id, x.Manager.Name, x.Manager.Sequence })
                 .Select(g => new
                 {
                     ManagerId = g.Key.Id,
                     ManagerName = g.Key.Name,
+                    ManagerSequence = g.Key.Sequence ,
                     BudgetYear = g.Sum(x => x.Budget != null ? x.Budget.BudgetTotal : 0)
                 });
 
@@ -698,8 +699,11 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                     CountryBusinessManagerName = budget.ManagerName,
                     BudgetYear = budget.BudgetYear,
                     ApprovedYear = approval.ApprovedYear,
-                    RemainingYear = budget.BudgetYear - approval.ApprovedYear
-                }).ToListAsync();
+                    ManagerSequence = budget.ManagerSequence ,
+                    RemainingYear = budget.BudgetYear - approval.ApprovedYear ,
+                })
+                .OrderBy(i => i.ManagerSequence)
+                .ToListAsync();
 
             result.AddRange(managerData);
         }

@@ -184,7 +184,7 @@ const calculateSums = () => {
   }
 
   if(sums['budgetYear'] && sums['remainingYear'])
-    sums['ratio'] = (sums['remainingYear'] / sums['budgetYear']);
+    sums['ratio'] = (sums['remainingYear'] / sums['budgetYear']) * 100;
 
   gridApi.value.setGridOption('pinnedTopRowData', [sums])
 }

@@ -40,7 +40,7 @@ public class ResponseProcessBusinessUnit
             if (RemainingYear == 0 || ApprovedYear == 0)
                 return 0.0;
             
-            return RemainingYear / ApprovedYear;
+            return RemainingYear / ApprovedYear * 100;
         }
     }
     

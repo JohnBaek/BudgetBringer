@@ -308,7 +308,7 @@ const gridStyle = ref('width: 100%; height: 90px;');
 const showGridDetail = ref(false);
 const toggleDetail = () => {
   showGridDetail.value = !showGridDetail.value
-  applyGridStyle();
+  applyGridStyle();f
 };
 const applyGridStyle = () => {
   if(showGridDetail.value)

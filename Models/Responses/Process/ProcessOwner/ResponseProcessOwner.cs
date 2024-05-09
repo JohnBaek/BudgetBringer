@@ -40,6 +40,11 @@ public class ResponseProcessOwner
     /// 올해 남은 예산 ( BudgetYear - BudgetApprovedYearSum ) 2024 년 남은 Budget [올해 Budget] - [승인된 작년 + 이번년도 전체 예산]
     /// </summary>
     public double RemainingYear { get; set; }
+    
+    /// <summary>
+    /// Sequence 
+    /// </summary>
+    public int ManagerSequence { get; set; } = 0;
 
     /// <summary>
     /// RemainingYear divide ApprovedYear
@@ -51,7 +56,7 @@ public class ResponseProcessOwner
             if (RemainingYear == 0 || ApprovedYear == 0)
                 return 0.0;
             
-            return RemainingYear / ApprovedYear;
+            return RemainingYear / ApprovedYear * 100;
         }
     }
 }

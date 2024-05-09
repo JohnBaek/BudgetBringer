@@ -258,7 +258,7 @@ const updateDialog = ref(false);
 </script>
 
 <template>
-  <common-grid :is-use-insert="gridModel.isUseInsert"
+  <common-grid
                :input-colum-defined="gridModel.columDefined"
                :query-request="requestQuery"
                :grid-title="((props.isAbove500k as String).toLowerCase() == 'true') ? '예산계획_Above_500K_Budget' : '예산계획_Below_500K_Budget'"

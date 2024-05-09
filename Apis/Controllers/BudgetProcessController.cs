@@ -140,13 +140,13 @@ public class BudgetProcessController : Controller
             for (int rowIndex = 1; rowIndex <= lastRow; rowIndex++)
             {
                 // 숫자 형식 적용
-                workbook.Worksheets.Last().Cell(rowIndex, 5).Style.NumberFormat.Format = "0.000";
+                workbook.Worksheets.Last().Cell(rowIndex, 5).Style.NumberFormat.Format = "0.00";
 
                 if (rowIndex == lastRow) 
                 {
                     double budgetSum = double.Parse(workbook.Worksheets.Last().Cell(rowIndex, 2).Value.ToString());
                     double remainingSum = double.Parse(workbook.Worksheets.Last().Cell(rowIndex, 4).Value.ToString());
-                    double ratio = remainingSum == 0 ? 0 : remainingSum / budgetSum; 
+                    double ratio = remainingSum == 0 ? 0 : (remainingSum / budgetSum) * 100; 
                     workbook.Worksheets.Last().Cell(rowIndex, 5).Value = ratio;
                 }
             }
@@ -209,13 +209,13 @@ public class BudgetProcessController : Controller
             for (int rowIndex = 1; rowIndex <= lastRow; rowIndex++)
             {
                 // 숫자 형식 적용
-                workbook.Worksheets.Last().Cell(rowIndex, 5).Style.NumberFormat.Format = "0.000";
+                workbook.Worksheets.Last().Cell(rowIndex, 5).Style.NumberFormat.Format = "0.00";
 
                 if (rowIndex == lastRow) 
                 {
                     double budgetSum = double.Parse(workbook.Worksheets.Last().Cell(rowIndex, 2).Value.ToString());
                     double remainingSum = double.Parse(workbook.Worksheets.Last().Cell(rowIndex, 4).Value.ToString());
-                    double ratio = remainingSum == 0 ? 0 : remainingSum / budgetSum; 
+                    double ratio = remainingSum == 0 ? 0 : (remainingSum / budgetSum) * 100; 
                     workbook.Worksheets.Last().Cell(rowIndex, 5).Value = ratio;
                 }
             }
