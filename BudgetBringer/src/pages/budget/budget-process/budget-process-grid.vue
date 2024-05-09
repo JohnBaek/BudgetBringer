@@ -7,13 +7,11 @@ import {HttpService} from "../../../services/api-services/http-service";
 import {ResponseData} from "../../../models/responses/response-data";
 import {messageService} from "../../../services/message-service";
 import {AgGridVue} from "ag-grid-vue3";
-import { AgChartsVue } from 'ag-charts-vue3';
+import {AgChartsVue} from 'ag-charts-vue3';
 import CommonGridButtonGroup from "../../../shared/grids/common-grid-button-group.vue";
 import {CommonGridButtonGroupDefinesButtonEmits} from "../../../shared/grids/common-grid-button-group-defines";
 import {getDateFormatForFile} from "../../../services/utils/date-util";
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
-
+import {exportPdfFile} from "../../../services/utils/pdf-util";
 
 /**
  * From the parent.
@@ -28,16 +26,10 @@ interface Props {
   yearList : {Type: []}
   year: string
 }
-
-
 const props = defineProps<Props>();
 const year = ref(props.year);
 const gridModel = ref(props.gridModel);
-
-console.log('gridModel', gridModel.value);
-
 let requestQuery = props.gridModel.requestQuery;
-
 /**
  * Current selected rows list.
  */
@@ -77,7 +69,7 @@ const refresh = () => {
 const exportExcel = () => {
   communicationService.inTransmission();
 
-  const yearValue = (year.value == '전체년도') ? 'all' : year.value;
+  const yearValue = year.value;
 
   // Request to Server
   HttpService.requestGetFile(`${props.gridModel.requestQuery.apiUri}/export/excel/${yearValue}` , requestQuery).subscribe({
@@ -110,43 +102,30 @@ const exportExcel = () => {
     },
   });
 }
-const exportPdf =  () => {
+/**
+ * Export PDF FILE
+ */
+const exportPDF =  () => {
   communicationService.inTransmission();
-  const storeState = showGridDetail.value;
-  showGridDetail.value = true;
-  gridDetailStyle();
+  try {
+    // Store Previous Style
+    const storeState = showGridDetail.value;
+    showGridDetail.value = true;
+    applyGridStyle();
 
-  setTimeout(async () => {
-    // Get Native Html elements
-    const element = document.getElementById('capture-area') as HTMLElement;
+    setTimeout(async () => {
+      // Export PDF
+      await exportPdfFile("capture-area", props.excelTitle);
+      communicationService.offTransmission();
 
-    // Transform to canvas
-    const canvas = await html2canvas(element, {
-      onclone: function (clonedDoc) {
-        clonedDoc.getElementById('capture-area').style.padding = '20px';
-      }
-    });
-
-    const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
-
-    // PDF 문서의 크기를 캔버스 크기에 맞춤
-    const pdfWidth = canvas.width;
-    const pdfHeight = canvas.height;
-
-    // PDF 문서 생성 (단위를 'px'로 설정하여 픽셀 기반의 정확한 크기 조절 가능)
-    const pdf = new jsPDF({
-      orientation: 'p',
-      unit: 'px',
-      format: [pdfWidth, pdfHeight]
-    });
-
-    // 이미지를 PDF에 추가
-    pdf.addImage(image, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`${getDateFormatForFile()}_${props.excelTitle}.pdf`);
+      // Recover Previous Grid Detail
+      showGridDetail.value = storeState;
+      applyGridStyle();
+    }, 1000);
+  }catch (e) {
+    console.error(e);
     communicationService.offTransmission();
-    showGridDetail.value = storeState;
-    gridDetailStyle();
-  },100);
+  }
 }
 
 /**
@@ -213,28 +192,24 @@ const calculateSums = () => {
  * 데이터를 로드한다.
  */
 const loadData = () => {
-  console.log(year.value);
-
   let params = {
     year: year.value ,
   };
 
-  if(year.value == '전체년도') {
-    params.year = 'all';
+  // When Year Conditions changes , Change Year Header Name
+  for(let item of gridModel.value.columDefined) {
+    // Is Invalid
+    if(!item.headerName || ( item.headerName.indexOf('FY') === -1) )
+      continue;
+
+    // Get Header Name
+    const headerName = item.headerName.split('FY')[1];
+
+    // Change Year Name of Header
+    item.headerName = `${year.value}FY${headerName}`
   }
 
-  gridModel.value.columDefined.forEach(i => {
-    if(i.headerName) {
-      if(i.headerName.indexOf('FY') > -1) {
-        i.headerName = `${year.value}FY`
-      }
-
-      if(i.headerName.indexOf('FY') > -1 && year.value == 'all') {
-        i.headerName = `전체 FY`
-      }
-    }
-  });
-
+  // Clear Items
   items.value = [];
 
   communicationService.notifyInCommunication();
@@ -247,7 +222,6 @@ const loadData = () => {
         messageService.showError(`[${response.code}] ${response.message}`);
         return;
       }
-
       // Update list
       items.value = response.data.items.slice();
       // Compute sums
@@ -322,17 +296,17 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
 });
 
 const showGrid = ref(true);
-const gridStyle = ref('width: 100%; height: 137px;');
+const gridStyle = ref('width: 100%; height: 90px;');
 const showGridDetail = ref(false);
 const toggleDetail = () => {
   showGridDetail.value = !showGridDetail.value
-  gridDetailStyle();
+  applyGridStyle();
 };
-const gridDetailStyle = () => {
+const applyGridStyle = () => {
   if(showGridDetail.value)
     gridStyle.value = 'width: 100%; height: 600px;';
   else
-    gridStyle.value = 'width: 100%; height: 137px;';
+    gridStyle.value = 'width: 100%; height: 90px;';
 }
 
 </script>
@@ -347,7 +321,7 @@ const gridDetailStyle = () => {
           :showButtons="['refresh', 'excel' , 'pdf', 'chart']"
           @on-refresh="refresh()"
           @on-export-excel="exportExcel()"
-          @exportPdf="exportPdf()"
+          @exportPdf="exportPDF()"
           @chart="toChart()"
           @grid="toGrid()"
         />

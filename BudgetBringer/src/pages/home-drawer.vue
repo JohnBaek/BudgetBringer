@@ -2,7 +2,7 @@
 import CommonLogo from "../shared/common-logo.vue";
 import {inject, onBeforeMount, Ref, ref} from "vue";
 import {DrawerLink} from "./models-view/drawer-link";
-import {RoutingStore} from "../stores/routing-store";
+import {RoutingStore} from "../services/stores/routing-store";
 import LoginDialogConfirmLogout from "./login/login-dialog-confirm-logout.vue";
 import {AuthenticationStore} from "../services/stores/authentication-store";
 import {ResponseUser} from "../models/responses/users/response-user";

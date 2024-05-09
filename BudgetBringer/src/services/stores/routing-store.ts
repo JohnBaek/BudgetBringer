@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {DrawerLink} from "../pages/models-view/drawer-link";
+import {DrawerLink} from "../../pages/models-view/drawer-link";
 import {toRaw} from "vue";
 
 interface RoutingState {

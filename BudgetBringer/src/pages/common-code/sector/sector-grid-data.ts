@@ -1,5 +1,5 @@
 import {CommonGridModel} from "../../../shared/grids/common-grid-model";
-import {CommonColumnDefinitions} from "../../../services/utils/common-grid-column-definitions";
+import {CommonColumnDefinitions} from "../../../shared/grids/common-grid-column-definitions";
 
 /**
  * Sector Grid Model

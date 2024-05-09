@@ -226,19 +226,22 @@ export namespace CommonColumnDefinitions {
    * @param field
    * @param headerName
    * @param valueFormatter
-   * @constructor
+   * @param isUseInChart
+   * @param cellRenderer
    */
-  export const createColumnDefinitionForNumberFilter = (width: number , field: string , headerName: string, valueFormatter?: {}  ) => {
+  export const createColumnDefinitionForNumberFilter = (width: number , field: string , headerName: string, valueFormatter?: {}  , isUseInChart: boolean = true, cellRenderer:any = null) => {
     return {
       field: field,
       headerClass: 'ag-grids-custom-header',
       headerName: headerName  ,
       valueFormatter: valueFormatter,
       width: width,
+      isUseInChart: isUseInChart ,
+      cellRenderer: cellRenderer
     }
   }
 
-  export const createColumnDefinitionForTextFilter = (width: number , field: string , headerName: string, valueFormatter?: {}  ) => {
+  export const createColumnDefinitionForTextFilter = (width: number , field: string , headerName: string, valueFormatter?: {} , isFloatingFilter: boolean = true, isUseInChart: boolean = true) => {
     return {
       field: field,
       headerClass: 'ag-grids-custom-header',
@@ -246,7 +249,8 @@ export namespace CommonColumnDefinitions {
       headerName: headerName  ,
       valueFormatter: valueFormatter,
       width: width,
-      floatingFilter: true,
+      floatingFilter: isFloatingFilter,
+      isUseInChart: isUseInChart ,
     }
   }
 }

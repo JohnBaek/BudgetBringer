@@ -6,7 +6,7 @@
 
 // Plugins
 import vuetify from './vuetify'
-import pinia from '../stores'
+import pinia from '../services/stores'
 import router from '../router'
 
 // Types

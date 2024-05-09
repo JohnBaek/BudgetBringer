@@ -1,4 +1,9 @@
 import {RequestQuery} from "../../models/requests/query/request-query";
+import {toClone} from "../../services/utils/object-util";
+import CommonGridSkeletonRenderer from "./common-grid-skeleton-renderer.vue";
+import {CommonChartDefinitions} from "./common-grid-chart-definitions";
+
+export type chartType = 'bar';
 
 /**
  * CommonGrid Model
@@ -10,7 +15,7 @@ export abstract class CommonGridModel {
   public columDefined : any [];
   public columDefinedSkeleton : any [];
   /**
-   *
+   * ag-chart Column Definitions
    */
   public chartDefined: any [];
   /**
@@ -29,5 +34,30 @@ export abstract class CommonGridModel {
 
     // 그 외
     return 0;
+  }
+  /**
+   * Set Skeleton object from Column definitions
+   */
+  setSkeleton = () => {
+    this.columDefinedSkeleton = toClone(this.columDefined);
+    this.columDefinedSkeleton.forEach(item => {
+      item.cellRenderer = CommonGridSkeletonRenderer
+    });
+  }
+  /**
+   * Set chart definition by Column Definitions
+   * @param chartType chart Types
+   * @param chartXKey X axis Key
+   */
+  setChart = (chartType: chartType , chartXKey: string) => {
+    // Clear chart
+    this.chartDefined = [];
+    // Process all columns only flag isUseInChart is true
+    this.columDefined.filter(i => i.isUseInChart).forEach(item => {
+      // Add chart
+      this.chartDefined.push(
+        CommonChartDefinitions.createChartLegend(chartType, chartXKey, item.field, item.headerName)
+      );
+    });
   }
 }

@@ -1,15 +1,11 @@
 import {CommonGridModel} from "../../../../shared/grids/common-grid-model";
 import {RequestQuery} from "../../../../models/requests/query/request-query";
-import CommonGridSkeletonRenderer from "../../../../shared/grids/common-grid-skeleton-renderer.vue";
+import {CommonColumnDefinitions} from "../../../../shared/grids/common-grid-column-definitions";
 
 /**
- * 진생상황 BudgetProcessGridBusinessUnit 그리드 모델
+ * Business Unit Grid Model
  */
 export class BudgetProcessGridBusinessUnit extends CommonGridModel{
-  /**
-   * 컬럼정보
-   */
-  columDefined : any [];
   /**
    * Date
    */
@@ -30,74 +26,15 @@ export class BudgetProcessGridBusinessUnit extends CommonGridModel{
     this.year = year;
     this.requestQuery = requestQuery;
     this.columDefined = [
-      // 비지니스유닛 명
-      {
-        field: "businessUnitName",
-        headerName: date,
-        headerClass: 'ag-grids-custom-header',
-      },
-      {
-        headerName:`${year.toString()}FY` ,
-        headerClass: 'ag-grids-custom-header',
-        children: [
-          {
-            headerName:'Budget Amount ' ,
-            field: "budgetYear",
-            headerClass: 'ag-grids-custom-header',
-            valueFormatter: this.numberValueFormatter,
-          }
-        ]
-      },
-      // 승인 예산
-      {
-        // headerName:`${year.toString()}&${(year-1).toString()} FY` ,
-        headerName:`${year.toString()}FY` ,
-        headerClass: 'ag-grids-custom-header',
-        children: [
-          {
-            field: "approvedYear",
-            headerClass: 'ag-grids-custom-header',
-            headerName:'Approved Amount ' ,
-            valueFormatter: this.numberValueFormatter,
-          }
-        ]
-      },
-      // 남은 예산
-      {
-        headerName:`${year.toString()}FY` ,
-        headerClass: 'ag-grids-custom-header',
-        children: [
-          {
-            field: "remainingYear",
-            headerClass: 'ag-grids-custom-header',
-            headerName:'Remaining Amount',
-            valueFormatter: this.numberValueFormatter,
-          }
-        ]
-      },
-      {
-        headerName:`${year.toString()}FY` ,
-        headerClass: 'ag-grids-custom-header',
-        children: [
-          {
-            field: "ratio",
-            headerClass: 'ag-grids-custom-header',
-            headerName:'Ratio(%)' ,
-            valueFormatter: this.numberValueFormatter,
-            cellRenderer: function(params) {
-              return params.value.toFixed(3);
-            }
-          }
-        ]
-      },
+      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "businessUnitName", date , null,false, false) ,
+      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "budgetYear", `${year.toString()}FY BudgetYear`, this.numberValueFormatter,false) ,
+      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "approvedYear", `${year.toString()}FY Approved Amount`, this.numberValueFormatter,false) ,
+      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "remainingYear", `${year.toString()}FY Approved Amount`, this.numberValueFormatter,false) ,
+      CommonColumnDefinitions.createColumnDefinitionForNumberFilter(250 , "ratio", `${year.toString()}FY Ratio(%)`, null ,false, function(params) {
+        return params.value.toFixed(3);
+      }) ,
     ];
-    this.columDefinedSkeleton = JSON.parse(JSON.stringify(this.columDefined));
-    this.columDefinedSkeleton.forEach(item => {
-      item.cellRenderer = CommonGridSkeletonRenderer;
-      item.children?.forEach(child => {
-        child.cellRenderer = CommonGridSkeletonRenderer;
-      })
-    });
+    this.setSkeleton();
     this.chartDefined = [
       {   type: 'bar'
         , xKey: 'businessUnitName'

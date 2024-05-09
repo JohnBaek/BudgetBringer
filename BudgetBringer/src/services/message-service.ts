@@ -1,5 +1,4 @@
 import {Ref, ref} from "vue";
-import {EnumResponseResult} from "../models/enums/enum-response-result";
 import {MessageInformation} from "./message-service-model";
 
 /**

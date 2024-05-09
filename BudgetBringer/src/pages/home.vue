@@ -4,7 +4,7 @@ import {DrawerLink} from "./models-view/drawer-link";
 import router from "../router";
 import {onBeforeMount, onMounted, provide, ref} from "vue";
 import {useRoute} from "vue-router";
-import {RoutingStore} from "../stores/routing-store";
+import {RoutingStore} from "../services/stores/routing-store";
 
 
 /**
