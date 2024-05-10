@@ -1,5 +1,6 @@
 #!/bin/bash
 cp ./BudgetBringer/Dockerfile ./
+cp ./BudgetBringer/default.conf ./
 
 # Step 1: 실행 중인 "sgs/budget-bringer-ui" 컨테이너를 찾아 정지하고 삭제
 container_id=$(docker ps -q -f name=budget-bringer-ui)
