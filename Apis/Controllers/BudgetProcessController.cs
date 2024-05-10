@@ -34,6 +34,11 @@ public class BudgetProcessController : Controller
     private readonly IExcelService _excelService;
 
     /// <summary>
+    /// Year of Current
+    /// </summary>
+    private readonly string _yearCurrent = DateTime.Now.ToString("yyyy");
+
+    /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="businessUnitService"></param>
@@ -53,6 +58,9 @@ public class BudgetProcessController : Controller
     [ClaimRequirement("Permission","process-result,process-result-view")]
     public async Task<ResponseData<ResponseProcessOwnerSummary>> GetOwnerBudgetAsync(string year = "")
     {
+        if (year.IsEmpty())
+            year = _yearCurrent;
+        
         return await _budgetProcessService.GetOwnerBudgetSummaryAsync(year);
     }
     
@@ -66,7 +74,7 @@ public class BudgetProcessController : Controller
     public async Task<ResponseData<ResponseProcessBusinessUnitSummary>> GetBusinessUnitBudgetAsync(string year = "")
     {
         if (year.IsEmpty())
-            year = DateTime.Now.ToString("yyyy");
+            year = _yearCurrent;
         
         return await _budgetProcessService.GetBusinessUnitBudgetSummaryAsync(year);
     }
@@ -75,23 +83,31 @@ public class BudgetProcessController : Controller
     /// <summary>
     /// Get Approved Analysis for Below 
     /// </summary>
+    /// <param name="year">년도 정보</param>
     /// <returns></returns>
     [HttpGet("Approved/Below")]
     [ClaimRequirement("Permission","process-result,process-result-view")]
-    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedBelowAmountSummaryAsync()
+    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedBelowAmountSummaryAsync(string year = "")
     {
-        return await _budgetProcessService.GetApprovedBelowAmountSummaryAsync();
+        if (year.IsEmpty())
+            year = _yearCurrent;
+        
+        return await _budgetProcessService.GetApprovedBelowAmountSummaryAsync(year);
     }
     
     /// <summary>
     /// Get Approved Analysis for Above 
     /// </summary>
+    /// <param name="year">년도 정보</param>
     /// <returns></returns>
     [HttpGet("Approved/Above")]
     [ClaimRequirement("Permission","process-result,process-result-view")]
-    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAboveAmountSummaryAsync()
+    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAboveAmountSummaryAsync(string year = "")
     {
-        return await _budgetProcessService.GetApprovedAboveAmountSummaryAsync();
+        if (year.IsEmpty())
+            year = _yearCurrent;
+        
+        return await _budgetProcessService.GetApprovedAboveAmountSummaryAsync(year);
     }
     
     

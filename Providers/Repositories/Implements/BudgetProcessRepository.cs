@@ -284,7 +284,28 @@ public class BudgetProcessRepository : IBudgetProcessRepository
     /// ! If an authenticated user has only 'process-result-view' permissions, they can only view results they own.
     /// </summary>
     /// <returns></returns>
-    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedBelowAmountSummaryAsync()
+    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetComputeStateOfPurchaseBelowAsync(string year)
+    {
+        return await GetComputeStateOfPurchaseAsync(year, false);
+    }
+    
+    /// <summary>
+    /// Get Approved Analysis for Above Amount
+    /// ! If an authenticated user has only 'process-result-view' permissions, they can only view results they own.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetComputeStateOfPurchaseAboveAsync(string year)
+    {
+        return await GetComputeStateOfPurchaseAsync(year, true);
+    }
+
+    /// <summary>
+    /// Get Compute StatueOfPurchaseAysnc
+    /// </summary>
+    /// <param name="year"></param>
+    /// <param name="isAbove"></param>
+    /// <returns></returns>
+    private async Task<ResponseData<ResponseProcessApprovedSummary>> GetComputeStateOfPurchaseAsync(string year, bool isAbove)
     {
         ResponseData<ResponseProcessApprovedSummary> result;
         try
@@ -310,42 +331,36 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             // 전체 권한을 가지고 있는지 여부 
             bool isPermitAll = foundClaims.Contains("process-result");
 
-            // 현재 날짜 
-            DateTime today = DateTime.Now;
+            // Get Year Ranges 
+            int yearCurrent = year.ToInt();
+            int yearBefore = yearCurrent - 1;
+       
+            // Get all approved amounts in this year and before year
+            IQueryable<DbModelBudgetApproved> queryApproved = _dbContext.BudgetApproved.AsNoTracking()
+                .Where(i =>
+                    new[] {yearCurrent, yearBefore}.Contains(i.BaseYearForStatistics)
+                );            
             
-            // 현재 년도를 가져온다.
-            string year = today.ToString("yyyy");
-            
-            // 지난 년도를 가져온다.
-            string beforeYear = today.AddYears(-1).ToString("yyyy");
-            
-            // 현재년도와 지난년도에 해당하는 예산 계획을 가져온다.
-            List<DbModelBudgetApproved> budgetApproveds = await _dbContext.BudgetApproved
-                .Where(i => new[] { year,beforeYear }.Contains(i.Year))
-                .AsNoTracking()
-                .ToListAsync();
-            
-            // 모든 CBM 을 조회한다. 
-            IQueryable<DbModelCountryBusinessManager> managersQuery = _dbContext.CountryBusinessManagers
+            // Get all CountryBusiness Managers
+            IQueryable<DbModelCountryBusinessManager> queryManagers = _dbContext.CountryBusinessManagers
                 .AsNoTracking();
             
             // 전체 Permit 이 아닌경우 
             if (!isPermitAll)
                 // 본인의 부서만 확인한다.
-                managersQuery = managersQuery.Where(i => i.Id == user.CountryBusinessManagerId);
+                queryManagers = queryManagers.Where(i => i.Id == user.CountryBusinessManagerId);
 
-            // 전체 매니저를 조회한다.
-            List<DbModelCountryBusinessManager> managers = await managersQuery
-                .Include(i => i.CountryBusinessManagerBusinessUnits)
-                    .ThenInclude(v => v.BusinessUnit)
+            // Managers with include BusinessUnit
+            queryManagers = queryManagers
                 .AsNoTracking()
-                .ToListAsync();
+                .Include(i => i.CountryBusinessManagerBusinessUnits)
+                .ThenInclude(v => v.BusinessUnit);
             
             // 조회된 정보로 CHK 500K 이하 전년도 정보를 찾는다.
-            List<ResponseProcessApproved> yearBeforeBelow500K = ComputeApproved(  budgetApproveds, managers, beforeYear , false );
+            List<ResponseProcessApproved> yearBeforeBelow500K = await ComputeApprovedAsync( queryApproved, queryManagers, yearBefore , isAbove );
             
             // 조회된 정보로 CHK 500K 이하 당해년도 정보를 찾는다.
-            List<ResponseProcessApproved> yearBelow500K = ComputeApproved(  budgetApproveds, managers, year , false );
+            List<ResponseProcessApproved> yearBelow500K = await ComputeApprovedAsync( queryApproved, queryManagers, yearCurrent , isAbove );
 
             // 객체를 생성한다.
             ResponseProcessApprovedSummary data = new ResponseProcessApprovedSummary();
@@ -355,14 +370,14 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             ResponseProcessSummaryDetail<ResponseProcessApproved> beforeYearDetailBelow500K = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
             {
                 Sequence = 1,
-                Title = $"{beforeYear}FY",
+                Title = $"{ yearBefore }FY",
                 Items = yearBeforeBelow500K
             };
             // 당해년
             ResponseProcessSummaryDetail<ResponseProcessApproved>  yearDetailAbove500K = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
             {
                 Sequence = 2,
-                Title = $"{year}FY",
+                Title = $"{ yearCurrent }FY",
                 Items = yearBelow500K
             };
             // 전체 Sum
@@ -370,7 +385,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             ResponseProcessSummaryDetail<ResponseProcessApproved>  detailTotal = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
             {
                 Sequence = 3,
-                Title = $"{beforeYear}FY & {year}FY",
+                Title = $"{yearBefore}FY & { yearCurrent }FY",
                 Items = total
             };
             
@@ -389,114 +404,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
         return result;
     }
 
-    /// <summary>
-    /// Get Approved Analysis for Above Amount
-    /// ! If an authenticated user has only 'process-result-view' permissions, they can only view results they own.
-    /// </summary>
-    /// <returns></returns>
-    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAboveAmountSummaryAsync()
-    {
-        ResponseData<ResponseProcessApprovedSummary> result;
-        try
-        {
-            // Get authenticated user 
-            DbModelUser? user = await _userRepository.GetAuthenticatedUser();
-
-            // Can't find authenticated user
-            if(user == null)
-                return new ResponseData<ResponseProcessApprovedSummary>(EnumResponseResult.Error,"ERROR_SESSION_TIMEOUT", "로그인 상태를 확인해주세요", null);
-            
-            // Get all authenticated user Roles 
-            ResponseList<ResponseUserRole> roleResponse = await _userService.GetRolesByUserAsync();
-            
-            // User does not have Permission
-            if(roleResponse.Items is {Count: 0} or null)
-                return new ResponseData<ResponseProcessApprovedSummary>(EnumResponseResult.Error,"NOT_ALLOWED", "권한이 없습니다.", null);
-            
-            // Get claims for user
-            List<string> foundClaims = FindClaims(roleResponse.Items);
-
-            // Is has complete view permission?
-            bool isPermitAll = foundClaims.Contains("process-result");
-
-            // Current date
-            DateTime today = DateTime.Now;
-            
-            // Get Current year 
-            string year = today.ToString("yyyy");
-            
-            // Get 1 year before  
-            string beforeYear = today.AddYears(-1).ToString("yyyy");
-            
-            // Get Budget Plans for Current year and 1 year before  
-            List<DbModelBudgetApproved> budgetApproveds = await _dbContext.BudgetApproved
-                .Where(i => new[] { year,beforeYear }.Contains(i.Year))
-                .AsNoTracking()
-                .ToListAsync();
-            
-            // Get all CountryBusiness Managers
-            IQueryable<DbModelCountryBusinessManager> managersQuery = _dbContext.CountryBusinessManagers
-                .AsNoTracking();
-            
-            // Has not permit all
-            if (!isPermitAll)
-                // Can only view he own
-                managersQuery = managersQuery.Where(i => i.Id == user.CountryBusinessManagerId);
-
-            // Get all managers include BusinessUnits
-            List<DbModelCountryBusinessManager> managers = await managersQuery
-                .Include(i => i.CountryBusinessManagerBusinessUnits)
-                    .ThenInclude(v => v.BusinessUnit)
-                .AsNoTracking()
-                .ToListAsync();
-            
-            // Get 500k above before year
-            List<ResponseProcessApproved> yearBeforeBelow500K = ComputeApproved(  budgetApproveds, managers, beforeYear , true );
-            
-            // Get 500k above current year
-            List<ResponseProcessApproved> yearBelow500K = ComputeApproved(  budgetApproveds, managers, year , true );
-
-            // Generate ResponseProcessApprovedSummary
-            ResponseProcessApprovedSummary data = new ResponseProcessApprovedSummary();
-            
-            // All Summary 
-            // Before year 
-            ResponseProcessSummaryDetail<ResponseProcessApproved>  beforeYearDetailBelow500K = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
-            {
-                Sequence = 1,
-                Title = $"{beforeYear}FY",
-                Items = yearBeforeBelow500K
-            };
-            // Current year
-            ResponseProcessSummaryDetail<ResponseProcessApproved>  yearDetailAbove500K = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
-            {
-                Sequence = 2,
-                Title = $"{year}FY",
-                Items = yearBelow500K
-            };
-            // Sum all
-            List<ResponseProcessApproved> total = SumApproved(yearBeforeBelow500K,yearBelow500K);
-            ResponseProcessSummaryDetail<ResponseProcessApproved>  detailTotal = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
-            {
-                Sequence = 3,
-                Title = $"{beforeYear}FY & {year}FY",
-                Items = total
-            };
-            
-            // Inject all informations
-            data.Items.Add(beforeYearDetailBelow500K);
-            data.Items.Add(yearDetailAbove500K);
-            data.Items.Add(detailTotal);
-            return new ResponseData<ResponseProcessApprovedSummary>(EnumResponseResult.Success, "", "", data);
-        }
-        catch (Exception e)
-        {
-            result = new ResponseData<ResponseProcessApprovedSummary>(EnumResponseResult.Error,"" ,"처리중 예외가 발생했습니다.", null);
-            e.LogError(_logger);
-        }
-
-        return result;
-    }
+    
 
     /// <summary>
     /// 오너 정보를 합산한다.
@@ -797,30 +705,31 @@ public class BudgetProcessRepository : IBudgetProcessRepository
     /// <summary>
     /// Below500K 의 승인금액 정보를 찾아 바인딩한다.
     /// </summary>
-    /// <param name="budgetApproveds"></param>
-    /// <param name="managers"></param>
+    /// <param name="queryApproved"></param>
+    /// <param name="queryManagers"></param>
     /// <param name="year"></param>
     /// <param name="isAbove500K"></param>
     /// <returns></returns>
-    private List<ResponseProcessApproved> ComputeApproved( 
-        List<DbModelBudgetApproved> budgetApproveds ,
-        List<DbModelCountryBusinessManager> managers ,
-        string year ,
+    private async Task<List<ResponseProcessApproved>> ComputeApprovedAsync( 
+        IQueryable<DbModelBudgetApproved> queryApproved ,
+        IQueryable<DbModelCountryBusinessManager> queryManagers ,
+        int year ,
         bool isAbove500K
         )
     {
         List<ResponseProcessApproved> result = new List<ResponseProcessApproved>();
-
         try
         {
+            List<DbModelCountryBusinessManager> managers = await queryManagers.ToListAsync();
+            
             // 모든 매니저에 대해 처리
             foreach (DbModelCountryBusinessManager manager in managers)
             {
                 // 쿼리 베이스
-                IEnumerable<DbModelBudgetApproved> query = budgetApproveds.Where(i =>
+                IEnumerable<DbModelBudgetApproved> query = queryApproved.Where(i =>
                     i.CountryBusinessManagerId == manager.Id &&
                     i.IsAbove500K == isAbove500K &&
-                    i.Year == year
+                    i.BaseYearForStatistics == year
                 ).ToList();
                 
                 // 들어갈 데이터 
@@ -886,18 +795,6 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                 managerApproved.PoIssueAmount = sumPoIssueAmount;
                 managerApproved.NotPoIssueAmount = sumNotPoIssueAmount;
                 managerApproved.ApprovedAmount = sumApprovedAmount;
-                
-                // // 데이터를 만든다.
-                // managerApproved.CountryBusinessManagerId = manager.Id ;
-                // managerApproved.CountryBusinessManagerName = manager.DisplayName ;
-                // managerApproved.PoIssueAmountSpending = managerApproved.BusinessUnits.Sum(i => i.PoIssueAmountSpending);
-                // managerApproved.PoIssueAmount = managerApproved.BusinessUnits.Sum(i => i.PoIssueAmount);
-                // managerApproved.NotPoIssueAmount = managerApproved.BusinessUnits.Sum(i => i.NotPoIssueAmount);
-                // managerApproved.ApprovedAmount = managerApproved.BusinessUnits.Sum(i => i.ApprovedAmount);
-                // result.Add(managerApproved);
-                //
-                //
-                // result.AddRange(managerApproved.BusinessUnits);
             }
         }
         catch (Exception e)

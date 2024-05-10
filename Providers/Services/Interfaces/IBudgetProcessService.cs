@@ -32,13 +32,15 @@ public interface IBudgetProcessService
     /// Get Approved Analysis for Below Amount
     /// ! If an authenticated user has only 'process-result-view' permissions, they can only view results they own.
     /// </summary>
+    /// <param name="year">년도 정보</param>
     /// <returns></returns>
-    Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedBelowAmountSummaryAsync();
+    Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedBelowAmountSummaryAsync(string year);
     
     /// <summary>
     /// Get Approved Analysis for Above Amount
     /// ! If an authenticated user has only 'process-result-view' permissions, they can only view results they own.
     /// </summary>
+    /// <param name="year">년도 정보</param>
     /// <returns></returns>
-    Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAboveAmountSummaryAsync();
+    Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAboveAmountSummaryAsync(string year);
 }

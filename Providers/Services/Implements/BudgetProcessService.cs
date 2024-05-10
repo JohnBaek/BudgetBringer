@@ -86,14 +86,15 @@ public class BudgetProcessService : IBudgetProcessService
     /// Get Approved Analysis for Below Amount
     /// ! If an authenticated user has only 'process-result-view' permissions, they can only view results they own.
     /// </summary>
+    /// <param name="year">년도 정보</param>
     /// <returns></returns>
-    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedBelowAmountSummaryAsync()
+    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedBelowAmountSummaryAsync(string year)
     {
         ResponseData<ResponseProcessApprovedSummary> response;
         
         try
         {
-            response = await _repository.GetApprovedBelowAmountSummaryAsync();
+            response = await _repository.GetComputeStateOfPurchaseBelowAsync(year);
         }
         catch (Exception e)
         {
@@ -108,14 +109,15 @@ public class BudgetProcessService : IBudgetProcessService
     /// Get Approved Analysis for Above Amount
     /// ! If an authenticated user has only 'process-result-view' permissions, they can only view results they own.
     /// </summary>
+    /// <param name="year">년도 정보</param>
     /// <returns></returns>
-    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAboveAmountSummaryAsync()
+    public async Task<ResponseData<ResponseProcessApprovedSummary>> GetApprovedAboveAmountSummaryAsync(string year)
     {
         ResponseData<ResponseProcessApprovedSummary> response;
         
         try
         {
-            response = await _repository.GetApprovedAboveAmountSummaryAsync();
+            response = await _repository.GetComputeStateOfPurchaseAboveAsync(year);
         }
         catch (Exception e)
         {

@@ -34,4 +34,14 @@ public static class StringExtensions
     {
         return string.IsNullOrWhiteSpace(input);
     }
+
+    /// <summary>
+    /// String to Int
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    public static int ToInt(this string input)
+    {
+        return int.Parse(input);
+    }
 }
