@@ -1,5 +1,6 @@
 import {EnumApprovalStatus} from "../../models/enums/enum-approval-status";
 
+
 /**
  * Grid Common column definitions
  */
@@ -48,6 +49,8 @@ export namespace CommonColumnDefinitions {
     headerClass: 'ag-grids-custom-header',
     filter: 'agTextColumnFilter',
     floatingFilter: true,
+    useAsModel: true,
+    inputType : 'text',
     width: 250
   });
 
@@ -241,7 +244,7 @@ export namespace CommonColumnDefinitions {
     }
   }
 
-  export const createColumnDefinitionForTextFilter = (width: number , field: string , headerName: string, valueFormatter?: {} , isFloatingFilter: boolean = true, isUseInChart: boolean = true) => {
+  export const createColumnDefinitionForTextFilter = (width: number , field: string , headerName: string, valueFormatter?: {} , isFloatingFilter: boolean = true, isUseInChart: boolean = true, isRequired: boolean = false) => {
     return {
       field: field,
       headerClass: 'ag-grids-custom-header',
@@ -251,6 +254,7 @@ export namespace CommonColumnDefinitions {
       width: width,
       floatingFilter: isFloatingFilter,
       isUseInChart: isUseInChart ,
+      isRequired: isRequired ,
     }
   }
 }

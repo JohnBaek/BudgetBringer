@@ -10,6 +10,9 @@ export class CostCenterGridData extends CommonGridModel{
    */
   constructor() {
     super();
+    this.requestQuery.apiUri = "/api/v1/CostCenter";
+    this.requestQuery.sortFields = [ 'regDate' ];
+    this.requestQuery.sortOrders = [ 'desc' ];
     this.columDefined = [
       CommonColumnDefinitions.createColumnDefinitionForTextFilter(250, "value", "이름"),
       CommonColumnDefinitions.getRegDateColumn() ,

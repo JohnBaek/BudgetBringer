@@ -24,7 +24,7 @@ export class RequestQuery {
   /**
    *  페이지 카운트
    */
-  pageCount: number = 30;
+  pageCount: number = 100;
   /**
    *  (사용자로부터 입력 받음) 검색 키워드
    */

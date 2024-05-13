@@ -1,5 +1,6 @@
 import {CommonGridModel} from "../../../shared/grids/common-grid-model";
 import {CommonColumnDefinitions} from "../../../shared/grids/common-grid-column-definitions";
+import {RequestQuery} from "../../../models/requests/query/request-query";
 
 /**
  * Budget Approved Grid Model
@@ -10,6 +11,9 @@ export class BudgetApprovedGridData extends CommonGridModel{
    */
   constructor() {
     super();
+    this.requestQuery.apiUri = '/api/v1/BudgetApproved';
+    this.requestQuery.sortFields = [ 'regDate' ];
+    this.requestQuery.sortOrders = [ 'desc' ];
     this.columDefined = [
       CommonColumnDefinitions.getBaseYearColumn() ,
       CommonColumnDefinitions.createColumnDefinitionForTextFilter(145, "approvalDate", "Approval Date"),

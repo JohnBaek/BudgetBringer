@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T">
 import {AgGridVue} from "ag-grid-vue3";
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 import {RequestQuery} from "../../models/requests/query/request-query";
 import {HttpService} from "../../services/api-services/http-service";
 import {EnumResponseResult} from "../../models/enums/enum-response-result";
@@ -9,74 +9,26 @@ import {communicationService} from "../../services/communication-service";
 import CommonGridButtonGroup from "./common-grid-button-group.vue";
 import {CommonGridButtonGroupDefinesButtonEmits} from "./common-grid-button-group-defines";
 import {getDateFormatForFile} from "../../services/utils/date-util";
-/**
- * Prop 정의
- */
+import {toClone} from "../../services/utils/object-util";
+
+// Props
 const props = defineProps({
-  /**
-   * 컬럼정보
-   */
-  inputColumDefined : {
-    Type: Array<T> ,
-    required: true ,
-    default: [] ,
-    width : 50 ,
-  },
-
-  /**
-   * Insert 그리드 사용여부
-   */
-  isUseInsert : {
-    Type: Boolean ,
-    required: false ,
-    default: false
-  },
-
-  gridTitle: {
-    Type: String,
-    required: false,
-    default: ''
-  },
-
-  /**
-   * 사용할 버튼
-   */
-  showButtons: {
-    Type: Array<string> ,
-    default: ['add','update','delete','refresh', 'excel']
-  },
-  /**
-   * 너비
-   */
-  width : {
-    Type: String ,
-    required: false ,
-    default: '100%'
-  },
-  /**
-   * 높이
-   */
-  height : {
-    Type: String ,
-    required: false ,
-    default: '600px'
-  },
-  /**
-   * 쿼리 리퀘스트
-   */
-  queryRequest: {
-    type: Object as () => RequestQuery ,
-    required: true ,
-  }
+  inputColumDefined : {Type: Array<T> , required: true , default: [] , width : 50 ,},
+  title : {},
+  width : { Type: String ,  required: false ,  default: '100%' },
+  height : { Type: String ,  required: false ,  default: '600px' },
+  queryRequest: {type: Object as () => RequestQuery , required: true ,}
 });
 /**
  * incoming calls from parent
  */
 defineExpose({
-  doRefresh() {
-    refresh();
-  } ,
+  // When got refresh command from parent
+  doRefresh() { gridRefresh(); },
+  showAddDialog() { addDialog.value = true }
 });
+const addDialog = ref(false);
+
 let items = [];
 /**
  * 쿼리 요청을 복사한다.
@@ -95,22 +47,6 @@ const emits = defineEmits<CommonGridButtonGroupDefinesButtonEmits>();
  */
 const columDefined = ref([...props.inputColumDefined]);
 /**
- * 인서트 Grid 사용여부
- */
-const isUseInsert = props.isUseInsert;
-/**
- * 디테일 다이얼로그
- */
-const detailDialogReference = ref(false);
-/**
- * 입력 데이터
- */
-let inputRow = {};
-/**
- * Top 인서트 Pine
- */
-const pinnedTopRowData = isUseInsert ? [inputRow] : [];
-/**
  * Grid API
  */
 const gridApi = ref();
@@ -123,10 +59,9 @@ const gridColumnApi = ref(null);
  */
 const gridParams = ref(null);
 
-
 /**
- * gridReady 이벤트 핸들러
- * @param params 파라미터
+ * gridReady Event Handler
+ * @param params Parameters
  */
 const onGridReady = (params) => {
   gridApi.value = params.api;
@@ -136,7 +71,6 @@ const onGridReady = (params) => {
 
   // 필터 이벤트를 핸들링한다.
   gridApi.value.addEventListener('filterChanged', () => {
-    console.log("[filterChanged]");
     changedFilter();
   });
 
@@ -145,9 +79,8 @@ const onGridReady = (params) => {
     changeSort();
   });
 };
-
 /**
- * 소팅 변경시
+ * When change the sorts
  */
 const changeSort = () => {
   // Sort 모델을 가져온다.
@@ -174,8 +107,6 @@ const changeSort = () => {
   // 데이터를 초기화한다.
   items = [];
 }
-
-
 /**
  * 필터링 변경시
  */
@@ -208,29 +139,18 @@ const changedFilter = () => {
     }
   }
 }
-
-
-// 그리드 인피니티 스크롤 관련 기본 설정값
-const rowModelType = 'infinite';
-const rowBuffer = 0;
-const cacheBlockSize = queryRequest.pageCount;
-const cacheOverflowSize = 2;
-const maxConcurrentDatasourceRequests = 1;
-const infiniteInitialRowCount = 100;
-const maxBlocksInCache = 10;
-
-const createSkeletonData = (columnDefinitions, numberOfRows) => {
-  console.log('columnDefinitions',columnDefinitions);
-
-  return Array.from({length: numberOfRows}, () => {
-    const row = {};
-    columnDefinitions.forEach(col => {
-      row[col.field] = 'loading...'; // 각 필드에 'loading...' 값을 할당
-    });
-    return row;
-  });
-};
-
+/**
+ * Settings for Infinite Grid
+ */
+const gridSettings = ref({
+  rowModelType : 'infinite',
+  rowBuffer : 0,
+  cacheBlockSize : queryRequest.pageCount,
+  cacheOverflowSize : 2,
+  maxConcurrentDatasourceRequests : 1,
+  infiniteInitialRowCount : 100,
+  maxBlocksInCache : 10,
+});
 /**
  * 데이터 소스 정의
  */
@@ -283,39 +203,9 @@ const dataSource = {
 const getRowStyle = ({ node }) =>
   node.rowPinned ? {  fontStyle: 'italic' , fontWeight: 'bold', color:'gray' } : {};
 /**
- * 빈 탑 핀 컬럼 셀
- * @param params
- */
-const isEmptyPinnedCell = (params) => {
-  if(params.node == null)
-    return false;
-
-  return (
-    (params.node.isRowPinned() && params.value == null) ||
-    (params.node.isRowPinned() && params.value === '')
-  );
-}
-/**
- * 빈 핀 컬럼의 컬럼명을 조정한다.
- * @param colDefined
- */
-const createPinnedCellPlaceholder = (colDefined : any) => {
-  return colDefined.colDef.headerName + ' 입력..';
-}
-/**
- * 기본 그리드 컬럼 설정
- * * Insert 그리드 사용시만 초기화 *
- */
-const defaultColDefined = isUseInsert ? {
-  flex: 1,
-  valueFormatter: (params) =>
-    isEmptyPinnedCell(params) ?
-      createPinnedCellPlaceholder(params) : undefined,
-} : {};
-/**
  * 그리드의 셀렉트가 변경되었을때
  */
-const onSelectionChanged = () => {
+const gridSelectionChanged = () => {
   // 선택된 Row 를 업데이트한다.
   selectedRows.value = gridApi.value.getSelectedRows();
 };
@@ -338,17 +228,17 @@ const remove = () => {
 const update = () => {
   // Get Selected rows
   const selectedRows = gridApi.value.getSelectedRows();
+
   // Has not selected rows
   if(selectedRows.length == 0)
     return;
+
   emits('onUpdate' , selectedRows[0]);
 }
 /**
  * Request to server for excel
  */
 const exportExcel = () => {
-  communicationService.notifyInCommunication();
-
   // Copy Reference
   const _queryRequest = Object.assign({}, queryRequest);
 
@@ -357,7 +247,7 @@ const exportExcel = () => {
   _queryRequest.pageCount = 1000000;
 
   // Request to Server
-  HttpService.requestGetFile(`${queryRequest.apiUri}/export/excel` , _queryRequest).subscribe({
+  HttpService.requestGetFileAutoNotify(`${queryRequest.apiUri}/export/excel` , _queryRequest).subscribe({
     next(response) {
       if(response == null)
         return;
@@ -370,7 +260,7 @@ const exportExcel = () => {
 
       // Simulate Click
       link.href = url;
-      link.setAttribute('download', `${getDateFormatForFile()}_${props.gridTitle}.xlsx`);
+      link.setAttribute('download', `${getDateFormatForFile()}_.xlsx`);
       document.body.appendChild(link);
       link.click();
 
@@ -378,23 +268,16 @@ const exportExcel = () => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     },
-    error(err) {
-      console.error('Error loading data', err);
-    },
-    complete() {
-      // 커뮤니케이션 시작
-      communicationService.notifyOffCommunication();
-    },
   });
 }
 /**
  * 새로고침 명령
  */
-const refresh = () => {
+const gridRefresh = () => {
   emits('onRefresh');
 
   // 최초 상태의 조회 조건을 복원한다.
-  queryRequest = Object.assign({},props.queryRequest);
+  queryRequest = toClone(props.queryRequest);
   items = [];
 
   // 스크롤 위치를 맨 위로 초기화
@@ -403,58 +286,32 @@ const refresh = () => {
   // 캐싱 날리기
   gridApi.value.purgeInfiniteCache();
 }
-
-let detailData = ref();
-
-const toPascalCase = (str) => {
-  return str
-  .replace(new RegExp(/[-_]+/, 'g'), ' ') // 대시와 언더스코어를 공백으로 대체
-  .replace(new RegExp(/[^\w\s]/, 'g'), '') // 문자와 공백이 아닌 모든 것 제거
-  .replace(
-    /\s+(.)(\w*)/g, // 각 단어를 대문자로 시작하도록 변경
-    (_, firstChar, rest) => firstChar.toUpperCase() + rest.toLowerCase()
-  )
-  .replace(/\s/g, '') // 공백 제거
-  .replace(
-    /^./, // 첫 글자도 대문자로
-    str => str.toUpperCase()
-  );
-}
-
 /**
  * 셀 더블 클릭시
  */
-const onCellDoubleClicked = (event) => {
+const gridCellDoubleClicked = (event) => {
   emits('onDoubleClicked', event.data);
 }
-
 /**
  * 셀 클릭시
  * @param event
  */
-const onCellClicked = (event) => {
+const gridCellClicked = (event) => {
   emits('onCellClicked', event.data);
 }
-
-/**
- * 온마운트 핸들링
- */
-onMounted(() => {
-});
 </script>
 
 <template>
+  <!-- Action Buttons -->
   <v-row class="mt-1 mb-1">
     <v-col>
       <div class="mt-2">
-        <!-- Action Buttons -->
         <common-grid-button-group
           :selected-rows="selectedRows"
-          :show-buttons="showButtons"
           @on-add="add()"
           @on-remove="remove()"
           @on-update="update()"
-          @on-refresh="refresh()"
+          @on-refresh="gridRefresh()"
           @on-export-excel="exportExcel()"
         />
       </div>
@@ -464,63 +321,23 @@ onMounted(() => {
   <!-- Grid -->
   <ag-grid-vue
     @grid-ready="onGridReady"
-    @selection-changed="onSelectionChanged"
-    @cell-double-clicked="onCellDoubleClicked"
-    @cell-clicked="onCellClicked"
+    @selection-changed="gridSelectionChanged"
+    @cell-double-clicked="gridCellDoubleClicked"
+    @cell-clicked="gridCellClicked"
     class="ag-theme-alpine"
     :columnDefs="columDefined"
-    :defaultColDef="defaultColDefined"
-    :rowBuffer="rowBuffer"
     :rowSelection="'multiple'"
-    :rowModelType="rowModelType"
-    :cacheBlockSize="cacheBlockSize"
-    :cacheOverflowSize="cacheOverflowSize"
-    :maxConcurrentDatasourceRequests="maxConcurrentDatasourceRequests"
-    :infiniteInitialRowCount="infiniteInitialRowCount"
-    :maxBlocksInCache="maxBlocksInCache"
-    :pinnedTopRowData="pinnedTopRowData"
+    :rowBuffer="gridSettings.rowBuffer"
+    :rowModelType="gridSettings.rowModelType"
+    :cacheBlockSize="gridSettings.cacheBlockSize"
+    :cacheOverflowSize="gridSettings.cacheOverflowSize"
+    :maxConcurrentDatasourceRequests="gridSettings.maxConcurrentDatasourceRequests"
+    :infiniteInitialRowCount="gridSettings.infiniteInitialRowCount"
+    :maxBlocksInCache="gridSettings.maxBlocksInCache"
     :getRowStyle="getRowStyle"
     :style="{ width, height }"
   >
   </ag-grid-vue>
-
-  <!--데이터 수정 다이얼로그-->
-  <v-dialog v-model="detailDialogReference" width="80%">
-    <v-card elevation="1" rounded class="mb-10 pa-5">
-      <v-card-title class=" mt-5"><h4>상세정보</h4>
-      </v-card-title>
-      <v-row dense>
-        <v-col cols="12" md="12" lg="12">
-          <div v-for="(value, key) in detailData" :key="key">
-            <div v-if="key.toString().toLowerCase().indexOf('id') == -1">
-              <!-- "content"가 포함된 키에 대해 v-textarea 사용 -->
-              <v-textarea
-                v-if="key.toString().toLowerCase().indexOf('content') > -1"
-                :label="toPascalCase(key)"
-                v-model="detailData[key]"
-                variant="outlined"
-                auto-grow
-                readonly>
-              </v-textarea>
-
-              <!-- "content"가 포함되지 않은 나머지 키에 대해 v-text-field 사용 -->
-              <v-text-field
-                v-else
-                :label="toPascalCase(key)"
-                v-model="detailData[key]"
-                variant="outlined"
-                auto-grow
-                readonly>
-              </v-text-field>
-            </div>
-          </div>
-        </v-col>
-        <v-col>
-          <v-btn variant="outlined" @click="detailDialogReference = false" class="mr-2" color="error">닫기</v-btn>
-        </v-col>
-      </v-row>
-    </v-card>
-  </v-dialog>
 </template>
 
 <style lang="css" scoped>

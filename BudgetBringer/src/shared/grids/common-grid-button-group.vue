@@ -2,13 +2,21 @@
 import {CommonGridButtonGroupDefinesButtonEmits} from "./common-grid-button-group-defines";
 import {ref} from "vue";
 import {communicationService} from "../../services/communication-service";
+import {CommonButtonDefinitions, CommonGridButton} from "./common-grid-button";
 
 /**
  * From the parent.
  */
 const props = defineProps({
   // Only listed in this array will be shown.
-  showButtons: { Type: Array<string> , default: ['add','update','delete','refresh', 'excel' , 'chart' ,'print'] , required: false},
+  showButtons: { Type: Array<CommonGridButton> ,
+    default: [
+      CommonButtonDefinitions.add ,
+      CommonButtonDefinitions.remove ,
+      CommonButtonDefinitions.update ,
+      CommonButtonDefinitions.refresh ,
+    ],
+  required: false},
   // Items in grid
   selectedRows: { Type: Array<any> , default: [] , required: false},
 });
@@ -63,9 +71,6 @@ const toGrid = () => {
   emits('grid');
   onChart.value = true;
 }
-const print = () => {
-  emits('print');
-}
 const inCommunication = ref(false);
 communicationService.subscribeCommunication().subscribe((communication) =>{
   inCommunication.value = communication;
@@ -73,7 +78,7 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
 </script>
 
 <template>
-  <v-btn v-if="props.showButtons.includes('add')" class="mr-2"  :disabled="inCommunication" width="100" elevation="1" color="info" @click="add()">
+  <v-btn v-if="props.showButtons.includes(CommonButtonDefinitions.add)" class="mr-2"  :disabled="inCommunication" width="100" elevation="1" color="info" @click="add()">
     <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
     <template v-if="!inCommunication">
       <v-icon>mdi-checkbox-marked-circle</v-icon>
@@ -81,7 +86,7 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
     </template>
   </v-btn>
 
-  <v-btn v-if="props.showButtons.includes('delete')" class="mr-2"  :disabled="inCommunication" width="100" elevation="1" color="error" @click="remove()">
+  <v-btn v-if="props.showButtons.includes(CommonButtonDefinitions.remove)" class="mr-2"  :disabled="inCommunication || (selectedRows.length === 0)" width="100" elevation="1" color="error" @click="remove()">
     <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
     <template v-if="!inCommunication">
       <v-icon>mdi-delete-circle</v-icon>
@@ -89,25 +94,20 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
     </template>
   </v-btn>
 
-  <v-btn v-if="props.showButtons.includes('update')" class="mr-2"  :disabled="inCommunication" width="100" elevation="1" color="warning" @click="update()">
+  <v-btn v-if="props.showButtons.includes(CommonButtonDefinitions.update)" class="mr-2"  :disabled="inCommunication || (selectedRows.length === 0 || selectedRows.length > 1)" width="100" elevation="1" color="warning" @click="update()">
     <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
     <template v-if="!inCommunication">
       <v-icon>mdi-checkbox-multiple-marked-circle</v-icon>
       <pre><b> 수정 </b></pre>
     </template>
   </v-btn>
-
-<!--  <v-btn v-if="props.showButtons.includes('add')" variant="outlined" @click="add()" class="mr-2" color="info">추가</v-btn>-->
-<!--  <v-btn v-if="props.showButtons.includes('delete')" variant="outlined" @click="remove()" class="mr-2" color="error" :disabled="selectedRows.length == 0">삭제</v-btn>-->
-<!--  <v-btn v-if="props.showButtons.includes('update')" variant="outlined" @click="update()" :disabled="selectedRows.length != 1" color="warning">수정</v-btn>-->
-  <v-icon v-if="props.showButtons.includes('refresh')" @click="refresh()" class="ml-3" size="x-large" color="blue" style="cursor: pointer;">mdi-refresh-circle</v-icon>
-  <v-icon v-if="props.showButtons.includes('excel')" @click="exportExcel()" class="ml-3" size="x-large" color="green" style="cursor: pointer;">mdi-file-excel-outline</v-icon>
-  <v-icon v-if="props.showButtons.includes('pdf')" @click="exportPdf()" class="ml-3" size="x-large" color="red" style="cursor: pointer;">mdi-file-pdf-box</v-icon>
-  <v-icon v-if="props.showButtons.includes('chart') && onChart" @click="toChart()" class="ml-3" size="x-large" color="blue" style="cursor: pointer;">mdi-chart-bar</v-icon>
-  <v-icon v-if="props.showButtons.includes('chart') && !onChart" @click="toGrid()" class="ml-3" size="x-large" color="grey" style="cursor: pointer;">mdi-view-list</v-icon>
-  <v-icon v-if="props.showButtons.includes('print')" @click="print()" class="ml-3" size="x-large" style="cursor: pointer;">mdi-printer-outline</v-icon>
+  <v-icon v-if="props.showButtons.includes(CommonButtonDefinitions.refresh)" @click="refresh()" class="ml-3" size="x-large" color="blue" style="cursor: pointer;">mdi-refresh-circle</v-icon>
+  <v-icon v-if="props.showButtons.includes(CommonButtonDefinitions.exportExcel)" @click="exportExcel()" class="ml-3" size="x-large" color="green" style="cursor: pointer;">mdi-file-excel-outline</v-icon>
+  <v-icon v-if="props.showButtons.includes(CommonButtonDefinitions.exportPDF)" @click="exportPdf()" class="ml-3" size="x-large" color="red" style="cursor: pointer;">mdi-file-pdf-box</v-icon>
+  <v-icon v-if="props.showButtons.includes(CommonButtonDefinitions.toChart) && onChart" @click="toChart()" class="ml-3" size="x-large" color="blue" style="cursor: pointer;">mdi-chart-bar</v-icon>
+  <v-icon v-if="props.showButtons.includes(CommonButtonDefinitions.toChart) && !onChart" @click="toGrid()" class="ml-3" size="x-large" color="grey" style="cursor: pointer;">mdi-view-list</v-icon>
   <v-spacer v-if="props.showButtons.length > 0" class="mt-1"></v-spacer>
-  <span class="text-grey" v-if="props.showButtons.includes('delete')">shift 버튼을 누른채로 클릭하면 여러 행을 선택할수 있습니다.</span>
+  <span class="text-grey" v-if="props.showButtons.includes(CommonButtonDefinitions.remove)">shift 버튼을 누른채로 클릭하면 여러 행을 선택할수 있습니다.</span>
 </template>
 <style scoped lang="css">
 </style>

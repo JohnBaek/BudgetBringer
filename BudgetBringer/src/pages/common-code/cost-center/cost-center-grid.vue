@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 import CommonGrid from "../../../shared/grids/common-grid.vue";
 import {CostCenterGridData} from "./cost-center-grid-data";
-import {RequestQuery} from "../../../models/requests/query/request-query";
 import {messageService} from "../../../services/message-service";
 import {communicationService} from "../../../services/communication-service";
 import {ResponseData} from "../../../models/responses/response-data";
@@ -11,42 +10,23 @@ import {EnumResponseResult} from "../../../models/enums/enum-response-result";
 import {ResponseCostCenter} from "../../../models/responses/budgets/response-cost-center";
 import {RequestCostCenter} from "../../../models/requests/budgets/request-cost-center";
 
-/**
- * 그리드 모델
- */
+// GridModel
 const gridModel = new CostCenterGridData();
-/**
- * 쿼리 정보
- */
-let requestQuery :RequestQuery = {
-  apiUri : '/api/v1/CostCenter' ,
-  pageCount: 100 ,
-  skip: 0 ,
-  searchFields: [] ,
-  searchKeywords: [],
-  sortFields: [ 'regDate' ],
-  sortOrders: [ 'desc' ],
-}
-/**
- * props 정의
- */
+
+// Title
 const title : string = 'CostCenter';
-/**
- * 데이터 추가 다이얼로그
- */
-const addDialogReference = ref(false);
-/**
- * 삭제 다이얼로그
- */
-const removeDialogReference = ref(false);
-/**
- *
- */
-const updateDialogReference = ref(false);
-/**
- * 그리드 래퍼런스
- */
-const gridReference = ref(null);
+
+// Add dialog
+const addDialog = ref(false);
+
+// Remove Dialog
+const removeDialog = ref(false);
+
+// Update Dialog
+const updateDialog = ref(false);
+
+// Grid
+const grid = ref(null);
 /**
  * 데이터 추가 원본 요청 데이터
  */
@@ -59,15 +39,6 @@ let removeItems : Array<ResponseCostCenter> = [];
  * 수정할 데이터
  */
 let updateItem: ResponseCostCenter;
-
-/**
- * 마운트핸들링
- */
-onMounted(() => {
-  requestQuery.sortOrders.push('desc');
-  requestQuery.sortFields.push("regDate");
-});
-
 
 /**
  * 데이터를 추가한다.
@@ -83,7 +54,7 @@ const requestAddData = () => {
   communicationService.notifyInCommunication();
 
   // 데이터를 입력한다.
-  HttpService.requestPost<ResponseData<ResponseCostCenter>>(requestQuery.apiUri , modelReference.value).subscribe({
+  HttpService.requestPost<ResponseData<ResponseCostCenter>>(gridModel.requestQuery.apiUri , modelReference.value).subscribe({
     next(response) {
 
       // 요청에 실패한경우
@@ -99,10 +70,10 @@ const requestAddData = () => {
     } ,
     complete() {
       // 다이얼로그를 닫는다.
-      addDialogReference.value = false;
+      addDialog.value = false;
 
       // 데이터를 다시 로드한다.
-      gridReference.value.doRefresh();
+      grid.value.doRefresh();
 
       // 커뮤니케이션을 종료한다.
       communicationService.notifyOffCommunication();
@@ -125,7 +96,7 @@ const isValidModel = () => {
  * @param items 삭제할 데이터
  */
 const showRemoveDialog = (items : Array<ResponseCostCenter>) => {
-  removeDialogReference.value = true;
+  removeDialog.value = true;
 
   // 삭제할 데이터를 보관
   removeItems = items;
@@ -135,7 +106,7 @@ const showRemoveDialog = (items : Array<ResponseCostCenter>) => {
  * 추가 팝업을 요청한다.
  */
 const showAddDialog = () => {
-  addDialogReference.value = true;
+  addDialog.value = true;
   modelReference.value = new RequestCostCenter();
 }
 
@@ -148,7 +119,7 @@ const showUpdateDialog = (item: ResponseCostCenter) => {
   updateItem = item;
 
   // 서버에서 대상하는 데이터를 조회한다.
-  HttpService.requestGet<ResponseData<ResponseCostCenter>>(`${requestQuery.apiUri}/${item.id}`).subscribe({
+  HttpService.requestGet<ResponseData<ResponseCostCenter>>(`${gridModel.requestQuery.apiUri}/${item.id}`).subscribe({
     async next(response) {
       // 요청에 실패한경우
       if (response.result !== EnumResponseResult.success) {
@@ -160,7 +131,7 @@ const showUpdateDialog = (item: ResponseCostCenter) => {
       modelReference.value = Object.assign(modelReference.value, item);
 
       // 팝업을 연다.
-      updateDialogReference.value = true;
+      updateDialog.value = true;
     } ,
     error(err) {
       messageService.showError('Error loading data'+err);
@@ -178,7 +149,7 @@ const requestRemoveData = () => {
   // 모든 데이터에 대해 처리
   for (const data of removeItems) {
     communicationService.notifyInCommunication();
-    HttpService.requestDelete<ResponseData<any>>(`${requestQuery.apiUri}/${data.id}`).subscribe({
+    HttpService.requestDelete<ResponseData<any>>(`${gridModel.requestQuery.apiUri}/${data.id}`).subscribe({
       next(response) {
         // 요청에 실패한경우
         if(response.result !== EnumResponseResult.success) {
@@ -191,8 +162,8 @@ const requestRemoveData = () => {
         messageService.showError('Error loading data'+err);
       } ,
       complete() {
-        removeDialogReference.value = false;
-        gridReference.value.doRefresh();
+        removeDialog.value = false;
+        grid.value.doRefresh();
         communicationService.notifyOffCommunication();
       },
     });
@@ -209,7 +180,7 @@ const requestUpdateData = () => {
     return;
   }
   communicationService.notifyInCommunication();
-  HttpService.requestPut<ResponseData<any>>(`${requestQuery.apiUri}/${updateItem.id}`, modelReference.value).subscribe({
+  HttpService.requestPut<ResponseData<any>>(`${gridModel.requestQuery.apiUri}/${updateItem.id}`, modelReference.value).subscribe({
     next(response) {
       // 요청에 실패한경우
       if(response.result !== EnumResponseResult.success) {
@@ -219,12 +190,12 @@ const requestUpdateData = () => {
       messageService.showSuccess(`데이터가 수정 되었습니다.`);
     } ,
     error() {
-      updateDialogReference.value = false;
+      updateDialog.value = false;
       communicationService.notifyOffCommunication();
     } ,
     complete() {
-      gridReference.value.doRefresh();
-      updateDialogReference.value = false;
+      grid.value.doRefresh();
+      updateDialog.value = false;
       communicationService.notifyOffCommunication();
     },
   });
@@ -232,17 +203,17 @@ const requestUpdateData = () => {
 </script>
 
 <template>
-  <common-grid :is-use-insert="gridModel.isUseInsert"
+  <common-grid
                :input-colum-defined="gridModel.columDefined"
                grid-title="CostCenter"
-               :query-request="requestQuery"
+               :query-request="gridModel.requestQuery"
                @onAdd="showAddDialog"
                @onRemove="showRemoveDialog"
                @onUpdate="showUpdateDialog"
-               ref="gridReference"
+               ref="grid"
   />
   <!--데이터 추가 다이얼로그-->
-  <v-dialog v-model="addDialogReference" width="auto">
+  <v-dialog v-model="addDialog" width="auto">
     <v-card elevation="1" rounded class="mb-10 pa-5">
       <v-card-title class=" mt-5"><h4>{{title}} 추가</h4>
       </v-card-title>
@@ -251,14 +222,14 @@ const requestUpdateData = () => {
         <v-col cols="12" md="12" class="mt-5">
           <v-text-field required v-model="modelReference.value" label="Value" variant="outlined" @keyup.enter="requestAddData()"></v-text-field>
           <v-btn variant="outlined" @click="requestAddData()" class="mr-2" color="info" >추가</v-btn>
-          <v-btn variant="outlined" @click="addDialogReference = false" class="mr-2" color="error">취소</v-btn>
+          <v-btn variant="outlined" @click="addDialog = false" class="mr-2" color="error">취소</v-btn>
         </v-col>
       </v-row>
     </v-card>
   </v-dialog>
 
   <!--데이터 수정 다이얼로그-->
-  <v-dialog v-model="updateDialogReference" width="auto">
+  <v-dialog v-model="updateDialog" width="auto">
     <v-card elevation="1" rounded class="mb-10 pa-5">
       <v-card-title class=" mt-5"><h4>{{title}} 예산수정</h4>
       </v-card-title>
@@ -267,14 +238,14 @@ const requestUpdateData = () => {
         <v-col cols="12" md="12" class="mt-5">
           <v-text-field required v-model="modelReference.value" label="Value" variant="outlined" @keyup.enter="requestUpdateData()"></v-text-field>
           <v-btn variant="outlined" @click="requestUpdateData()" class="mr-2" color="info" >수정</v-btn>
-          <v-btn variant="outlined" @click="updateDialogReference = false" class="mr-2" color="error">취소</v-btn>
+          <v-btn variant="outlined" @click="updateDialog = false" class="mr-2" color="error">취소</v-btn>
         </v-col>
       </v-row>
     </v-card>
   </v-dialog>
 
   <!--삭제 다이얼로그-->
-  <v-dialog v-model="removeDialogReference" width="auto">
+  <v-dialog v-model="removeDialog" width="auto">
     <v-card min-width="250" title="코드 삭제" text="삭제하시겠습니까?">
       <template v-slot:actions>
         <v-btn class="ms-auto" text="확인" @click="requestRemoveData"

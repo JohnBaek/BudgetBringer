@@ -2,7 +2,6 @@
 import {onMounted, ref} from "vue";
 import CommonGrid from "../../../shared/grids/common-grid.vue";
 import {BudgetApprovedGridData} from "./budget-approved-grid-data";
-import {RequestQuery} from "../../../models/requests/query/request-query";
 import {messageService} from "../../../services/message-service";
 import {communicationService} from "../../../services/communication-service";
 import {ResponseBudgetApproved} from "../../../models/responses/budgets/response-budget-approved";
@@ -17,21 +16,9 @@ import CommonDialog from "../../../shared/common-dialog.vue";
 import BudgetApprovedDataForm from "./budget-approved-data-form.vue";
 
 /**
- * 그리드 모델
+ * Grid Model
  */
 const gridModel = new BudgetApprovedGridData();
-/**
- * 쿼리 정보
- */
-let requestQuery :RequestQuery = {
-  apiUri : '/api/v1/BudgetApproved' ,
-  pageCount: 100 ,
-  skip: 0 ,
-  searchFields: [] ,
-  searchKeywords: [],
-  sortFields: [ 'regDate' ],
-  sortOrders: [ 'desc' ],
-}
 /**
  * 스테이터스
  */
@@ -92,8 +79,8 @@ let updateItem: ResponseBudgetApproved;
  * 마운트핸들링
  */
 onMounted(() => {
-  requestQuery.searchKeywords.push(props.isAbove500k.toString());
-  requestQuery.searchFields.push("isAbove500k");
+  gridModel.requestQuery.searchKeywords.push(props.isAbove500k.toString());
+  gridModel.requestQuery.searchFields.push("isAbove500k");
 
   statusOptions.value = Object.entries(ApprovalStatusDescriptions).map(([status, description]) => ({
     status: parseInt(status),
@@ -114,7 +101,7 @@ const requestAddData = () => {
   communicationService.notifyInCommunication();
 
   // 데이터를 입력한다.
-  HttpService.requestPost<ResponseData<ResponseBudgetApproved>>(requestQuery.apiUri , requestModel.value).subscribe({
+  HttpService.requestPost<ResponseData<ResponseBudgetApproved>>(gridModel.requestQuery.apiUri , requestModel.value).subscribe({
     next(response) {
 
       // 요청에 실패한경우
@@ -182,7 +169,7 @@ const showUpdateDialog = (item: ResponseBudgetApproved) => {
   updateItem = item;
 
   // 서버에서 대상하는 데이터를 조회한다.
-  HttpService.requestGet<ResponseData<ResponseBudgetApproved>>(`${requestQuery.apiUri}/${item.id}`).subscribe({
+  HttpService.requestGet<ResponseData<ResponseBudgetApproved>>(`${gridModel.requestQuery.apiUri}/${item.id}`).subscribe({
     async next(response) {
       // 요청에 실패한경우
       if (response.result !== EnumResponseResult.success) {
@@ -230,7 +217,7 @@ const requestRemoveData = () => {
   // 모든 데이터에 대해 처리
   for (const data of removeItems) {
     communicationService.notifyInCommunication();
-    HttpService.requestDelete<ResponseData<any>>(`${requestQuery.apiUri}/${data.id}`).subscribe({
+    HttpService.requestDelete<ResponseData<any>>(`${gridModel.requestQuery.apiUri}/${data.id}`).subscribe({
       next(response) {
         // 요청에 실패한경우
         if(response.result !== EnumResponseResult.success) {
@@ -264,7 +251,7 @@ const requestUpdateData = () => {
   console.log('requestModel.value',requestModel.value);
 
   communicationService.notifyInCommunication();
-  HttpService.requestPut<ResponseData<any>>(`${requestQuery.apiUri}/${updateItem.id}`, requestModel.value).subscribe({
+  HttpService.requestPut<ResponseData<any>>(`${gridModel.requestQuery.apiUri}/${updateItem.id}`, requestModel.value).subscribe({
     next(response) {
       // 요청에 실패한경우
       if(response.result !== EnumResponseResult.success) {
@@ -296,7 +283,7 @@ const updateRequestModel = ($event: RequestBudgetApproved) => {
 <template>
   <common-grid
                :input-colum-defined="gridModel.columDefined"
-               :query-request="requestQuery"
+               :query-request="gridModel.requestQuery"
                :grid-title="((props.isAbove500k as String).toLowerCase() == 'true') ? '예산승인_Above_500K_Budget' : '예산승인_Below_500K_Budget'"
                @onAdd="showAddDialog"
                @onRemove="showRemoveDialog"

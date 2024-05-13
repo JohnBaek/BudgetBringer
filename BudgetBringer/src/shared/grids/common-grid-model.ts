@@ -1,7 +1,7 @@
 import {RequestQuery} from "../../models/requests/query/request-query";
 import {toClone} from "../../services/utils/object-util";
-import CommonGridSkeletonRenderer from "./common-grid-skeleton-renderer.vue";
 import {CommonChartDefinitions} from "./common-grid-chart-definitions";
+import CommonGridSkeletonRenderer from "./common-grid-skeleton-renderer.vue";
 
 export type chartType = 'bar';
 
@@ -21,7 +21,7 @@ export abstract class CommonGridModel {
   /**
    * Request Query Model
    */
-  requestQuery : RequestQuery;
+  requestQuery : RequestQuery = new RequestQuery("",0,100);
   /**
    * Number Formatter.
    * Uses in ag-grid Column Renderer
