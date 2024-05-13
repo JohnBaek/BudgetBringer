@@ -10,8 +10,11 @@ export class SectorGridData extends CommonGridModel{
    */
   constructor() {
     super();
+    this.requestQuery.apiUri = "/api/v1/Sector";
+    this.requestQuery.sortFields = [ 'regDate' ];
+    this.requestQuery.sortOrders = [ 'desc' ];
     this.columDefined = [
-      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250, "value", "이름"),
+      {  field: 'value', headerName: '이름', headerClass: 'ag-grids-custom-header', filter: 'agTextColumnFilter', floatingFilter: true, useAsModel: true, inputType : 'text', width: 250 , isRequired: true} ,
       CommonColumnDefinitions.getRegDateColumn() ,
       CommonColumnDefinitions.getRegNameColumn() ,
     ]

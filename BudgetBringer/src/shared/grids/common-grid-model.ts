@@ -10,6 +10,10 @@ export type chartType = 'bar';
  */
 export abstract class CommonGridModel {
   /**
+   * title of grid
+   */
+  public title: string = '';
+  /**
    * ag-grid Column Definitions
    */
   public columDefined : any [];

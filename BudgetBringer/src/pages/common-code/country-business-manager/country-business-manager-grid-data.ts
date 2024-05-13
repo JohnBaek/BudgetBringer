@@ -10,9 +10,12 @@ export class CountryBusinessManagerGridData extends CommonGridModel{
    */
   constructor() {
     super();
+    this.requestQuery.apiUri = "/api/v1/CountryBusinessManager";
+    this.requestQuery.sortFields = [ 'sequence' ];
+    this.requestQuery.sortOrders = [ 'asc' ];
     this.columDefined = [
-      CommonColumnDefinitions.createColumnDefinitionForNumberFilter(100, "sequence", "순서"),
-      CommonColumnDefinitions.getNameColumn() ,
+      { field: 'sequence', headerName: '순서', headerClass: 'ag-grids-custom-header', filter: 'agTextColumnFilter', floatingFilter: true, useAsModel: true, inputType : 'number', width: 100 , isRequired: true},
+      { field: 'name', headerName: '이름', headerClass: 'ag-grids-custom-header', filter: 'agTextColumnFilter', floatingFilter: true, useAsModel: true, inputType : 'text', width: 250 , isRequired: true} ,
       CommonColumnDefinitions.getRegDateColumn() ,
       CommonColumnDefinitions.getRegNameColumn() ,
     ]

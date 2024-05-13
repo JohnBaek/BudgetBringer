@@ -4,6 +4,7 @@ import CommonGrid from "../../../shared/grids/common-grid.vue";
 import {BusinessUnitGridData} from "./business-unit-grid-data";
 import {RequestBusinessUnit} from "../../../models/requests/budgets/request-business-unit";
 import CommonGridDialog from "../../../shared/grids/common-grid-dialog.vue";
+
 /**
  * Grid Model
  */
@@ -30,6 +31,7 @@ const dialog = ref();
                @onAdd="dialog.showAddDialog()"
                @onUpdate="dialog.showUpdateDialog($event.id)"
                @onRemove="dialog.showRemoveDialog($event)"
+               @on-double-clicked="dialog.showUpdateDialog($event.id)"
                ref="gridReference"
   />
   <common-grid-dialog

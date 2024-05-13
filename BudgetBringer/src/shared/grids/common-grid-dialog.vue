@@ -144,16 +144,15 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
       </v-card-title>
 
       <v-card-subtitle class="" v-if="addDialog">
-        <v-chip color="primary">추가</v-chip> {{title}}을 추가합니다.</v-card-subtitle>
+        <v-chip color="primary">추가</v-chip> {{title}}을(를) 추가합니다.</v-card-subtitle>
 
       <v-card-subtitle class="" v-if="updateDialog">
-        <v-chip color="warning">수정</v-chip> {{title}}을 수정합니다.</v-card-subtitle>
+        <v-chip color="warning">수정</v-chip> {{title}}을(를) 수정합니다.</v-card-subtitle>
 
       <v-row class="ma-1">
         <v-col cols="12" :md="columnDefined.length == 1 ? '12' : '6'"
                v-for="(item, key) in columnDefined"
                :key="key">
-
           <div>
             <div class="mb-1" v-if="!item.isRequired">
               <b>{{ item['headerName'] }} </b>
@@ -164,6 +163,14 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
           </div>
 
           <v-text-field v-if="item.inputType && item.inputType === 'text'"
+                        outlined variant="outlined"
+                        density="compact"
+                        v-model="model[item.field]"
+                        :placeholder="`${ item['headerName'] }을(를) 입력해주세요`"
+                        @keyup.enter="add()"
+          />
+          <v-text-field v-if="item.inputType && item.inputType === 'number'"
+                        type="number"
                         outlined variant="outlined"
                         density="compact"
                         v-model="model[item.field]"

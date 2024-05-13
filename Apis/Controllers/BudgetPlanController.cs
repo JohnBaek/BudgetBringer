@@ -28,17 +28,44 @@ public class BudgetPlanController : Controller
     /// Excel Provider
     /// </summary>
     private readonly IExcelService _excelService;
-
+    
+    /// <summary>
+    /// Business Unit
+    /// </summary>
+    private readonly IBusinessUnitService _businessUnitService;
+    
+    /// <summary>
+    /// CostCenter
+    /// </summary>
+    private readonly ICostCenterService _costCenterService;
+    
+    /// <summary>
+    /// Sector
+    /// </summary>
+    private readonly ISectorService _sectorService;
+    
+    /// <summary>
+    /// Country Business Managers
+    /// </summary>
+    private readonly ICountryBusinessManagerService _countryBusinessManagerService;
 
     /// <summary>
     /// 생성자 
     /// </summary>
     /// <param name="budgetPlanService">비지니스 유닛 서비스 </param>
     /// <param name="excelService">Excel Provider</param>
-    public BudgetPlanController(IBudgetPlanService budgetPlanService, IExcelService excelService)
+    /// <param name="businessUnitService"></param>
+    /// <param name="costCenterService"></param>
+    /// <param name="sectorService"></param>
+    /// <param name="countryBusinessManagerService"></param>
+    public BudgetPlanController(IBudgetPlanService budgetPlanService, IExcelService excelService, IBusinessUnitService businessUnitService, ICostCenterService costCenterService, ISectorService sectorService, ICountryBusinessManagerService countryBusinessManagerService)
     {
         _budgetPlanService = budgetPlanService;
         _excelService = excelService;
+        _businessUnitService = businessUnitService;
+        _costCenterService = costCenterService;
+        _sectorService = sectorService;
+        _countryBusinessManagerService = countryBusinessManagerService;
     }
     
     /// <summary>
@@ -159,6 +186,60 @@ public class BudgetPlanController : Controller
         
         return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "report.xlsx");
     }
+    
+    /// <summary>
+    /// Export Excel
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("Import/Excel/Download")]
+    public async Task<IActionResult> ImportExcelFileDownload()
+    {
+        // Define request 
+        RequestQuery requestQuery = GetDefinedSearchMeta(new RequestQuery());
+
+        // Create Instance
+        XLWorkbook workbook = new XLWorkbook();
+       
+        // TODO
+        // // Sum 제거 
+        // foreach (RequestQuerySearchMeta searchMeta in requestQuery.SearchMetas)
+        // {
+        //     searchMeta.IsSum = false;
+        //     switch (searchMeta.Field)
+        //     {
+        //         // Cost Center 
+        //         case nameof(ResponseBudgetPlan.CostCenterName)
+        //             
+        //     }
+        // }
+
+        // Find index for 'isabove500k'
+        int foundIndex = requestQuery.SearchFields!.FindIndex(i => i.ToLower() == "isabove500k");
+        string sheetName = "Above 500K (Budget)";
+        
+        // Is founded 'isabove500k'
+        if (foundIndex > -1)
+        {
+            // To parse value
+            bool isAbove = Convert.ToBoolean(requestQuery.SearchKeywords?[foundIndex]);
+
+            // Set sheet name
+            sheetName = (isAbove) ? "Above 500K (Budget)" : "Below 500K (Budget)";
+        }
+
+        // Make data For worksheet 
+        workbook = _excelService.AddDataToWorkbook(sheetName: sheetName, workbook: workbook, requestQuery: requestQuery, items: new List<ResponseBudgetPlan>());
+
+        // Create Stream for generate file
+        MemoryStream stream = new MemoryStream();
+        
+        // Save workbook to memory stream
+        workbook.SaveAs(stream);
+        stream.Position = 0; 
+        
+        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "import.xlsx");
+    }
+    
     
     /// <summary>
     /// Return RequestQuery object to set Search Meta 
