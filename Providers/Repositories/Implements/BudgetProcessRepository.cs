@@ -333,12 +333,11 @@ public class BudgetProcessRepository : IBudgetProcessRepository
 
             // Get Year Ranges 
             int yearCurrent = year.ToInt();
-            int yearBefore = yearCurrent - 1;
        
             // Get all approved amounts in this year and before year
             IQueryable<DbModelBudgetApproved> queryApproved = _dbContext.BudgetApproved.AsNoTracking()
                 .Where(i =>
-                    new[] {yearCurrent, yearBefore}.Contains(i.BaseYearForStatistics)
+                    new[] {yearCurrent }.Contains(i.BaseYearForStatistics)
                 );            
             
             // Get all CountryBusiness Managers
@@ -355,44 +354,18 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                 .AsNoTracking()
                 .Include(i => i.CountryBusinessManagerBusinessUnits)
                 .ThenInclude(v => v.BusinessUnit);
-            
-            // 조회된 정보로 CHK 500K 이하 전년도 정보를 찾는다.
-            List<ResponseProcessApproved> yearBeforeBelow500K = await ComputeApprovedAsync( queryApproved, queryManagers, yearBefore , isAbove );
-            
-            // 조회된 정보로 CHK 500K 이하 당해년도 정보를 찾는다.
-            List<ResponseProcessApproved> yearBelow500K = await ComputeApprovedAsync( queryApproved, queryManagers, yearCurrent , isAbove );
+                
+            List<ResponseProcessApproved> thisYear = await ComputeApprovedAsync( queryApproved, queryManagers, yearCurrent , isAbove );
 
             // 객체를 생성한다.
             ResponseProcessApprovedSummary data = new ResponseProcessApprovedSummary();
-            
-            // 전체 Summary 정보
-            // 전년
-            ResponseProcessSummaryDetail<ResponseProcessApproved> beforeYearDetailBelow500K = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
-            {
-                Sequence = 1,
-                Title = $"{ yearBefore }FY",
-                Items = yearBeforeBelow500K
-            };
-            // 당해년
-            ResponseProcessSummaryDetail<ResponseProcessApproved>  yearDetailAbove500K = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
+            ResponseProcessSummaryDetail<ResponseProcessApproved>  thisYearDetail = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
             {
                 Sequence = 2,
-                Title = $"{ yearCurrent }FY",
-                Items = yearBelow500K
+                Title = $"",
+                Items = thisYear
             };
-            // 전체 Sum
-            List<ResponseProcessApproved> total = SumApproved(yearBeforeBelow500K,yearBelow500K);
-            ResponseProcessSummaryDetail<ResponseProcessApproved>  detailTotal = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
-            {
-                Sequence = 3,
-                Title = $"{yearBefore}FY & { yearCurrent }FY",
-                Items = total
-            };
-            
-            // 모든 리스트를 주입한다.
-            data.Items.Add(beforeYearDetailBelow500K);
-            data.Items.Add(yearDetailAbove500K);
-            data.Items.Add(detailTotal);
+            data.Items.Add(thisYearDetail);
             return new ResponseData<ResponseProcessApprovedSummary>(EnumResponseResult.Success, "", "", data);
         }
         catch (Exception e)
