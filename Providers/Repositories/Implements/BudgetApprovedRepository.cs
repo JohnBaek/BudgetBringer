@@ -595,7 +595,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                     RequestBudgetApprovedExcelImport add = new RequestBudgetApprovedExcelImport();
                     add.ApprovalDate = row.Cell(1).Value.ToString();
                     add.BaseYearForStatistics = int.Parse(row.Cell(2).Value.ToString());
-                    add.Description = row.Cell(4).Value.ToString();
+                    add.Description = row.Cell(3).Value.ToString();
 
                     // Get Sector
                     string sectorName = row.Cell(4).Value.ToString();
@@ -671,8 +671,13 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                     add.BusinessUnitId = businessUnitId.ToGuid();
                     
                     
-                     add.PoNumber = int.Parse(row.Cell(8).Value.ToString());
+                    int.TryParse(row.Cell(8).Value.ToString(), out int PoNumber);
+                    add.PoNumber = PoNumber;
                     Enum.TryParse(row.Cell(9).Value.ToString(), out EnumApprovalStatus status);
+                    
+                    
+                    
+                    
                     add.ApprovalStatus = status;
                     add.ApprovalAmount = double.Parse(row.Cell(10).Value.ToString());
                     add.Actual = double.Parse(row.Cell(11).Value.ToString());
