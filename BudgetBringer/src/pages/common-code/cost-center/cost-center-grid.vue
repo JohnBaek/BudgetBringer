@@ -3,7 +3,6 @@ import {ref} from "vue";
 import CommonGrid from "../../../shared/grids/common-grid.vue";
 import {CostCenterGridData} from "./cost-center-grid-data";
 import {RequestCostCenter} from "../../../models/requests/budgets/request-cost-center";
-import {RequestBusinessUnit} from "../../../models/requests/budgets/request-business-unit";
 import CommonGridDialog from "../../../shared/grids/common-grid-dialog.vue";
 
 /**

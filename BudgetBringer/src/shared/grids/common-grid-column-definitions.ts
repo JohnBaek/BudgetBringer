@@ -1,4 +1,5 @@
 import {EnumApprovalStatus} from "../../models/enums/enum-approval-status";
+import {getYearList} from "../../services/utils/date-util";
 
 
 /**
@@ -11,7 +12,23 @@ export namespace CommonColumnDefinitions {
     headerClass: 'ag-grids-custom-header',
     filter: 'agTextColumnFilter',
     floatingFilter: true,
-    width: 160
+    width: 160,
+    useAsModel: true,
+    inputType : 'select',
+    isRequired: true,
+    selectItems: getYearList(true),
+  });
+
+  export const getApprovalDateColumn = () => ({
+    field: 'approvalDate',
+    headerName: 'Approval Date',
+    headerClass: 'ag-grids-custom-header',
+    filter: 'agTextColumnFilter',
+    floatingFilter: true,
+    width: 145,
+    useAsModel: true,
+    inputType : 'text',
+    isRequired: false,
   });
 
   export const getRegDateColumn = () => ({

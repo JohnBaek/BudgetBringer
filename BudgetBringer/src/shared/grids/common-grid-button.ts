@@ -22,6 +22,8 @@ export class CommonGridButton {
  * Pre Defined Buttons
  */
 export namespace CommonButtonDefinitions {
+
+
   export const add: CommonGridButton = ({
     actionType:'ADD',
     name:'추가' ,
@@ -90,6 +92,18 @@ export namespace CommonButtonDefinitions {
     toDispatch: false ,
     icon: 'mdi-arrow-down-bold-circle-outline'
   });
+
+  /**
+   * Group of actions
+   */
+  export const actionGroup:  Array<CommonGridButton> = [
+    CommonButtonDefinitions.add,
+    CommonButtonDefinitions.remove,
+    CommonButtonDefinitions.update,
+    CommonButtonDefinitions.importExcel,
+    CommonButtonDefinitions.importExcelDownload,
+    CommonButtonDefinitions.refresh
+  ];
 }
 
 

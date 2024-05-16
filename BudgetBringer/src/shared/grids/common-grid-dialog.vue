@@ -177,6 +177,16 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
                         :placeholder="`${ item['headerName'] }을(를) 입력해주세요`"
                         @keyup.enter="add()"
           />
+          <v-select
+            v-if="item.inputType && item.inputType === 'select'"
+            :item-title="item.field"
+            :item-value="item.field"
+            :items="item.selectItems"
+            :placeholder="`${ item['headerName'] }을(를) 입력해주세요`"
+            v-model="model[item.field]"
+            variant="outlined"
+            density="compact"
+          ></v-select>
         </v-col>
       </v-row>
 
