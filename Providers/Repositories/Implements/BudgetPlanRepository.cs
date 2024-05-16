@@ -500,7 +500,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
                         continue;
                     }
                     add.BusinessUnitId = businessUnitId.ToGuid();
-                    add.BudgetTotal = int.Parse(row.Cell(9).Value.ToString());
+                    add.BudgetTotal = double.Parse(row.Cell(9).Value.ToString());
                     add.OcProjectName = row.Cell(10).Value.ToString();
                     add.BossLineDescription = row.Cell(11).Value.ToString();
                     add.Result = EnumResponseResult.Success;

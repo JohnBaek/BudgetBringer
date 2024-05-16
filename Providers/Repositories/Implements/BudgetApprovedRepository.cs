@@ -674,8 +674,8 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                      add.PoNumber = int.Parse(row.Cell(8).Value.ToString());
                     Enum.TryParse(row.Cell(9).Value.ToString(), out EnumApprovalStatus status);
                     add.ApprovalStatus = status;
-                    add.ApprovalAmount = int.Parse(row.Cell(10).Value.ToString());
-                    add.Actual = int.Parse(row.Cell(11).Value.ToString());
+                    add.ApprovalAmount = double.Parse(row.Cell(10).Value.ToString());
+                    add.Actual = double.Parse(row.Cell(11).Value.ToString());
                     add.OcProjectName = row.Cell(12).Value.ToString();
                     add.BossLineDescription = row.Cell(13).Value.ToString();
                     add.Result = EnumResponseResult.Success;
