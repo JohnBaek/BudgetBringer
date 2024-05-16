@@ -123,10 +123,10 @@ public class BudgetProcessController : Controller
         
         // Define request 
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessOwner.CountryBusinessManagerName) ,thisYearDate,true );
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetYear) ,$"{year}FY BUDGET AMOUNT",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.ApprovedYear) ,$"{year}FY APPROVED AMOUNT",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.RemainingYear) ,$"{year}FY REMAINING YEAR",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.Ratio) ,$"{year}FY RATIO(%)",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetYear) ,$"BUDGET AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.ApprovedYear) ,$"APPROVED AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.RemainingYear) ,$"REMAINING YEAR",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.Ratio) ,$"RATIO(%)",true ,true);
 
         // Get data
         ResponseData<ResponseProcessOwnerSummary> response = await GetOwnerBudgetAsync(year);
@@ -190,10 +190,10 @@ public class BudgetProcessController : Controller
         
         // Define request 
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BusinessUnitName) ,thisYearDate,true );
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetYear) ,$"{year}FY BUDGET AMOUNT",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.ApprovedYear) ,$"{year}FY APPROVED AMOUNT",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.RemainingYear) ,$"{year}FY REMAINING YEAR",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.Ratio) ,$"{year}FY Ratio(%)",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetYear) ,$"BUDGET AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.ApprovedYear) ,$"APPROVED AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.RemainingYear) ,$"REMAINING YEAR",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.Ratio) ,$"Ratio(%)",true ,true);
         // requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetApprovedYearSum) ,$"{thisYear}&{beforeYear}FY\nAPPROVED AMOUNT",true ,true);
         // requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessBusinessUnit.BudgetRemainingYear) ,"REMAINING YEAR",true ,true);
 
@@ -261,9 +261,9 @@ public class BudgetProcessController : Controller
         
         // Define request 
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessApproved.CountryBusinessManagerName) ,thisYearDate,true );
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessApproved.PoIssueAmountSpending) ,$"SPENDING & PO ISSUE AMOUNT",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessApproved.PoIssueAmount) ,$"PO ISSUE AMOUNT",true ,true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessApproved.NotPoIssueAmount) ,$"NOT PO ISSUE AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessApproved.PoIssueAmountSpending) ,$"SPENDING & ISSUE PO AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessApproved.PoIssueAmount) ,$"ISSUE PO AMOUNT",true ,true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessApproved.NotPoIssueAmount) ,$"NOT YET ISSUE PO AMOUNT",true ,true);
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseProcessApproved.ApprovedAmount) ,$"APPROVED AMOUNT",true ,true);
 
         // Get data

@@ -13,6 +13,7 @@ import CommonGridButtonGroup from "../../../shared/grids/common-grid-button-grou
 import {AgChartsVue} from 'ag-charts-vue3';
 import html2canvas from "html2canvas";
 import {exportPdfFile} from "../../../services/utils/pdf-util";
+import {CommonButtonDefinitions} from "../../../shared/grids/common-grid-button";
 
 /**
  * From the parent.
@@ -317,6 +318,13 @@ const applyGridStyle = () => {
     gridStyle.value = 'width: 100%; height: 90px;';
 }
 
+const showButtons = [
+  CommonButtonDefinitions.exportExcel,
+  CommonButtonDefinitions.exportPDF,
+  CommonButtonDefinitions.refresh,
+  CommonButtonDefinitions.toChart,
+];
+
 </script>
 
 <template>
@@ -326,7 +334,7 @@ const applyGridStyle = () => {
         <!-- Action Buttons -->
         <common-grid-button-group
           :selected-rows="selectedRows"
-          :showButtons="['refresh', 'excel' , 'pdf', 'chart']"
+          :showButtons="showButtons"
           @on-refresh="refresh()"
           @on-export-excel="exportExcel()"
           @exportPdf="exportPDF()"
