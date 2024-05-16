@@ -26,23 +26,23 @@ public class IBudgetPlanRepositoryTest
     /// </summary>
     public IBudgetPlanRepositoryTest()
     {
-        _mockDbContext = new Mock<AnalysisDbContext>(new DbContextOptions<AnalysisDbContext>());
-        _mockDbSet = new Mock<DbSet<DbModelBudgetPlan>>();
-
-        // DbContext에 DbSet을 설정
-        _mockDbContext.Setup(m => m.BudgetPlans).Returns(_mockDbSet.Object);
-
-        // DbContext를 사용하는 Repository 인스턴스 생성
-        _repository = new BudgetPlanRepository(
-            Mock.Of<ILogger<BudgetPlanRepository>>(),
-            _mockDbContext.Object,
-            Mock.Of<IQueryService>(),
-            Mock.Of<IUserRepository>(),
-            Mock.Of<ILogActionWriteService>(),
-            Mock.Of<IDispatchService>(),
-        new DebounceManager(),
-            Mock.Of<IFileService>()
-        );
+        // _mockDbContext = new Mock<AnalysisDbContext>(new DbContextOptions<AnalysisDbContext>());
+        // _mockDbSet = new Mock<DbSet<DbModelBudgetPlan>>();
+        //
+        // // DbContext에 DbSet을 설정
+        // _mockDbContext.Setup(m => m.BudgetPlans).Returns(_mockDbSet.Object);
+        //
+        // // DbContext를 사용하는 Repository 인스턴스 생성
+        // _repository = new BudgetPlanRepository(
+        //     Mock.Of<ILogger<BudgetPlanRepository>>(),
+        //     _mockDbContext.Object,
+        //     Mock.Of<IQueryService>(),
+        //     Mock.Of<IUserRepository>(),
+        //     Mock.Of<ILogActionWriteService>(),
+        //     Mock.Of<IDispatchService>(),
+        // new DebounceManager(),
+        //     Mock.Of<IFileService>()
+        // );
     }
     
   //   /// <summary>

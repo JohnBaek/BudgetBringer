@@ -17,17 +17,17 @@ public enum EnumApprovalStatus
     /// 세금계산서 발행 전
     /// </summary>
     [Description("세금계산서 발행 전")]
-    PoNotYetPublished ,
+    NotYetIssuePo ,
     
     /// <summary>
     /// 세금계산서 발행
     /// </summary>
     [Description("세금계산서 발행")]
-    PoPublished ,
+    IssuePo ,
     
     /// <summary>
     /// 인보이스 발행
     /// </summary>
     [Description("인보이스 발행")]
-    InVoicePublished
+    SpendingAndIssuePo
 }

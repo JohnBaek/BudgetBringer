@@ -59,7 +59,6 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
           </v-col>
         </v-row>
       </v-container>
-
     </v-card>
   </v-dialog>
 </template>

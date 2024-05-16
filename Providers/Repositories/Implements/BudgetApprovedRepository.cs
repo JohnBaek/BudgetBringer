@@ -1,11 +1,14 @@
 using System.Linq.Expressions;
+using ClosedXML.Excel;
 using Features.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.DataModels;
 using Models.Requests.Budgets;
+using Models.Requests.Files;
 using Models.Requests.Query;
 using Models.Responses;
 using Models.Responses.Budgets;
@@ -24,6 +27,11 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
     /// DB Context
     /// </summary>
     private readonly AnalysisDbContext _dbContext;
+    
+    /// <summary>
+    /// SystemConfig Service
+    /// </summary>
+    private ISystemConfigService _systemConfigService;
 
     /// <summary>
     /// 로거
@@ -49,6 +57,11 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
     /// 로그 카테고리명
     /// </summary>
     private const string LogCategory = "[BudgetApproved]";
+    
+    /// <summary>
+    /// Host Environment
+    /// </summary>
+    private IHostEnvironment _hostEnvironment;
 
     /// <summary>
     /// 디스패처 서비스
@@ -70,13 +83,15 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
     /// <param name="logActionWriteService">액션 로그 기록 서비스</param>
     /// <param name="dispatchService">디스패처 서비스</param>
     /// <param name="fileService"></param>
+    /// <param name="systemConfigService"></param>
+    /// <param name="hostEnvironment"></param>
     public BudgetApprovedRepository(
         ILogger<BudgetApprovedRepository> logger
         , AnalysisDbContext dbContext
         , IQueryService queryService
         , IUserRepository userRepository
         , ILogActionWriteService logActionWriteService
-        , IDispatchService dispatchService, IFileService fileService)
+        , IDispatchService dispatchService, IFileService fileService, ISystemConfigService systemConfigService, IHostEnvironment hostEnvironment)
     {
         _logger = logger;
         _dbContext = dbContext;
@@ -85,6 +100,8 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         _logActionWriteService = logActionWriteService;
         _dispatchService = dispatchService;
         _fileService = fileService;
+        _systemConfigService = systemConfigService;
+        _hostEnvironment = hostEnvironment;
     }
 
     /// <summary>
@@ -498,4 +515,192 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
 
         return result;
     }
+    
+    /// <summary>
+    /// Add Multiple Request
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<ResponseList<ResponseData<ResponseBudgetApproved>>> AddListAsync(List<RequestBudgetApproved> request)
+    {
+        ResponseList<ResponseData<ResponseBudgetApproved>> result;
+        try
+        {
+            List<ResponseData<ResponseBudgetApproved>> storedResult = new List<ResponseData<ResponseBudgetApproved>>();
+            
+            // Proces all 
+            foreach (RequestBudgetApproved requestBudgetPlan in request)
+            {
+                storedResult.Add(await AddAsync(requestBudgetPlan));
+            }
+
+            return new ResponseList<ResponseData<ResponseBudgetApproved>>(EnumResponseResult.Success, "", "", storedResult);
+        }
+        catch (Exception e)
+        {
+            result = new ResponseList<ResponseData<ResponseBudgetApproved>>(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.",null);
+            e.LogError(_logger);
+        }
+
+        return result;
+    }
+    
+    
+        /// <summary>
+    /// Get import Preview
+    /// </summary>
+    /// <param name="uploadFile"></param>
+    /// <returns></returns>
+    public async Task<ResponseList<RequestBudgetApprovedExcelImport>> GetImportPreview(RequestUploadFile uploadFile)
+    {
+        ResponseList<RequestBudgetApprovedExcelImport> result;
+ 
+        try
+        {
+            // Get root TempFile Path
+            string? tempPath = await _systemConfigService.GetValueAsync<string>("UPLOAD", "TEMP_PATH");
+            
+            // In Development
+            if (_hostEnvironment.IsDevelopment())
+            {
+                tempPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library", "Caches", "Budget");
+            }
+            
+            if (tempPath == null)
+                tempPath = "";
+
+            // Combine result Path
+            string filePath = Path.Combine(tempPath, uploadFile.Name);
+
+            // Get File object
+            FileInfo importedFile = new FileInfo(filePath);
+            
+            // Does not have file
+            if (!importedFile.Exists)
+                return new ResponseList<RequestBudgetApprovedExcelImport>(EnumResponseResult.Error, "", "업로드된 파일 찾기에 실패했습니다.", null);
+
+            // Get excel instance
+            using IXLWorkbook workbook = new XLWorkbook(filePath);
+
+            // Get First 
+            IXLWorksheet worksheet = workbook.Worksheets.FirstOrDefault()!;
+
+            List<RequestBudgetApprovedExcelImport> items = new List<RequestBudgetApprovedExcelImport>();
+            
+            // Process all
+            foreach (IXLRow row in worksheet.Rows().Skip(1))
+            {
+                try
+                {
+                    RequestBudgetApprovedExcelImport add = new RequestBudgetApprovedExcelImport();
+                    add.ApprovalDate = row.Cell(1).Value.ToString();
+                    add.BaseYearForStatistics = int.Parse(row.Cell(2).Value.ToString());
+                    add.Description = row.Cell(4).Value.ToString();
+
+                    // Get Sector
+                    string sectorName = row.Cell(4).Value.ToString();
+                    add.SectorName = sectorName;
+                    string sectorId = await _dispatchService.GetValueFromAsync<DbModelSector>
+                        (nameof(DbModelSector.Value), nameof(DbModelSector.Id), sectorName);
+
+                    // Cannot Find
+                    if (sectorId.IsEmpty())
+                    {
+                        items.Add(new RequestBudgetApprovedExcelImport()
+                        {
+                            Result = EnumResponseResult.Error ,
+                            Message = $"섹터 : [{sectorName}] 을 찾을수 없습니다."
+                        });
+                        continue;
+                    }
+                    add.SectorId = sectorId.ToGuid();
+                    
+                    
+                    // Get Cost Center Name
+                    string costCenterName = row.Cell(5).Value.ToString();
+                    add.CostCenterName = costCenterName;
+                    string costCenterId = await _dispatchService.GetValueFromAsync<DbModelCostCenter>
+                        (nameof(DbModelCostCenter.Value), nameof(DbModelCountryBusinessManager.Id), costCenterName);
+                    
+                    // Cannot Find
+                    if (costCenterId.IsEmpty())
+                    {
+                        items.Add(new RequestBudgetApprovedExcelImport()
+                        {
+                            Result = EnumResponseResult.Error ,
+                            Message = $"코스트센터 : [{costCenterName}] 을 찾을수 없습니다."
+                        });
+                        continue;
+                    }
+                    add.CostCenterId = costCenterId.ToGuid();
+                    
+                    // Get CountryBusiness Manager Name
+                    string countryBusinessManagerName = row.Cell(6).Value.ToString();
+                    add.CountryBusinessManagerName = countryBusinessManagerName;
+                    string countryBusinessManagerId = await _dispatchService.GetValueFromAsync<DbModelCountryBusinessManager>
+                        (nameof(DbModelCountryBusinessManager.Name), nameof(DbModelCountryBusinessManager.Id), countryBusinessManagerName);
+                    
+                    // Cannot Find
+                    if (countryBusinessManagerId.IsEmpty())
+                    {
+                        items.Add(new RequestBudgetApprovedExcelImport()
+                        {
+                            Result = EnumResponseResult.Error ,
+                            Message = $"컨트리비지니스 매니저 : [{countryBusinessManagerName}] 을 찾을수 없습니다."
+                        });
+                        continue;
+                    }
+                    add.CountryBusinessManagerId = countryBusinessManagerId.ToGuid();
+                    
+                    
+                    // Get Business Unit
+                    string businessUnitName = row.Cell(7).Value.ToString();
+                    add.BusinessUnitName = businessUnitName;
+                    string businessUnitId = await _dispatchService.GetValueFromAsync<DbModelBusinessUnit>
+                        (nameof(DbModelBusinessUnit.Name), nameof(DbModelBusinessUnit.Id), businessUnitName);
+                    // Cannot Find
+                    if (businessUnitId.IsEmpty())
+                    {
+                        items.Add(new RequestBudgetApprovedExcelImport()
+                        {
+                            Result = EnumResponseResult.Error ,
+                            Message = $"비지니스 유닛 : [{businessUnitName}] 을 찾을수 없습니다."
+                        });
+                        continue;
+                    }
+                    add.BusinessUnitId = businessUnitId.ToGuid();
+                    
+                    
+                     add.PoNumber = int.Parse(row.Cell(8).Value.ToString());
+                    Enum.TryParse(row.Cell(9).Value.ToString(), out EnumApprovalStatus status);
+                    add.ApprovalStatus = status;
+                    add.ApprovalAmount = int.Parse(row.Cell(10).Value.ToString());
+                    add.Actual = int.Parse(row.Cell(11).Value.ToString());
+                    add.OcProjectName = row.Cell(12).Value.ToString();
+                    add.BossLineDescription = row.Cell(13).Value.ToString();
+                    add.Result = EnumResponseResult.Success;
+                    
+                    items.Add(add);
+                }
+                catch (Exception e)
+                {
+                    items.Add(new RequestBudgetApprovedExcelImport()
+                    {
+                        Result = EnumResponseResult.Error ,
+                        Message = $"처리중 예외가 발생했습니다."
+                    });
+                }
+            }
+            
+            result = new ResponseList<RequestBudgetApprovedExcelImport>(EnumResponseResult.Success, "", "", items);
+        }
+        catch (Exception e)
+        {
+            result = new ResponseList<RequestBudgetApprovedExcelImport>(EnumResponseResult.Error,"ERROR_DATA_EXCEPTION","처리중 예외가 발생했습니다.",null);
+            e.LogError(_logger);
+        }
+    
+        return result;
+    }
+
 }

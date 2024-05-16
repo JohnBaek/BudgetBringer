@@ -37,10 +37,12 @@
 
 <script setup="ts">
 import BudgetPlanGrid from "./budget-plan-grid.vue";
+import {CommonButtonDefinitions} from "../../../shared/grids/common-grid-button";
 
 /**
  * 탭 데이터
  * @type {Ref<UnwrapRef<null>>}
  */
 const tab = ref(null);
+
 </script>

@@ -1,4 +1,5 @@
 using Models.Requests.Budgets;
+using Models.Requests.Files;
 using Models.Requests.Query;
 using Models.Responses;
 using Models.Responses.Budgets;
@@ -46,4 +47,18 @@ public interface IBudgetApprovedRepository
     /// <param name="id">대상 아이디값</param>
     /// <returns></returns>
     Task<Response> DeleteAsync(string id);
+    
+    /// <summary>
+    /// Get import Preview
+    /// </summary>
+    /// <param name="uploadFile"></param>
+    /// <returns></returns>
+    Task<ResponseList<RequestBudgetApprovedExcelImport>> GetImportPreview(RequestUploadFile uploadFile);
+        
+    /// <summary>
+    /// Add Multiple Request
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    Task<ResponseList<ResponseData<ResponseBudgetApproved>>> AddListAsync(List<RequestBudgetApproved> request);
 }

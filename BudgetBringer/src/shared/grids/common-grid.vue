@@ -10,6 +10,7 @@ import CommonGridButtonGroup from "./common-grid-button-group.vue";
 import {CommonGridButtonGroupDefinesButtonEmits} from "./common-grid-button-group-defines";
 import {getDateFormatForFile} from "../../services/utils/date-util";
 import {toClone} from "../../services/utils/object-util";
+import {CommonButtonDefinitions, CommonGridButton} from "./common-grid-button";
 
 // Props
 const props = defineProps({
@@ -17,7 +18,16 @@ const props = defineProps({
   title : {},
   width : { Type: String ,  required: false ,  default: '100%' },
   height : { Type: String ,  required: false ,  default: '600px' },
-  queryRequest: {type: Object as () => RequestQuery , required: true ,}
+  queryRequest: {type: Object as () => RequestQuery , required: true ,},
+  showButtons: {
+    Type: Array<CommonGridButton>,
+    default: [
+      CommonButtonDefinitions.add,
+      CommonButtonDefinitions.remove,
+      CommonButtonDefinitions.update,
+      CommonButtonDefinitions.refresh,
+    ],
+  }
 });
 /**
  * incoming calls from parent
@@ -299,6 +309,19 @@ const gridCellDoubleClicked = (event) => {
 const gridCellClicked = (event) => {
   emits('onCellClicked', event.data);
 }
+/**
+ * imported file
+ * @param event
+ */
+const importFile = (event) => {
+  emits('importFile', event);
+}
+const importFileDownload = () =>{
+  emits('importExcelDownload');
+}
+
+
+
 </script>
 
 <template>
@@ -308,11 +331,14 @@ const gridCellClicked = (event) => {
       <div class="mt-2">
         <common-grid-button-group
           :selected-rows="selectedRows"
+          :show-buttons="showButtons"
           @on-add="add()"
           @on-remove="remove()"
           @on-update="update()"
           @on-refresh="gridRefresh()"
           @on-export-excel="exportExcel()"
+          @import-file="importFile($event)"
+          @import-excel-download="importFileDownload()"
         />
       </div>
     </v-col>
@@ -340,5 +366,8 @@ const gridCellClicked = (event) => {
   </ag-grid-vue>
 </template>
 
-<style lang="css" scoped>
+<style lang="css">
+.disabled-row {
+  background-color: lightgray; /* 비활성화된 행의 배경색을 변경합니다. */
+}
 </style>

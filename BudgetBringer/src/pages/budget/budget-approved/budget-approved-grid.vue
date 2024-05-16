@@ -14,6 +14,12 @@ import {firstValueFrom} from "rxjs";
 import {ApprovalStatusDescriptions} from "../../../models/enums/enum-approval-status";
 import CommonDialog from "../../../shared/common-dialog.vue";
 import BudgetApprovedDataForm from "./budget-approved-data-form.vue";
+import {CommonButtonDefinitions} from "../../../shared/grids/common-grid-button";
+import {RequestUploadFile} from "../../../models/requests/files/request-upload-file";
+import {ResponseList} from "../../../models/responses/response-list";
+import {RequestBudgetPlan} from "../../../models/requests/budgets/request-budget-plan";
+import CommonImportDialog from "../../../shared/common-import-dialog.vue";
+import {ResponseBudgetPlan} from "../../../models/responses/budgets/response-budget-plan";
 
 /**
  * Grid Model
@@ -271,6 +277,9 @@ const requestUpdateData = () => {
     },
   });
 }
+
+const importRef = ref(null);
+
 /**
  * When form data updated
  * @param $event
@@ -278,6 +287,121 @@ const requestUpdateData = () => {
 const updateRequestModel = ($event: RequestBudgetApproved) => {
   requestModel.value = $event;
 }
+const showButtons = [CommonButtonDefinitions.add,
+  CommonButtonDefinitions.remove,
+  CommonButtonDefinitions.update,
+  CommonButtonDefinitions.importExcel,
+  CommonButtonDefinitions.importExcelDownload,
+  CommonButtonDefinitions.refresh,];
+
+
+const importFileDownload = async() => {
+  communicationService.inTransmission();
+
+  console.log('importFileDownload')
+
+  // Request to Server
+  HttpService.requestGetFile(`${gridModel.requestQuery.apiUri}/Import/Excel/File`).subscribe({
+    next(response) {
+      if(response == null)
+        return;
+
+      console.log(1)
+
+      // Create URL dummy link
+      const url = window.URL.createObjectURL(response);
+
+      // Create Anchor dummy
+      const link = document.createElement('a');
+
+      // Simulate Click
+      link.href = url;
+      link.setAttribute('download', `import-file.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+
+      // Remove Dummy
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    },
+    error(err) {
+      console.error('Error loading data', err);
+    },
+    complete() {
+      setTimeout(() => {
+        communicationService.offTransmission();
+      },2000)
+    },
+  });
+}
+const importFile = async ($event) => {
+  importRef.value.show();
+
+  // Create form data
+  const formData = new FormData();
+  formData.append("formFile", $event);
+
+  communicationService.inTransmission();
+  let response = await firstValueFrom<ResponseData<any>>(HttpService.requestPost<ResponseData<any>>('/api/v1/file', formData));
+
+  // 요청에 실패한경우
+  if(response.result !== EnumResponseResult.success) {
+    messageService.showError(`[${response.code}] ${response.message}`);
+    return;
+  }
+
+
+  // 강제딜레이 2초후
+  await delay(2000);
+  importRef.value.increaseStep();
+  messageService.showSuccess("분석중입니다");
+
+  const param: RequestUploadFile = new RequestUploadFile();
+  param.name = response.data.name;
+
+  const responseData = await firstValueFrom<ResponseList<RequestBudgetPlan>>(HttpService.requestPost<ResponseData<any>>(`${gridModel.requestQuery.apiUri}/Import/Excel`, param));
+  // 요청에 실패한경우
+  if(responseData.result !== EnumResponseResult.success) {
+    messageService.showError(`[${responseData.code}] ${responseData.message}`);
+    return;
+  }
+  await delay(2000);
+  importRef.value.increaseStep();
+
+  responseData.items.forEach(i => {
+    i.enabled = (i.result as EnumResponseResult) === EnumResponseResult.success;
+    i.isAbove500K = props.isAbove500k == "true" || props.isAbove500k == true
+  });
+
+  console.log('responseData.items',responseData.items);
+  await delay(2000);
+  importRef.value.updateStep(99);
+  console.log('gridModel.columDefined',gridModel.columDefined);
+
+  importRef.value.updateItems(gridModel.columDefined, responseData.items);
+  communicationService.offTransmission();
+}
+const submit = async ($event) => {
+  const params = $event as Array<RequestBudgetPlan>;
+  if (params.length === 0)
+    return;
+
+  communicationService.notifyInCommunication();
+  const responseData = (await firstValueFrom<ResponseList<ResponseData<ResponseBudgetPlan>>>(HttpService.requestPost<ResponseData<any>>(`${gridModel.requestQuery.apiUri}/Import/list`, params))) as ResponseList<ResponseData<ResponseBudgetPlan>>;
+
+  if(responseData.success)
+    messageService.showSuccess(`데이터 등록 성공: ${responseData.items.filter(i => i.success).length}\n데이터 등록 실패: ${responseData.items.filter(i => i.error).length}`);
+
+  if(responseData.error)
+    messageService.showError(`[${responseData.code}] ${responseData.message}`);
+
+  gridReference.value.doRefresh();
+  importRef.value.hide();
+  communicationService.notifyOffCommunication();
+  console.log('responseData',responseData)
+}
+
+const delay =  (ms) => new Promise(resolve => setTimeout(resolve, ms));
 </script>
 
 <template>
@@ -285,10 +409,13 @@ const updateRequestModel = ($event: RequestBudgetApproved) => {
                :input-colum-defined="gridModel.columDefined"
                :query-request="gridModel.requestQuery"
                :grid-title="((props.isAbove500k as String).toLowerCase() == 'true') ? '예산승인_Above_500K_Budget' : '예산승인_Below_500K_Budget'"
+               :show-buttons="showButtons"
                @onAdd="showAddDialog"
                @onRemove="showRemoveDialog"
                @onUpdate="showUpdateDialog"
                @onDoubleClicked="onDoubleClicked($event)"
+               @import-file="importFile($event)"
+               @import-excel-download="importFileDownload()"
                ref="gridReference"
   />
   <!-- Add Dialog -->
@@ -322,6 +449,8 @@ const updateRequestModel = ($event: RequestBudgetApproved) => {
       </template>
     </v-card>
   </v-dialog>
+
+  <common-import-dialog ref="importRef" @submit="submit($event)"></common-import-dialog>
 </template>
 
 <style scoped lang="css">

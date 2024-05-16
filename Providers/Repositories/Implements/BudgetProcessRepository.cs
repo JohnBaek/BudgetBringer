@@ -362,7 +362,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             ResponseProcessSummaryDetail<ResponseProcessApproved>  thisYearDetail = new ResponseProcessSummaryDetail<ResponseProcessApproved> 
             {
                 Sequence = 2,
-                Title = $"",
+                Title = $"Total",
                 Items = thisYear
             };
             data.Items.Add(thisYearDetail);
@@ -725,7 +725,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                     double poIssueAmountSpending = query
                         .Where(i => 
                             i.BusinessUnitId == businessUnit.BusinessUnitId &&
-                            i.ApprovalStatus == EnumApprovalStatus.InVoicePublished)
+                            i.ApprovalStatus == EnumApprovalStatus.SpendingAndIssuePo)
                         .Sum(i => i.ApprovalAmount );
                     sumPoIssueAmountSpending += poIssueAmountSpending;
                 
@@ -733,7 +733,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                     double poIssueAmount = query
                         .Where(i =>
                             i.BusinessUnitId == businessUnit.BusinessUnitId &&
-                            i.ApprovalStatus == EnumApprovalStatus.PoPublished)
+                            i.ApprovalStatus == EnumApprovalStatus.IssuePo)
                         .Sum(i => i.ApprovalAmount );
                     sumPoIssueAmount += poIssueAmount;
                 
@@ -741,7 +741,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                     double notPoIssueAmount = query
                         .Where(i =>
                             i.BusinessUnitId == businessUnit.BusinessUnitId &&
-                            i.ApprovalStatus == EnumApprovalStatus.PoNotYetPublished)
+                            i.ApprovalStatus == EnumApprovalStatus.NotYetIssuePo)
                         .Sum(i => i.ApprovalAmount );
                     sumNotPoIssueAmount += notPoIssueAmount;
                 

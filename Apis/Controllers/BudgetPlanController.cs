@@ -1,9 +1,13 @@
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Drawing;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using Features.Attributes;
+using Features.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Common.Enums;
 using Models.Requests.Budgets;
+using Models.Requests.Files;
 using Models.Requests.Query;
 using Models.Responses;
 using Models.Responses.Budgets;
@@ -119,6 +123,18 @@ public class BudgetPlanController : Controller
     }
     
     /// <summary>
+    /// 데이터를 추가한다.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("Import/List")]
+    [ClaimRequirement("Permission","budget-plan")]
+    public async Task<ResponseList<ResponseData<ResponseBudgetPlan>>> AddListAsync(List<RequestBudgetPlan> request)
+    {
+        return await _budgetPlanService.AddListAsync(request);
+    }
+    
+    /// <summary>
     /// 데이터를 삭제한다.
     /// </summary>
     /// <param name="id">대상 아이디값</param>
@@ -164,6 +180,7 @@ public class BudgetPlanController : Controller
         int foundIndex = requestQuery.SearchFields!.FindIndex(i => i.ToLower() == "isabove500k");
         string sheetName = "Above 500K (Budget)";
         
+        
         // Is founded 'isabove500k'
         if (foundIndex > -1)
         {
@@ -187,48 +204,53 @@ public class BudgetPlanController : Controller
         return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "report.xlsx");
     }
     
+    
     /// <summary>
-    /// Export Excel
+    /// Import Budget Excel
     /// </summary>
     /// <returns></returns>
-    [HttpGet("Import/Excel/Download")]
-    public async Task<IActionResult> ImportExcelFileDownload()
+    [HttpGet("Import/Excel/File")]
+    public async Task<IActionResult> GetImportExcelFile()
     {
         // Define request 
         RequestQuery requestQuery = GetDefinedSearchMeta(new RequestQuery());
+        
+        // Except import Properties
+        requestQuery.SearchMetas = requestQuery.SearchMetas.Where(i => !new[]
+        {
+            nameof(ResponseCommonWriter.RegName), nameof(ResponseCommonWriter.RegDate),
+            nameof(ResponseCommonWriter.ModName), nameof(ResponseCommonWriter.ModDate)
+        }.Contains(i.Field) ).ToList();
 
         // Create Instance
         XLWorkbook workbook = new XLWorkbook();
        
-        // TODO
-        // // Sum 제거 
-        // foreach (RequestQuerySearchMeta searchMeta in requestQuery.SearchMetas)
-        // {
-        //     searchMeta.IsSum = false;
-        //     switch (searchMeta.Field)
-        //     {
-        //         // Cost Center 
-        //         case nameof(ResponseBudgetPlan.CostCenterName)
-        //             
-        //     }
-        // }
-
-        // Find index for 'isabove500k'
-        int foundIndex = requestQuery.SearchFields!.FindIndex(i => i.ToLower() == "isabove500k");
-        string sheetName = "Above 500K (Budget)";
-        
-        // Is founded 'isabove500k'
-        if (foundIndex > -1)
-        {
-            // To parse value
-            bool isAbove = Convert.ToBoolean(requestQuery.SearchKeywords?[foundIndex]);
-
-            // Set sheet name
-            sheetName = (isAbove) ? "Above 500K (Budget)" : "Below 500K (Budget)";
-        }
+        // Sum 제거 
+        foreach (RequestQuerySearchMeta searchMeta in requestQuery.SearchMetas)
+            searchMeta.IsSum = false;
 
         // Make data For worksheet 
-        workbook = _excelService.AddDataToWorkbook(sheetName: sheetName, workbook: workbook, requestQuery: requestQuery, items: new List<ResponseBudgetPlan>());
+        workbook = _excelService.AddDataToWorkbook(sheetName: "BudgetPlanImport", workbook: workbook, requestQuery: requestQuery, items: new List<ResponseBudgetPlan>());
+
+        // Get Work sheet
+        IXLWorksheet worksheet = workbook.Worksheets.FirstOrDefault()!;
+        
+        // 통계 기준년도 
+        _excelService.AddDropDownList(worksheet, 3, "포함,미포함");
+
+        string costCenters = (await _costCenterService.GetListAsync(new RequestQuery(0, 100))).Items!.Select(i => i.Value).WithJoinString(",");
+        _excelService.AddDropDownList(worksheet, 5,  costCenters);
+
+        string countryBusinessManagers =
+            (await _countryBusinessManagerService.GetListAsync(new RequestQuery(0, 100))).Items!.Select(i => i.Name)
+            .WithJoinString(",");
+        _excelService.AddDropDownList(worksheet, 6,  countryBusinessManagers);
+
+        string sectors = (await _sectorService.GetListAsync(new RequestQuery(0, 100))).Items!.Select(i => i.Value).WithJoinString(",");
+        _excelService.AddDropDownList(worksheet, 7,  sectors);
+
+        string businessUnits = (await _businessUnitService.GetListAsync(new RequestQuery(0, 100))).Items!.Select(i => i.Name).WithJoinString(",");
+        _excelService.AddDropDownList(worksheet, 8,  businessUnits);
 
         // Create Stream for generate file
         MemoryStream stream = new MemoryStream();
@@ -240,6 +262,16 @@ public class BudgetPlanController : Controller
         return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "import.xlsx");
     }
     
+    
+    /// <summary>
+    /// Import Budget Excel
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("Import/Excel")]
+    public async Task<ResponseList<RequestBudgetPlanExcelImport>> GetImportPreview(RequestUploadFile request)
+    {
+        return await _budgetPlanService.GetImportPreview(request);
+    }
     
     /// <summary>
     /// Return RequestQuery object to set Search Meta 

@@ -11,6 +11,23 @@ namespace Models.Requests.Query;
 public class RequestQuery
 {
     /// <summary>
+    /// Constructor
+    /// </summary>
+    public RequestQuery() {}
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="skip"></param>
+    /// <param name="pageCount"></param>
+    public RequestQuery(int skip, int pageCount)
+    {
+        Skip = skip;
+        PageCount = pageCount;
+    }
+
+
+    /// <summary>
     /// 스킵
     /// </summary>
     [Required]

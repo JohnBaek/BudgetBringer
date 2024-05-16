@@ -25,10 +25,11 @@ public interface IFileService
     /// <param name="tempUploadedFiles"></param>
     /// <returns></returns>
     Task<ResponseList<ResponseFileUpload>> PersistFilesAsync(string category, List<RequestUploadFile> tempUploadedFiles);
-    
+
     /// <summary>
     /// Try persist files from temp path
     /// </summary>
+    /// <param name="dbContext"></param>
     /// <param name="category"></param>
     /// <param name="tempUploadedFiles"></param>
     /// <param name="groupId"></param>

@@ -1,4 +1,6 @@
+using Models.Requests.Budgets;
 using Models.Responses;
+using Models.Responses.Budgets;
 using Models.Responses.Process.ProcessApproved;
 using Models.Responses.Process.ProcessBusinessUnit;
 using Models.Responses.Process.ProcessOwner;
@@ -43,4 +45,5 @@ public interface IBudgetProcessRepository
     /// <param name="year">년도 정보</param>
     /// <returns></returns>
     Task<ResponseData<ResponseProcessApprovedSummary>> GetComputeStateOfPurchaseAboveAsync(string year);
+
 }

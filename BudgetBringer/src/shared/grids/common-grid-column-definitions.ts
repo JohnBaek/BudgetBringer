@@ -179,12 +179,12 @@ export namespace CommonColumnDefinitions {
       switch (params.value) {
         case EnumApprovalStatus.None:
           return "None";
-        case EnumApprovalStatus.PoNotYetPublished:
-          return "Po Not Yet Published";
-        case EnumApprovalStatus.PoPublished:
-          return "Po Published";
-        case EnumApprovalStatus.InVoicePublished:
-          return "In Voice Published";
+        case EnumApprovalStatus.NotYetIssuePo:
+          return "Not Yet Issue PO";
+        case EnumApprovalStatus.IssuePo:
+          return "Issue PO";
+        case EnumApprovalStatus.SpendingAndIssuePo:
+          return "Spending & Issue PO";
         default:
           return "Error"; // 값이 열거형에 없는 경우
       }
@@ -193,11 +193,11 @@ export namespace CommonColumnDefinitions {
       switch (params.value) {
         case EnumApprovalStatus.None:
           return { backgroundColor: '#33CC3344', color: 'light-black' };
-        case EnumApprovalStatus.PoNotYetPublished:
+        case EnumApprovalStatus.NotYetIssuePo:
           return { backgroundColor: '#ccc42244', color: 'light-black' };
-        case EnumApprovalStatus.PoPublished:
+        case EnumApprovalStatus.IssuePo:
           return { backgroundColor: '#33CC3344', color: 'light-black' };
-        case EnumApprovalStatus.InVoicePublished:
+        case EnumApprovalStatus.SpendingAndIssuePo:
           return { backgroundColor: '#2244CC44', color: 'light-black' };
         default:
           return { backgroundColor: '#CC222244', color: 'light-black' }; // 값이 열거형에 없는 경우

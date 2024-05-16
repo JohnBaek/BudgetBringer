@@ -7,17 +7,17 @@ export enum EnumApprovalStatus {
   /**
    * 세금계산서 발행 전
    */
-  PoNotYetPublished,
+  NotYetIssuePo,
 
   /**
    * 세금계산서 발행
    */
-  PoPublished,
+  IssuePo,
 
   /**
    * 인보이스 발행
    */
-  InVoicePublished
+  SpendingAndIssuePo
 }
 
 /**
@@ -25,7 +25,7 @@ export enum EnumApprovalStatus {
  */
 export const ApprovalStatusDescriptions: Record<EnumApprovalStatus, string> = {
   [EnumApprovalStatus.None]: "None",
-  [EnumApprovalStatus.PoNotYetPublished]: "Po Not Yet Published",
-  [EnumApprovalStatus.PoPublished]: "Po Published",
-  [EnumApprovalStatus.InVoicePublished]: "Invoice Published"
+  [EnumApprovalStatus.NotYetIssuePo]: "Not Yet Issue PO",
+  [EnumApprovalStatus.IssuePo]: "Issue PO",
+  [EnumApprovalStatus.SpendingAndIssuePo]: "Spending & Issue PO"
 };

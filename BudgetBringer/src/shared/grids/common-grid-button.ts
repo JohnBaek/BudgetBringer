@@ -1,5 +1,5 @@
 // Type of Button Action
-export type ButtonActionType = 'ADD' | 'REMOVE' | 'UPDATE' | 'REFRESH' | 'EXPORT_EXCEL' | 'EXPORT_PDF' | 'TO_CHART' | 'TO_LIST';
+export type ButtonActionType = 'ADD' | 'REMOVE' | 'UPDATE' | 'REFRESH' | 'EXPORT_EXCEL' | 'EXPORT_PDF' | 'TO_CHART' | 'TO_LIST' | 'IMPORT_EXCEL';
 
 /**
  * Grid Button Action
@@ -75,6 +75,20 @@ export namespace CommonButtonDefinitions {
     name:'' ,
     toDispatch: false ,
     icon: 'mdi-view-list'
+  });
+
+  export const importExcel: CommonGridButton = ({
+    actionType:'IMPORT_EXCEL',
+    name:'업로드' ,
+    toDispatch: false ,
+    icon: 'mdi-checkbox-multiple-marked-circle'
+  });
+
+  export const importExcelDownload: CommonGridButton = ({
+    actionType:'IMPORT_EXCEL',
+    name:'다운로드' ,
+    toDispatch: false ,
+    icon: 'mdi-arrow-down-bold-circle-outline'
   });
 }
 

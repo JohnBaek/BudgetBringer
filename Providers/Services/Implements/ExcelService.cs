@@ -1,5 +1,6 @@
 using System.Reflection;
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Features.Extensions;
 using Microsoft.Extensions.Logging;
 using Models.Requests.Query;
@@ -526,5 +527,24 @@ public class ExcelService : IExcelService
     private XLColor GetColorFromIndex(int index)
     {
         return _colors[index % _colors.Count]; 
+    }
+
+    /// <summary>
+    /// To Add Drop down list
+    /// </summary>
+    /// <param name="worksheet"></param>
+    /// <param name="cellIndex"></param>
+    /// <param name="dropDownList"></param>
+    public void AddDropDownList(IXLWorksheet worksheet, int cellIndex, string dropDownList)
+    {
+        try
+        {
+            // Get Cell From Worksheet
+            worksheet.Column(cellIndex).SetDataValidation().List($"\"{dropDownList}\"" ,true);
+        }
+        catch (Exception e)
+        {
+            e.LogError(_logger);
+        }
     }
 }

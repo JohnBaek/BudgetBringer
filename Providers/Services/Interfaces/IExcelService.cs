@@ -1,4 +1,5 @@
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Models.Requests.Query;
 using Models.Responses.Process.ProcessApproved;
 
@@ -30,4 +31,12 @@ public interface IExcelService
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     XLWorkbook AddApprovedDataToWorkbook(XLWorkbook workbook, RequestQuery requestQuery, List<ResponseProcessApproved> items , string sheetName);
+
+    /// <summary>
+    /// To Add Drop down list
+    /// </summary>
+    /// <param name="worksheet"></param>
+    /// <param name="cellIndex"></param>
+    /// <param name="dropDownList"></param>
+    void AddDropDownList(IXLWorksheet worksheet, int cellIndex, string dropDownList);
 }

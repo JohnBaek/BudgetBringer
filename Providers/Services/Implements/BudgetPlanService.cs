@@ -2,6 +2,7 @@ using Features.Extensions;
 using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.Requests.Budgets;
+using Models.Requests.Files;
 using Models.Requests.Query;
 using Models.Responses;
 using Models.Responses.Budgets;
@@ -147,6 +148,52 @@ public class BudgetPlanService : IBudgetPlanService
 
         return response;
     }
+
+    /// <summary>
+    /// Get import Preview
+    /// </summary>
+    /// <param name="uploadFile"></param>
+    /// <returns></returns>
+    public async Task<ResponseList<RequestBudgetPlanExcelImport>> GetImportPreview(RequestUploadFile uploadFile)
+    {
+        ResponseList<RequestBudgetPlanExcelImport> response;
+        
+        try
+        {
+            response = await _repository.GetImportPreview(uploadFile);
+        }
+        catch (Exception e)
+        {
+            response = new ResponseList<RequestBudgetPlanExcelImport>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
+            e.LogError(_logger);
+        }
+
+        return response;
+    }
+
+    /// <summary>
+    /// Add Multiple Request
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public async Task<ResponseList<ResponseData<ResponseBudgetPlan>>> AddListAsync(List<RequestBudgetPlan> request)
+    {
+        ResponseList<ResponseData<ResponseBudgetPlan>> response;
+        
+        try
+        {
+            response = await _repository.AddListAsync(request);
+        }
+        catch (Exception e)
+        {
+            response = new ResponseList<ResponseData<ResponseBudgetPlan>>(EnumResponseResult.Error,"","처리중 예외가 발생했습니다.",null);
+            e.LogError(_logger);
+        }
+
+        return response;
+    }
+
 
     /// <summary>
     /// 데이터를 마이그리에션 한다.

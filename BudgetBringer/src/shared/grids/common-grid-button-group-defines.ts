@@ -14,4 +14,6 @@ export type CommonGridButtonGroupDefinesButtonEmits = {
   (e: 'grid'): void,
   (e: 'print'): void,
   (e: 'onDoubleClicked', params: any): void,
+  (e: 'importFile', params: any): void,
+  (e: 'importExcelDownload'): void,
 };

@@ -1,4 +1,5 @@
 using Models.Requests.Budgets;
+using Models.Requests.Files;
 using Models.Requests.Query;
 using Models.Responses;
 using Models.Responses.Budgets;
@@ -24,7 +25,6 @@ public interface IBudgetPlanService
     /// <returns></returns>
     Task<ResponseData<ResponseBudgetPlan>> GetAsync(string id);
 
-
     /// <summary>
     /// 데이터를 업데이트한다.
     /// </summary>
@@ -47,7 +47,20 @@ public interface IBudgetPlanService
     /// <returns></returns>
     Task<Response> DeleteAsync(string id);
 
+    /// <summary>
+    /// Get import Preview
+    /// </summary>
+    /// <param name="uploadFile"></param>
+    /// <returns></returns>
+    Task<ResponseList<RequestBudgetPlanExcelImport>> GetImportPreview(RequestUploadFile uploadFile);
 
+    /// <summary>
+    /// Add Multiple Request
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    Task<ResponseList<ResponseData<ResponseBudgetPlan>>> AddListAsync(List<RequestBudgetPlan> request);
+    
     /// <summary>
     /// 데이터를 마이그리에션 한다.
     /// </summary>

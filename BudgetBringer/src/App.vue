@@ -1,3 +1,5 @@
+
+
 <script lang="ts" setup>
 import CommonMessageTemplate from "./shared/common-message-template.vue";
 import CommonLogo from "./shared/common-logo.vue";
@@ -68,6 +70,8 @@ onMounted(() => {
     })
   );
 });
+
+const fileUploadDialog = ref(true);
 
 /**
  * 언마운트시

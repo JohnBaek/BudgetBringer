@@ -1,9 +1,11 @@
 using ClosedXML.Excel;
 using Features.Attributes;
+using Features.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Common.Enums;
 using Models.Requests.Budgets;
+using Models.Requests.Files;
 using Models.Requests.Query;
 using Models.Responses;
 using Models.Responses.Budgets;
@@ -28,16 +30,45 @@ public class BudgetApprovedController : Controller
     /// Excel Provider
     /// </summary>
     private readonly IExcelService _excelService;
+    
+    
+    /// <summary>
+    /// Business Unit
+    /// </summary>
+    private readonly IBusinessUnitService _businessUnitService;
+    
+    /// <summary>
+    /// CostCenter
+    /// </summary>
+    private readonly ICostCenterService _costCenterService;
+    
+    /// <summary>
+    /// Sector
+    /// </summary>
+    private readonly ISectorService _sectorService;
+    
+    /// <summary>
+    /// Country Business Managers
+    /// </summary>
+    private readonly ICountryBusinessManagerService _countryBusinessManagerService;
 
     /// <summary>
     /// 생성자 
     /// </summary>
     /// <param name="budgetPlanService">비지니스 유닛 서비스 </param>
     /// <param name="excelService"></param>
-    public BudgetApprovedController(IBudgetApprovedService budgetPlanService, IExcelService excelService)
+    /// <param name="businessUnitService"></param>
+    /// <param name="costCenterService"></param>
+    /// <param name="sectorService"></param>
+    /// <param name="countryBusinessManagerService"></param>
+    public BudgetApprovedController(IBudgetApprovedService budgetPlanService, IExcelService excelService, IBusinessUnitService businessUnitService, ICostCenterService costCenterService, ISectorService sectorService, ICountryBusinessManagerService countryBusinessManagerService)
     {
         _budgetApprovedService = budgetPlanService;
         _excelService = excelService;
+        _businessUnitService = businessUnitService;
+        _costCenterService = costCenterService;
+        _sectorService = sectorService;
+        _countryBusinessManagerService = countryBusinessManagerService;
     }
     
     /// <summary>
@@ -102,6 +133,18 @@ public class BudgetApprovedController : Controller
     }
     
     /// <summary>
+    /// 데이터를 추가한다.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("Import/List")]
+    [ClaimRequirement("Permission","budget-plan")]
+    public async Task<ResponseList<ResponseData<ResponseBudgetApproved>>> AddListAsync(List<RequestBudgetApproved> request)
+    {
+        return await _budgetApprovedService.AddListAsync(request);
+    }
+    
+    /// <summary>
     /// Export Excel
     /// </summary>
     /// <returns></returns>
@@ -146,6 +189,77 @@ public class BudgetApprovedController : Controller
         stream.Position = 0; 
         
         return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "report.xlsx");
+    }
+    
+    
+    /// <summary>
+    /// Import Budget Excel
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("Import/Excel/File")]
+    public async Task<IActionResult> GetImportExcelFile()
+    {
+        // Define request 
+        RequestQuery requestQuery = GetDefinedSearchMeta(new RequestQuery());
+        
+        // Except import Properties
+        requestQuery.SearchMetas = requestQuery.SearchMetas.Where(i => !new[]
+        {
+            nameof(ResponseCommonWriter.RegName), nameof(ResponseCommonWriter.RegDate),
+            nameof(ResponseCommonWriter.ModName), nameof(ResponseCommonWriter.ModDate)
+        }.Contains(i.Field) ).ToList();
+
+        // Create Instance
+        XLWorkbook workbook = new XLWorkbook();
+       
+        // Sum 제거 
+        foreach (RequestQuerySearchMeta searchMeta in requestQuery.SearchMetas)
+            searchMeta.IsSum = false;
+
+        // Make data For worksheet 
+        workbook = _excelService.AddDataToWorkbook(sheetName: "BudgetApprovedImport", workbook: workbook, requestQuery: requestQuery, items: new List<ResponseBudgetApproved>());
+
+        // Get Work sheet
+        IXLWorksheet worksheet = workbook.Worksheets.FirstOrDefault()!;
+
+        
+        string sectors = (await _sectorService.GetListAsync(new RequestQuery(0, 100))).Items!.Select(i => i.Value).WithJoinString(",");
+        _excelService.AddDropDownList(worksheet, 4,  sectors);
+        
+        string costCenters = (await _costCenterService.GetListAsync(new RequestQuery(0, 100))).Items!.Select(i => i.Value).WithJoinString(",");
+        _excelService.AddDropDownList(worksheet, 5,  costCenters);
+
+        string countryBusinessManagers =
+            (await _countryBusinessManagerService.GetListAsync(new RequestQuery(0, 100))).Items!.Select(i => i.Name)
+            .WithJoinString(",");
+        _excelService.AddDropDownList(worksheet, 6,  countryBusinessManagers);
+
+        string businessUnits = (await _businessUnitService.GetListAsync(new RequestQuery(0, 100))).Items!.Select(i => i.Name).WithJoinString(",");
+        _excelService.AddDropDownList(worksheet, 7,  businessUnits);
+        
+        string approvalStatus = Enum.GetNames(typeof(EnumApprovalStatus)).ToList().WithJoinString(",");
+        _excelService.AddDropDownList(worksheet, 9 , approvalStatus);
+        
+
+        // Create Stream for generate file
+        MemoryStream stream = new MemoryStream();
+        
+        // Save workbook to memory stream
+        workbook.SaveAs(stream);
+        stream.Position = 0; 
+        
+        return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "import.xlsx");
+    }
+    
+    
+    /// <summary>
+    /// Import Budget Excel
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("Import/Excel")]
+    public async Task<ResponseList<RequestBudgetApprovedExcelImport>> GetImportPreview(RequestUploadFile request)
+    {
+        return await _budgetApprovedService.GetImportPreview(request);
     }
     
     
