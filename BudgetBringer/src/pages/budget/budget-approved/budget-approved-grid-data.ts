@@ -15,18 +15,18 @@ export class BudgetApprovedGridData extends CommonGridModel{
     this.requestQuery.sortOrders = [ 'desc' ];
     this.columDefined = [
       CommonColumnDefinitions.getBaseYearColumn() ,
-      CommonColumnDefinitions.getApprovalDateColumn(),
-      CommonColumnDefinitions.getAttachedFiles() ,
+      CommonColumnDefinitions.getApprovalDate(),
       CommonColumnDefinitions.getApprovalStatus() ,
-      CommonColumnDefinitions.getDescription() ,
+      CommonColumnDefinitions.getAttachedFiles() ,
       CommonColumnDefinitions.getSector() ,
-      CommonColumnDefinitions.getBusinessUnit() ,
       CommonColumnDefinitions.getCountryBusinessManager() ,
+      CommonColumnDefinitions.getBusinessUnit() ,
       CommonColumnDefinitions.getCostCenter() ,
-      CommonColumnDefinitions.createColumnDefinitionForNumberFilter(130, "actual", "Actual", this.numberValueFormatter),
-      CommonColumnDefinitions.createColumnDefinitionForNumberFilter(150, "approvalAmount", "ApprovalAmount", this.numberValueFormatter),
-      CommonColumnDefinitions.createColumnDefinitionForTextFilter(130, "poNumber", "PoNumber"),
-      CommonColumnDefinitions.createColumnDefinitionForTextFilter(190, "bossLineDescription", "BossLineDescription"),
-    ]
+      CommonColumnDefinitions.getPoNumber(),
+      CommonColumnDefinitions.getActual() ,
+      CommonColumnDefinitions.getApprovalAmount(),
+      CommonColumnDefinitions.getDescription() ,
+      CommonColumnDefinitions.getBossLineDescription(),
+    ];
   }
 }

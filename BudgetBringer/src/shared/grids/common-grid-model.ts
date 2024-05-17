@@ -2,13 +2,18 @@ import {RequestQuery} from "../../models/requests/query/request-query";
 import {toClone} from "../../services/utils/object-util";
 import {CommonChartDefinitions} from "./common-grid-chart-definitions";
 import CommonGridSkeletonRenderer from "./common-grid-skeleton-renderer.vue";
+import {firstValueFrom} from "rxjs";
+import {HttpService} from "../../services/api-services/http-service";
+import {ResponseList} from "../../models/responses/response-list";
+import {CommonDialogColumnModel} from "./common-dialog-column-model";
+import {communicationService} from "../../services/communication-service";
 
 export type chartType = 'bar';
 
 /**
  * CommonGrid Model
  */
-export abstract class CommonGridModel {
+export class CommonGridModel {
   /**
    * title of grid
    */
@@ -63,5 +68,20 @@ export abstract class CommonGridModel {
         CommonChartDefinitions.createChartLegend(chartType, chartXKey, item.field, item.headerName)
       );
     });
+  }
+
+  /**
+   * Setup Async lists
+   */
+  initializeListAsync = async () => {
+    // Get Targets
+    const columns = this.columDefined.filter(i => i.selectShouldInitAsync) as Array<CommonDialogColumnModel>;
+    communicationService.inTransmission();
+    // Process all
+    for(const column of columns) {
+      const response = await firstValueFrom(HttpService.requestListAsync<ResponseList<any>>(column.selectRequestQuery));
+      column.selectItems = response.items;
+    }
+    communicationService.offTransmission();
   }
 }

@@ -15,6 +15,7 @@ import {RequestBudgetPlan} from "../../../models/requests/budgets/request-budget
 import {RequestCostCenter} from "../../../models/requests/budgets/request-cost-center";
 import CommonGridDialog from "../../../shared/grids/common-grid-dialog.vue";
 import {RequestBudgetApproved} from "../../../models/requests/budgets/request-budget-approved";
+import CommonImportDialog from "../../../shared/common-import-dialog.vue";
 
 /**
  * Grid Model
@@ -36,13 +37,13 @@ const gridReference = ref(null);
  */
 const dialog = ref();
 const importRef = ref(null);
-const showButtons = CommonButtonDefinitions.actionGroup;
 /**
  * 마운트핸들링
  */
-onMounted(() => {
+onMounted(async () => {
   gridModel.requestQuery.searchKeywords.push(props.isAbove500k.toString());
   gridModel.requestQuery.searchFields.push("isAbove500k");
+  await gridModel.initializeListAsync();
 });
 const dataModel = ref<RequestBudgetApproved>(new RequestBudgetApproved());
 const importFileDownload = async() => {
@@ -108,8 +109,8 @@ const importFile = async ($event) => {
   const param: RequestUploadFile = new RequestUploadFile();
   param.name = response.data.name;
 
-  const responseData = await firstValueFrom<ResponseList<RequestBudgetPlan>>(
-    HttpService.requestPost<ResponseData<any>>(`${gridModel.requestQuery.apiUri}/Import/Excel`, param) as Observable<ResponseList<RequestBudgetPlan>>);
+  const responseData = await firstValueFrom<ResponseList<RequestBudgetApproved>>(
+    HttpService.requestPost<ResponseData<any>>(`${gridModel.requestQuery.apiUri}/Import/Excel`, param) as Observable<ResponseList<RequestBudgetApproved>>);
   // 요청에 실패한경우
   if(responseData.result !== EnumResponseResult.success) {
     messageService.showError(`[${responseData.code}] ${responseData.message}`);
@@ -158,7 +159,7 @@ const delay =  (ms) => new Promise(resolve => setTimeout(resolve, ms));
                :input-colum-defined="gridModel.columDefined"
                :query-request="gridModel.requestQuery"
                :grid-title="((props.isAbove500k as String).toLowerCase() == 'true') ? '예산승인_Above_500K_Budget' : '예산승인_Below_500K_Budget'"
-               :show-buttons="showButtons"
+               :show-buttons="CommonButtonDefinitions.actionGroup"
                @onAdd="dialog.showAddDialog()"
                @onUpdate="dialog.showUpdateDialog($event.id)"
                @onRemove="dialog.showRemoveDialog($event)"
@@ -170,12 +171,14 @@ const delay =  (ms) => new Promise(resolve => setTimeout(resolve, ms));
   <common-grid-dialog
     :input-colum-defined="gridModel.columDefined"
     :request-query="gridModel.requestQuery"
+    :is-use-attach="true"
     v-model="dataModel"
     :title="title"
     :model-empty-value="new RequestCostCenter()"
     @submit="gridReference.doRefresh()"
     ref="dialog"
   />
+  <common-import-dialog ref="importRef" @submit="submit($event)"></common-import-dialog>
 </template>
 
 <style scoped lang="css">

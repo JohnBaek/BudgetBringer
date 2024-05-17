@@ -29,3 +29,12 @@ export const ApprovalStatusDescriptions: Record<EnumApprovalStatus, string> = {
   [EnumApprovalStatus.IssuePo]: "Issue PO",
   [EnumApprovalStatus.SpendingAndIssuePo]: "Spending & Issue PO"
 };
+
+
+export const GetApprovalStatusList = () => {
+  return Object.entries(ApprovalStatusDescriptions).map(([status, description]) => ({
+    id: parseInt(status),
+    title: description
+  }))
+}
+

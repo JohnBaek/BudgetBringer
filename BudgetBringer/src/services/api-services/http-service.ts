@@ -3,11 +3,21 @@ import {ajax} from "rxjs/internal/ajax/ajax";
 import {communicationService} from "../communication-service";
 import {ResponseData} from "../../models/responses/response-data";
 import {messageService} from "../message-service";
+import {RequestQuery} from "../../models/requests/query/request-query";
 
 /**
  * http 클라이언트 요청 서비스
  */
 export class HttpService {
+  /**
+   * Get RequestList
+   * @param requestQuery
+   */
+  static requestListAsync<T> (requestQuery : RequestQuery): Observable<T> {
+    return this.requestGet<T>(requestQuery.apiUri,requestQuery);
+  }
+
+
   /**
    * GET 요청을 수행하는 메서드.
    * @param url 요청할 리소스의 URL
@@ -33,7 +43,15 @@ export class HttpService {
     const queryString = searchParams.toString() ? `?${searchParams}` : '';
 
     const fullUrl = `${url}${queryString}`;
-    return ajax.getJSON<T>(fullUrl);
+    return ajax.getJSON<T>(fullUrl).pipe(
+      tap(data=>{
+        const response = data as ResponseData<any>;
+        if (response.error) {
+          messageService.showError(`[${response.code}] ${response.message}`);
+        }
+        communicationService.notifyOffCommunication();
+      })
+    );
   }
   static requestGetAutoNotify<T>(url: string, params?: Record<string, any>): Observable<T> {
     const searchParams = new URLSearchParams();

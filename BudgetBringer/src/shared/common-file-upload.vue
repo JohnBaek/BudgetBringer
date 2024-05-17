@@ -140,11 +140,10 @@ const removeTempUploadedFile = (item) => {
 
 <template>
   <v-row>
-
     <v-col md="12" lg="12" sm="12">
       <!-- Shows Previous Attached Files -->
       <v-list density="compact">
-        <v-card-title><v-icon color="primary">mdi-checkbox-marked-circle</v-icon> 첨부파일</v-card-title>
+        <v-card-title>첨부파일</v-card-title>
         <v-card-subtitle>기존에 첨부했던 파일 입니다.</v-card-subtitle>
         <v-list-item v-for="(item, index) in _uploadedFiles" :key="index" link>
           <v-row dense >
@@ -161,7 +160,7 @@ const removeTempUploadedFile = (item) => {
     <v-col md="12" lg="12" sm="12">
       <!-- Will Upload Files (NEW) -->
       <v-list density="compact">
-        <v-card-title><v-icon color="green">mdi-checkbox-marked-circle</v-icon> 업로드 대기중</v-card-title>
+        <v-card-title> 업로드 대기중</v-card-title>
         <v-card-subtitle>임시 업로드된 파일로 확인 버튼을 누른후에 저장됩니다.</v-card-subtitle>
         <v-list-item v-for="(item, index) in model" :key="index" link>
           <v-row dense >

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, watch} from "vue";
+import {ref, watch, computed} from "vue";
 import {communicationService} from "../../services/communication-service";
 import {toClone} from "../../services/utils/object-util";
 import {RequestQuery} from "../../models/requests/query/request-query";
@@ -7,6 +7,8 @@ import {HttpService} from "../../services/api-services/http-service";
 import {ResponseData} from "../../models/responses/response-data";
 import {firstValueFrom} from "rxjs";
 import {messageService} from "../../services/message-service";
+import {CommonDialogColumnModel, EnumModelType} from "./common-dialog-column-model";
+import CommonFileUpload from "../common-file-upload.vue";
 
 const props = defineProps({
   inputColumDefined : {Type: Array<any> , required: true , default: [] },
@@ -14,6 +16,7 @@ const props = defineProps({
   title : {},
   modelValue: {} ,
   modelEmptyValue: {},
+  isUseAttach: {Type: Boolean, default: false }
 });
 const columnDefined = ref(props.inputColumDefined.filter(i => i.useAsModel == true));
 /**
@@ -21,15 +24,18 @@ const columnDefined = ref(props.inputColumDefined.filter(i => i.useAsModel == tr
  */
 let model = ref();
 /**
+ * Copy already Uploaded files
+ */
+const uploadedFiles = ref([]);
+/**
  * Dialogs
  */
 const dialog = ref(false);
 const addDialog = ref(false);
 const updateDialog = ref(false);
 const removeDialog = ref(false);
-
 let removeItems = [];
-
+const isUseAttachFile = ref(false);
 /**
  * incoming calls from parent
  */
@@ -40,6 +46,9 @@ defineExpose({
     dismissAll();
     addDialog.value = true;
     dialog.value = true;
+    if(props.isUseAttach) {
+      model.value.attachedFiles = [];
+    }
   } ,
   // Open update dialog
   async showUpdateDialog(id: string) {
@@ -48,6 +57,11 @@ defineExpose({
     model.value = response.data;
     updateDialog.value = true;
     dialog.value = true;
+    if(props.isUseAttach) {
+      uploadedFiles.value = JSON.parse(JSON.stringify(model.value.attachedFiles));
+      model.value.attachedFiles = [];
+      isUseAttachFile.value = true;
+    }
   } ,
   // Open remove dialog
   async showRemoveDialog(items: []) {
@@ -69,6 +83,11 @@ const emits = defineEmits<{
  * Add Data
  */
 const add = async () => {
+  if(isInvalid.value) {
+    messageService.showWarning('입력되지 않은 데이터가 있습니다.');
+    return;
+  }
+
   const response = await firstValueFrom<ResponseData<any>>(HttpService.requestPostAutoNotify<ResponseData<any>>(props.requestQuery.apiUri, model.value));
   if(response.success)
     dismissAll();
@@ -79,6 +98,11 @@ const add = async () => {
  * Update Data
  */
 const update = async (id: string) => {
+  if(isInvalid.value) {
+    messageService.showWarning('입력되지 않은 데이터가 있습니다.');
+    return;
+  }
+
   const response = await firstValueFrom<ResponseData<any>>(
     HttpService.requestPutAutoNotify<ResponseData<any>>(`${props.requestQuery.apiUri}/${id}`, model.value));
 
@@ -88,6 +112,8 @@ const update = async (id: string) => {
   // Dispatch Event
   emits('submit');
 }
+
+
 /**
  * Remove data
  */
@@ -100,7 +126,7 @@ const remove = async () => {
   communicationService.notifyInCommunication();
   for (let item of removeItems) {
     const response = await firstValueFrom<ResponseData<any>>(
-      HttpService.requestDelete<ResponseData<any>>(`${props.requestQuery.apiUri}/${item.id}`, model.value));
+      HttpService.requestDelete<ResponseData<any>>(`${props.requestQuery.apiUri}/${item.id}`));
 
     if(response.error) {
       messageService.showError(response.message);
@@ -134,6 +160,35 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
   inCommunication.value = communication;
 });
 
+/**
+ * Dialog Configurations
+ */
+const dialogType = computed(() => {
+  if (addDialog.value) {
+    return { color: 'primary', text: '추가', action: '추가' };
+  }
+  if (updateDialog.value) {
+    return { color: 'warning', text: '수정', action: '수정' };
+  }
+  return { color: '', text: '', action: '' }; // 기본 값
+});
+
+/**
+ * Check Required fields
+ */
+const isInvalid = computed (() => {
+  const requiredProperties = columnDefined.value.filter(item => (item as CommonDialogColumnModel).isRequired);
+  // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+  model.value.isAbove500k = props.title.toString().indexOf('Above') > -1;
+
+  for (const item of requiredProperties) {
+    const required = (item as CommonDialogColumnModel);
+    if(!model.value[required.modelPropertyName])
+      return true;
+  }
+  return false;
+});
+
 </script>
 
 <template>
@@ -143,50 +198,60 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
       <v-card-title class=" mt-5"><b>{{title}}</b>
       </v-card-title>
 
-      <v-card-subtitle class="" v-if="addDialog">
-        <v-chip color="primary">추가</v-chip> {{title}}을(를) 추가합니다.</v-card-subtitle>
-
-      <v-card-subtitle class="" v-if="updateDialog">
-        <v-chip color="warning">수정</v-chip> {{title}}을(를) 수정합니다.</v-card-subtitle>
+      <v-card-subtitle>
+        <v-chip :color="dialogType.color">{{ dialogType.text }}</v-chip> {{ title }}을(를) {{ dialogType.action }}합니다.
+      </v-card-subtitle>
 
       <v-row class="ma-1">
         <v-col cols="12" :md="columnDefined.length == 1 ? '12' : '6'"
-               v-for="(item, key) in columnDefined"
+               v-for="(item, key) in columnDefined as Array<CommonDialogColumnModel>"
                :key="key">
           <div>
-            <div class="mb-1" v-if="!item.isRequired">
-              <b>{{ item['headerName'] }} </b>
-            </div>
-            <div class="mb-1" v-if="item.isRequired">
-              <b>{{ item['headerName'] }} <v-chip variant="plain" color="red">필수</v-chip></b>
+            <div class="mb-1 text-grey-darken-3" >
+              <v-icon>{{item.icon}}</v-icon> <b>{{ item.headerName }} </b> <v-chip style="height:15px" v-if="item.isRequired" variant="plain" color="red">필수</v-chip>
             </div>
           </div>
 
-          <v-text-field v-if="item.inputType && item.inputType === 'text'"
-                        outlined variant="outlined"
-                        density="compact"
-                        v-model="model[item.field]"
-                        :placeholder="`${ item['headerName'] }을(를) 입력해주세요`"
-                        @keyup.enter="add()"
-          />
-          <v-text-field v-if="item.inputType && item.inputType === 'number'"
-                        type="number"
-                        outlined variant="outlined"
-                        density="compact"
-                        v-model="model[item.field]"
-                        :placeholder="`${ item['headerName'] }을(를) 입력해주세요`"
-                        @keyup.enter="add()"
-          />
-          <v-select
-            v-if="item.inputType && item.inputType === 'select'"
-            :item-title="item.field"
-            :item-value="item.field"
-            :items="item.selectItems"
-            :placeholder="`${ item['headerName'] }을(를) 입력해주세요`"
-            v-model="model[item.field]"
-            variant="outlined"
-            density="compact"
-          ></v-select>
+          <!-- Text Input -->
+          <div v-if="item.inputType === EnumModelType.text">
+            <v-text-field outlined variant="outlined"
+                          class="custom-field-margin"
+                          density="compact"
+                          v-model="model[item.modelPropertyName]"
+                          :placeholder="`${ item.headerName }을(를) 입력해주세요`"
+                          @keyup.enter="add()"
+            />
+          </div>
+
+          <!-- Number Input -->
+          <div v-else-if="item.inputType === EnumModelType.number">
+            <v-text-field type="number"
+                          outlined variant="outlined"
+                          class="custom-field-margin"
+                          density="compact"
+                          v-model="model[item.modelPropertyName]"
+                          :placeholder="`${ item.headerName }을(를) 입력해주세요`"
+                          @keyup.enter="add()"
+
+            />
+          </div>
+
+          <!-- Select -->
+          <div v-else-if="item.inputType === EnumModelType.select">
+            <v-select
+              class="custom-select-margin"
+              :item-title="item.selectTitle"
+              :item-value="item.selectValue"
+              :items="item.selectItems"
+              :placeholder="`${ item.headerName }을(를) 선택해주세요`"
+              v-model="model[item.modelPropertyName]"
+              variant="outlined"
+              density="compact"
+            ></v-select>
+          </div>
+        </v-col>
+        <v-col cols="12" md="12">
+          <common-file-upload :uploaded-files="uploadedFiles" v-model="model.attachedFiles" v-if="isUseAttach"></common-file-upload>
         </v-col>
       </v-row>
 
@@ -201,7 +266,7 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
         <div v-if="addDialog">
           <v-btn
             v-if="addDialog"
-            class="mr-2" :disabled="inCommunication" width="100" elevation="1" color="info" @click="add()">
+            class="mr-2" :disabled="inCommunication || isInvalid" width="100" elevation="1" color="info" @click="add()">
             <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
             <template v-if="!inCommunication">
               <v-icon>mdi-checkbox-marked-circle</v-icon>
@@ -211,7 +276,7 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
         </div>
 
         <div v-if="updateDialog">
-          <v-btn class="mr-2" :disabled="inCommunication" width="100" elevation="1" color="warning" @click="update(model.id)">
+          <v-btn class="mr-2" :disabled="inCommunication || isInvalid" width="100" elevation="1" color="warning" @click="update(model.id)">
             <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
             <template v-if="!inCommunication">
               <v-icon>mdi-checkbox-marked-circle</v-icon>
@@ -252,4 +317,5 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
 </template>
 
 <style scoped lang="css">
+
 </style>

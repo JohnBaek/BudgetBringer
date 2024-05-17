@@ -1,35 +1,106 @@
-import {EnumApprovalStatus} from "../../models/enums/enum-approval-status";
+import {EnumApprovalStatus, GetApprovalStatusList} from "../../models/enums/enum-approval-status";
 import {getYearList} from "../../services/utils/date-util";
+import {SectorGridData} from "../../pages/common-code/sector/sector-grid-data";
+import {CommonDialogColumnModel, EnumModelType} from "./common-dialog-column-model";
+import {BusinessUnitGridData} from "../../pages/common-code/business-unit/business-unit-grid-data";
+import {CostCenterGridData} from "../../pages/common-code/cost-center/cost-center-grid-data";
+import {
+  CountryBusinessManagerGridData
+} from "../../pages/common-code/country-business-manager/country-business-manager-grid-data";
+import {CommonGridModel} from "./common-grid-model";
+import {communicationService} from "../../services/communication-service";
 
 
 /**
  * Grid Common column definitions
  */
 export namespace CommonColumnDefinitions {
-  export const getBaseYearColumn = () => ({
-    field: 'baseYearForStatistics',
-    headerName: '통계 기준년도',
-    headerClass: 'ag-grids-custom-header',
-    filter: 'agTextColumnFilter',
-    floatingFilter: true,
-    width: 160,
-    useAsModel: true,
-    inputType : 'select',
-    isRequired: true,
-    selectItems: getYearList(true),
-  });
+  export const getSector = () => {
+    const column = new CommonDialogColumnModel("sectorName", "Sector", 150);
+    column.isRequired = true;
+    column.selectShouldInitAsync = true;
+    column.useAsModel = true;
+    column.selectValue = 'id';
+    column.selectTitle = 'value';
+    column.selectRequestQuery = (new SectorGridData()).requestQuery;
+    column.inputType = EnumModelType.select;
+    column.modelPropertyName = 'sectorId'
+    column.icon = 'mdi-note-edit-outline'
+    return column;
+  }
 
-  export const getApprovalDateColumn = () => ({
-    field: 'approvalDate',
-    headerName: 'Approval Date',
-    headerClass: 'ag-grids-custom-header',
-    filter: 'agTextColumnFilter',
-    floatingFilter: true,
-    width: 145,
-    useAsModel: true,
-    inputType : 'text',
-    isRequired: false,
-  });
+  export const getBaseYearColumn = () => {
+    const column = new CommonDialogColumnModel("baseYearForStatistics", "통계 기준년도", 160);
+    column.useAsModel = true;
+    column.isRequired = true;
+    column.inputType = EnumModelType.select;
+    column.selectItems = getYearList(true);
+    column.modelPropertyName = 'baseYearForStatistics'
+    column.icon = 'mdi-calendar-check'
+    return column;
+  };
+
+  export const getApprovalStatus =() => {
+    const column = new CommonDialogColumnModel("approvalStatus", "ApprovalStatus", 160);
+    column.useAsModel = true;
+    column.isRequired = true;
+    column.inputType = EnumModelType.select;
+    column.selectItems = GetApprovalStatusList();
+    column.selectValue = 'id';
+    column.selectTitle = 'title';
+    column.modelPropertyName = 'approvalStatus'
+    column.icon = 'mdi-note-edit-outline'
+    column.cellRenderer = (params) => {
+      switch (params.value) {
+        case EnumApprovalStatus.None:
+          return "None";
+        case EnumApprovalStatus.NotYetIssuePo:
+          return "Not Yet Issue PO";
+        case EnumApprovalStatus.IssuePo:
+          return "Issue PO";
+        case EnumApprovalStatus.SpendingAndIssuePo:
+          return "Spending & Issue PO";
+        default:
+          return "Error"; // 값이 열거형에 없는 경우
+      }
+    };
+    column.cellStyle = (params) => {
+      switch (params.value) {
+        case EnumApprovalStatus.None:
+          return { backgroundColor: '#33CC3344', color: 'light-black' };
+        case EnumApprovalStatus.NotYetIssuePo:
+          return { backgroundColor: '#ccc42244', color: 'light-black' };
+        case EnumApprovalStatus.IssuePo:
+          return { backgroundColor: '#33CC3344', color: 'light-black' };
+        case EnumApprovalStatus.SpendingAndIssuePo:
+          return { backgroundColor: '#2244CC44', color: 'light-black' };
+        default:
+          return { backgroundColor: '#CC222244', color: 'light-black' }; // 값이 열거형에 없는 경우
+      }
+    }
+    return column;
+  };
+
+  export const getApprovalDate =() => {
+    const column = new CommonDialogColumnModel("approvalDate", "Approval Date", 145);
+    column.useAsModel = true;
+    column.isRequired = true;
+    column.inputType = EnumModelType.text;
+    column.selectValue = 'id';
+    column.selectTitle = 'title';
+    column.modelPropertyName = 'approvalDate'
+    column.icon = 'mdi-calendar-check'
+    return column;
+  };
+
+  export const getDescription = () => {
+    const column = new CommonDialogColumnModel("description", "Description", 250);
+    column.useAsModel = true;
+    column.inputType = EnumModelType.text;
+    column.modelPropertyName = 'description'
+    column.icon = 'mdi-note-text-outline'
+    return column;
+  };
 
   export const getRegDateColumn = () => ({
     field: "regDate",
@@ -42,6 +113,7 @@ export namespace CommonColumnDefinitions {
     },
     floatingFilter: true,
     width:250,
+
     valueFormatter: function(params) {
       if (params.value) {
         const date = new Date(params.value);
@@ -57,6 +129,107 @@ export namespace CommonColumnDefinitions {
       return null;
     }
   })
+
+  export const getBusinessUnit = () => {
+    const column = new CommonDialogColumnModel("businessUnitName", "Business Unit", 150);
+    column.isRequired = true;
+    column.selectShouldInitAsync = true;
+    column.useAsModel = true;
+    column.selectValue = 'id';
+    column.selectTitle = 'name';
+    column.selectRequestQuery = (new BusinessUnitGridData()).requestQuery;
+    column.inputType = EnumModelType.select;
+    column.modelPropertyName = 'businessUnitId'
+    column.icon = 'mdi-note-edit-outline'
+    return column;
+  };
+
+  export const getCostCenter = () => {
+    const column = new CommonDialogColumnModel("costCenterName", "Cost Center", 150);
+    column.isRequired = true;
+    column.selectShouldInitAsync = true;
+    column.useAsModel = true;
+    column.selectValue = 'id';
+    column.selectTitle = 'value';
+    column.selectRequestQuery = (new CostCenterGridData()).requestQuery;
+    column.inputType = EnumModelType.select;
+    column.modelPropertyName = 'costCenterId'
+    column.icon = 'mdi-note-edit-outline'
+    return column;
+  };
+
+  export const getCountryBusinessManager = () => {
+    const column = new CommonDialogColumnModel("countryBusinessManagerName", "Country Business Manager", 230);
+    column.isRequired = true;
+    column.selectShouldInitAsync = true;
+    column.useAsModel = true;
+    column.selectValue = 'id';
+    column.selectTitle = 'name';
+    column.selectRequestQuery = (new CountryBusinessManagerGridData()).requestQuery;
+    column.inputType = EnumModelType.select;
+    column.modelPropertyName = 'countryBusinessManagerId'
+    column.icon = 'mdi-note-edit-outline'
+    return column;
+  };
+
+  export const getActual = () => {
+    const column = new CommonDialogColumnModel("actual", "Actual", 130);
+    column.useAsModel = true;
+    column.inputType = EnumModelType.number;
+    column.valueFormatter = (new CommonGridModel()).numberValueFormatter;
+    column.modelPropertyName = 'actual' ;
+    column.icon = 'mdi-currency-usd'
+    return column;
+  };
+
+  export const getApprovalAmount = () => {
+    const column = new CommonDialogColumnModel("approvalAmount", "ApprovalAmount", 150);
+    column.useAsModel = true;
+    column.inputType = EnumModelType.number;
+    column.valueFormatter = new CommonGridModel().numberValueFormatter;
+    column.modelPropertyName = 'approvalAmount'
+    column.icon = 'mdi-currency-usd'
+    return column;
+  };
+
+  export const getBudgetTotal = () => {
+    const column = new CommonDialogColumnModel("budgetTotal", "BudgetTotal", 150);
+    column.useAsModel = true;
+    column.inputType = EnumModelType.number;
+    column.valueFormatter = new CommonGridModel().numberValueFormatter;
+    column.modelPropertyName = 'budgetTotal'
+    column.icon = 'mdi-currency-usd'
+    return column;
+  };
+
+  export const getPoNumber = () => {
+    const column = new CommonDialogColumnModel("poNumber", "PoNumber", 130);
+    column.useAsModel = true;
+    column.inputType = EnumModelType.number;
+    column.modelPropertyName = 'poNumber'
+    column.icon = 'mdi-numeric'
+    return column;
+  };
+
+  export const getBossLineDescription = () => {
+    const column = new CommonDialogColumnModel("bossLineDescription", "BossLineDescription", 190);
+    column.useAsModel = true;
+    column.inputType = EnumModelType.number;
+    column.modelPropertyName = 'bossLineDescription'
+    column.icon = 'mdi-note-text-outline'
+    return column;
+  };
+
+  export const getOcProjectName = () => {
+    const column = new CommonDialogColumnModel("ocProjectName", "Oc Project Name", 190);
+    column.useAsModel = true;
+    column.inputType = EnumModelType.number;
+    column.modelPropertyName = 'ocProjectName'
+    column.icon = 'mdi-note-text-outline'
+    return column;
+  };
+
+
 
   export const getRegNameColumn = () => CommonColumnDefinitions.createColumnDefinitionForTextFilter(250, 'regName' , '등록자명');
 
@@ -75,6 +248,7 @@ export namespace CommonColumnDefinitions {
     field: "isIncludeInStatistics",
     headerClass: 'ag-grids-custom-header',
     headerName:"통계포함여부" ,
+
     width:130,
     cellRenderer: (params) => {
       if(params.value)
@@ -90,7 +264,6 @@ export namespace CommonColumnDefinitions {
     },
   });
 
-  export const getApprovalDate = () => CommonColumnDefinitions.createColumnDefinitionForTextFilter(145, "approvalDate", "Approval Date");
 
   export const getAttachedFiles = () => ({
     field: "attachedFiles",
@@ -187,58 +360,12 @@ export namespace CommonColumnDefinitions {
     cellClass: 'files-cell'
   });
 
-  export const getApprovalStatus =() => ({
-    field: "approvalStatus",
-    headerClass: 'ag-grids-custom-header',
-    headerName:"ApprovalStatus"  ,
-    width:160,
-    cellRenderer: (params) => {
-      switch (params.value) {
-        case EnumApprovalStatus.None:
-          return "None";
-        case EnumApprovalStatus.NotYetIssuePo:
-          return "Not Yet Issue PO";
-        case EnumApprovalStatus.IssuePo:
-          return "Issue PO";
-        case EnumApprovalStatus.SpendingAndIssuePo:
-          return "Spending & Issue PO";
-        default:
-          return "Error"; // 값이 열거형에 없는 경우
-      }
-    },
-    cellStyle: (params) => {
-      switch (params.value) {
-        case EnumApprovalStatus.None:
-          return { backgroundColor: '#33CC3344', color: 'light-black' };
-        case EnumApprovalStatus.NotYetIssuePo:
-          return { backgroundColor: '#ccc42244', color: 'light-black' };
-        case EnumApprovalStatus.IssuePo:
-          return { backgroundColor: '#33CC3344', color: 'light-black' };
-        case EnumApprovalStatus.SpendingAndIssuePo:
-          return { backgroundColor: '#2244CC44', color: 'light-black' };
-        default:
-          return { backgroundColor: '#CC222244', color: 'light-black' }; // 값이 열거형에 없는 경우
-      }
-    }
-  });
 
-  export const getDescription = () => ({
-    field: "description",
-    headerClass: 'ag-grids-custom-header',
-    headerName:"Description"  ,
-    filter: "agTextColumnFilter",
-    filterParams: {
-      filterOptions: ["포함하는"],
-      maxNumConditions: 1,
-    },
-    floatingFilter: true,
-    width:250,
-  });
 
-  export const getSector = () => CommonColumnDefinitions.createColumnDefinitionForTextFilter(150, "sectorName", "Sector");
-  export const getBusinessUnit = () => CommonColumnDefinitions.createColumnDefinitionForTextFilter(150, "businessUnitName", "Business Unit");
-  export const getCostCenter = () => CommonColumnDefinitions.createColumnDefinitionForTextFilter(150, "costCenterName", "Cost Center");
-  export const getCountryBusinessManager = () => CommonColumnDefinitions.createColumnDefinitionForTextFilter(230, "countryBusinessManagerName", "Country Business Manager");
+
+
+  // export const getBusinessUnit = () => CommonColumnDefinitions.createColumnDefinitionForTextFilter(150, "businessUnitName", "Business Unit");
+
 
   /**
    * Generate Column Definitions

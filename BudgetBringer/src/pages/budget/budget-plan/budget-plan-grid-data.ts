@@ -10,19 +10,22 @@ export class BudgetPlanGridData extends CommonGridModel{
    */
   constructor() {
     super();
+    this.requestQuery.apiUri = '/api/v1/BudgetPlan';
+    this.requestQuery.sortFields = [ 'regDate' ];
+    this.requestQuery.sortOrders = [ 'desc' ];
     this.columDefined = [
       CommonColumnDefinitions.getBaseYearColumn() ,
       CommonColumnDefinitions.getApprovalDate() ,
       CommonColumnDefinitions.getIsIncludeInStatistics() ,
       CommonColumnDefinitions.getAttachedFiles() ,
-      CommonColumnDefinitions.getDescription() ,
       CommonColumnDefinitions.getSector() ,
-      CommonColumnDefinitions.getBusinessUnit() ,
       CommonColumnDefinitions.getCountryBusinessManager() ,
+      CommonColumnDefinitions.getBusinessUnit() ,
       CommonColumnDefinitions.getCostCenter() ,
-      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250, "ocProjectName", "Oc Project Name"),
-      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250,"bossLineDescription", "BossLineDescription"),
-      CommonColumnDefinitions.createColumnDefinitionForNumberFilter(150, "budgetTotal", "FvBudget", this.numberValueFormatter),
+      CommonColumnDefinitions.getDescription() ,
+      CommonColumnDefinitions.getOcProjectName(),
+      CommonColumnDefinitions.getBossLineDescription(),
+      CommonColumnDefinitions.getBudgetTotal(),
     ]
   }
 }
