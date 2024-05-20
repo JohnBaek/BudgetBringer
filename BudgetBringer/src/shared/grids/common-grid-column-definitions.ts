@@ -229,7 +229,33 @@ export namespace CommonColumnDefinitions {
     return column;
   };
 
+  export const getSequence = () => {
+    const column = new CommonDialogColumnModel("sequence", "순서", 100);
+    column.useAsModel = true;
+    column.inputType = EnumModelType.number;
+    column.modelPropertyName = 'sequence'
+    column.icon = 'mdi-numeric'
+    return column;
+  };
 
+  export const getName = () => {
+    const column = new CommonDialogColumnModel("name", "이름", 250);
+    column.useAsModel = true;
+    column.inputType = EnumModelType.text;
+    column.modelPropertyName = 'name'
+    column.icon = 'mdi-note-text-outline'
+    return column;
+  };
+
+
+  export const getSectorName = () => {
+    const column = new CommonDialogColumnModel("value", "이름", 250);
+    column.useAsModel = true;
+    column.inputType = EnumModelType.text;
+    column.modelPropertyName = 'value'
+    column.icon = 'mdi-note-text-outline'
+    return column;
+  };
 
   export const getRegNameColumn = () => CommonColumnDefinitions.createColumnDefinitionForTextFilter(250, 'regName' , '등록자명');
 

@@ -208,7 +208,7 @@ const isInvalid = computed (() => {
                :key="key">
           <div>
             <div class="mb-1 text-grey-darken-3" >
-              <v-icon>{{item.icon}}</v-icon> <b>{{ item.headerName }} </b> <v-chip style="height:15px" v-if="item.isRequired" variant="plain" color="red">필수</v-chip>
+              <b>{{ item.headerName }} </b> <v-chip style="height:15px" v-if="item.isRequired" variant="plain" color="red">필수</v-chip>
             </div>
           </div>
 
@@ -219,7 +219,6 @@ const isInvalid = computed (() => {
                           density="compact"
                           v-model="model[item.modelPropertyName]"
                           :placeholder="`${ item.headerName }을(를) 입력해주세요`"
-                          @keyup.enter="add()"
             />
           </div>
 
@@ -231,8 +230,6 @@ const isInvalid = computed (() => {
                           density="compact"
                           v-model="model[item.modelPropertyName]"
                           :placeholder="`${ item.headerName }을(를) 입력해주세요`"
-                          @keyup.enter="add()"
-
             />
           </div>
 

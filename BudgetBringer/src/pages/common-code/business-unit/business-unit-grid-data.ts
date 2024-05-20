@@ -11,10 +11,11 @@ export class BusinessUnitGridData extends CommonGridModel{
   constructor() {
     super();
     this.requestQuery.apiUri = '/api/v1/BusinessUnit';
-    this.requestQuery.sortFields = [ 'regDate' ];
-    this.requestQuery.sortOrders = [ 'desc' ];
+    this.requestQuery.sortFields = [ 'sequence' ];
+    this.requestQuery.sortOrders = [ 'asc' ];
     this.columDefined = [
-      {  field: 'name', headerName: '이름', headerClass: 'ag-grids-custom-header', filter: 'agTextColumnFilter', floatingFilter: true, useAsModel: true, inputType : 'text', width: 250 , isRequired: true} ,
+      CommonColumnDefinitions.getSequence() ,
+      CommonColumnDefinitions.getName() ,
       CommonColumnDefinitions.getRegDateColumn() ,
       CommonColumnDefinitions.getRegNameColumn() ,
     ]

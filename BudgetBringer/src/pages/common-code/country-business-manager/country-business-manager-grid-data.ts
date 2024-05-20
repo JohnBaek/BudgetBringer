@@ -14,8 +14,8 @@ export class CountryBusinessManagerGridData extends CommonGridModel{
     this.requestQuery.sortFields = [ 'sequence' ];
     this.requestQuery.sortOrders = [ 'asc' ];
     this.columDefined = [
-      { field: 'sequence', headerName: '순서', headerClass: 'ag-grids-custom-header', filter: 'agTextColumnFilter', floatingFilter: true, useAsModel: true, inputType : 'number', width: 100 , isRequired: true},
-      { field: 'name', headerName: '이름', headerClass: 'ag-grids-custom-header', filter: 'agTextColumnFilter', floatingFilter: true, useAsModel: true, inputType : 'text', width: 250 , isRequired: true} ,
+      CommonColumnDefinitions.getSequence() ,
+      CommonColumnDefinitions.getName() ,
       CommonColumnDefinitions.getRegDateColumn() ,
       CommonColumnDefinitions.getRegNameColumn() ,
     ]
