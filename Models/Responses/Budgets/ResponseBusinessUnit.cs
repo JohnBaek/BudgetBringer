@@ -34,4 +34,9 @@ public class ResponseBusinessUnit : ResponseCommonWriter
     /// 유닛명 (유니크)
     /// </summary>
     public string Name { get; set; } = "";
+    
+    /// <summary>
+    /// Sequence 
+    /// </summary>
+    public int Sequence { get; set; } = 0;
 }

@@ -60,10 +60,4 @@ public interface IBudgetPlanService
     /// <param name="request"></param>
     /// <returns></returns>
     Task<ResponseList<ResponseData<ResponseBudgetPlan>>> AddListAsync(List<RequestBudgetPlan> request);
-    
-    /// <summary>
-    /// 데이터를 마이그리에션 한다.
-    /// </summary>
-    /// <returns></returns>
-    Task<Response> MigrationAsync();
 }

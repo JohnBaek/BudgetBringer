@@ -81,6 +81,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
     {
         Id = item.Id,
         Name = item.Name,
+        Sequence = item.Sequence ,
         RegName = item.RegName ,
         ModName = item.ModName ,
         RegDate = item.RegDate ,
@@ -183,6 +184,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
           
             // 데이터를 수정한다.
             update.Name = request.Name;
+            update.Sequence = request.Sequence;
             update.RegName = user.DisplayName; 
             update.ModName = user.DisplayName; 
             update.RegDate = DateTime.Now; 
@@ -248,6 +250,7 @@ public class BusinessUnitRepository : IBusinessUnitRepository
             {
                 Id = Guid.NewGuid() ,
                 Name = request.Name ,
+                Sequence = request.Sequence ,
                 RegName = user.DisplayName ,
                 ModName = user.DisplayName ,
                 RegDate = DateTime.Now ,

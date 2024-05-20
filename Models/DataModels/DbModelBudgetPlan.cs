@@ -34,24 +34,6 @@ public partial class DbModelBudgetPlan : DbModelDefault
     public Guid? FileGroupId { get; set; }
 
     /// <summary>
-    /// 년도 정보 : yyyy
-    /// </summary>
-    [MaxLength(4)]
-    public string Year { get; set; } = "";
-
-    /// <summary>
-    /// 월 정보 : MM
-    /// </summary>
-    [MaxLength(2)]
-    public string Month { get; set; } = "";
-
-    /// <summary>
-    /// 일 정보 : dd
-    /// </summary>
-    [MaxLength(2)]
-    public string Day { get; set; } = "";
-
-    /// <summary>
     /// 500K 이상 예산 여부
     /// </summary>
     [Required]
@@ -61,7 +43,6 @@ public partial class DbModelBudgetPlan : DbModelDefault
     /// Is included in statistics
     /// </summary>
     public bool IsIncludeInStatistics { get; set; }
-    
 
     /// <summary>
     /// 기안일 ( 날짜가아닌 일반 스트링데이터도 포함 될 수 있다. )
@@ -69,17 +50,6 @@ public partial class DbModelBudgetPlan : DbModelDefault
     [Required]
     [MaxLength(255)]
     public string ApprovalDate { get; set; } = "";
-    
-    /// <summary>
-    /// 기안일 정상 포맷 (yyyy-MM-dd) 이라면 DateOnly 로 파싱된 값 
-    /// </summary>
-    public DateOnly? ApproveDateValue { get; set; } 
-    
-    /// <summary>
-    /// 기안일 정상 포맷 (yyyy-MM-dd) 여부
-    /// </summary>
-    [Required]
-    public bool IsApprovalDateValid { get; set; }
 
     /// <summary>
     /// 설명 

@@ -11,64 +11,64 @@ public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelR
     /// <summary>
     /// 예산 승인
     /// </summary>
-    public required DbSet<DbModelBudgetApproved> BudgetApproved {get;init;}
+    public virtual DbSet<DbModelBudgetApproved> BudgetApproved {get;init;}
     
     /// <summary>
     /// 예산
     /// </summary>
-    public required DbSet<DbModelBudgetPlan> BudgetPlans {get;init;}
+    public virtual DbSet<DbModelBudgetPlan> BudgetPlans {get;init;}
     
     /// <summary>
     /// 비지니스 유닛
     /// </summary>
-    public required DbSet<DbModelBusinessUnit> BusinessUnits {get;init;}
+    public virtual DbSet<DbModelBusinessUnit> BusinessUnits {get;init;}
     
     /// <summary>
     /// 섹터
     /// </summary>
-    public required DbSet<DbModelSector> Sectors {get;init;}
+    public virtual DbSet<DbModelSector> Sectors {get;init;}
     
     /// <summary>
     /// 코스트센터
     /// </summary>
-    public required DbSet<DbModelCostCenter> CostCenters {get;init;}
+    public virtual DbSet<DbModelCostCenter> CostCenters {get;init;}
     
     /// <summary>
     /// 컨트리 비지니스 매니저
     /// </summary>
-    public required DbSet<DbModelCountryBusinessManager> CountryBusinessManagers {get;init;}
+    public virtual DbSet<DbModelCountryBusinessManager> CountryBusinessManagers {get;init;}
     
     /// <summary>
     /// 로그액션
     /// </summary>
-    public required DbSet<DbModelLogAction> LogActions {get;init;}
+    public virtual DbSet<DbModelLogAction> LogActions {get;init;}
     
     /// <summary>
     /// 컨트리 비지니스 매니저(1) : 비지니스 유닛 (N) 관계 테이블 
     /// </summary>
-    public required DbSet<DbModelCountryBusinessManagerBusinessUnit> CountryBusinessManagerBusinessUnits { get; set; }
+    public virtual DbSet<DbModelCountryBusinessManagerBusinessUnit> CountryBusinessManagerBusinessUnits { get; set; }
 
     /// <summary>
     /// 통계 캐시 테이블
     /// </summary>
-    public required DbSet<DbModelBudgetAnalysisCache>  BudgetAnalysisCache { get; set; }
+    public virtual DbSet<DbModelBudgetAnalysisCache>  BudgetAnalysisCache { get; set; }
     
     /// <summary>
     /// System Common Config 
     /// </summary>
-    public required DbSet<DbModelSystemConfig> SystemConfigs { get; set; }
+    public virtual DbSet<DbModelSystemConfig> SystemConfigs { get; set; }
     
     /// <summary>
     /// Detail of Configs
     /// </summary>
-    public required DbSet<DbModelSystemConfigDetail> SystemConfigDetail { get; set; }
+    public virtual DbSet<DbModelSystemConfigDetail> SystemConfigDetail { get; set; }
     
     /// <summary>
     /// Detail of FileInfos
     /// </summary>
-    public required DbSet<DbModelFileInfo> FileInfos { get; set; }
+    public virtual DbSet<DbModelFileInfo> FileInfos { get; set; }
 
-    
+
     /// <summary>
     /// 생성자
     /// </summary>
@@ -76,7 +76,6 @@ public partial class AnalysisDbContext : IdentityDbContext<DbModelUser, DbModelR
     public AnalysisDbContext(DbContextOptions<AnalysisDbContext> options) : base(options)
     {
     }
-    
 
     /// <summary>
     /// OnModelCreating
