@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Models.Responses.Process.ProcessBusinessUnit;
 
 /// <summary>
@@ -43,6 +45,12 @@ public class ResponseProcessBusinessUnit
             return RemainingYear / ApprovedYear * 100;
         }
     }
+    
+    /// <summary>
+    /// Sequence 
+    /// </summary>
+    [JsonIgnore]
+    public int BusinessUnitSequence { get; set; } = 0;
     
     // /// <summary>
     // /// 작년 Budget 확정된 것 ( ex: 2023FY ) 승인된 전 년도 전체 예산

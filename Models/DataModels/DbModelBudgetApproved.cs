@@ -35,41 +35,6 @@ public class DbModelBudgetApproved : DbModelDefault
     /// Base Year for Statistics ex ) 2024 .. 2025
     /// </summary>
     public int BaseYearForStatistics { get; set; }
-    
-    /// <summary>
-    /// 기안일 정상 포맷 (yyyy-MM-dd) 이라면 DateOnly 로 파싱된 값 
-    /// </summary>
-    public DateOnly? ApproveDateValue { get; set; } 
-    
-    /// <summary>
-    /// 기안일 정상 포맷 (yyyy-MM-dd) 여부
-    /// </summary>
-    [Required]
-    public bool IsApprovalDateValid { get; set; }
-
-    /// <summary>
-    /// 승인일이 확인된경우 ( OC 승인 예정 등의 텍스트가 아니라 날짜 형태로 들어간 경우 ) 
-    /// </summary>
-    [Required]
-    public bool IsApproved { get; set; } 
-
-    /// <summary>
-    /// 년도 정보 : yyyy
-    /// </summary>
-    [MaxLength(4)]
-    public string? Year { get; set; } 
-
-    /// <summary>
-    /// 월 정보 : MM
-    /// </summary>
-    [MaxLength(2)]
-    public string? Month { get; set; } 
-
-    /// <summary>
-    /// 일 정보 : dd
-    /// </summary>
-    [MaxLength(2)]
-    public string? Day { get; set; } 
 
     /// <summary>
     /// 500K 이상 예산 여부

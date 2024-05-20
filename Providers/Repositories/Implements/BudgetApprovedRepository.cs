@@ -128,7 +128,6 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         Actual = item.Actual,
         OcProjectName = item.OcProjectName,
         BossLineDescription = item.BossLineDescription,
-        IsApproved = item.IsApproved,
         RegName = item.RegName ,
         ModName = item.ModName ,
         RegDate = item.RegDate ,
@@ -428,30 +427,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         Response result;
         try
         {
-            model.IsApprovalDateValid = false;
-            model.ApproveDateValue = null;
-            model.Year = "";
-            model.Month = "";
-            model.Day = "";
-            model.IsApproved = false;
             model.ApprovalDate = request.ApprovalDate;
-            
-            // 기안일이 정상적인 Date 데이터인지 여부 
-            bool isApprovalDateValid = DateOnly.TryParse(request.ApprovalDate, out DateOnly approvalDate);
-
-            // 정상적인 데이터인경우 
-            if (isApprovalDateValid)
-            {
-                model.IsApprovalDateValid = true;
-                model.ApproveDateValue = approvalDate;
-                model.Year = approvalDate.Year.ToString();
-                model.Month = approvalDate.Month.ToString("00");
-                model.Day = approvalDate.Day.ToString("00");
-                
-                // 승인일이 정상인경우 승인으로 인정
-                model.IsApproved = true;
-                model.ApprovalDate = approvalDate.ToString("yyyy-MM-dd");
-            }
   
             // 코스트센터명 조회
             string costCenterName = await _dispatchService.GetNameByIdAsync<DbModelCostCenter>
@@ -595,7 +571,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                     RequestBudgetApprovedExcelImport add = new RequestBudgetApprovedExcelImport();
                     add.ApprovalDate = row.Cell(1).Value.ToString();
                     add.BaseYearForStatistics = int.Parse(row.Cell(2).Value.ToString());
-                    add.Description = row.Cell(4).Value.ToString();
+                    add.Description = row.Cell(3).Value.ToString();
 
                     // Get Sector
                     string sectorName = row.Cell(4).Value.ToString();
@@ -671,8 +647,13 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                     add.BusinessUnitId = businessUnitId.ToGuid();
                     
                     
-                     add.PoNumber = int.Parse(row.Cell(8).Value.ToString());
+                    int.TryParse(row.Cell(8).Value.ToString(), out int PoNumber);
+                    add.PoNumber = PoNumber;
                     Enum.TryParse(row.Cell(9).Value.ToString(), out EnumApprovalStatus status);
+                    
+                    
+                    
+                    
                     add.ApprovalStatus = status;
                     add.ApprovalAmount = double.Parse(row.Cell(10).Value.ToString());
                     add.Actual = double.Parse(row.Cell(11).Value.ToString());

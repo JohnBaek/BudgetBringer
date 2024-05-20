@@ -26,11 +26,6 @@ public class ResponseBudgetApproved : ResponseCommonWriter
     public int BaseYearForStatistics { get; set; }
 
     /// <summary>
-    /// 승인일이 확인된경우 ( OC 승인 예정 등의 텍스트가 아니라 날짜 형태로 들어간 경우 ) 
-    /// </summary>
-    public required bool IsApproved { get; init; } 
-
-    /// <summary>
     /// 500K 이상 예산 여부
     /// </summary>
     public bool IsAbove500K { get; init; }

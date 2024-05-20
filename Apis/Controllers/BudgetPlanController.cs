@@ -1,6 +1,4 @@
 using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Drawing;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using Features.Attributes;
 using Features.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -143,17 +141,6 @@ public class BudgetPlanController : Controller
     [ClaimRequirement("Permission","budget-plan")]
     public async Task<Response> DeleteAsync(string id){
         return await _budgetPlanService.DeleteAsync(id);
-    }
-    
-    /// <summary>
-    /// 데이터를 마이그레이션한다.
-    /// </summary>
-    /// <returns></returns>
-    [HttpOptions("Migration")]
-    [ClaimRequirement("Permission","budget-plan")]
-    public async Task<Response> Migration()
-    {
-        return await _budgetPlanService.MigrationAsync();
     }
 
     /// <summary>
