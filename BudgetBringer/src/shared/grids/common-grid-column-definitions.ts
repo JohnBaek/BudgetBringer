@@ -8,7 +8,6 @@ import {
   CountryBusinessManagerGridData
 } from "../../pages/common-code/country-business-manager/country-business-manager-grid-data";
 import {CommonGridModel} from "./common-grid-model";
-import {communicationService} from "../../services/communication-service";
 
 
 /**

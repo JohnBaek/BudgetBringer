@@ -47,17 +47,11 @@ onMounted(async () => {
 });
 const dataModel = ref<RequestBudgetApproved>(new RequestBudgetApproved());
 const importFileDownload = async() => {
-  communicationService.inTransmission();
-
-  console.log('importFileDownload')
-
   // Request to Server
-  HttpService.requestGetFile(`${gridModel.requestQuery.apiUri}/Import/Excel/File`).subscribe({
+  HttpService.requestGetFileAutoNotify(`${gridModel.requestQuery.apiUri}/Import/Excel/File`).subscribe({
     next(response) {
       if(response == null)
         return;
-
-      console.log(1)
 
       // Create URL dummy link
       const url = window.URL.createObjectURL(response);
@@ -77,11 +71,6 @@ const importFileDownload = async() => {
     },
     error(err) {
       console.error('Error loading data', err);
-    },
-    complete() {
-      setTimeout(() => {
-        communicationService.offTransmission();
-      },2000)
     },
   });
 }
