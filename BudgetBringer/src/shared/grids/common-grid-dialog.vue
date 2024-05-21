@@ -195,7 +195,7 @@ const isInvalid = computed (() => {
 const submit = () => {
   // Invalid valued
   if(isInvalid.value)
-    return; 
+    return;
 
   // Update dialog displayed
   if(updateDialog.value)

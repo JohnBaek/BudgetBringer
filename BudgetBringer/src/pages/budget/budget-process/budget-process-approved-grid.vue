@@ -126,9 +126,6 @@ onMounted(() => {
   // // Clone
   // skeletonColumnDefined.value = props.gridModel.columDefined.slice();
   // skeletonColumnDefined.value.forEach(i => i.cellRenderer = "CommonGridCellRendererSkeleton");
-
-  console.log('skeletonColumnDefined',skeletonColumnDefined);
-
   loadData();
 });
 /**
@@ -300,8 +297,8 @@ const print = () => {
 
     // 새 창을 열고 이미지를 로드하여 인쇄
     const printWindow = window.open('', '_blank', 'width=800,height=600');
-    printWindow.document.write('<html><head><title>Print</title></head>');
-    printWindow.document.write('<body><img src="' + imageDataUrl + '" onload="window.print();window.close()"/></body></html>');
+    printWindow.document.write('<html lang=""><head><title>Print</title></head>');
+    printWindow.document.write('<body><img src="' + imageDataUrl + '" onload="window.print();window.close()" alt=""/></body></html>');
     printWindow.document.close();
   });
 }

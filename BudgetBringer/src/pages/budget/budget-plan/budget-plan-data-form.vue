@@ -25,7 +25,6 @@ const uploadedFiles = ref([]);
 
 // Update Uploaded Files
 uploadedFiles.value = JSON.parse(JSON.stringify(model.value.attachedFiles));
-console.log('form',uploadedFiles.value)
 model.value.attachedFiles = [];
 
 let tempBusinessUnitId = '';

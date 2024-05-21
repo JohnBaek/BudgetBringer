@@ -4,10 +4,6 @@ import {ref} from "vue";
 import {communicationService} from "../../services/communication-service";
 import {CommonButtonDefinitions, CommonGridButton} from "./common-grid-button";
 import {messageService} from "../../services/message-service";
-import {HttpService} from "../../services/api-services/http-service";
-import {ResponseData} from "../../models/responses/response-data";
-import {ResponseFileUpload} from "../../models/responses/files/response-upload-file";
-import {firstValueFrom} from "rxjs";
 
 /**
  * From the parent.
@@ -94,11 +90,7 @@ const importExcelDownload = () => {
 
 const handleFileChange = async (event: Event) => {
   const target = event.target as HTMLInputElement;
-  const file = target.files?.[0];
-
-  console.log(file);
-
-  const blob = file;
+  const blob = target.files?.[0];
   target.value = '';
   if (!blob) {
     messageService.showError('파일을 선택해주세요');

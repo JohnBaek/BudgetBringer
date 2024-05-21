@@ -22,11 +22,9 @@ const definedEmits = defineEmits<{
   (e: "update:data", Array),
 }>();
 
-console.log('definedProps.uploadedFiles',definedProps.uploadedFiles);
 
 // To References : Already Uploaded ( Persisted ) Files
 const _uploadedFiles = ref(definedProps.uploadedFiles ?? []);
-console.log('_uploadedFiles',_uploadedFiles);
 
 // Store uploaded temp results
 const uploadFiles = ref([]);
@@ -150,7 +148,7 @@ const removeTempUploadedFile = (item) => {
             <v-col md="11" lg="11" sm="11">
               <a :href="'/' + item.url" target="_blank">{{ item.name }}</a>
             </v-col>
-            <v-col md="1" lg="1" sm="1" align="right" @click="showDialogRemovePersist(item)">
+            <v-col md="1" lg="1" sm="1" :align="'right'" @click="showDialogRemovePersist(item)">
               <v-icon>mdi-close</v-icon>
             </v-col>
           </v-row>
@@ -167,7 +165,7 @@ const removeTempUploadedFile = (item) => {
             <v-col md="11" lg="11" sm="11">
               {{ (item as ResponseFileUpload).originalFileName }}
             </v-col>
-            <v-col  md="1" lg="1" sm="1" align="right" @click="removeTempUploadedFile(item)">
+            <v-col  md="1" lg="1" sm="1" :align="'right'" @click="removeTempUploadedFile(item)">
               <v-icon>mdi-close</v-icon>
             </v-col>
           </v-row>

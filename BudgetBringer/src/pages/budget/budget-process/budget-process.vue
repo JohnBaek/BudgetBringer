@@ -99,9 +99,6 @@ const router = useRouter();
 
 onMounted(() => {
   // tab.value = route.query.tab;
-  console.log('route.query.tab',route.query.tab);
-  console.log('tab.value',tab.value);
-
   if(route.query.tab) {
     const requestTab = route.query.tab.toString().toLowerCase();
     if(requestTab){

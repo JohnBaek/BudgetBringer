@@ -28,8 +28,6 @@ export const exportPdfFile = async (domTarget: string, title: string) => {
 
     // To Image from stream
     const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
-    console.log(image)
-
     // Generate PDF
     const pdf = new jsPDF({
       orientation: 'p',

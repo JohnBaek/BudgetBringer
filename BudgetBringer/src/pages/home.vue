@@ -54,7 +54,6 @@ onBeforeMount(() => {
   if(!result) {
     // 페이지 없음으로 이동
     router.push('/no-page');
-    console.log('페이지 없음으로 이동');
   }
 });
 

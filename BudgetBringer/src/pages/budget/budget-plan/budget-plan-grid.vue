@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import {BudgetPlanGridData} from "./budget-plan-grid-data";
-import {RequestQuery} from "../../../models/requests/query/request-query";
 import {RequestBudgetPlan} from "../../../models/requests/budgets/request-budget-plan";
 import {messageService} from "../../../services/message-service";
 import {communicationService} from "../../../services/communication-service";
 import {HttpService} from "../../../services/api-services/http-service";
 import {EnumResponseResult} from "../../../models/enums/enum-response-result";
 import {ResponseData} from "../../../models/responses/response-data";
-import {ResponseBudgetPlan} from "../../../models/responses/budgets/response-budget-plan";
 import {firstValueFrom, Observable} from "rxjs";
 import CommonGrid from "../../../shared/grids/common-grid.vue";
 import {CommonButtonDefinitions} from "../../../shared/grids/common-grid-button";
@@ -76,10 +74,8 @@ const importFile = async ($event) => {
     i.isAbove500K = props.isAbove500k == "true" || props.isAbove500k == true
   });
 
-  console.log('responseData.items',responseData.items);
   await delay(2000);
   importRef.value.updateStep(99);
-  console.log('gridModel.columDefined',gridModel.columDefined);
 
   importRef.value.updateItems(gridModel.columDefined, responseData.items);
   communicationService.offTransmission();
@@ -95,8 +91,6 @@ const importFileDownload = async() => {
     next(response) {
       if(response == null)
         return;
-
-      console.log(1)
 
       // Create URL dummy link
       const url = window.URL.createObjectURL(response);

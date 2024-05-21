@@ -113,7 +113,6 @@ const importFile = async ($event) => {
     i.isAbove500K = props.isAbove500k == "true" || props.isAbove500k == true
   });
 
-  console.log('responseData.items',responseData.items);
   await delay(2000);
   importRef.value.updateStep(99);
   console.log('gridModel.columDefined',gridModel.columDefined);
@@ -138,7 +137,6 @@ const submit = async ($event) => {
   gridReference.value.doRefresh();
   importRef.value.hide();
   communicationService.notifyOffCommunication();
-  console.log('responseData',responseData)
 }
 const delay =  (ms) => new Promise(resolve => setTimeout(resolve, ms));
 </script>

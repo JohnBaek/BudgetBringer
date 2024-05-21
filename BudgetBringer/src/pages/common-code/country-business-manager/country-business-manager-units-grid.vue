@@ -11,7 +11,6 @@ import {BusinessUnitGridData} from "../business-unit/business-unit-grid-data";
 import {ResponseBusinessUnit} from "../../../models/responses/budgets/response-business-unit";
 import {RequestBusinessUnit} from "../../../models/requests/budgets/request-business-unit";
 import {ResponseCountryBusinessManager} from "../../../models/responses/budgets/response-country-business-manager";
-import BusinessUnit from "../business-unit/business-unit.vue";
 import {ResponseList} from "../../../models/responses/response-list";
 
 /**
@@ -35,18 +34,6 @@ const props = defineProps({
  */
 const gridModel = new BusinessUnitGridData();
 /**
- * 쿼리 정보
- */
-const requestQuery :RequestQuery = {
-  apiUri : '/api/v1/BudgetProcess' ,
-  pageCount: 10000 ,
-  skip: 0 ,
-  searchFields: [] ,
-  searchKeywords: [],
-  sortFields: [],
-  sortOrders: [],
-}
-/**
  * 데이터 추가 다이얼로그
  */
 const addDialogReference = ref(false);
@@ -54,11 +41,6 @@ const addDialogReference = ref(false);
  * 삭제 다이얼로그
  */
 const removeDialogReference = ref(false);
-/**
- *
- */
-const updateDialogReference = ref(false);
-
 /**
  * 마운트 핸들링
  */
@@ -78,7 +60,6 @@ onMounted(() => {
 
   loadData();
 });
-
 const columDefined = [
   // 승인일
   {
@@ -91,8 +72,6 @@ const columDefined = [
     width:250,
   },
 ]
-
-
 const countryBusinessManagerRef = ref(new ResponseCountryBusinessManager());
 const businessUnits = ref([]);
 const targetBusinessUnits = ref([]);
@@ -243,8 +222,6 @@ const requestAddData = () => {
  * 데이터를 삭제한다.
  */
 const requestRemoveData = () => {
-  console.log('selectedRows.value',selectedRows.value);
-
   // 유효한 데이터가 아닌경우
   if(selectedRows.value.length == 0) {
     messageService.showWarning("입력하지 않은 데이터가 있습니다");
@@ -280,30 +257,6 @@ const requestRemoveData = () => {
       },
     });
   });
-
-  // // 데이터를 입력한다.
-  // HttpService.requestPost<ResponseData<ResponseBusinessUnit>>(requestUri,{}).subscribe({
-  //   next(response) {
-  //
-  //     // 요청에 실패한경우
-  //     if(response.result !== EnumResponseResult.success) {
-  //       messageService.showError(`[${response.code}] ${response.message}`);
-  //       return;
-  //     }
-  //     messageService.showSuccess(`데이터가 등록되었습니다.`);
-  //     countryBusinessManagerRef.value.businessUnits = (response.data as ResponseCountryBusinessManager).businessUnits;
-  //   } ,
-  //   error(err) {
-  //     messageService.showError('Error loading data'+err);
-  //     communicationService.offCommunication();
-  //   } ,
-  //   complete() {
-  //     // 다이얼로그를 닫는다.
-  //     addDialogReference.value = false;
-  //     // 커뮤니케이션을 종료한다.
-  //     communicationService.offCommunication();
-  //   },
-  // });
 }
 
 const selectedBusinessUnit = ref();

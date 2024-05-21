@@ -99,9 +99,6 @@ onMounted(() => {
  * @param countryBusinessManagerId
  */
 const onChangeCountryBusinessManager = (countryBusinessManagerId: any) => {
-
-  console.log('onChangeCountryBusinessManager',countryBusinessManagerId);
-
   // 선택된 값 초기화
   modelReference.value.businessUnitId = "";
 

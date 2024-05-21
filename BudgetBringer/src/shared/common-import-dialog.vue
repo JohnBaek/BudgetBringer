@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import {ref, onBeforeMount} from "vue";
+import {onBeforeMount, ref} from "vue";
 import {communicationService} from "../services/communication-service";
 import {AgGridVue} from "ag-grid-vue3";
-import {EnumApprovalStatus} from "../models/enums/enum-approval-status";
 import {EnumResponseResult} from "../models/enums/enum-response-result";
+
 const dialog = ref(false);
 const fileUploadStep = ref(1);
 /**
@@ -26,7 +26,6 @@ defineExpose({
     columnDefined.value = [];
     items.value = [];
     dialog.value = true;
-    console.log('show');
   } ,
   hide() {
     dialog.value = false;
