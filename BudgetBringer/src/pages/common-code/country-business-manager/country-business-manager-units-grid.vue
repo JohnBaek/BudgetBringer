@@ -136,10 +136,6 @@ const add = () => {
 const remove = () => {
   removeDialogReference.value = true;
 }
-
-const update = () => {
-}
-
 const selectedRows = ref([]);
 
 /**
@@ -173,10 +169,7 @@ const onGridReady = (params) => {
  * 유효성 여부를 검증한다.
  */
 const isValidModel = () => {
-  if(selectedBusinessUnit.value === null){
-    return false;
-  }
-  return true;
+  return selectedBusinessUnit.value !== null;
 }
 
 /**

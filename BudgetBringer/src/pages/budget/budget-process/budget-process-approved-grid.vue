@@ -116,9 +116,6 @@ const onGridReady = (params) => {
   gridParams.value = params;
   calculateSums();
 };
-
-let skeletonColumnDefined = ref([]);
-
 /**
  * 마운트 핸들링
  */
