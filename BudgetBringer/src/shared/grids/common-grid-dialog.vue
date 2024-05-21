@@ -189,11 +189,27 @@ const isInvalid = computed (() => {
   return false;
 });
 
+/**
+ * submit
+ */
+const submit = () => {
+  // Invalid valued
+  if(isInvalid.value)
+    return; 
+
+  // Update dialog displayed
+  if(updateDialog.value)
+    update(model.value.id);
+  // Add dialog displayed
+  else if (addDialog.value)
+    add();
+}
+
 </script>
 
 <template>
   <!--Data ADD Common Dialog-->
-  <v-dialog v-model="dialog" width="800">
+  <v-dialog v-model="dialog" width="800" @keyup.enter="submit()">
     <v-card elevation="1" rounded class="mb-10 pa-5">
       <v-card-title class=" mt-5"><b>{{title}}</b>
       </v-card-title>
