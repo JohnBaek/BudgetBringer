@@ -267,6 +267,7 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             // 데이터를 바인딩한다
             Response bidingResult = await SetBudgetPlanDispatchValidatorAsync(update, user , request);
 
+
             if (bidingResult.Result != EnumResponseResult.Success)
                 return bidingResult;
             
@@ -337,6 +338,9 @@ public class BudgetPlanRepository : IBudgetPlanRepository
 
             // 데이터를 바인딩한다
             Response bidingResult = await SetBudgetPlanDispatchValidatorAsync(add, user , request);
+            add.RegName = user.DisplayName;
+            add.RegDate = DateTime.Now;
+            add.RegId = user.Id;
 
             // 바인딩에 실패한 경우
             if (bidingResult.Result != EnumResponseResult.Success)
@@ -668,11 +672,8 @@ public class BudgetPlanRepository : IBudgetPlanRepository
             model.OcProjectName = request.OcProjectName;
             model.BossLineDescription = request.BossLineDescription;
             model.IsIncludeInStatistics = request.IsIncludeInStatistics;
-            model.RegName = user.DisplayName; 
-            model.ModName = user.DisplayName; 
-            model.RegDate = DateTime.Now; 
-            model.ModDate = DateTime.Now; 
-            model.RegId = user.Id; 
+            model.ModName = user.DisplayName;
+            model.ModDate = DateTime.Now;
             model.ModId = user.Id;
             return new Response() {Result = EnumResponseResult.Success};
         }

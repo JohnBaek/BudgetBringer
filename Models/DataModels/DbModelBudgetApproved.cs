@@ -105,12 +105,12 @@ public class DbModelBudgetApproved : DbModelDefault
     /// 인보이스 번호 
     /// </summary>
     public int PoNumber { get; set; }
-
-    /// <summary>
-    /// 승인 상태 : PO 전/후 , Invoice 발행 여부  
-    /// </summary>
-    [Required]
-    public EnumApprovalStatus ApprovalStatus { get; set; } 
+    //
+    // /// <summary>
+    // /// 승인 상태 : PO 전/후 , Invoice 발행 여부  
+    // /// </summary>
+    // [Required]
+    // public EnumApprovalStatus ApprovalStatus { get; set; } 
     
     /// <summary>
     /// 승인된 예산
@@ -118,6 +118,27 @@ public class DbModelBudgetApproved : DbModelDefault
     [Required]
     [DefaultValue(0)]
     public double ApprovalAmount { get; set; }
+    
+    /// <summary>
+    /// Not PO Issue Amount
+    /// </summary>
+    [Required]
+    [DefaultValue(0)]
+    public double NotPoIssueAmount { get; set; }
+    
+    /// <summary>
+    /// PO Issue Amount
+    /// </summary>
+    [Required]
+    [DefaultValue(0)]
+    public double PoIssueAmount { get; set; }
+    
+    /// <summary>
+    /// SpendingAndIssue PO Amount
+    /// </summary>
+    [Required]
+    [DefaultValue(0)]
+    public double SpendingAndIssuePoAmount { get; set; }
     
     /// <summary>
     /// Actual

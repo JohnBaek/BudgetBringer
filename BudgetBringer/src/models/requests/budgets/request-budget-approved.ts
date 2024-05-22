@@ -52,6 +52,21 @@ export class RequestBudgetApproved {
   approvalAmount: number = 0;
 
   /**
+   * Not PO Issue Amount
+   */
+  notPoIssueAmount : number = 0;
+
+  /**
+   * PO Issue Amount
+   */
+  poIssueAmount : number = 0;
+
+  /**
+   * SpendingAndIssue PO Amount
+   */
+  spendingAndIssuePoAmount : number = 0;
+
+  /**
    * Actual
    */
   actual: number = 0;

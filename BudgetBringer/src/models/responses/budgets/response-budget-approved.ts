@@ -60,6 +60,21 @@ export class ResponseBudgetApproved  {
   approvalAmount: number;
 
   /**
+   * Not PO Issue Amount
+   */
+  notPoIssueAmount : number = 0;
+
+  /**
+   * PO Issue Amount
+   */
+  poIssueAmount : number = 0;
+
+  /**
+   * SpendingAndIssue PO Amount
+   */
+  spendingAndIssuePoAmount : number = 0;
+
+  /**
    * DbModelCostCenter 명
    */
   actual: number;

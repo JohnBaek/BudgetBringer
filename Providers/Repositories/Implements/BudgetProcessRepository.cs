@@ -106,7 +106,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             IQueryable<DbModelBudgetApproved> approvedQuery = _dbContext.BudgetApproved
                 .AsNoTracking()
                 .Where(i => 
-                            i.ApprovalStatus != EnumApprovalStatus.None && 
+                            // i.ApprovalStatus != EnumApprovalStatus.None && 
                             i.BaseYearForStatistics == int.Parse(year));
 
             // Query to all Country Business Managers
@@ -210,7 +210,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             IQueryable<DbModelBudgetApproved> approvedQuery = _dbContext.BudgetApproved
                 .AsNoTracking()
                 .Where(i => 
-                    i.ApprovalStatus != EnumApprovalStatus.None && 
+                    // i.ApprovalStatus != EnumApprovalStatus.None && 
                     i.BaseYearForStatistics == int.Parse(year));
             
             // 모든 BusinessUnit 을 조회한다. 
@@ -727,24 +727,30 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                     // 승인된 금액 중 PO 발행건 합산금액
                     double poIssueAmountSpending = query
                         .Where(i => 
-                            i.BusinessUnitId == businessUnit.BusinessUnitId &&
-                            i.ApprovalStatus == EnumApprovalStatus.SpendingAndIssuePo)
+                            i.BusinessUnitId == businessUnit.BusinessUnitId 
+                            // &&
+                            //i.ApprovalStatus == EnumApprovalStatus.SpendingAndIssuePo
+                            )
                         .Sum(i => i.ApprovalAmount );
                     sumPoIssueAmountSpending += poIssueAmountSpending;
                 
                     // 승인된 금액 중 PO 미 발행건 합산금액
                     double poIssueAmount = query
                         .Where(i =>
-                            i.BusinessUnitId == businessUnit.BusinessUnitId &&
-                            i.ApprovalStatus == EnumApprovalStatus.IssuePo)
+                            i.BusinessUnitId == businessUnit.BusinessUnitId 
+                            // &&
+                            //i.ApprovalStatus == EnumApprovalStatus.IssuePo
+                        )
                         .Sum(i => i.ApprovalAmount );
                     sumPoIssueAmount += poIssueAmount;
                 
                     // PO 미 발행건 합산금액 
                     double notPoIssueAmount = query
                         .Where(i =>
-                            i.BusinessUnitId == businessUnit.BusinessUnitId &&
-                            i.ApprovalStatus == EnumApprovalStatus.NotYetIssuePo)
+                            i.BusinessUnitId == businessUnit.BusinessUnitId 
+                            // &&
+                            //i.ApprovalStatus == EnumApprovalStatus.NotYetIssuePo
+                        )
                         .Sum(i => i.ApprovalAmount );
                     sumNotPoIssueAmount += notPoIssueAmount;
                 

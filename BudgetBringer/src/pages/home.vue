@@ -5,6 +5,7 @@ import router from "../router";
 import {onBeforeMount, onMounted, provide, ref} from "vue";
 import {useRoute} from "vue-router";
 import {RoutingStore} from "../services/stores/routing-store";
+import Button from "primevue/button";
 
 
 /**

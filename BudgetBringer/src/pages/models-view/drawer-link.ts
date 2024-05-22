@@ -12,7 +12,6 @@ export class DrawerLink {
    * @param isContainerMenu
    * @param childMenus
    */
-
   constructor(title: string,description: string,  route: string, icon: string, permissions:Array<string>,  isContainerMenu:boolean, childMenus:Array<DrawerLink>) {
     this.title = title;
     this.description = description;

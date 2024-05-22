@@ -62,18 +62,34 @@ public class RequestBudgetApproved : RequestBase
     /// 인보이스 번호 
     /// </summary>
     public int PoNumber { get; set; }
-
-    /// <summary>
-    /// 승인 상태 : PO 전/후 , Invoice 발행 여부  
-    /// </summary>
-    [Required(ErrorMessage = "승인 상태 를 선택해주세요")]
-    public EnumApprovalStatus ApprovalStatus { get; set; } 
+    //
+    // /// <summary>
+    // /// 승인 상태 : PO 전/후 , Invoice 발행 여부  
+    // /// </summary>
+    // [Required(ErrorMessage = "승인 상태 를 선택해주세요")]
+    // public EnumApprovalStatus ApprovalStatus { get; set; } 
     
     /// <summary>
     /// 승인된 예산
     /// </summary>
     public double ApprovalAmount { get; set; }
-    
+
+
+    /// <summary>
+    /// Not PO Issue Amount
+    /// </summary>
+    public double NotPoIssueAmount { get; set; }
+
+    /// <summary>
+    /// PO Issue Amount
+    /// </summary>
+    public double PoIssueAmount { get; set; }
+
+    /// <summary>
+    /// SpendingAndIssue PO Amount
+    /// </summary>
+    public double SpendingAndIssuePoAmount { get; set; }
+
     /// <summary>
     /// Actual
     /// </summary>

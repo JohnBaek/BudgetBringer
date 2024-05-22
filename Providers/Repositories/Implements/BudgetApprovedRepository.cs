@@ -123,7 +123,7 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         CountryBusinessManagerName = item.CountryBusinessManagerName,
         BusinessUnitName = item.BusinessUnitName,
         PoNumber = item.PoNumber,
-        ApprovalStatus = item.ApprovalStatus,
+        // ApprovalStatus = item.ApprovalStatus,
         ApprovalAmount = item.ApprovalAmount,
         Actual = item.Actual,
         OcProjectName = item.OcProjectName,
@@ -133,6 +133,9 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         RegDate = item.RegDate ,
         ModDate = item.ModDate ,
         FileGroupId = item.FileGroupId ,
+        PoIssueAmount = item.PoIssueAmount,
+        NotPoIssueAmount = item.NotPoIssueAmount,
+        SpendingAndIssuePoAmount = item.SpendingAndIssuePoAmount,
     };
    
     /// <summary>
@@ -323,7 +326,10 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             
             // 데이터를 바인딩한다
             Response bidingResult = await SetBudgetPlanDispatchValidatorAsync(add, user , request);
-            
+            add.RegName = user.DisplayName;
+            add.RegDate = DateTime.Now;
+            add.RegId = user.Id;
+
             // 바인딩에 실패한 경우
             if (bidingResult.Result != EnumResponseResult.Success)
                 return new ResponseData<ResponseBudgetApproved>{ Code = bidingResult.Code, Message = bidingResult.Message };
@@ -469,16 +475,16 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
             model.CountryBusinessManagerName = countryBusinessManagerName;
             model.BusinessUnitName = businessUnitName;
             model.PoNumber = request.PoNumber;
-            model.ApprovalStatus = request.ApprovalStatus;
+            // model.ApprovalStatus = request.ApprovalStatus;
             model.ApprovalAmount = request.ApprovalAmount;
+            model.PoIssueAmount = request.PoIssueAmount;
+            model.NotPoIssueAmount = request.NotPoIssueAmount;
+            model.SpendingAndIssuePoAmount = request.SpendingAndIssuePoAmount;
             model.Actual = request.Actual;
             model.OcProjectName = request.OcProjectName;
             model.BossLineDescription = request.BossLineDescription;
-            model.RegName = user.DisplayName; 
-            model.ModName = user.DisplayName; 
-            model.RegDate = DateTime.Now; 
-            model.ModDate = DateTime.Now; 
-            model.RegId = user.Id; 
+            model.ModName = user.DisplayName;
+            model.ModDate = DateTime.Now;
             model.ModId = user.Id;
           
             return new Response() {Result = EnumResponseResult.Success};
@@ -649,16 +655,16 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                     
                     int.TryParse(row.Cell(8).Value.ToString(), out int PoNumber);
                     add.PoNumber = PoNumber;
-                    Enum.TryParse(row.Cell(9).Value.ToString(), out EnumApprovalStatus status);
-                    
-                    
-                    
-                    
-                    add.ApprovalStatus = status;
-                    add.ApprovalAmount = double.Parse(row.Cell(10).Value.ToString());
-                    add.Actual = double.Parse(row.Cell(11).Value.ToString());
-                    add.OcProjectName = row.Cell(12).Value.ToString();
-                    add.BossLineDescription = row.Cell(13).Value.ToString();
+                    // Enum.TryParse(row.Cell(9).Value.ToString(), out EnumApprovalStatus status);
+                    //
+                    // add.ApprovalStatus = status;
+                    add.ApprovalAmount = double.Parse(row.Cell(9).Value.ToString());
+                    add.PoIssueAmount = double.Parse(row.Cell(10).Value.ToString());
+                    add.NotPoIssueAmount = double.Parse(row.Cell(11).Value.ToString());
+                    add.SpendingAndIssuePoAmount = double.Parse(row.Cell(12).Value.ToString());
+                    add.Actual = double.Parse(row.Cell(13).Value.ToString());
+                    add.OcProjectName = row.Cell(14).Value.ToString();
+                    add.BossLineDescription = row.Cell(15).Value.ToString();
                     add.Result = EnumResponseResult.Success;
                     
                     items.Add(add);

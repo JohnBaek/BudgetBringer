@@ -238,8 +238,8 @@ public class BudgetApprovedController : Controller
         string businessUnits = (await _businessUnitService.GetListAsync(new RequestQuery(0, 100))).Items!.Select(i => i.Name).WithJoinString(",");
         _excelService.AddDropDownList(worksheet, 7,  businessUnits);
         
-        string approvalStatus = Enum.GetNames(typeof(EnumApprovalStatus)).ToList().WithJoinString(",");
-        _excelService.AddDropDownList(worksheet, 9 , approvalStatus);
+        // string approvalStatus = Enum.GetNames(typeof(EnumApprovalStatus)).ToList().WithJoinString(",");
+        // _excelService.AddDropDownList(worksheet, 9 , approvalStatus);
 
         // Create Stream for generate file
         MemoryStream stream = new MemoryStream();
@@ -288,8 +288,11 @@ public class BudgetApprovedController : Controller
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.CountryBusinessManagerName), "COUNTRY BUSINESS MANAGER NAME", true);
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.BusinessUnitName), "BUSINESS UNIT NAME", true);
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.PoNumber), "PO NUMBER", true);
-        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.ApprovalStatus), "APPROVAL STATUS", true, false, typeof(EnumApprovalStatus));
+        // requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.ApprovalStatus), "APPROVAL STATUS", true, false, typeof(EnumApprovalStatus));
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.ApprovalAmount) , "APPROVAL AMOUNT", true, true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.PoIssueAmount) , "PO ISSUE AMOUNT", true, true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.NotPoIssueAmount) , "NOT PO ISSUE AMOUNT", true, true);
+        requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.SpendingAndIssuePoAmount) , "SPENDING ANDI ISSUE PO AMOUNT", true, true);
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Equals , nameof(ResponseBudgetApproved.Actual),"ACTUAL", true, true);
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.OcProjectName));
         requestQuery.AddSearchAndSortDefine(EnumQuerySearchType.Contains , nameof(ResponseBudgetApproved.OcProjectName), "OC-PROJECT NAME", true);

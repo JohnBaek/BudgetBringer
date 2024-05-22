@@ -80,16 +80,31 @@ public class ResponseBudgetApproved : ResponseCommonWriter
     /// </summary>
     public int PoNumber { get; init; }
 
-    /// <summary>
-    /// 승인 상태 : PO 전/후 , Invoice 발행 여부  
-    /// </summary>
-    public EnumApprovalStatus ApprovalStatus { get; init; } 
-    
+    // /// <summary>
+    // /// 승인 상태 : PO 전/후 , Invoice 발행 여부  
+    // /// </summary>
+    // public EnumApprovalStatus ApprovalStatus { get; init; } 
+    //
     /// <summary>
     /// 승인된 예산
     /// </summary>
     public double ApprovalAmount { get; init; }
-    
+
+    /// <summary>
+    /// Not PO Issue Amount
+    /// </summary>
+    public double NotPoIssueAmount { get; set; }
+
+    /// <summary>
+    /// PO Issue Amount
+    /// </summary>
+    public double PoIssueAmount { get; set; }
+
+    /// <summary>
+    /// SpendingAndIssue PO Amount
+    /// </summary>
+    public double SpendingAndIssuePoAmount { get; set; }
+
     /// <summary>
     /// Actual
     /// </summary>

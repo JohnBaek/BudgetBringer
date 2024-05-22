@@ -82,9 +82,6 @@ namespace Models.DataModels.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int>("ApprovalStatus")
-                        .HasColumnType("int");
-
                     b.Property<int>("BaseYearForStatistics")
                         .HasColumnType("int");
 
@@ -137,9 +134,15 @@ namespace Models.DataModels.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
+                    b.Property<double>("NotPoIssueAmount")
+                        .HasColumnType("double");
+
                     b.Property<string>("OcProjectName")
                         .HasMaxLength(3000)
                         .HasColumnType("varchar(3000)");
+
+                    b.Property<double>("PoIssueAmount")
+                        .HasColumnType("double");
 
                     b.Property<int>("PoNumber")
                         .HasColumnType("int");
@@ -162,6 +165,9 @@ namespace Models.DataModels.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
+
+                    b.Property<double>("SpendingAndIssuePoAmount")
+                        .HasColumnType("double");
 
                     b.HasKey("Id");
 

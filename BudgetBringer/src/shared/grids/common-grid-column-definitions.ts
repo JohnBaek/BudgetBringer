@@ -191,6 +191,36 @@ export namespace CommonColumnDefinitions {
     return column;
   };
 
+  export const getSpendingAndIssuePoAmount = () => {
+    const column = new CommonDialogColumnModel("spendingAndIssuePoAmount", "Spending & Issue Po Amount", 150);
+    column.useAsModel = true;
+    column.inputType = EnumModelType.number;
+    column.valueFormatter = new CommonGridModel().numberValueFormatter;
+    column.modelPropertyName = 'spendingAndIssuePoAmount'
+    column.icon = 'mdi-currency-usd'
+    return column;
+  };
+
+  export const getNotPoIssueAmount = () => {
+    const column = new CommonDialogColumnModel("notPoIssueAmount", "Not Po Issue Amount", 150);
+    column.useAsModel = true;
+    column.inputType = EnumModelType.number;
+    column.valueFormatter = new CommonGridModel().numberValueFormatter;
+    column.modelPropertyName = 'notPoIssueAmount'
+    column.icon = 'mdi-currency-usd'
+    return column;
+  };
+
+  export const getPoIssueAmount = () => {
+    const column = new CommonDialogColumnModel("poIssueAmount", "Po Issue Amount", 150);
+    column.useAsModel = true;
+    column.inputType = EnumModelType.number;
+    column.valueFormatter = new CommonGridModel().numberValueFormatter;
+    column.modelPropertyName = 'poIssueAmount'
+    column.icon = 'mdi-currency-usd'
+    return column;
+  };
+
   export const getBudgetTotal = () => {
     const column = new CommonDialogColumnModel("budgetTotal", "BudgetTotal", 150);
     column.useAsModel = true;

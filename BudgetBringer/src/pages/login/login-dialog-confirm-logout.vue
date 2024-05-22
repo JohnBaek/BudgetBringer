@@ -3,7 +3,7 @@ import router from "../../router";
 import {authenticationService} from "../../services/api-services/authentication-service";
 import {AuthenticationStore} from "../../services/stores/authentication-store";
 
-/**
+  /**
    * 인증 상태 관리
    */
   const authenticationStore = AuthenticationStore();

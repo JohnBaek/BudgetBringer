@@ -5,13 +5,11 @@ import {CommonGridModel} from "../../../shared/grids/common-grid-model";
 import {communicationService} from "../../../services/communication-service";
 import {HttpService} from "../../../services/api-services/http-service";
 import {ResponseData} from "../../../models/responses/response-data";
-import {messageService} from "../../../services/message-service";
 import {AgGridVue} from "ag-grid-vue3";
 import {CommonGridButtonGroupDefinesButtonEmits} from "../../../shared/grids/common-grid-button-group-defines";
 import {getDateFormatForFile} from "../../../services/utils/date-util";
 import CommonGridButtonGroup from "../../../shared/grids/common-grid-button-group.vue";
 import {AgChartsVue} from 'ag-charts-vue3';
-import html2canvas from "html2canvas";
 import {exportPdfFile} from "../../../services/utils/pdf-util";
 import {CommonButtonDefinitions} from "../../../shared/grids/common-grid-button";
 
@@ -179,29 +177,15 @@ communicationService.subscribeCommunication().subscribe((communication) =>{
  * 데이터를 로드한다.
  */
 const loadData = () => {
-  communicationService.notifyInCommunication();
   // Request to Server
-  HttpService.requestGet<ResponseData<ResponseProcessSummaryDetail<any>>>(
-      props.gridModel.requestQuery.apiUri).subscribe({
+  HttpService.requestGetAutoNotify<ResponseData<ResponseProcessSummaryDetail<any>>>(props.gridModel.requestQuery.apiUri).subscribe({
     async next(response) {
-      // Failed Request
-      if (response.error) {
-        messageService.showError(`[${response.code}] ${response.message}`);
-        return;
-      }
-
       // Update list
       items.value = response.data.items;
 
       // Compute sums
       setTimeout(() => {calculateSums();},100);
-    } ,
-    error(err) {
-      messageService.showError('Error loading data'+err);
-    } ,
-    complete() {
-      communicationService.notifyOffCommunication();
-    },
+    }
   });
 }
 /**
@@ -286,32 +270,15 @@ const toGrid = () => {
 }
 const showGrid = ref(true);
 const options = ref([]);
-const print = () => {
-  const element = document.getElementById('capture-area');
-  html2canvas(element).then(canvas => {
-    // 이미지 데이터 URL로 변환
-    const imageDataUrl = canvas.toDataURL('image/png');
-
-    // 새 창을 열고 이미지를 로드하여 인쇄
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
-    printWindow.document.write('<html lang=""><head><title>Print</title></head>');
-    printWindow.document.write('<body><img src="' + imageDataUrl + '" onload="window.print();window.close()" alt=""/></body></html>');
-    printWindow.document.close();
-  });
-}
 const gridStyle = ref('width: 100%; height: 90px;');
 const showGridDetail = ref(false);
 const toggleDetail = () => {
   showGridDetail.value = !showGridDetail.value
-  applyGridStyle();f
+  applyGridStyle();
 };
 const applyGridStyle = () => {
-  if(showGridDetail.value)
-    gridStyle.value = 'width: 100%; height: 600px;';
-  else
-    gridStyle.value = 'width: 100%; height: 90px;';
+  gridStyle.value = (showGridDetail.value) ? 'width: 100%; height: 600px;' : 'width: 100%; height: 90px;';
 }
-
 const showButtons = [
   CommonButtonDefinitions.exportExcel,
   CommonButtonDefinitions.exportPDF,
@@ -334,7 +301,6 @@ const showButtons = [
           @exportPdf="exportPDF()"
           @chart="toChart()"
           @grid="toGrid()"
-          @print="print()"
         >
         </common-grid-button-group>
       </div>

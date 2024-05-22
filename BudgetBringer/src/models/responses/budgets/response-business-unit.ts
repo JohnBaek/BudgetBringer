@@ -8,9 +8,12 @@ export class ResponseBusinessUnit extends ResponseCommonWriter {
    * 아이디
    */
   id: string;
-
   /**
    * 유닛명 (유니크)
    */
   name: string;
+  /**
+   * Sequence
+   */
+  sequence: number;
 }
