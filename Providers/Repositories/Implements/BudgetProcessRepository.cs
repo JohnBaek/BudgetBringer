@@ -708,75 +708,15 @@ public class BudgetProcessRepository : IBudgetProcessRepository
                     i.BaseYearForStatistics == year
                 ).ToList();
                 
-                // 들어갈 데이터 
-                ResponseProcessApproved managerApproved = new ResponseProcessApproved();
-                
-                // 데이터를 만든다.
-                managerApproved.CountryBusinessManagerId = manager.Id ;
-                managerApproved.CountryBusinessManagerName = manager.Name ;
-                result.Add(managerApproved);
-                
-                double sumPoIssueAmountSpending = 0.0;
-                double sumPoIssueAmount = 0.0;
-                double sumNotPoIssueAmount = 0.0;
-                double sumApprovedAmount = 0.0;
-
-                // 매니저가 소유한 비지니스 유닛에 대한 처리 
-                foreach (var businessUnit in manager.CountryBusinessManagerBusinessUnits)
+                result.Add(new ResponseProcessApproved()
                 {
-                    // 승인된 금액 중 PO 발행건 합산금액
-                    double poIssueAmountSpending = query
-                        .Where(i => 
-                            i.BusinessUnitId == businessUnit.BusinessUnitId 
-                            // &&
-                            //i.ApprovalStatus == EnumApprovalStatus.SpendingAndIssuePo
-                            )
-                        .Sum(i => i.ApprovalAmount );
-                    sumPoIssueAmountSpending += poIssueAmountSpending;
-                
-                    // 승인된 금액 중 PO 미 발행건 합산금액
-                    double poIssueAmount = query
-                        .Where(i =>
-                            i.BusinessUnitId == businessUnit.BusinessUnitId 
-                            // &&
-                            //i.ApprovalStatus == EnumApprovalStatus.IssuePo
-                        )
-                        .Sum(i => i.ApprovalAmount );
-                    sumPoIssueAmount += poIssueAmount;
-                
-                    // PO 미 발행건 합산금액 
-                    double notPoIssueAmount = query
-                        .Where(i =>
-                            i.BusinessUnitId == businessUnit.BusinessUnitId 
-                            // &&
-                            //i.ApprovalStatus == EnumApprovalStatus.NotYetIssuePo
-                        )
-                        .Sum(i => i.ApprovalAmount );
-                    sumNotPoIssueAmount += notPoIssueAmount;
-                
-                    // 승인된 금액 전체 [승인된 금액 중 PO 발행건 합산금액] + [PO 미 발행건 합산금액 ]
-                    double approvedAmount = poIssueAmountSpending + notPoIssueAmount;
-                    sumApprovedAmount += approvedAmount;
-                
-                    // 데이터를 만든다.
-                    ResponseProcessApproved add = new ResponseProcessApproved
-                    {
-                        BusinessUnitId = businessUnit.BusinessUnit!.Id ,
-                        BusinessUnitName = businessUnit.BusinessUnit!.Name ,
-                        CountryBusinessManagerId = manager.Id ,
-                        CountryBusinessManagerName = businessUnit.BusinessUnit!.Name ,
-                        PoIssueAmountSpending = poIssueAmountSpending,
-                        PoIssueAmount = poIssueAmount,
-                        NotPoIssueAmount = notPoIssueAmount,
-                        ApprovedAmount = approvedAmount,
-                    };
-                    result.Add(add);
-                }
-                
-                managerApproved.PoIssueAmountSpending = sumPoIssueAmountSpending;
-                managerApproved.PoIssueAmount = sumPoIssueAmount;
-                managerApproved.NotPoIssueAmount = sumNotPoIssueAmount;
-                managerApproved.ApprovedAmount = sumApprovedAmount;
+                    CountryBusinessManagerId = manager.Id,
+                    CountryBusinessManagerName = manager.Name ,
+                    PoIssueAmountSpending = query.Sum(i => i.SpendingAndIssuePoAmount),
+                    PoIssueAmount = query.Sum(i => i.PoIssueAmount),
+                    NotPoIssueAmount = query.Sum(i => i.NotPoIssueAmount),
+                    ApprovedAmount = query.Sum(i => i.ApprovalAmount),
+                });
             }
         }
         catch (Exception e)

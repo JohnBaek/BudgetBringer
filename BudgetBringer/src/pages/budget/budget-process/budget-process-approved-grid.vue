@@ -55,17 +55,7 @@ const refresh = () => {
   items.value = [];
   loadData();
 }
-/**
- * 그리드 옵션
- */
-const gridOptions = {
-  getRowStyle: params => {
-    if (params.data.businessUnitId !== '00000000-0000-0000-0000-000000000000' && params.data.countryBusinessManagerName !== '합계') {
-      params.data.countryBusinessManagerName = ' → ' + params.data.countryBusinessManagerName;
-      return { backgroundColor: '#D3D3D3' }; // 여기서 색상을 설정
-    }
-  }
-}
+
 /**
  * Request to server for excel
  */
@@ -134,8 +124,7 @@ const calculateSums = () => {
   // Get list from grid
   const rowData = [];
   gridApi.value.forEachNode(node => {
-    if (node.data.businessUnitId !== '00000000-0000-0000-0000-000000000000')
-      rowData.push(node.data);
+    rowData.push(node.data);
   });
 
   // Get column states
@@ -163,9 +152,6 @@ const calculateSums = () => {
       return acc + (typeof value === 'number' ? value : 0);
     }, 0);
   }
-
-
-
   gridApi.value.setGridOption('pinnedTopRowData', [sums])
 }
 const inCommunication = ref(true);
@@ -332,7 +318,6 @@ const showButtons = [
           <ag-grid-vue
             :style="gridStyle"
             @grid-ready="onGridReady"
-            :grid-options="gridOptions"
             :columnDefs="(props.gridModel as CommonGridModel).columDefined"
             :rowData="item.items"
             :pinnedTopRowData="item.total"
