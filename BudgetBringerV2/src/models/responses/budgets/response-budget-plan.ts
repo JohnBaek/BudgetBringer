@@ -1,5 +1,5 @@
-import {ResponseCommonWriter} from "../response-common-writer";
-import {ResponseFileUpload} from "../files/response-upload-file";
+import type { ResponseCommonWriter } from '@/models/responses/response-common-writer'
+import type { ResponseFileUpload } from '@/models/responses/files/response-upload-file'
 
 /**
  * 예산정보 응답 클래스

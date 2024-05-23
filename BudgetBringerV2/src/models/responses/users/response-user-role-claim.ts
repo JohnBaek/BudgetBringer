@@ -1,7 +1,7 @@
 /**
  * 사용자 역할에 대한 Claim
  */
-export class ResponseUserRoleClaim {
+export interface ResponseUserRoleClaim {
 
   /**
    * Type 명

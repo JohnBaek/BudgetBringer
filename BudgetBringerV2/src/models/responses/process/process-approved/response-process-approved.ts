@@ -1,7 +1,7 @@
 /**
  * 결과중 개별 승인 별 통계 데이터
  */
-export class ResponseProcessApproved {
+export interface ResponseProcessApproved {
   /**
    * 컨트리 비지니스매니저 아이디
    */

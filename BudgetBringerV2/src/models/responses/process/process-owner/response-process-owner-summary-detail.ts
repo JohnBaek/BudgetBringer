@@ -1,9 +1,9 @@
-import {ResponseProcessOwner} from "./response-process-owner";
+import type { ResponseProcessOwner } from '@/models/responses/process/process-owner/response-process-owner'
 
 /**
  * 상세
  */
-export class ResponseProcessOwnerSummaryDetail {
+export interface ResponseProcessOwnerSummaryDetail {
   /**
    * 시퀀스 정보 , 총 3가지의 종류로 나가기때문
    */

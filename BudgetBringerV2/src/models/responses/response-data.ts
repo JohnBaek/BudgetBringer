@@ -1,11 +1,9 @@
 import {Response} from "./response";
 
 /**
- * 응답 클래스
+ * Within <T> Response
  */
-export class ResponseData<T> extends Response {
-  /**
-   * 응답 데이터
-   */
+export interface ResponseData<T> extends Response {
+  // Response Data
   data? : T;
 }

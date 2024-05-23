@@ -1,9 +1,9 @@
-import {ResponseCommonWriter} from "../response-common-writer";
+import type { ResponseCommonWriter } from '@/models/responses/response-common-writer'
 
 /**
  * 섹터 정보 응답 모델
  */
-export class ResponseSector extends ResponseCommonWriter {
+export interface ResponseSector extends ResponseCommonWriter {
   /**
    * 아이디
    */

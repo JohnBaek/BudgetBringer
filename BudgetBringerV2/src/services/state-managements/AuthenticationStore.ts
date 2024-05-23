@@ -5,24 +5,20 @@ import type { ResponseUser } from '@/models/responses/users/response-user'
 /**
  * 인증 상태
  */
-interface AuthenticationState {
-  /**
-   * 인증여부
-   */
+interface AuthenticationStore {
+  // 인증여부
   isAuthenticated: boolean;
 
-  /**
-   * 유저 정보
-   */
+  // 유저 정보
   authenticatedUser: ResponseUser;
 }
 
 /**
  * 인증 상태 관리
  */
-export const AuthenticationState = defineStore('authenticated', {
+export const useAuthenticationStore = defineStore('authenticated', {
   // 인증상태 정의
-  state: (): AuthenticationState => {
+  state: (): AuthenticationStore => {
     return {
       isAuthenticated: false,
       authenticatedUser: JSON.parse(localStorage.getItem('authenticatedUser') || '{}')
@@ -46,7 +42,7 @@ export const AuthenticationState = defineStore('authenticated', {
      */
     clearAuthenticated() {
       this.isAuthenticated = false;
-      this.authenticatedUser = new ResponseUser();
+      // this.authenticatedUser = ResponseUser {}
 
       // 로컬 스토리지에 사용자의 정보를 제거한다.
       localStorage.removeItem('authenticatedUser')
@@ -62,8 +58,6 @@ export const AuthenticationState = defineStore('authenticated', {
 
       // 모든 역할에 대해 검색한다.
       for (const role of this.authenticatedUser.roles) {
-
-
         // Claim 값에서 값이 있는지 찾는다.
         isHasPermission = role.claims.some(i => permissions.includes(i.value));
 

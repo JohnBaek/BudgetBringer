@@ -1,21 +1,32 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RequestLogin } from '@/models/requests/login/request-login'
-
-// Is Communication To Sever?
-const inCommunication = ref(false);
+import { useCommunicationStore } from '@/services/state-managements/CommunicationStore'
+import { AuthenticationAPIService } from '@/services/RestAPIServices/AuthenticationAPIService'
+import router from '@/router'
 
 // Request Model
-const model = ref(new RequestLogin('',''));
+const model = ref(new RequestLogin());
+
+// Communication Store
+const communicationStore = useCommunicationStore();
+
+// Rest API
+const restApi: AuthenticationAPIService = new AuthenticationAPIService();
 
 /**
  * Try Login
  */
-const requestLogin = async () => {
-  const response = await fetch('');
-}
+const requestLoginAsync = async () => {
+  if(model.value.isInvalid())
+    return;
 
-// const authenticationStore = AuthenticationState();
+  // Request to server
+  restApi.tryLoginAsync(model.value).subscribe((response) => {
+    if(response.success)
+      router.push('/budget/management/statistics');
+  });
+}
 </script>
 
 <template>
@@ -28,22 +39,21 @@ const requestLogin = async () => {
         <div class="flex align-items-center justify-content-center">
           <h2> Capex Budget 관리</h2>
         </div>
-
         <div class="p-col-12 p-md-6 p-lg-4">
           <InputGroup>
-            <InputText placeholder="아이디"  class="h-3rem" v-model="model.loginId"/>
+            <InputText placeholder="아이디"  class="h-3rem" v-model="model.loginId" @keyup.enter="requestLoginAsync" :disabled="communicationStore.communication"/>
           </InputGroup>
         </div>
         <div class="p-col-12 p-md-6 p-lg-4 mt-3">
           <InputGroup>
-            <InputText placeholder="패스워드"  type="password" class="h-3rem" v-model="model.password"/>
+            <InputText placeholder="패스워드"  type="password" class="h-3rem" v-model="model.password" @keyup.enter="requestLoginAsync" :disabled="communicationStore.communication"/>
           </InputGroup>
         </div>
         <div class="p-col-12 p-md-6 p-lg-4 mt-3">
-          <Button style="width: 100%;" class="w-30rem h-3rem" :disabled="model.loginId === '' || model.password === ''">
-            <div class="text-center" style="width: 100%" v-if="!inCommunication">
-              로그인
-              <i class="pi pi-spin pi-spinner" style="font-size: 2rem" v-if="inCommunication"></i>
+          <Button style="width: 100%;" class="w-30rem h-3rem" @click="requestLoginAsync" :disabled="model.loginId === '' || model.password === '' || communicationStore.communication ">
+            <div class="text-center" style="width: 100%" >
+              <div v-if="!communicationStore.communication">로그인</div>
+              <i class="pi pi-spin pi-spinner" style="font-size: 2rem" v-if="communicationStore.communication"></i>
             </div>
           </Button>
         </div>

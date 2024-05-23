@@ -1,7 +1,7 @@
 /**
  * Represent Summary Details
  */
-export class ResponseProcessSummaryDetail<T> {
+export interface ResponseProcessSummaryDetail<T> {
   /**
    * 시퀀스 정보 , 총 3가지의 종류로 나가기때문
    */

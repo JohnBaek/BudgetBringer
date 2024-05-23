@@ -3,7 +3,7 @@ import {ResponseCommonWriter} from "../response-common-writer";
 /**
  * 비지니스 유닛 응답 모델
  */
-export class ResponseBusinessUnit extends ResponseCommonWriter {
+export interface ResponseBusinessUnit extends ResponseCommonWriter {
   /**
    * 아이디
    */

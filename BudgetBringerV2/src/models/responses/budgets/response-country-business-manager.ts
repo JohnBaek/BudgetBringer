@@ -1,10 +1,10 @@
-import {ResponseCommonWriter} from "../response-common-writer";
-import {ResponseBusinessUnit} from "./response-business-unit";
+import type { ResponseBusinessUnit } from '@/models/responses/budgets/response-business-unit'
+import type { ResponseCommonWriter } from '@/models/responses/response-common-writer'
 
 /**
  * CBM 관리 응답 모델
  */
-export class ResponseCountryBusinessManager extends ResponseCommonWriter {
+export interface ResponseCountryBusinessManager extends ResponseCommonWriter {
   /**
    * 아이디
    */
@@ -16,7 +16,7 @@ export class ResponseCountryBusinessManager extends ResponseCommonWriter {
   /**
    * CBM 이 소유한 비지니스 유닛
    */
-  businessUnits: Array<ResponseBusinessUnit> = [];
+  businessUnits: Array<ResponseBusinessUnit>;
   /**
    * Sequence
    */

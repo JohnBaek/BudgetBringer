@@ -1,25 +1,17 @@
-/**
- * Statistics by Owners
- */
-export class ResponseProcessOwner {
-  /**
-   * Id of Country Business Manager
-   */
+// Statistics by Owners
+export interface ResponseProcessOwner {
+  // Id of Country Business Manager
   countryBusinessManagerId: string;
-  /**
-   * Name of Country Business Manager
-   */
+
+  // Name of Country Business Manager
   countryBusinessManagerName: string;
-  /**
-   * This year Budget
-   */
+
+  // This year Budget
   budgetYear: number;
-  /**
-   * This year Approved
-   */
+
+  // This year Approved
   approvedYear: number;
-  /**
-   * [budgetYear] - [approvedYear]
-   */
+
+  // [budgetYear] - [approvedYear]
   remainingYear: number;
 }

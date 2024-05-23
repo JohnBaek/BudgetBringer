@@ -1,10 +1,11 @@
 <script setup lang="ts">
+
 </script>
 
 <template>
-  <Toast position="top-center" />
-  <RouterView />
+ddd111
 </template>
 
 <style scoped>
+
 </style>

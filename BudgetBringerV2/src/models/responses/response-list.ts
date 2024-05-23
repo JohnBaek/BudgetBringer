@@ -1,23 +1,18 @@
 import {Response} from "./response";
 
 /**
- * 응답 클래스
+ * Within <T> ResponseList
  */
-export class ResponseList<T> extends  Response {
-  /**
-   * 응답 데이터
-   */
+export interface ResponseList<T> extends  Response {
+  // List of Response data
   items : T[];
-  /**
-   * 스킵
-   */
+
+  // Skips
   skip: number;
-  /**
-   * 페이지 카운트
-   */
+
+  // Counter of Pages
   pageCount: number;
-  /**
-   * 전체 수
-   */
+
+  // total Count
   totalCount: number;
 }

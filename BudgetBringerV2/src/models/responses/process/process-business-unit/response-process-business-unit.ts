@@ -1,7 +1,7 @@
 /**
  * 결과중 개별 BusinessUnit 별 통계 데이터
  */
-export class ResponseProcessBusinessUnit {
+export interface ResponseProcessBusinessUnit {
   /**
    * 비지니스 유닛 아이디
    */

@@ -1,41 +1,64 @@
-import {EnumResponseResult} from "../enums/enum-response-result";
+import { EnumResponseResult } from "../enums/enum-response-result";
 
 /**
- * 응답 기본 데이터
+ * Response Interface
  */
-export class Response {
-  /**
-   * 응답 결과
-   */
-  public result : EnumResponseResult = EnumResponseResult.error;
-  /**
-   * 응답 메세지
-   */
-  public message: string;
-  /**
-   * 코드
-   */
-  public code : string;
-  /**
-   * 권한 여부
-   */
-  public isAuthenticated = false;
-  /**
-   * is Result Error
-   */
-  public error  = () => {
-    return this.result === EnumResponseResult.error;
-  }
-  /**
-   * is Result Success
-   */
-  public success  = () => {
-    return this.result === EnumResponseResult.success;
-  }
-  /**
-   * is Result Warning
-   */
-  public warning  = () => {
-    return this.result === EnumResponseResult.waring;
-  }
+export interface IResponse {
+  result: EnumResponseResult;
+  message: string;
+  code: string;
+  isAuthenticated: boolean;
+  error: boolean;
+  success: boolean;
+  warning: boolean;
+}
+
+/**
+ * Implement IResponse
+ */
+export class Response implements IResponse {
+  // State of Response
+  public result: EnumResponseResult = EnumResponseResult.error;
+
+  // Message of Response
+  public message: string = '';
+
+  // Code of Response
+  public code: string = '';
+
+  // State of Authenticated of Response of user
+  public isAuthenticated: boolean = false;
+
+  // State of Response
+  public error: boolean = false;
+
+  // State of Response
+  public success: boolean = false;
+
+  // State of Response
+  public warning: boolean = false;
+
+
+
+  //
+  // /**
+  //  * Is State of Error?
+  //  */
+  // public error(): boolean {
+  //   return this.result === EnumResponseResult.error;
+  // }
+  //
+  // /**
+  //  * Is State of Success?
+  //  */
+  // public success(): boolean {
+  //   return this.result === EnumResponseResult.success;
+  // }
+  //
+  // /**
+  //  * Is State of Warning?
+  //  */
+  // public warning(): boolean {
+  //   return this.result === EnumResponseResult.waring;
+  // }
 }

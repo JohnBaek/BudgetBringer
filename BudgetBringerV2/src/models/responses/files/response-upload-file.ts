@@ -1,25 +1,19 @@
 /**
  * Response File Uploaded
  */
-export class ResponseFileUpload {
-  /**
-   * Id of file
-   */
-  id='';
-  /**
-   * Name of file
-   */
-  name='';
-  /**
-   * Name of origin file Name
-   */
-  originalFileName='';
-  /**
-   * Url
-   */
-  url='';
-  /**
-   * File size in bytes
-   */
-  size:number;
+export interface ResponseFileUpload {
+  // Id of file
+  id: string;
+
+  // Name of file
+  name: string;
+
+  // Name of origin file Name
+  originalFileName: string;
+
+  // Url
+  url: string;
+
+  // File size in bytes
+  size: number;
 }

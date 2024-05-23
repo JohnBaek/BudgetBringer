@@ -3,7 +3,7 @@ import {EnumApprovalStatus} from "../../enums/enum-approval-status";
 /**
  * 예산정보 승인 정보 응답 클래스
  */
-export class ResponseBudgetApproved  {
+export interface ResponseBudgetApproved  {
   /**
    * 예산정보 승인 정보 응답 클래스
    */
@@ -62,17 +62,17 @@ export class ResponseBudgetApproved  {
   /**
    * Not PO Issue Amount
    */
-  notPoIssueAmount : number = 0;
+  notPoIssueAmount : number;
 
   /**
    * PO Issue Amount
    */
-  poIssueAmount : number = 0;
+  poIssueAmount : number;
 
   /**
    * SpendingAndIssue PO Amount
    */
-  spendingAndIssuePoAmount : number = 0;
+  spendingAndIssuePoAmount : number;
 
   /**
    * DbModelCostCenter 명

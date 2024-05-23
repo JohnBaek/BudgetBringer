@@ -1,9 +1,11 @@
-import {ResponseProcessBusinessUnit} from "./response-process-business-unit";
+import type {
+  ResponseProcessBusinessUnit
+} from '@/models/responses/process/process-business-unit/response-process-business-unit'
 
 /**
  * 상세
  */
-export class ResponseProcessBusinessUnitSummaryDetail {
+export interface ResponseProcessBusinessUnitSummaryDetail {
   /**
    * 시퀀스 정보 , 총 3가지의 종류로 나가기때문
    */
