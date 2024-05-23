@@ -352,9 +352,8 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             // Managers with include BusinessUnit
             queryManagers = queryManagers
                 .AsNoTracking()
-                .Include(i => i.CountryBusinessManagerBusinessUnits)
-                .ThenInclude(v => v.BusinessUnit);
-                
+                .OrderBy(i => i.Sequence);
+
             List<ResponseProcessApproved> thisYear = await ComputeApprovedAsync( queryApproved, queryManagers, yearCurrent , isAbove );
 
             // 객체를 생성한다.
