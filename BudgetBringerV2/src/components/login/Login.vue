@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RequestLogin } from '@/models/requests/login/request-login'
-import { useCommunicationStore } from '@/services/state-managements/CommunicationStore'
-import { AuthenticationAPIService } from '@/services/RestAPIServices/AuthenticationAPIService'
+import { useCommunicationStore } from '@/services/stores/CommunicationStore'
+import { AuthenticationApiService } from '@/services/apis/AuthenticationApiService'
 import router from '@/router'
 
 // Request Model
@@ -12,7 +12,7 @@ const model = ref(new RequestLogin());
 const communicationStore = useCommunicationStore();
 
 // Rest API
-const restApi: AuthenticationAPIService = new AuthenticationAPIService();
+const restApi: AuthenticationApiService = new AuthenticationApiService();
 
 /**
  * Try Login
@@ -22,9 +22,11 @@ const requestLoginAsync = async () => {
     return;
 
   // Request to server
-  restApi.tryLoginAsync(model.value).subscribe((response) => {
-    if(response.success)
-      router.push('/budget/management/statistics');
+  restApi.tryLoginAsync(model.value).subscribe(async (response) => {
+    if (response.success) {
+      await router.push('/budget/statistics');
+      console.log('route')
+    }
   });
 }
 </script>
@@ -37,7 +39,7 @@ const requestLoginAsync = async () => {
           <i class="mdi mdi-checkbox-marked-circle" style="font-size: 2rem"></i>
         </div>
         <div class="flex align-items-center justify-content-center">
-          <h2> Capex Budget 관리</h2>
+          <h2> Capex Budget 관리 </h2>
         </div>
         <div class="p-col-12 p-md-6 p-lg-4">
           <InputGroup>

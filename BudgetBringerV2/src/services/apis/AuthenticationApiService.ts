@@ -1,15 +1,15 @@
 import { RequestLogin } from '@/models/requests/login/request-login'
 import { Observable, tap } from 'rxjs'
 import { Response } from '@/models/responses/response'
-import { ApiClient } from '@/services/RestAPIServices/ApiClient'
+import { ApiClient } from '@/services/apis/ApiClient'
 import type { ResponseData } from '@/models/responses/response-data'
 import type { ResponseUser } from '@/models/responses/users/response-user'
-import { useAuthenticationStore } from '@/services/state-managements/AuthenticationStore'
+import { useAuthenticationStore } from '@/services/stores/AuthenticationStore'
 
 /**
  * Authentication API Service
  */
-export class AuthenticationAPIService  {
+export class AuthenticationApiService {
   // API Client
   private readonly client: ApiClient = new ApiClient('/api/v1/Authentication');
 
@@ -38,7 +38,7 @@ export class AuthenticationAPIService  {
   public logoutAsync()  : Observable<Response> {
     return this.client.restApi.requestGetAsync<Response>(`${this.client.baseUrl}/logout`)
       .pipe(
-        tap((response) => {
+        tap(() => {
           this.authenticationStore.clearAuthenticated();
         })
       );

@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory, type NavigationGuardNext, type RouteLocationNormalized } from 'vue-router'
 import Login from '@/components/login/Login.vue'
-import { useAuthenticationStore } from '@/services/state-managements/AuthenticationStore'
+import { useAuthenticationStore } from '@/services/stores/AuthenticationStore'
 import { firstValueFrom } from 'rxjs'
-import { AuthenticationAPIService } from '@/services/RestAPIServices/AuthenticationAPIService'
-import { useMessageStore } from '@/services/state-managements/MessageStore'
+import { AuthenticationApiService } from '@/services/apis/AuthenticationApiService'
+import { useMessageStore } from '@/services/stores/MessageStore'
 import Home from '@/components/Home.vue'
 import BudgetStatistics from '@/components/budget-management/BudgetStatistics.vue'
+import BudgetPlan from '@/components/budget-management/BudgetPlan.vue'
+import { useRoutingStore } from '@/services/stores/RoutingStore'
 
 /**
  * 라우터를 주입한다.
@@ -20,11 +22,15 @@ const router = createRouter({
       meta: { requiresAuth: true },
       children: [
         {
-          path: '/budget/management', name: 'Budget', meta: { requiresAuth: true },
+          path: '/budget', name: 'Budget', meta: { requiresAuth: true },
           children: [
             {
               path: 'statistics', name: 'BudgetStatistics', component: BudgetStatistics,
               meta: { requiresAuth: true, permissions: ['process-result-view', 'process-result'] },
+            },
+            {
+              path: 'plan', name: 'BudgetPlan', component: BudgetPlan,
+              meta: { requiresAuth: true, permissions: ['budget-plan'] },
             }
           ]
         }
@@ -38,12 +44,13 @@ const router = createRouter({
  */
 export default router;
 
+
 /**
  * 라우팅 인터셉터
  */
 router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const restApi: AuthenticationAPIService = new AuthenticationAPIService();
+  const restApi: AuthenticationApiService = new AuthenticationApiService();
   const authenticationStore = useAuthenticationStore();
   const messageStore = useMessageStore();
 
@@ -54,6 +61,7 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
     // 인증여부 확인
     if (!response.isAuthenticated) {
       restApi.logoutAsync();
+      messageStore.showError('접근제어','로그인정보가 없습니다.');
       next("/Login");
     }
 
@@ -72,6 +80,8 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
         return;
       }
     }
+    // Update routing
+    useRoutingStore().updateRoutingByPath(to.path);
     next();
   } else {
     next();

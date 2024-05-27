@@ -2,6 +2,7 @@
 </script>
 
 <template>
+  <ConfirmDialog></ConfirmDialog>
   <Toast position="top-center" />
   <RouterView />
 </template>

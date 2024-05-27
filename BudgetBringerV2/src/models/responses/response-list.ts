@@ -3,16 +3,16 @@ import {Response} from "./response";
 /**
  * Within <T> ResponseList
  */
-export interface ResponseList<T> extends  Response {
+export class ResponseList<T> extends  Response {
   // List of Response data
-  items : T[];
+  items : T[] = [];
 
   // Skips
-  skip: number;
+  skip: number = 0;
 
   // Counter of Pages
-  pageCount: number;
+  pageCount: number = 0;
 
   // total Count
-  totalCount: number;
+  totalCount: number = 0;
 }

@@ -662,7 +662,10 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                     add.PoIssueAmount = double.Parse(row.Cell(10).Value.ToString());
                     add.NotPoIssueAmount = double.Parse(row.Cell(11).Value.ToString());
                     add.SpendingAndIssuePoAmount = double.Parse(row.Cell(12).Value.ToString());
-                    add.Actual = double.Parse(row.Cell(13).Value.ToString());
+
+                    if(!string.IsNullOrWhiteSpace(row.Cell(13).Value.ToString()))
+                        add.Actual = double.Parse(row.Cell(13).Value.ToString());
+
                     add.OcProjectName = row.Cell(14).Value.ToString();
                     add.BossLineDescription = row.Cell(15).Value.ToString();
                     add.Result = EnumResponseResult.Success;

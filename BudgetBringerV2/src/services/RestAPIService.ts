@@ -1,8 +1,8 @@
 import { finalize, map, Observable, tap } from 'rxjs'
 import { ajax } from 'rxjs/internal/ajax/ajax'
 import type { ResponseData } from '@/models/responses/response-data'
-import { useMessageStore } from '@/services/state-managements/MessageStore'
-import { useCommunicationStore } from '@/services/state-managements/CommunicationStore'
+import { useMessageStore } from '@/services/stores/MessageStore'
+import { useCommunicationStore } from '@/services/stores/CommunicationStore'
 import type { AjaxResponse } from 'rxjs/internal/ajax/AjaxResponse'
 import { type IResponse, Response } from '@/models/responses/response'
 
@@ -26,11 +26,7 @@ export class RestAPIService {
     let observable = new Observable<T>();
     try {
       observable = ajax.getJSON<T>(uri).pipe(map(response => response as T) ,
-        tap(data => {
-          const response = data as ResponseData<T>;
-          if(response.error)
-            this.messageStore.showError(response.code , response.message);
-        }));
+        );
     }catch (ex) {
       console.error(ex);
     }
