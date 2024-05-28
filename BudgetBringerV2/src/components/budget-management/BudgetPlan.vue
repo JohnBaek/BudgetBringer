@@ -6,140 +6,77 @@ import type { ResponseBudgetPlan } from '@/models/responses/budgets/response-bud
 import { firstValueFrom } from 'rxjs'
 import { toClone } from '@/services/utils/ObjectUtils'
 import { FilterMatchMode } from 'primevue/api'
+import { useConfigStore } from '@/services/stores/ConfigStore'
+import type { ColumnFilterModelType } from 'primevue/column'
+import { RequestQuery } from '@/models/requests/query/request-query'
+import { CommonGridColumn } from '@/components/common/grid/CommonGridColumn'
+import CommonGridCore from '@/components/common/grid/CommonGridCore.vue'
 
-// Communication Store
+// Stores
 const communicationStore = useCommunicationStore();
 
-// Data Table Ref
-const dataTable = ref();
-
-// Count of Total Records
-const totalRecords = ref(200);
-
-// Data Items
-const items = ref(Array<ResponseBudgetPlan>());
-
-// Weather or not is Bottom
-const isBottom = ref(false);
-
-// Request Container
-let requestContainer =  {
-  skip:0, pageCount:100,
-  searchKeywords:[], searchFields:[],
-  sortFields:[], sortOrders:[]
-};
-
-/**
- * Request To Server
- */
-const loadData = async () => {
-  // In Transmissions
-  if(communicationStore.communication || communicationStore.transmission)
-    return;
-
-  const client = new BudgetPlanApiService();
-  const response = await firstValueFrom(client.getListAsync(requestContainer));
-
-  // Errors
-  if(response.error)
-    return;
-
-  // Item Loaded done
-  if(items.value.length >= response.totalCount)
-    return;
-
-  requestContainer.skip += response.items.length;
-  totalRecords.value = response.totalCount;
-
-  // Add Items
-  items.value = items.value.concat(toClone(response.items));
-}
-
-/**
- * Scroll event callback
- * @param event
- */
-const onScroll = async (event: Event) => {
-  const { scrollTop, clientHeight, scrollHeight } = event.target as HTMLElement;
-
-  // Scroll Bottom
-  if (scrollTop + clientHeight >= scrollHeight - 10) {
-    isBottom.value = true;
-    if (requestContainer.skip < totalRecords.value) {
-      await loadData();
-    }
-  }
-  // Not Scroll Bottom
-  else {
-    isBottom.value = false;
-  }
-}
-
-onMounted(async () => {
-  // Add Scroll Event
-  dataTable.value.$el.children[0].addEventListener("scroll", onScroll);
-  await loadData();
-})
-
-onUnmounted(() => {
-  if (dataTable.value) {
-    // Remove Scroll Event
-    dataTable.value.removeEventListener('scroll', onScroll);
-  }
-});
+// Request Resources
+const query: RequestQuery = new RequestQuery('/api/v1/BudgetPlan');
+const columns: Array<CommonGridColumn> = [
+  new CommonGridColumn({ field: 'baseYearForStatistics', header: '통계 기준년도', filterComponentType: 'Text', isUseFilter: true }) ,
+];
 
 const filters = ref({
   baseYearForStatistics: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
   businessUnitName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
 });
-
-const requestFilter = (data:any) => {
-  console.log('data',data)
-}
-
 </script>
 
 <template>
   <Panel>
-    <DataTable
-      v-model:filters="filters"
-      filterDisplay="row"
-      :value="items"
-      dataKey="id"
-      scrollable
-      scrollHeight="600px"
-      tableStyle="min-width: 50rem"
-      ref="dataTable"
-    >
-      <Column field="baseYearForStatistics" header="통계기준일" style="width: 20%">
-        <template #body="{ data }">
-          {{ data.baseYearForStatistics }}
-        </template>
-        <template #filter="{ filterModel }">
-          <InputText v-model="filterModel.value" type="text" @keyup.enter="requestFilter(filterModel)" class="p-column-filter" placeholder="통계기준일 검색" />
-        </template>
-      </Column>
+    <CommonGridCore
+      :query="query"
+      :columns="columns"
+    ></CommonGridCore>
 
-      <Column field="businessUnitName" header="비지니스 유닛" style="width: 20%">
-        <template #body="{ data }">
-          {{ data.businessUnitName }}
-        </template>
-        <template #filter="{ filterModel, filterCallback }">
-          <MultiSelect v-model="filterModel.value" @change="filterCallback()" :options="representatives" optionLabel="name" placeholder="Any" class="p-column-filter" style="min-width: 14rem" :maxSelectedLabels="1">
-            <template #option="slotProps">
-              <div class="flex align-items-center gap-2">
-                <img :alt="slotProps.option.name" :src="`https://primefaces.org/cdn/primevue/images/avatar/${slotProps.option.image}`" style="width: 32px" />
-                <span>{{ slotProps.option.name }}</span>
-              </div>
-            </template>
-          </MultiSelect>
-        </template>
-      </Column>
+<!--    <DataTable-->
+<!--      v-model:filters="filters"-->
+<!--      filterDisplay="row"-->
+<!--      :value="items"-->
+<!--      :lazy="true"-->
+<!--      dataKey="id"-->
+<!--      scrollable-->
+<!--      scrollHeight="600px"-->
+<!--      tableStyle="min-width: 50rem"-->
+<!--      ref="dataTable"-->
+<!--    >-->
+<!--      <Column field="baseYearForStatistics"  :filterMatchModeOptions="customFilterOptions" header="통계기준일" style="width: 20%"  >-->
+<!--        <template #body="{ data }">-->
+<!--          {{ data.baseYearForStatistics }}-->
+<!--        </template>-->
+<!--        <template #filter="{ filterModel }">-->
+<!--          <InputText v-model="filterModel.value" type="text" @keyup.enter="requestFilter(filterModel)" class="p-column-filter" placeholder="통계기준일 검색" />-->
+<!--        </template>-->
+<!--      </Column>-->
 
-    </DataTable>
-    <div class="loading-bar" v-if="communicationStore.transmission && totalRecords > items.length">
-      <div><i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i></div>
-    </div>
+<!--      <Column field="businessUnitName" header="비지니스 유닛" style="width: 20%" :showFilterMenu="false">-->
+<!--        <template #body="{ data }">-->
+<!--          {{ data.businessUnitName }}-->
+<!--        </template>-->
+<!--        <template #filter="{ filterModel }">-->
+<!--          <MultiSelect v-model="filterModel.value"-->
+<!--                       @change="changeFilter(filterModel)"-->
+<!--                       :options="configStore.businessUnits"-->
+<!--                       optionLabel="name"-->
+<!--                       placeholder="비지니스 유닛 선택"-->
+<!--                       class="p-column-filter"-->
+<!--                       style="min-width: 14rem"-->
+<!--                       :maxSelectedLabels="1">-->
+<!--            <template #option="slotProps">-->
+<!--              <div class="flex align-items-center gap-2">-->
+<!--                <span>{{ slotProps.option.name }}</span>-->
+<!--              </div>-->
+<!--            </template>-->
+<!--          </MultiSelect>-->
+<!--        </template>-->
+<!--      </Column>-->
+
+<!--    </DataTable>-->
   </Panel>
 </template>
 

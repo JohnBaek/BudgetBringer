@@ -1,22 +1,28 @@
 /**
  *  Represent for Request Query To Server
  */
-export interface RequestQuery {
+export class RequestQuery {
+  constructor(url:string, sortOrders: string[], sortFields: string[]);
+  constructor(url:string);
+  constructor(url: string, sortOrders?: string[], sortFields?: string[]) {
+    this.url = url;
+    if (sortOrders && sortFields) {
+      this.sortOrders = sortOrders;
+      this.sortFields = sortFields;
+    }
+  }
+  // URL
+  private readonly url: string = '';
   // skip
-  skip: number;
-
+  public skip: number = 0;
   // pageCount
-  pageCount: number;
-
+  public pageCount: number = 100;
   // searchKeywords
-  searchKeywords: string[];
-
+  public searchKeywords: string[] = [];
   // searchFields
-  searchFields: string[];
-
+  public searchFields: string[] = [];
   // sortOrders
-  sortOrders: string[];
-
+  public sortOrders: string[] = ['desc'];
   // sortFields
-  sortFields: string[];
+  public sortFields: string[] = ['regDate'];
 }

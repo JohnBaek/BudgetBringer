@@ -34,6 +34,7 @@ import ConfirmPopup from 'primevue/confirmpopup'
 import DataTable from 'primevue/datatable'
 import ColumnGroup from 'primevue/columngroup'
 import Skeleton from 'primevue/skeleton'
+import MultiSelect from 'primevue/multiselect'
 
 const app = createApp(App);
 
@@ -73,6 +74,7 @@ app.component('Dialog', Dialog);
 app.component('DynamicDialog', DynamicDialog);
 app.component('ConfirmPopup', ConfirmPopup);
 app.component('DataTable',DataTable);
+app.component('MultiSelect',MultiSelect);
 // eslint-disable-next-line vue/multi-word-component-names,vue/no-reserved-component-names
 app.component('Column',Column);
 app.component('ColumnGroup',ColumnGroup);

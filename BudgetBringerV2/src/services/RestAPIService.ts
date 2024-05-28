@@ -4,7 +4,7 @@ import type { ResponseData } from '@/models/responses/response-data'
 import { useMessageStore } from '@/services/stores/MessageStore'
 import { useCommunicationStore } from '@/services/stores/CommunicationStore'
 import type { AjaxResponse } from 'rxjs/internal/ajax/AjaxResponse'
-import { type IResponse, Response } from '@/models/responses/response'
+import { Response } from '@/models/responses/response'
 
 /**
  * Service for REST API
@@ -280,7 +280,7 @@ export class RestAPIService {
    * @param url API End point
    * @param params Key/Value
    */
-  private getParsedKeyValueParameter (url: string,params?: Record<string, any>) : string {
+  public getParsedKeyValueParameter (url: string,params?: Record<string, any>) : string {
     const searchParams = new URLSearchParams();
 
     // params is null

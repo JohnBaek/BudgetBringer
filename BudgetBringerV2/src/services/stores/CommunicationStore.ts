@@ -13,7 +13,7 @@ interface CommunicationStore {
 /**
  * State of request/response
  */
-export const useCommunicationStore = defineStore('communicationState', {
+export const useCommunicationStore = defineStore('communicationStore', {
   state: (): CommunicationStore => <CommunicationStore> ({
     communication: false ,
     transmission: false,

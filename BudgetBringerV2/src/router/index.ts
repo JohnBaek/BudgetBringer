@@ -44,7 +44,6 @@ const router = createRouter({
  */
 export default router;
 
-
 /**
  * 라우팅 인터셉터
  */

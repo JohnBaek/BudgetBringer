@@ -4,6 +4,7 @@ import { RequestLogin } from '@/models/requests/login/request-login'
 import { useCommunicationStore } from '@/services/stores/CommunicationStore'
 import { AuthenticationApiService } from '@/services/apis/AuthenticationApiService'
 import router from '@/router'
+import Logo from '@/components/Logo.vue'
 
 // Request Model
 const model = ref(new RequestLogin());
@@ -35,12 +36,7 @@ const requestLoginAsync = async () => {
   <div class="center-screen">
     <div class="card">
       <div class="flex flex-column">
-        <div class="flex align-items-center justify-content-center">
-          <i class="mdi mdi-checkbox-marked-circle" style="font-size: 2rem"></i>
-        </div>
-        <div class="flex align-items-center justify-content-center">
-          <h2> Capex Budget 관리 </h2>
-        </div>
+        <Logo />
         <div class="p-col-12 p-md-6 p-lg-4">
           <InputGroup>
             <InputText placeholder="아이디"  class="h-3rem" v-model="model.loginId" @keyup.enter="requestLoginAsync" :disabled="communicationStore.communication"/>

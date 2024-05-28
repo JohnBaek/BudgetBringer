@@ -1,5 +1,6 @@
 import {defineStore} from "pinia";
 import type { ResponseUser } from '@/models/responses/users/response-user'
+import { useConfigStore } from '@/services/stores/ConfigStore'
 
 
 /**

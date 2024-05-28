@@ -8,7 +8,7 @@ import { ApiServiceBase } from '@/services/apis/ApiServiceBase'
 /**
  * BudgetPlan API Service
  */
-export class BudgetPlanApiService extends ApiServiceBase{
+export class BudgetPlanApiService extends ApiServiceBase  {
   // API Client
   client: ApiClient = new ApiClient('/api/v1/BudgetPlan');
 
