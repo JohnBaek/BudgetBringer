@@ -29,53 +29,13 @@ export class BudgetProcessGridBusinessUnit extends CommonGridModel{
       CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "businessUnitName", date , null,false, false) ,
       CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "budgetYear", `Budget Amount`, this.numberValueFormatter,false) ,
       CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "approvedYear", `Approved Amount`, this.numberValueFormatter,false) ,
-      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "remainingYear", `Remaining Amount`, this.numberValueFormatter,false) ,
+      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "remainingYear", `Remaining Amount`, this.numberValueFormatter,false, false) ,
       CommonColumnDefinitions.createColumnDefinitionForNumberFilter(250 , "ratio", `Ratio(%)`, null ,false, function(params) {
         return params.value.toFixed(2);
       }) ,
     ];
     this.setSkeleton();
-    this.chartDefined = [
-      {   type: 'bar'
-        , xKey: 'businessUnitName'
-        , yKey: 'budgetYear'
-        , yName: 'Budget Amount '
-        , tooltip: {
-          renderer: function ({ datum, xKey, yKey }) {
-            return {
-              content: Intl.NumberFormat('en-US', { style: 'decimal', maximumFractionDigits: 0 }).format(datum[yKey]) ,
-              title: datum[xKey]
-            };
-          },
-        },
-      },
-      {   type: 'bar'
-        , xKey: 'businessUnitName'
-        , yKey: 'approvedYear'
-        , yName: 'Approved Amount'
-        , tooltip: {
-          renderer: function ({ datum, xKey, yKey }) {
-            return {
-              content: Intl.NumberFormat('en-US', { style: 'decimal', maximumFractionDigits: 0 }).format(datum[yKey]) ,
-              title: datum[xKey]
-            };
-          },
-        },
-      },
-      {   type: 'bar'
-        , xKey: 'businessUnitName'
-        , yKey: 'remainingYear'
-        , yName: 'Remaining Amount'
-        , tooltip: {
-          renderer: function ({ datum, xKey, yKey }) {
-            return {
-              content: Intl.NumberFormat('en-US', { style: 'decimal', maximumFractionDigits: 0 }).format(datum[yKey]) ,
-              title: datum[xKey]
-            };
-          },
-        },
-      },
-    ]
+    this.setChart('bar', 'businessUnitName');
   }
 }
 

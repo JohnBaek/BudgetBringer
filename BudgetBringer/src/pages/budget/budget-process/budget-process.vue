@@ -10,11 +10,11 @@
           <v-tab value="bu">
             Business Unit
           </v-tab>
-          <v-tab value="approvedbelow">
-            Status of Purchase Below
-          </v-tab>
           <v-tab value="approvedabove">
             Status of Purchase Above
+          </v-tab>
+          <v-tab value="approvedbelow">
+            Status of Purchase Below
           </v-tab>
         </v-tabs>
         <v-window v-model="tab">

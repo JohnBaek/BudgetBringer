@@ -103,55 +103,73 @@ const handleFileChange = async (event: Event) => {
 </script>
 
 <template>
-  <v-btn v-if="props.showButtons.includes(CommonButtonDefinitions.add)" class="mr-2"  :disabled="inCommunication" width="100" elevation="1" color="info" @click="add()">
-    <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
-    <template v-if="!inCommunication">
-      <v-icon>mdi-checkbox-marked-circle</v-icon>
-      <pre><b> 추가 </b></pre>
-    </template>
-  </v-btn>
-
-  <v-btn v-if="props.showButtons.includes(CommonButtonDefinitions.remove)" class="mr-2"  :disabled="inCommunication || (selectedRows.length === 0)" width="100" elevation="1" color="error" @click="remove()">
-    <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
-    <template v-if="!inCommunication">
-      <v-icon>mdi-delete-circle</v-icon>
-      <pre><b> 삭제 </b></pre>
-    </template>
-  </v-btn>
-
-  <v-btn v-if="props.showButtons.includes(CommonButtonDefinitions.update)" class="mr-2"  :disabled="inCommunication || (selectedRows.length === 0 || selectedRows.length > 1)" width="100" elevation="1" color="warning" @click="update()">
-    <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
-    <template v-if="!inCommunication">
-      <v-icon>mdi-checkbox-multiple-marked-circle</v-icon>
-      <pre><b> 수정 </b></pre>
-    </template>
-  </v-btn>
-
-  <v-btn v-if="props.showButtons.includes(CommonButtonDefinitions.importExcel)" class="mr-2"  :disabled="inCommunication" width="100" elevation="1" color="green" @click="importExcel()">
-    <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
-    <template v-if="!inCommunication">
-      <v-icon>{{CommonButtonDefinitions.importExcel.icon}}</v-icon>
-      <pre><b> {{CommonButtonDefinitions.importExcel.name}} </b></pre>
-    </template>
-  </v-btn>
-
-  <v-btn v-if="props.showButtons.includes(CommonButtonDefinitions.importExcelDownload)" class="mr-2"  :disabled="inCommunication" width="100" elevation="1" color="purple" @click="importExcelDownload()">
-    <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
-    <template v-if="!inCommunication">
-      <v-icon>{{CommonButtonDefinitions.importExcelDownload.icon}}</v-icon>
-      <pre><b> {{CommonButtonDefinitions.importExcelDownload.name}} </b></pre>
-    </template>
-  </v-btn>
-
+  <v-row justify="start" >
+    <v-col cols="auto" class="pa-1" v-if="props.showButtons.includes(CommonButtonDefinitions.add)">
+      <v-btn :disabled="inCommunication" width="100" elevation="1" color="info" @click="add()">
+        <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
+        <template v-if="!inCommunication">
+          <v-icon>mdi-checkbox-marked-circle</v-icon>
+          <pre><b> 추가 </b></pre>
+        </template>
+      </v-btn>
+    </v-col>
+    <v-col cols="auto" class="pa-1" v-if="props.showButtons.includes(CommonButtonDefinitions.remove)">
+      <v-btn :disabled="inCommunication || (selectedRows.length === 0)" width="100" elevation="1" color="error" @click="remove()">
+        <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
+        <template v-if="!inCommunication">
+          <v-icon>mdi-delete-circle</v-icon>
+          <pre><b> 삭제 </b></pre>
+        </template>
+      </v-btn>
+    </v-col>
+    <v-col cols="auto" class="pa-1" v-if="props.showButtons.includes(CommonButtonDefinitions.update)">
+      <v-btn :disabled="inCommunication || (selectedRows.length === 0 || selectedRows.length > 1)" width="100" elevation="1" color="warning" @click="update()">
+        <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
+        <template v-if="!inCommunication">
+          <v-icon>mdi-checkbox-multiple-marked-circle</v-icon>
+          <pre><b> 수정 </b></pre>
+        </template>
+      </v-btn>
+    </v-col>
+    <v-col cols="auto" class="pa-1" v-if="props.showButtons.includes(CommonButtonDefinitions.importExcel)">
+      <v-btn :disabled="inCommunication" width="100" elevation="1" color="green" @click="importExcel()">
+        <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
+        <template v-if="!inCommunication">
+          <v-icon>{{CommonButtonDefinitions.importExcel.icon}}</v-icon>
+          <pre><b> {{CommonButtonDefinitions.importExcel.name}} </b></pre>
+        </template>
+      </v-btn>
+    </v-col>
+    <v-col cols="auto" class="pa-1" v-if="props.showButtons.includes(CommonButtonDefinitions.importExcelDownload)">
+      <v-btn :disabled="inCommunication" width="100" elevation="1" color="purple" @click="importExcelDownload()">
+        <v-progress-circular size="small" indeterminate v-if="inCommunication"></v-progress-circular>
+        <template v-if="!inCommunication">
+          <v-icon>{{CommonButtonDefinitions.importExcelDownload.icon}}</v-icon>
+          <pre><b> {{CommonButtonDefinitions.importExcelDownload.name}} </b></pre>
+        </template>
+      </v-btn>
+    </v-col>
+    <v-col cols="auto" class="pa-1">
+      <v-icon v-if="props.showButtons.includes(CommonButtonDefinitions.refresh)" @click="refresh()" class="ml-3" size="x-large" color="blue" style="cursor: pointer;">mdi-refresh-circle</v-icon>
+    </v-col>
+    <v-col cols="auto" class="pa-1">
+      <v-icon v-if="props.showButtons.includes(CommonButtonDefinitions.exportExcel)" @click="exportExcel()" class="ml-3" size="x-large" color="green" style="cursor: pointer;">mdi-file-excel-outline</v-icon>
+    </v-col>
+    <v-col cols="auto" class="pa-1">
+      <v-icon v-if="props.showButtons.includes(CommonButtonDefinitions.exportPDF)" @click="exportPdf()" class="ml-3" size="x-large" color="red" style="cursor: pointer;">mdi-file-pdf-box</v-icon>
+    </v-col>
+    <v-col cols="auto" class="pa-1">
+      <div @click="toChart()" v-if="props.showButtons.includes(CommonButtonDefinitions.toChart) && onChart" class="ml-3" style="cursor: pointer;">
+        <v-icon  size="x-large" color="blue" >mdi-chart-bar</v-icon><b style="color:#2196F3"> Currency : 000 KRW</b>
+      </div>
+    </v-col>
+    <v-col cols="auto" class="pa-1">
+      <v-icon v-if="props.showButtons.includes(CommonButtonDefinitions.toChart) && !onChart" @click="toGrid()" class="ml-3" size="x-large" color="grey" style="cursor: pointer;">mdi-view-list</v-icon>
+    </v-col>
+  </v-row>
   <input type="file" ref="fileInput" accept=".xlsx" @change="handleFileChange" style="display: none;" />
 
-  <v-icon v-if="props.showButtons.includes(CommonButtonDefinitions.refresh)" @click="refresh()" class="ml-3" size="x-large" color="blue" style="cursor: pointer;">mdi-refresh-circle</v-icon>
-  <v-icon v-if="props.showButtons.includes(CommonButtonDefinitions.exportExcel)" @click="exportExcel()" class="ml-3" size="x-large" color="green" style="cursor: pointer;">mdi-file-excel-outline</v-icon>
-  <v-icon v-if="props.showButtons.includes(CommonButtonDefinitions.exportPDF)" @click="exportPdf()" class="ml-3" size="x-large" color="red" style="cursor: pointer;">mdi-file-pdf-box</v-icon>
-  <v-icon v-if="props.showButtons.includes(CommonButtonDefinitions.toChart) && onChart" @click="toChart()" class="ml-3" size="x-large" color="blue" style="cursor: pointer;">mdi-chart-bar</v-icon>
-  <v-icon v-if="props.showButtons.includes(CommonButtonDefinitions.toChart) && !onChart" @click="toGrid()" class="ml-3" size="x-large" color="grey" style="cursor: pointer;">mdi-view-list</v-icon>
-
-  <v-spacer v-if="props.showButtons.length > 0" class="mt-1"></v-spacer>
+  <v-spacer v-if="props.showButtons.length > 0" class="mt-3"></v-spacer>
   <span class="text-grey" v-if="props.showButtons.includes(CommonButtonDefinitions.remove)">shift 버튼을 누른채로 클릭하면 여러 행을 선택할수 있습니다.</span>
 </template>
 <style scoped lang="css">
