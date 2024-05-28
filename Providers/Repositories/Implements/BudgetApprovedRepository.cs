@@ -658,13 +658,11 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
                     // Enum.TryParse(row.Cell(9).Value.ToString(), out EnumApprovalStatus status);
                     //
                     // add.ApprovalStatus = status;
-                    add.ApprovalAmount = double.Parse(row.Cell(9).Value.ToString());
-                    add.PoIssueAmount = double.Parse(row.Cell(10).Value.ToString());
-                    add.NotPoIssueAmount = double.Parse(row.Cell(11).Value.ToString());
-                    add.SpendingAndIssuePoAmount = double.Parse(row.Cell(12).Value.ToString());
-
-                    if(!string.IsNullOrWhiteSpace(row.Cell(13).Value.ToString()))
-                        add.Actual = double.Parse(row.Cell(13).Value.ToString());
+                    add.ApprovalAmount = GetDoubleValue(row.Cell(9));
+                    add.PoIssueAmount = GetDoubleValue(row.Cell(10));
+                    add.NotPoIssueAmount = GetDoubleValue(row.Cell(11));
+                    add.SpendingAndIssuePoAmount = GetDoubleValue(row.Cell(12));
+                    add.Actual = GetDoubleValue(row.Cell(13));
 
                     add.OcProjectName = row.Cell(14).Value.ToString();
                     add.BossLineDescription = row.Cell(15).Value.ToString();
@@ -693,4 +691,15 @@ public class BudgetApprovedRepository : IBudgetApprovedRepository
         return result;
     }
 
+    private double GetDoubleValue(IXLCell cell)
+    {
+        string value = cell.Value.ToString();
+        if (value.IsEmpty())
+            return (double) 0;
+
+        if (Double.TryParse(value, out double result))
+            return result;
+
+        return 0;
+    }
 }
