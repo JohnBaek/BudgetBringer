@@ -10,6 +10,7 @@ import {ResponseData} from "../../../models/responses/response-data";
 import {ResponseBudgetPlan} from "../../../models/responses/budgets/response-budget-plan";
 import {RequestUserChangePassword} from "../../../models/requests/users/request-user-change-password";
 import CommonGrid from "../../../shared/grids/common-grid.vue";
+import {CommonButtonDefinitions} from "../../../shared/grids/common-grid-button";
 
 /**
  * 그리드 모델
@@ -106,10 +107,10 @@ const requestUpdateData = () => {
 </script>
 
 <template>
-  <common-grid :is-use-insert="gridModel.isUseInsert"
+  <common-grid
                :input-colum-defined="gridModel.columDefined"
                :query-request="requestQuery"
-               :showButtons="['update','refresh','excel']"
+               :show-buttons="[CommonButtonDefinitions.update]"
                @onUpdate="showUpdateDialog"
                grid-title="UserManagements"
                ref="gridReference"
