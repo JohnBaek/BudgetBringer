@@ -27,7 +27,7 @@ export class BudgetProcessGridProcessApproved extends CommonGridModel{
     this.requestQuery = requestQuery;
     this.columDefined = [
       CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "countryBusinessManagerName", date , null,false, false) ,
-      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "poIssueAmountSpending", "Spending & Issue PO Amount" , this.numberValueFormatter , false) ,
+      CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "poIssueAmountSpending", "Spending (Invoice) Amount" , this.numberValueFormatter , false) ,
       CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "poIssueAmount", "Issue PO Amountt" , this.numberValueFormatter , false) ,
       CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "notPoIssueAmount", "Not Yet Issue PO Amount" , this.numberValueFormatter , false) ,
       CommonColumnDefinitions.createColumnDefinitionForTextFilter(250 , "approvedAmount", "Approved Amount" , this.numberValueFormatter , false) ,

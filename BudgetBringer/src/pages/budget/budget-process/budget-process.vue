@@ -11,10 +11,10 @@
             Business Unit
           </v-tab>
           <v-tab value="approvedabove">
-            Status of Purchase Above
+            {{ "Status of Purchase > CHF500K" }}
           </v-tab>
           <v-tab value="approvedbelow">
-            Status of Purchase Below
+            {{ "Status of Purchase < CHF500K" }}
           </v-tab>
         </v-tabs>
         <v-window v-model="tab">
