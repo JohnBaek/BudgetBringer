@@ -18,6 +18,8 @@ export default defineConfig({
       dts: 'src/typed-router.d.ts',
     }),
 
+
+
     Layouts(),
     AutoImport({
       imports: [
@@ -54,6 +56,16 @@ export default defineConfig({
       },
     }),
   ],
+  // Add hash to builds to cache refresh
+  build: {
+    rollupOptions: {
+      output: {
+        entryFileNames: 'assets/[name].[hash].js',
+        chunkFileNames: 'assets/[name].[hash].js',
+        assetFileNames: 'assets/[name].[hash].[ext]'
+      }
+    }
+  },
   define: { 'process.env': {} },
   resolve: {
     alias: {
