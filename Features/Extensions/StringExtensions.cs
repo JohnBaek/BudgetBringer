@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace Features.Extensions;
 
 /// <summary>
@@ -43,5 +45,17 @@ public static class StringExtensions
     public static int ToInt(this string input)
     {
         return int.Parse(input);
+    }
+
+    /// <summary>
+    /// Checks if the current object, which is a regex pattern, matches the provided input string.
+    /// </summary>
+    /// <param name="pattern">The regex pattern to match against the input string.</param>
+    /// <param name="input">The input string to be checked against the regex pattern.</param>
+    /// <returns>True if the regex pattern matches the input string; otherwise, false.</returns>
+    public static bool IsMatch(this string pattern, string input)
+    {
+        Regex regex = new Regex(pattern: pattern);
+        return regex.Match(input).Success;
     }
 }

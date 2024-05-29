@@ -1,3 +1,4 @@
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Text;
@@ -5,6 +6,7 @@ using Features.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Models.Common.Enums;
 using Models.DataModels;
@@ -62,19 +64,31 @@ public class UserRepository : IUserRepository
     private const string LogCategory = "[User]";
 
     /// <summary>
+    /// SystemConfig Service
+    /// </summary>
+    private ISystemConfigService _systemConfigService;
+
+    /// <summary>
+    /// HashService
+    /// </summary>
+    private readonly IHashService _hashService;
+
+    /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="dbContext">DB Context</param>
     /// <param name="logger">로거</param>
     /// <param name="userManager"></param>
     /// <param name="httpContextAccessor">IHttpContextAccessor</param>
-    /// <param name="queryService"></param>
-    /// <param name="logActionWriteService"></param>
+    /// <param name="queryService">queryService</param>
+    /// <param name="logActionWriteService">logActionWriteService</param>
+    /// <param name="systemConfigService">systemConfigService</param>
+    /// <param name="hashService"></param>
     public UserRepository(
           AnalysisDbContext dbContext
         , ILogger<UserRepository> logger
         , UserManager<DbModelUser> userManager
-        , IHttpContextAccessor httpContextAccessor, IQueryService queryService, ILogActionWriteService logActionWriteService)
+        , IHttpContextAccessor httpContextAccessor, IQueryService queryService, ILogActionWriteService logActionWriteService, ISystemConfigService systemConfigService, IHashService hashService)
     {
         _dbContext = dbContext;
         _logger = logger;
@@ -82,6 +96,8 @@ public class UserRepository : IUserRepository
         _httpContextAccessor = httpContextAccessor;
         _queryService = queryService;
         _logActionWriteService = logActionWriteService;
+        _systemConfigService = systemConfigService;
+        _hashService = hashService;
     }
     
     
@@ -256,7 +272,16 @@ public class UserRepository : IUserRepository
             // 요청이 유효하지 않은경우
             if(request.IsInValid())
                 return new Response{ Code = "ERROR_INVALID_PARAMETER", Message = request.GetFirstErrorMessage() };
-            
+
+            // Get password Pattern
+            DbModelSystemConfigDetail? passwordConfig = await _systemConfigService.GetValueAsync("USER", "PASSWORD_PATTERN");
+
+            // If password conditions are present , and check password conditions
+            if (passwordConfig != null && !passwordConfig.Value.IsMatch(request.Password))
+            {
+                return new Response{ Code = "ERROR_INVALID_PARAMETER", Message = passwordConfig.Description! };
+            }
+
             // 로그인한 사용자를 가져온다.
             DbModelUser? loginUser = await GetAuthenticatedUser();
             
@@ -274,27 +299,52 @@ public class UserRepository : IUserRepository
             // 사용자 정보가 없는경우 
             if(userPrincipal == null)
                 return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "사용자가 존재하지 않습니다."};
-            
-            // Token 토큰을 생성한다.
-            string token = await _userManager.GeneratePasswordResetTokenAsync(userPrincipal);
 
-            // 사용자의 패스워드를 초기화한다.
-            IdentityResult resetPasswordResult = await _userManager.ResetPasswordAsync(userPrincipal, token, request.Password);
             StringBuilder message = new StringBuilder();
-            
-            // 성공한 경우 
-            if (resetPasswordResult.Succeeded)
-            {
-                message.AppendLine($"사용자 [{userPrincipal.DisplayName}] 의 대한 패스워드를 변경하였습니다.");
-                result = new Response(EnumResponseResult.Success, "", "");
 
-            }
-            // 실패한 경우
-            else
+            await using IDbContextTransaction transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
             {
+                userPrincipal.PasswordHash = _hashService.ComputeHash(request.Password);
+                _dbContext.Update(userPrincipal);
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                message.AppendLine($"사용자 [{userPrincipal.DisplayName}] 의 대한 패스워드를 변경하였습니다.");
+                result = new Response(EnumResponseResult.Success, "", message.ToString());
+            }
+            catch (Exception e)
+            {
+
                 message.AppendLine($"사용자 [{userPrincipal.DisplayName}] 의 대한 패스워드 변경을 실패하였습니다.");
                 result = new Response(EnumResponseResult.Error, "", message.ToString());
+
+                await transaction.RollbackAsync();
+                e.LogError(_logger);
             }
+
+
+            
+            // // Token 토큰을 생성한다.
+            // string token = await _userManager.GeneratePasswordResetTokenAsync(userPrincipal);
+            //
+            // // 사용자의 패스워드를 초기화한다.
+            // IdentityResult resetPasswordResult = await _userManager.ResetPasswordAsync(userPrincipal, token, request.Password);
+            // StringBuilder message = new StringBuilder();
+            //
+            // 성공한 경우 
+            // if (resetPasswordResult.Succeeded)
+            // {
+            //     message.AppendLine($"사용자 [{userPrincipal.DisplayName}] 의 대한 패스워드를 변경하였습니다.");
+            //     result = new Response(EnumResponseResult.Success, "", "");
+            //
+            // }
+            // // 실패한 경우
+            // else
+            // {
+            //     message.AppendLine($"사용자 [{userPrincipal.DisplayName}] 의 대한 패스워드 변경을 실패하였습니다.");
+            //     result = new Response(EnumResponseResult.Error, "", message.ToString());
+            // }
 
             // 로그 기록
             await _logActionWriteService.WriteUpdate(new ResponseUser(), new ResponseUser(), userPrincipal , message.ToString() ,LogCategory);

@@ -164,7 +164,16 @@ public static class Program
         // 커스텀 Identity 설정 주입
         services.AddLogging();
         // 컨트롤러 설정
-        services.AddControllers();
+        services.AddControllers(controllerConfig =>
+        {
+            controllerConfig.Filters.Add<CustomValidationFilter>();
+        })
+        .ConfigureApiBehaviorOptions(options =>
+        {
+            // 기본 모델 상태 검사를 비활성화
+            options.SuppressModelStateInvalidFilter = true;
+        });
+        services.AddScoped<CustomValidationFilter>();
         
         // 인증서비스 DI
         services.AddAuthentication();
@@ -204,7 +213,8 @@ public static class Program
         services.AddScoped<IExcelService,ExcelService>();
         services.AddScoped<ISystemConfigService,SystemConfigService>();
         services.AddScoped<IFileService,FileService>();
-        
+        services.AddScoped<IHashService,HashService>();
+
         services.AddSingleton<DebounceManager>();
         services.AddTransient<IQueryService, QueryService>();
     }

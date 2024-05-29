@@ -1,3 +1,4 @@
+using Features.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Models.DataModels;
@@ -63,6 +64,39 @@ public class SystemConfigService : ISystemConfigService
         }
         catch (Exception e)
         {
+            _logger.LogError(e, "Error retrieving or converting the configuration value");
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="configName"></param>
+    /// <param name="detailConfig"></param>
+    /// <returns></returns>
+    public async Task<DbModelSystemConfigDetail?> GetValueAsync(string configName, string detailConfig)
+    {
+        DbModelSystemConfigDetail result = new DbModelSystemConfigDetail();
+        try
+        {
+            // Find config
+            var config = await _dbContext.SystemConfigs
+                .AsNoTracking()
+                .Include(i => i.Details)
+                .Where(i => i.Name == configName)
+                .SelectMany(i => i.Details!)
+                .FirstOrDefaultAsync(d => d.Name == detailConfig);
+
+            if (config != null)
+            {
+                result = config.FromCopyValue<DbModelSystemConfigDetail>();
+            }
+        }
+        catch (Exception e)
+        {
+            result = new DbModelSystemConfigDetail();
             _logger.LogError(e, "Error retrieving or converting the configuration value");
         }
 

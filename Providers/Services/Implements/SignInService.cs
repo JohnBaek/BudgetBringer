@@ -1,5 +1,7 @@
+using Features.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Models.Common.Enums;
 using Models.DataModels;
 using Models.Responses;
@@ -23,14 +25,33 @@ public class SignInService : ISignInService<DbModelUser>
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     /// <summary>
+    /// HashService
+    /// </summary>
+    private readonly IHashService _hashService;
+
+    /// <summary>
+    /// DB Context
+    /// </summary>
+    private readonly AnalysisDbContext _dbContext;
+
+    /// <summary>
+    /// UserManager
+    /// </summary>
+    private readonly UserManager<DbModelUser> _userManager;
+
+    /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="signInManager">사인인 매니저</param>
     /// <param name="httpContextAccessor">IHttpContextAccessor</param>
-    public SignInService(SignInManager<DbModelUser> signInManager, IHttpContextAccessor httpContextAccessor)
+    /// <param name="hashService"></param>
+    /// <param name="dbContext"></param>
+    public SignInService(SignInManager<DbModelUser> signInManager, IHttpContextAccessor httpContextAccessor, IHashService hashService, AnalysisDbContext dbContext)
     {
         _signInManager = signInManager;
         _httpContextAccessor = httpContextAccessor;
+        _hashService = hashService;
+        _dbContext = dbContext;
     }
 
 
@@ -80,31 +101,24 @@ public class SignInService : ISignInService<DbModelUser>
     /// <summary>
     /// 패스워드 정보로 로그인 시킨다.
     /// </summary>
-    /// <param name="userName"></param>
+    /// <param name="loginId"></param>
     /// <param name="password"></param>
     /// <param name="isPersistent"></param>
     /// <param name="lockoutOnFailure"></param>
     /// <returns></returns>
-    public async Task<Response> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
+    public async Task<Response> PasswordSignInAsync(string loginId, string password, bool isPersistent, bool lockoutOnFailure)
     {
-        // 로그인을 시도한다.
-        SignInResult loginResult = await _signInManager.PasswordSignInAsync(userName, password, isPersistent, lockoutOnFailure);
+        // Hashing password
+        string hashPassword = _hashService.ComputeHash(password);
 
-        // 성공한경우  
-        if (loginResult.Succeeded)
-            return new Response(EnumResponseResult.Success,"","");
-        
-        // 계정이 잠긴경우 
-        if(loginResult.IsLockedOut)
-            return new Response(EnumResponseResult.Error,"", "계정이 잠겨있습니다.");
-        
-        // 허용되지 않는경우 
-        if(loginResult.IsNotAllowed)
-           return new Response(EnumResponseResult.Error, "허용되지 않습니다.","");
+        // Is matches Id and password?
+        DbModelUser? user = await _dbContext.Users.Where(i => i.PasswordHash == hashPassword && i.LoginId == loginId).FirstOrDefaultAsync();
 
-        // 실패한경우 
-        return loginResult == SignInResult.Failed
-            ? new Response(EnumResponseResult.Error, "아이디 또는 비밀번호를 확인해주세요", "")
-            : new Response(EnumResponseResult.Error, "예외가 발생했습니다.", "");
+        // Cannot find user
+        if (user == null)
+            return new Response(EnumResponseResult.Error, "아이디 또는 비밀번호를 확인해주세요", "");
+
+        await _signInManager.SignInAsync(user, isPersistent: false);
+        return new Response(EnumResponseResult.Success,"","");
     }
 }

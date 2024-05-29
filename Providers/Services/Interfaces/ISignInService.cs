@@ -31,12 +31,12 @@ public interface ISignInService<in TUser> where TUser : DbModelUser
 
 
     /// <summary>
-    /// Attempts to sign in the specified <paramref name="userName" /> and <paramref name="password" /> combination
+    /// Attempts to sign in the specified <paramref name="loginId" /> and <paramref name="password" /> combination
     /// as an asynchronous operation.
     /// </summary>
-    /// <param name="userName">The dbModelUser name to sign in.</param>
+    /// <param name="loginId">The dbModelUser name to sign in.</param>
     /// <param name="password">The password to attempt to sign in with.</param>
     /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
     /// <param name="lockoutOnFailure">Flag indicating if the dbModelUser account should be locked if the sign in fails.</param>
-    Task<Response> PasswordSignInAsync(string userName,string password,bool isPersistent,bool lockoutOnFailure);
+    Task<Response> PasswordSignInAsync(string loginId,string password,bool isPersistent,bool lockoutOnFailure);
 }
