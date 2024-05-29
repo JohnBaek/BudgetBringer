@@ -93,7 +93,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             List<string> foundClaims = FindClaims(roleResponse.Items);
 
             // 전체 권한을 가지고 있는지 여부 
-            bool isPermitAll = foundClaims.Contains("process-result");
+            bool isPermitAll = true;
 
             // Query to Budget Plan List this year
             IQueryable<DbModelBudgetPlan> budgetPlansQuery = _dbContext.BudgetPlans
@@ -197,7 +197,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             List<string> foundClaims = FindClaims(roleResponse.Items);
 
             // 전체 권한을 가지고 있는지 여부 
-            bool isPermitAll = foundClaims.Contains("process-result");
+            bool isPermitAll = true;
             
             // Query to Budget Plan List this year
             IQueryable<DbModelBudgetPlan> budgetPlansQuery = _dbContext.BudgetPlans
@@ -329,7 +329,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
             List<string> foundClaims = FindClaims(roleResponse.Items);
 
             // 전체 권한을 가지고 있는지 여부 
-            bool isPermitAll = foundClaims.Contains("process-result");
+            bool isPermitAll = true;
 
             // Get Year Ranges 
             int yearCurrent = year.ToInt();

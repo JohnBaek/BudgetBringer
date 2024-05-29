@@ -2,6 +2,7 @@ using System.Net;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Features.Filters;
@@ -46,8 +47,8 @@ public class ClaimRequirementFilter : IAsyncActionFilter
             await next(); // 다음 미들웨어로 진행
             return;
         }
-        
-        // 로그인이 되어있지 않을경우 
+
+        // 로그인이 되어있지 않을경우
         if (context.HttpContext.User.Identity is {IsAuthenticated: false})
         {
             // 로그인 되어 있지 않음
