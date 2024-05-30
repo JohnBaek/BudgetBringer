@@ -11,7 +11,7 @@ namespace Providers.Services.Interfaces;
 public interface IExcelService
 {
     /// <summary>
-    /// Generate work book for 
+    /// GenerateAsync work book for 
     /// </summary>
     /// <param name="workbook"></param>
     /// <param name="requestQuery"></param>
@@ -22,7 +22,7 @@ public interface IExcelService
     XLWorkbook AddDataToWorkbook<T>(XLWorkbook workbook, RequestQuery requestQuery, List<T> items , string sheetName);
     
     /// <summary>
-    /// Generate work book for 
+    /// GenerateAsync work book for 
     /// </summary>
     /// <param name="workbook"></param>
     /// <param name="requestQuery"></param>

@@ -4,6 +4,7 @@ using Models.Common.Enums;
 using Models.DataModels;
 using Models.Requests.Login;
 using Models.Responses;
+using Models.Responses.Authentication;
 using Models.Responses.Users;
 using Providers.Repositories.Interfaces;
 using Providers.Services.Interfaces;
@@ -37,17 +38,25 @@ public class AuthenticationService : IAuthenticationService
     private readonly IUserService _userService;
 
     /// <summary>
+    /// _jwtTokenService
+    /// </summary>
+    private readonly IJwtTokenService _jwtTokenService;
+
+    /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="logger">Logger</param>
     /// <param name="userRepository">사용자 리파지토리</param>
     /// <param name="signInService"></param>
-    public AuthenticationService( ILogger<AuthenticationService> logger, IUserRepository userRepository, ISignInService<DbModelUser> signInService, IUserService userService)
+    /// <param name="userService"></param>
+    /// <param name="jwtTokenService"></param>
+    public AuthenticationService( ILogger<AuthenticationService> logger, IUserRepository userRepository, ISignInService<DbModelUser> signInService, IUserService userService, IJwtTokenService jwtTokenService)
     {
         _logger = logger;
         _userRepository = userRepository;
         _signInService = signInService;
         _userService = userService;
+        _jwtTokenService = jwtTokenService;
     }
     
     /// <summary>
@@ -110,6 +119,35 @@ public class AuthenticationService : IAuthenticationService
             e.LogError(_logger);
         }
     
+        return result;
+    }
+
+    /// <summary>
+    /// Token
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<ResponseData<ResponseToken>> TryLoginForTokenAsync(RequestLogin request)
+    {
+        ResponseData<ResponseToken> result;
+        try
+        {
+            // // Try Login to server
+            // ResponseData<ResponseUser> loginResult = await TryLoginAsync(request: request);
+            //
+            // // If Not Success
+            // if (!loginResult.Success)
+            //     return new ResponseData<ResponseToken>(loginResult.Result, loginResult.Code, loginResult.Message, null);
+
+            // Get Token and Refresh Token
+            result = await _jwtTokenService.GenerateAsync(request.LoginId, 20);
+        }
+        catch (Exception e)
+        {
+            result = new ResponseData<ResponseToken>{Code = "ERR", Message = "처리중 예외가 발생했습니다." };
+            e.LogError(_logger);
+        }
+
         return result;
     }
 }

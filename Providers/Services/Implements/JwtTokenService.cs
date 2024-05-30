@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using Features.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,27 @@ public class JwtTokenService : IJwtTokenService
     private readonly UserManager<DbModelUser> _userManager;
 
     /// <summary>
+    /// JWT Secret 키
+    /// </summary>
+    private readonly SecurityKey _securityKey;
+
+    /// <summary>
+    /// JWT Issuer
+    /// </summary>
+    private readonly SigningCredentials _signingCredentials;
+
+    /// <summary>
+    /// _jwtSecret
+    /// </summary>
+    private readonly string _jwtSecret;
+
+    /// <summary>
+    /// _jwtIssuer
+    /// </summary>
+    private readonly string _jwtIssuer;
+
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="logger"></param>
@@ -56,16 +78,22 @@ public class JwtTokenService : IJwtTokenService
         _dbContext = dbContext;
         _configuration = configuration;
         _userManager = userManager;
+
+        // Set JWT Credentials
+        _jwtSecret = _configuration["jwt:Secret"] ?? "";
+        _jwtIssuer = _configuration["jwt:ValidIssuer"] ?? "";
+        _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSecret));
+        _signingCredentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256);
     }
 
     /// <summary>
-    /// Generate Token and Refresh Token
+    /// GenerateAsync Token and Refresh Token
     /// </summary>
     /// <param name="loginId"></param>
     /// <param name="expiredMinutes"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public async Task<ResponseData<ResponseToken>> Generate(string loginId, int expiredMinutes = 20)
+    public async Task<ResponseData<ResponseToken>> GenerateAsync(string loginId, int expiredMinutes = 20)
     {
         ResponseData<ResponseToken> result;
         try
@@ -87,12 +115,12 @@ public class JwtTokenService : IJwtTokenService
     }
 
     /// <summary>
-    /// Generate Token
+    /// GenerateAsync Token
     /// </summary>
     /// <param name="loginId">loginId</param>
     /// <param name="expiredMinutes">expiredMinutes</param>
     /// <returns></returns>
-    public async Task<string> GenerateTokenAsync(string loginId, int expiredMinutes)
+    public async Task<string> GenerateTokenAsync(string loginId, int expiredMinutes = 20)
     {
         string result = "";
         try
@@ -104,23 +132,16 @@ public class JwtTokenService : IJwtTokenService
             if (user == null)
                 throw new Exception();
 
-            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
             List<Claim> claims = (await _userManager.GetClaimsAsync(user: user)).ToList();
 
-            // Signing Key
-            SymmetricSecurityKey signKey = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes(_configuration["jwt:Secret"] ?? ""));
+            // GenerateAsync Token
+            JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(
+                _jwtIssuer, _jwtIssuer,
+                claims, expires: DateTime.Now.AddMinutes(expiredMinutes),
+                signingCredentials: _signingCredentials
+            );
 
-            // Create Token Descriptor
-            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims: claims),
-                Expires = DateTime.Now.AddMinutes(expiredMinutes),
-                SigningCredentials = new SigningCredentials(signKey, SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            // Create Token
-            SecurityToken securityToken = tokenHandler.CreateToken(tokenDescriptor: tokenDescriptor);
-            return tokenHandler.WriteToken(securityToken);
+            result = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
         }
         catch (Exception e)
         {
@@ -130,7 +151,7 @@ public class JwtTokenService : IJwtTokenService
     }
 
     /// <summary>
-    /// Generate refresh token Base64
+    /// GenerateAsync refresh token Base64
     /// </summary>
     /// <returns></returns>
     public string GenerateRefreshToken()

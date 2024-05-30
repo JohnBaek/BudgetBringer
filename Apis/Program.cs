@@ -1,11 +1,14 @@
 using System.Reflection;
+using System.Text;
 using Apis.Middlewares;
 using Features.Debounce;
 using Features.Filters;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Models.DataModels;
 using Providers.Repositories.Implements;
@@ -31,10 +34,31 @@ public static class Program
         
         ConfigureServices(builder.Services , builder.Configuration , builder.Environment);
 
-        // DB 컨텍스트 설정
-        builder.Services.AddIdentity<DbModelUser, DbModelRole>()
-            .AddEntityFrameworkStores<AnalysisDbContext>()
-            .AddDefaultTokenProviders();
+        // // DB 컨텍스트 설정
+        // builder.Services.AddIdentity<DbModelUser, DbModelRole>()
+        //     .AddEntityFrameworkStores<AnalysisDbContext>()
+        //     .AddDefaultTokenProviders();
+
+        builder.Services.AddDbContext<AnalysisDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("AnalysisDatabase")));
+
+        // Jwt Configuration
+        string jwtSecretKey = builder.Configuration.GetSection("jwt:Secret").Get<string>() ?? "";
+        string jwtValidIssuer = builder.Configuration.GetSection("jwt:ValidIssuer").Get<string>() ?? "";
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtValidIssuer,
+                    ValidAudience = jwtValidIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey))
+                };
+            });
 
         // Reverse Proxy 설정
         builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -58,6 +82,31 @@ public static class Program
             string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             swagger.IncludeXmlComments(xmlPath);
+
+            // Add OAuth Bearer
+            swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Description = "Please enter token",
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT",
+                Scheme = "bearer"
+            });
+            swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type=ReferenceType.SecurityScheme,
+                            Id="Bearer"
+                        }
+                    },
+                    new string[]{}
+                }
+            });
         });
         
         // Serilog Logger 설정
@@ -79,8 +128,7 @@ public static class Program
         // 그 외 환경
         else
         {
-            app.UseSwagger();
-            // 예외시 라우팅 추가 
+            // 예외시 라우팅 추가
             app.UseExceptionHandler("/Error");
             app.UseForwardedHeaders();
             // app.UseHsts();
@@ -99,7 +147,7 @@ public static class Program
         });
         
         app.UseAuthentication();
-        app.UseHandleUnauthorized();
+        // app.UseHandleUnauthorized();
         app.UseAuthorization();
         app.MapControllers();
         app.Run();
@@ -160,7 +208,6 @@ public static class Program
         
         // HttpContext 전역 서비스 레이어에서 사용 
         services.AddHttpContextAccessor();
-        
         // 커스텀 Identity 설정 주입
         services.AddLogging();
         // 컨트롤러 설정
@@ -173,10 +220,11 @@ public static class Program
             // 기본 모델 상태 검사를 비활성화
             options.SuppressModelStateInvalidFilter = true;
         });
+        // Model Validation Filter
         services.AddScoped<CustomValidationFilter>();
         
         // 인증서비스 DI
-        services.AddAuthentication();
+        // services.AddAuthentication();
         // 컨트롤러 추가
         services.AddControllers();
         // 빌더에 미들웨어 서비스를 추가한다.
@@ -212,6 +260,7 @@ public static class Program
         services.AddScoped<ISystemConfigService,SystemConfigService>();
         services.AddScoped<IFileService,FileService>();
         services.AddScoped<IHashService,HashService>();
+        services.AddScoped<IJwtTokenService,JwtTokenService>();
 
         services.AddSingleton<DebounceManager>();
         services.AddTransient<IQueryService, QueryService>();

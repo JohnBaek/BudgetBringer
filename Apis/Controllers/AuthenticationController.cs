@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Models.DataModels;
 using Models.Requests.Login;
 using Models.Responses;
+using Models.Responses.Authentication;
 using Models.Responses.Users;
 using Providers.Services.Interfaces;
 
@@ -39,7 +40,7 @@ public class AuthenticationController
         _authenticationService = authenticationService;
         _signInService = signInService;
     }
-    
+
     
     /// <summary>
     /// 로그인을 시도한다.
@@ -50,6 +51,17 @@ public class AuthenticationController
     public async Task<ResponseData<ResponseUser>> TryLogin(RequestLogin request)
     {
         return await _authenticationService.TryLoginAsync(request);
+    }
+
+    /// <summary>
+    /// 로그인을 시도한다.
+    /// </summary>
+    /// <param name="request">로그인 정보</param>
+    /// <returns>로그인결과</returns>
+    [HttpPost("LoginToken")]
+    public async Task<ResponseData<ResponseToken>> TryLoginToken(RequestLogin request)
+    {
+        return await _authenticationService.TryLoginForTokenAsync(request);
     }
     
     

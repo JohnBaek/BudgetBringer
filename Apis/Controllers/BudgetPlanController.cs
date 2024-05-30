@@ -18,7 +18,8 @@ namespace Apis.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/v1/[controller]")]
-[Authorize(Roles = "Admin")]
+// [Authorize(Roles = "Admin")]
+[Authorize]
 public class BudgetPlanController : Controller
 {
     /// <summary>
@@ -76,7 +77,7 @@ public class BudgetPlanController : Controller
     /// <param name="requestQuery">요청 정보</param>
     /// <returns></returns>
     [HttpGet("")]
-    [ClaimRequirement("Permission","budget-plan")]
+    // [ClaimRequirement("Permission","budget-plan")]
     public async Task<ResponseList<ResponseBudgetPlan>> GetListAsync([FromQuery] RequestQuery requestQuery)
     {
         return await _budgetPlanService.GetListAsync(GetDefinedSearchMeta(requestQuery));

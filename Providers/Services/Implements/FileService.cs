@@ -532,7 +532,7 @@ public class FileService : IFileService
 
 
     /// <summary>
-    /// Generate File Paths 
+    /// GenerateAsync File Paths 
     /// </summary>
     /// <param name="category"></param>
     /// <param name="realFileRootPath"></param>

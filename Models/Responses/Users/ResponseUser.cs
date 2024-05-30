@@ -3,7 +3,7 @@ namespace Models.Responses.Users;
 /// <summary>
 /// 사용자 정보 응답 클래스 
 /// </summary>
-public class ResponseUser 
+public class ResponseUser
 {
     /// <summary>
     /// 아이디 

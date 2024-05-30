@@ -37,10 +37,10 @@ public class UserRepository : IUserRepository
     /// </summary>
     private readonly ILogger<UserRepository> _logger;
 
-    /// <summary>
-    /// 사용자 매니저
-    /// </summary>
-    private readonly UserManager<DbModelUser> _userManager;
+    // /// <summary>
+    // /// 사용자 매니저
+    // /// </summary>
+    // private readonly UserManager<DbModelUser> _userManager;
     
     /// <summary>
     /// IHttpContextAccessor
@@ -87,12 +87,12 @@ public class UserRepository : IUserRepository
     public UserRepository(
           AnalysisDbContext dbContext
         , ILogger<UserRepository> logger
-        , UserManager<DbModelUser> userManager
+        // , UserManager<DbModelUser> userManager
         , IHttpContextAccessor httpContextAccessor, IQueryService queryService, ILogActionWriteService logActionWriteService, ISystemConfigService systemConfigService, IHashService hashService)
     {
         _dbContext = dbContext;
         _logger = logger;
-        _userManager = userManager;
+        // _userManager = userManager;
         _httpContextAccessor = httpContextAccessor;
         _queryService = queryService;
         _logActionWriteService = logActionWriteService;
@@ -203,8 +203,9 @@ public class UserRepository : IUserRepository
             // 세션이 비어있을 경우 
             if (_httpContextAccessor.HttpContext?.User == null)
                 return new DbModelUser();
-            
-            result = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+
+            return null;
+            // result = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
         }
         catch (Exception e)
         {
@@ -293,35 +294,39 @@ public class UserRepository : IUserRepository
             if(loginUser.LoginId.ToLower() != "admin")
                 return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "접근권한이 없습니다."};
 
-            // 대상사용자를 검색한다.
-            DbModelUser? userPrincipal = await _userManager.FindByIdAsync(request.Id.ToString());
-            
-            // 사용자 정보가 없는경우 
-            if(userPrincipal == null)
-                return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "사용자가 존재하지 않습니다."};
 
-            StringBuilder message = new StringBuilder();
+            return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "접근권한이 없습니다."};
 
-            await using IDbContextTransaction transaction = await _dbContext.Database.BeginTransactionAsync();
-            try
-            {
-                userPrincipal.PasswordHash = _hashService.ComputeHash(request.Password);
-                _dbContext.Update(userPrincipal);
-                await _dbContext.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                message.AppendLine($"사용자 [{userPrincipal.DisplayName}] 의 대한 패스워드를 변경하였습니다.");
-                result = new Response(EnumResponseResult.Success, "", message.ToString());
-            }
-            catch (Exception e)
-            {
-
-                message.AppendLine($"사용자 [{userPrincipal.DisplayName}] 의 대한 패스워드 변경을 실패하였습니다.");
-                result = new Response(EnumResponseResult.Error, "", message.ToString());
-
-                await transaction.RollbackAsync();
-                e.LogError(_logger);
-            }
+            //
+            // // 대상사용자를 검색한다.
+            // DbModelUser? userPrincipal = await _userManager.FindByIdAsync(request.Id.ToString());
+            //
+            // // 사용자 정보가 없는경우
+            // if(userPrincipal == null)
+            //     return new Response{ Code = "ERROR_SESSION_TIMEOUT", Message = "사용자가 존재하지 않습니다."};
+            //
+            // StringBuilder message = new StringBuilder();
+            //
+            // await using IDbContextTransaction transaction = await _dbContext.Database.BeginTransactionAsync();
+            // try
+            // {
+            //     userPrincipal.PasswordHash = _hashService.ComputeHash(request.Password);
+            //     _dbContext.Update(userPrincipal);
+            //     await _dbContext.SaveChangesAsync();
+            //     await transaction.CommitAsync();
+            //
+            //     message.AppendLine($"사용자 [{userPrincipal.DisplayName}] 의 대한 패스워드를 변경하였습니다.");
+            //     result = new Response(EnumResponseResult.Success, "", message.ToString());
+            // }
+            // catch (Exception e)
+            // {
+            //
+            //     message.AppendLine($"사용자 [{userPrincipal.DisplayName}] 의 대한 패스워드 변경을 실패하였습니다.");
+            //     result = new Response(EnumResponseResult.Error, "", message.ToString());
+            //
+            //     await transaction.RollbackAsync();
+            //     e.LogError(_logger);
+            // }
 
 
             
@@ -347,7 +352,7 @@ public class UserRepository : IUserRepository
             // }
 
             // 로그 기록
-            await _logActionWriteService.WriteUpdate(new ResponseUser(), new ResponseUser(), userPrincipal , message.ToString() ,LogCategory);
+            // await _logActionWriteService.WriteUpdate(new ResponseUser(), new ResponseUser(), userPrincipal , message.ToString() ,LogCategory);
         }
         catch (Exception e)
         {

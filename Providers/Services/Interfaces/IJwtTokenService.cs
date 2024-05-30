@@ -10,15 +10,15 @@ namespace Providers.Services.Interfaces;
 public interface IJwtTokenService
 {
     /// <summary>
-    /// Generate Token
+    /// GenerateAsync Token
     /// </summary>
     /// <param name="loginId"></param>
     /// <param name="expiredMinutes"></param>
     /// <returns></returns>
-    Task<ResponseData<ResponseToken>> Generate(string loginId, int expiredMinutes = 20);
+    Task<ResponseData<ResponseToken>> GenerateAsync(string loginId, int expiredMinutes = 20);
 
     /// <summary>
-    /// Generate Token
+    /// GenerateAsync Token
     /// </summary>
     /// <param name="loginId">loginId</param>
     /// <param name="expiredMinutes">expiredMinutes</param>
@@ -26,7 +26,7 @@ public interface IJwtTokenService
     Task<string> GenerateTokenAsync(string loginId, int expiredMinutes = 20);
 
     /// <summary>
-    /// Generate refresh token
+    /// GenerateAsync refresh token
     /// </summary>
     /// <returns></returns>
     string GenerateRefreshToken();
