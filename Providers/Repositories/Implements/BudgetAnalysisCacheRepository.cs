@@ -21,7 +21,7 @@ public class BudgetAnalysisCacheRepository : IBudgetAnalysisCacheRepository
     private readonly AnalysisDbContext _dbContext;
 
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<BudgetAnalysisCacheRepository> _logger;
     

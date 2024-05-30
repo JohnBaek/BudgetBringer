@@ -21,7 +21,7 @@ namespace Providers.Services.Implements;
 public class UserService : IUserService 
 {
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<UserService> _logger;
 
@@ -48,7 +48,7 @@ public class UserService : IUserService
     /// <summary>
     /// 생성자
     /// </summary>
-    /// <param name="logger">로거</param>
+    /// <param name="logger">Logger</param>
     /// <param name="userManager">사용자 매니저</param>
     /// <param name="roleManager">역할 매니저</param>
     /// <param name="httpContextAccessor">IHttpContextAccessor</param>
@@ -141,6 +141,7 @@ public class UserService : IUserService
     
         return result;
     }
+
 
     /// <summary>
     /// 로그인한 사용자의 정보를 가져온다.

@@ -21,7 +21,7 @@ public class CostCenterService : ICostCenterService
     private readonly ICostCenterRepository _repository;
     
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<CostCenterService> _logger;
 
@@ -29,7 +29,7 @@ public class CostCenterService : ICostCenterService
     /// 생성자
     /// </summary>
     /// <param name="costCenterRepository">리파지토리</param>
-    /// <param name="logger">로거</param>
+    /// <param name="logger">Logger</param>
     public CostCenterService(
         ICostCenterRepository costCenterRepository
         , ILogger<CostCenterService> logger)

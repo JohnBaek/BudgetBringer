@@ -22,7 +22,7 @@ public class LogActionRepository : ILogActionRepository
     private readonly AnalysisDbContext _dbContext;
 
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<LogActionRepository> _logger;
     
@@ -36,7 +36,7 @@ public class LogActionRepository : ILogActionRepository
     /// <summary>
     /// 생성자
     /// </summary>
-    /// <param name="logger">로거</param>
+    /// <param name="logger">Logger</param>
     /// <param name="dbContext">디비컨텍스트</param>
     /// <param name="queryService">쿼리서비스</param>
     public LogActionRepository(ILogger<LogActionRepository> logger, AnalysisDbContext dbContext, IQueryService queryService)

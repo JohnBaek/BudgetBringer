@@ -33,7 +33,7 @@ public class UserRepository : IUserRepository
     private readonly AnalysisDbContext _dbContext;
 
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<UserRepository> _logger;
 
@@ -77,7 +77,7 @@ public class UserRepository : IUserRepository
     /// 생성자
     /// </summary>
     /// <param name="dbContext">DB Context</param>
-    /// <param name="logger">로거</param>
+    /// <param name="logger">Logger</param>
     /// <param name="userManager"></param>
     /// <param name="httpContextAccessor">IHttpContextAccessor</param>
     /// <param name="queryService">queryService</param>

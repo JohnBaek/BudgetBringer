@@ -21,7 +21,7 @@ public class SectorService : ISectorService
     private readonly ISectorRepository _repository;
     
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<SectorService> _logger;
 
@@ -29,7 +29,7 @@ public class SectorService : ISectorService
     /// 생성자
     /// </summary>
     /// <param name="sectorRepository">리파지토리</param>
-    /// <param name="logger">로거</param>
+    /// <param name="logger">Logger</param>
     public SectorService(
         ISectorRepository sectorRepository
         , ILogger<SectorService> logger)

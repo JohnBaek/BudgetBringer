@@ -19,14 +19,14 @@ public class DispatchService : IDispatchService
     private readonly AnalysisDbContext _dbContext;
 
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<DispatchService> _logger;
 
     /// <summary>
     /// 생성자
     /// </summary>
-    /// <param name="logger">로거</param>
+    /// <param name="logger">Logger</param>
     /// <param name="dbContext">dbContext</param>
     public DispatchService(ILogger<DispatchService> logger, AnalysisDbContext dbContext)
     {

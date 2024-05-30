@@ -17,7 +17,7 @@ namespace Providers.Services.Implements;
 public class AuthenticationService : IAuthenticationService
 {
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<AuthenticationService> _logger;
     
@@ -39,7 +39,7 @@ public class AuthenticationService : IAuthenticationService
     /// <summary>
     /// 생성자
     /// </summary>
-    /// <param name="logger">로거</param>
+    /// <param name="logger">Logger</param>
     /// <param name="userRepository">사용자 리파지토리</param>
     /// <param name="signInService"></param>
     public AuthenticationService( ILogger<AuthenticationService> logger, IUserRepository userRepository, ISignInService<DbModelUser> signInService, IUserService userService)
@@ -68,7 +68,6 @@ public class AuthenticationService : IAuthenticationService
             if(!await _userRepository.ExistUserAsync(request.LoginId))
                 return new ResponseData<ResponseUser>{ Code = "ERR", Message = "사용자를 찾지 못했습니다."};
             
-      
             // 해당 정보로 로그인을 시도한다.
             Response loginResult = await _signInService.PasswordSignInAsync(request.LoginId, request.Password, isPersistent:false , lockoutOnFailure:false);
           
@@ -94,8 +93,7 @@ public class AuthenticationService : IAuthenticationService
                     Data = null,
                     Message = loginResult.Message
                 };
-            
-            
+
             // 성공한 경우 
             return new ResponseData<ResponseUser>
             {

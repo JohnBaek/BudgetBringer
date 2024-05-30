@@ -18,7 +18,7 @@ public class BudgetAnalysisCacheService : IBudgetAnalysisCacheService
     private readonly IBudgetAnalysisCacheRepository _repository;
     
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<BudgetAnalysisCacheService> _logger;
 

@@ -60,7 +60,7 @@ public static class Program
             swagger.IncludeXmlComments(xmlPath);
         });
         
-        // Serilog 로거 설정
+        // Serilog Logger 설정
         builder.Host.UseSerilog((hostingContext, loggerConfiguration) => 
             loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));        
                 
@@ -179,11 +179,9 @@ public static class Program
         services.AddAuthentication();
         // 컨트롤러 추가
         services.AddControllers();
-        
         // 빌더에 미들웨어 서비스를 추가한다.
         services.AddEndpointsApiExplorer();
-        
-        // 리파지토리 레이어 추가 
+        // 리파지토리 레이어 추가
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IBusinessUnitRepository,BusinessUnitRepository>();
         services.AddScoped<ICostCenterRepository,CostCenterRepository>();

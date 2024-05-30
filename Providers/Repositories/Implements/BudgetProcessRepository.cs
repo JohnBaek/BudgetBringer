@@ -25,7 +25,7 @@ public class BudgetProcessRepository : IBudgetProcessRepository
     private readonly AnalysisDbContext _dbContext;
 
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<BudgetApprovedRepository> _logger;
     

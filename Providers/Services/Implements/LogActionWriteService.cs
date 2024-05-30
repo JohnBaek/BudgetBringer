@@ -16,7 +16,7 @@ namespace Providers.Services.Implements;
 public class LogActionWriteService : ILogActionWriteService
 {
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<LogActionWriteService> _logger;
     
@@ -28,7 +28,7 @@ public class LogActionWriteService : ILogActionWriteService
     /// <summary>
     /// 생성자
     /// </summary>
-    /// <param name="logger">로거</param>
+    /// <param name="logger">Logger</param>
     /// <param name="logActionRepository">리파지토리</param>
     public LogActionWriteService(ILogger<LogActionWriteService> logger, ILogActionRepository logActionRepository)
     {

@@ -21,7 +21,7 @@ public class BudgetProcessService : IBudgetProcessService
     private readonly IBudgetProcessRepository _repository;
     
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<BudgetProcessService> _logger;
 

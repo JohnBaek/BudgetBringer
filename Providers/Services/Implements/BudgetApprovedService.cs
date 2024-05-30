@@ -22,7 +22,7 @@ public class BudgetApprovedService : IBudgetApprovedService
     private readonly IBudgetApprovedRepository _repository;
     
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<BudgetApprovedService> _logger;
 
@@ -30,7 +30,7 @@ public class BudgetApprovedService : IBudgetApprovedService
     /// 생성자
     /// </summary>
     /// <param name="budgetApprovedRepository">리파지토리</param>
-    /// <param name="logger">로거</param>
+    /// <param name="logger">Logger</param>
     public BudgetApprovedService(
         IBudgetApprovedRepository budgetApprovedRepository
         , ILogger<BudgetApprovedService> logger)

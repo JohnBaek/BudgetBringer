@@ -28,7 +28,7 @@ public class CostCenterRepository : ICostCenterRepository
     private readonly AnalysisDbContext _dbContext;
 
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<CostCenterRepository> _logger;
     
@@ -56,7 +56,7 @@ public class CostCenterRepository : ICostCenterRepository
     /// <summary>
     /// 생성자
     /// </summary>
-    /// <param name="logger">로거</param>
+    /// <param name="logger">Logger</param>
     /// <param name="dbContext">디비컨텍스트</param>
     /// <param name="queryService">쿼리 서비스</param>
     /// <param name="userRepository">유저 리파지토리</param>

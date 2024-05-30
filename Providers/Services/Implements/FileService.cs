@@ -29,7 +29,7 @@ public class FileService : IFileService
     private readonly IWebHostEnvironment _hostEnvironment;
     
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<FileService> _logger;
     

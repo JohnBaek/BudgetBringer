@@ -20,7 +20,7 @@ public class LogActionService : ILogActionService
     private readonly ILogActionRepository _repository;
     
     /// <summary>
-    /// 로거
+    /// Logger
     /// </summary>
     private readonly ILogger<LogActionService> _logger;
 
@@ -28,7 +28,7 @@ public class LogActionService : ILogActionService
     /// 생성자
     /// </summary>
     /// <param name="repository">X Repository</param>
-    /// <param name="logger">로거</param>
+    /// <param name="logger">Logger</param>
     public LogActionService(
           ILogActionRepository repository
         , ILogger<LogActionService> logger)
