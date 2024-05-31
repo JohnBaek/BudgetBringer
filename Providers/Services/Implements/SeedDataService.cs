@@ -45,40 +45,39 @@ public class SeedDataService : IHostedService
         // 마이그레이션을 시작한다.
         await dbContext.Database.MigrateAsync(cancellationToken);
         Console.WriteLine("[Migration End]".WithDateTime());    
-        
-        
-        Console.WriteLine("[DbModelUser and DbModelRole Initialize Start]".WithDateTime());    
-        // 필요한 매니저 서비스를 DI 한다.
-        UserManager<DbModelUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<DbModelUser>>();
-        RoleManager<DbModelRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<DbModelRole>>();
-            
-        // 관리자 , 및 유저에 대한 권한을 생성한다.
-        await CreateRoleAsync(roleManager,"Admin");
-        await CreateRoleAsync(roleManager,"User");
-        
-        // 상세 관리자 Claim 을 설정한다.
-        await CreateRoleClaimAdminAsync(dbContext,roleManager);
-        // 상세 유저 Claim 을 설정한다.
-        await CreateRoleClaimUserAsync(dbContext,roleManager);
-            
-        // 관리자를 생성한다.
-        await CreateUserAsync(userManager: userManager , role:"Admin" , loginId:"admin" , displayName:"관리자", password:"Qkfka!@12" );
-        await CreateUserAsync(userManager: userManager , role:"Admin" , loginId:"sgs_mike_admin" , displayName:"Mike(Admin)", password:"Pass%word12" );
-        // 사용자를 생성한다.
-        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"commonuser" , displayName:"일반 사용자", password:"Qkfka!@12" );
-        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_AnoldKim" , displayName:"Anold Kim", password:"Pass%word1" );
-        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_ByungchanHong" , displayName:"Byungchan Hong", password:"Pass%word2" );
-        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_JeffJang" , displayName:"Jeff Jang", password:"Pass%word3" );
-        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_DerekLee" , displayName:"Derek Lee", password:"Pass%word4" );
-        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_AlbertLim" , displayName:"Albert Lim", password:"Pass%word5" );
-        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_YuriHong" , displayName:"Yuri Hong", password:"Pass%word6" );
-        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_WuhongJu" , displayName:"Wuhong Ju", password:"Pass%word7" );
-        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_BCHong" , displayName:"BC Hong", password:"Pass%word8" );
-        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_SandersBae" , displayName:"Sanders Bae", password:"Pass%word9" );
-        await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_BruceMoon" , displayName:"Bruce Moon", password:"Pass%word10" );
-        
-        await CreateUserWithSpecifyAsync(userManager , role:"User" , loginId:"sgs" , displayName:"SGS", password:"Qkfka!212", targetPermission: "process-result" , description: "결과페이지 전체 권한 부여" );
-        await CreateUserWithSpecifyAsync(userManager , role:"User" , loginId:"sgs_mike_user" , displayName:"Mike", password:"Pass%word12", targetPermission: "process-result" , description: "결과페이지 전체 권한 부여" );
+        Console.WriteLine("[DbModelUser and DbModelRole Initialize Start]".WithDateTime());
+
+        // // 필요한 매니저 서비스를 DI 한다.
+        // UserManager<DbModelUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<DbModelUser>>();
+        // RoleManager<DbModelRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<DbModelRole>>();
+        //
+        // // 관리자 , 및 유저에 대한 권한을 생성한다.
+        // await CreateRoleAsync(roleManager,"Admin");
+        // await CreateRoleAsync(roleManager,"User");
+        //
+        // // 상세 관리자 Claim 을 설정한다.
+        // await CreateRoleClaimAdminAsync(dbContext,roleManager);
+        // // 상세 유저 Claim 을 설정한다.
+        // await CreateRoleClaimUserAsync(dbContext,roleManager);
+        //
+        // // 관리자를 생성한다.
+        // await CreateUserAsync(userManager: userManager , role:"Admin" , loginId:"admin" , displayName:"관리자", password:"Qkfka!@12" );
+        // await CreateUserAsync(userManager: userManager , role:"Admin" , loginId:"sgs_mike_admin" , displayName:"Mike(Admin)", password:"Pass%word12" );
+        // // 사용자를 생성한다.
+        // await CreateUserAsync(userManager: userManager , role:"User" , loginId:"commonuser" , displayName:"일반 사용자", password:"Qkfka!@12" );
+        // await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_AnoldKim" , displayName:"Anold Kim", password:"Pass%word1" );
+        // await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_ByungchanHong" , displayName:"Byungchan Hong", password:"Pass%word2" );
+        // await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_JeffJang" , displayName:"Jeff Jang", password:"Pass%word3" );
+        // await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_DerekLee" , displayName:"Derek Lee", password:"Pass%word4" );
+        // await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_AlbertLim" , displayName:"Albert Lim", password:"Pass%word5" );
+        // await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_YuriHong" , displayName:"Yuri Hong", password:"Pass%word6" );
+        // await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_WuhongJu" , displayName:"Wuhong Ju", password:"Pass%word7" );
+        // await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_BCHong" , displayName:"BC Hong", password:"Pass%word8" );
+        // await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_SandersBae" , displayName:"Sanders Bae", password:"Pass%word9" );
+        // await CreateUserAsync(userManager: userManager , role:"User" , loginId:"sgs_BruceMoon" , displayName:"Bruce Moon", password:"Pass%word10" );
+        //
+        // await CreateUserWithSpecifyAsync(userManager , role:"User" , loginId:"sgs" , displayName:"SGS", password:"Qkfka!212", targetPermission: "process-result" , description: "결과페이지 전체 권한 부여" );
+        // await CreateUserWithSpecifyAsync(userManager , role:"User" , loginId:"sgs_mike_user" , displayName:"Mike", password:"Pass%word12", targetPermission: "process-result" , description: "결과페이지 전체 권한 부여" );
         
         Console.WriteLine("[User and DbModelRole Initialize End]".WithDateTime());    
     }

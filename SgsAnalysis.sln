@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{C77857EA-E9D8-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apis.Tests", "Apis.Tests\Apis.Tests.csproj", "{6710A9B8-8A8D-4614-8871-E83EF038EB18}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiV2", "ApiV2\ApiV2.csproj", "{FAD5215B-1917-4C35-9846-C979501ABBA9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{6710A9B8-8A8D-4614-8871-E83EF038EB18}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6710A9B8-8A8D-4614-8871-E83EF038EB18}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6710A9B8-8A8D-4614-8871-E83EF038EB18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAD5215B-1917-4C35-9846-C979501ABBA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAD5215B-1917-4C35-9846-C979501ABBA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAD5215B-1917-4C35-9846-C979501ABBA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAD5215B-1917-4C35-9846-C979501ABBA9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2963F25C-6AF0-4C95-9C8B-C78F121BE007} = {27CA4EC8-A393-4247-979B-53D803758528}
