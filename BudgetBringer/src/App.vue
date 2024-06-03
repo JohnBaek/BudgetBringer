@@ -22,6 +22,7 @@ const splashTimer = () =>
       onSplash.value = false;
     }, 1000 * 3);
   }
+
 ;
 
 /**
