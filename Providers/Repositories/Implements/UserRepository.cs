@@ -232,10 +232,10 @@ public class UserRepository : IUserRepository
             if(loginUser == null)
                 return new ResponseList<ResponseUser> { Code = "ERROR_SESSION_TIMEOUT", Message = "로그인 상태를 확인해주세요"};
             
-            // 관리자가 아닌경우 
-            if(loginUser.LoginId.ToLower() != "admin")
-                return new ResponseList<ResponseUser> { Code = "ERROR_SESSION_TIMEOUT", Message = "접근권한이 없습니다."};
-            
+            // // 관리자가 아닌경우 
+            // if(loginUser.LoginId.ToLower() != "admin")
+            //     return new ResponseList<ResponseUser> { Code = "ERROR_SESSION_TIMEOUT", Message = "접근권한이 없습니다."};
+            //
             // 기본 Sort가 없을 경우 
             if (requestQuery.SortOrders is { Count: 0 })
             {
