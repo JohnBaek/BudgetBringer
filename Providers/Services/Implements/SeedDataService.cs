@@ -48,8 +48,8 @@ public class SeedDataService : IHostedService
         Console.WriteLine("[DbModelUser and DbModelRole Initialize Start]".WithDateTime());
 
         // // 필요한 매니저 서비스를 DI 한다.
-        // UserManager<DbModelUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<DbModelUser>>();
-        // RoleManager<DbModelRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<DbModelRole>>();
+        UserManager<DbModelUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<DbModelUser>>();
+        RoleManager<DbModelRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<DbModelRole>>();
         //
         // // 관리자 , 및 유저에 대한 권한을 생성한다.
         // await CreateRoleAsync(roleManager,"Admin");
@@ -78,6 +78,9 @@ public class SeedDataService : IHostedService
         //
         // await CreateUserWithSpecifyAsync(userManager , role:"User" , loginId:"sgs" , displayName:"SGS", password:"Qkfka!212", targetPermission: "process-result" , description: "결과페이지 전체 권한 부여" );
         // await CreateUserWithSpecifyAsync(userManager , role:"User" , loginId:"sgs_mike_user" , displayName:"Mike", password:"Pass%word12", targetPermission: "process-result" , description: "결과페이지 전체 권한 부여" );
+        
+        await CreateUserAsync(userManager: userManager , role:"Admin" , loginId:"capexadmin1" , displayName:"Capex관리자1", password:"Qkfka!@34" );
+        await CreateUserAsync(userManager: userManager , role:"Admin" , loginId:"capexadmin2" , displayName:"Capex관리자2", password:"Qkfka!@34" );
         
         Console.WriteLine("[User and DbModelRole Initialize End]".WithDateTime());    
     }
